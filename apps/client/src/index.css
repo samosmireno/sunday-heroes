@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Exo", sans-serif, system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  background-color: #f4f4f4;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}

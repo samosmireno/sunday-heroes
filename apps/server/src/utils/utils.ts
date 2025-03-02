@@ -1,0 +1,102 @@
+import { MatchWithDetails } from "../repositories/match-repo";
+import { z } from "zod";
+import {
+  createMatchRequest,
+  DuelPlayerRequest,
+  MatchResponse,
+  PlayerResponse,
+  VotingStatus,
+} from "@repo/logger";
+import { Match, MatchPlayer } from "@prisma/client";
+
+export function createStepSchema<T extends Record<string, z.ZodType>>(
+  steps: T
+) {
+  return z.object(steps);
+}
+
+function sortPlayersHomeAwayByPosition(
+  players: PlayerResponse[]
+): PlayerResponse[] {
+  const homePlayers = players
+    .filter((player) => player.isHome === true)
+    .sort((a, b) => a.position - b.position);
+  const awayPlayers = players
+    .filter((player) => player.isHome !== true)
+    .sort((a, b) => a.position - b.position);
+
+  return [...homePlayers, ...awayPlayers];
+}
+
+export function transformMatchServiceToResponse(
+  data: MatchWithDetails
+): MatchResponse {
+  const mappedPlayers = data.matchPlayers.map((player) => ({
+    id: player.id,
+    nickname: player.player.nickname,
+    isHome: player.is_home,
+    goals: player.goals,
+    assists: player.assists,
+    position: player.position,
+  }));
+
+  const sortedPlayers = sortPlayersHomeAwayByPosition(mappedPlayers);
+
+  const transformedData: MatchResponse = {
+    id: data.id,
+    date: data.date.toLocaleDateString(),
+    match_type: data.match_type as MatchResponse["match_type"],
+    round: data.round,
+    home_team_score: data.home_team_score,
+    away_team_score: data.away_team_score,
+    penalty_home_score: data.penalty_home_score ?? undefined,
+    penalty_away_score: data.penalty_away_score ?? undefined,
+    teams: data.match_teams.map((matchTeam) => matchTeam.team.name),
+    players: sortedPlayers,
+  };
+
+  return transformedData;
+}
+
+export function transformAddMatchRequestToService(
+  data: createMatchRequest
+): Omit<Match, "id"> {
+  const matchForService: Omit<Match, "id"> = {
+    competition_id: data.competitionId,
+    match_type: data.matchType,
+    date: data.date,
+    home_team_score: data.homeTeamScore,
+    away_team_score: data.awayTeamScore,
+    penalty_home_score: data.penaltyHomeScore ?? null,
+    penalty_away_score: data.penaltyHomeScore ?? null,
+    created_at: new Date(Date.now()),
+    round: data.round,
+    bracket_position: data.bracketPosition ?? null,
+    voting_status: VotingStatus.OPEN,
+    voting_ends_at: new Date(Date.now() + 5 * 24 * 60 * 60),
+    is_completed: false,
+  };
+
+  return matchForService;
+}
+
+export function transformAddMatchRequestToMatchPlayer(
+  data: DuelPlayerRequest,
+  match_id: string,
+  player_id: string,
+  team_id: string
+): Omit<MatchPlayer, "id"> {
+  const matchPlayerForService: Omit<MatchPlayer, "id"> = {
+    created_at: new Date(Date.now()),
+    match_id: match_id,
+    player_id: player_id,
+    team_id: team_id,
+    is_home: data.isHome,
+    goals: data.goals,
+    assists: data.assists,
+    position: data.position,
+    penalty_scored: data.penaltyScored ?? null,
+  };
+
+  return matchPlayerForService;
+}

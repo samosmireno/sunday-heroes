@@ -1,0 +1,35 @@
+.border {
+  background: black;
+  position: absolute;
+  z-index: 1;
+}
+
+.box.small {
+  top: 36%;
+  width: 8%;
+  height: 28%;
+}
+
+.box-d {
+  top: 35%;
+  width: 15%;
+  height: 30%;
+  background: transparent;
+  border: 2px solid black;
+}
+
+.box-d.left {
+  left: 5%;
+  border-left: none;
+  border-bottom-right-radius: 1000px;
+  border-top-right-radius: 1000px;
+  clip-path: inset(0 0 0 77%);
+}
+
+.box-d.right {
+  right: 5%;
+  border-right: none;
+  border-bottom-left-radius: 1000px;
+  border-top-left-radius: 1000px;
+  clip-path: inset(0 77% 0 0);
+}
