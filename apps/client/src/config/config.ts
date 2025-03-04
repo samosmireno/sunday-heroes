@@ -16,7 +16,7 @@ export const config = {
     : "http://localhost:5000", //"http://localhost:5000", //"https://sunday-squad.onrender.com",
   redirect_uri: isProd
     ? "https://sunday-heroes.netlify.app/auth/callback"
-    : "http://localhost:5173/auth/callback",
+    : "http://localhost:5000/auth/google/callback",
   google: {
     authEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
     clientId: import.meta.env.VITE_CLIENT_ID,

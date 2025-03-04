@@ -30,7 +30,7 @@ const refreshAuthLogic = async (failedRequest: any) => {
       authUpdateCallback(true);
     }
 
-    return axiosInstance(failedRequest.config);
+    return Promise.resolve();
   } catch (error) {
     isRefreshing = false;
     if (authUpdateCallback) {

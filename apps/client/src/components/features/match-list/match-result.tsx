@@ -94,7 +94,7 @@ export default function MatchResult({
             </div>
             {isLoggedIn && (
               <div className="m-4 flex w-fit flex-row items-center space-x-2 hover:cursor-pointer md:space-x-4">
-                <Link to={`edit-match/${matchId}`}>
+                <Link to={`/edit-match/${matchId}`}>
                   <MdEdit className="items-center text-lg text-black md:text-xl" />
                 </Link>
                 <MdDelete

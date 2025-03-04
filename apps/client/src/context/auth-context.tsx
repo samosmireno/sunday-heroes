@@ -7,13 +7,15 @@ import {
 } from "react";
 import axiosInstance from "../config/axiosConfig";
 import { config } from "../config/config";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
+  isLoading: boolean;
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
   login: () => void;
   logout: () => void;
-  updateLoginState: () => Promise<boolean>;
+  updateLoginState: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +30,8 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   const login = () => {
     const googleAuthUrl = `${config.google.authEndpoint}?client_id=${config.google.clientId}&redirect_uri=${config.redirect_uri}&response_type=code&scope=email profile`;
@@ -45,34 +49,44 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const updateLoginState = async () => {
     try {
+      console.log("Entered updateLoginState");
+      setIsLoading(true);
       const response = await axiosInstance.get(`${config.server}/auth/verify`, {
         withCredentials: true,
       });
 
+      console.log(response.data.loggedIn);
+
+      setIsLoggedIn(response.data.loggedIn);
+      setIsLoading(false);
+
       if (response.data.loggedIn) {
-        setIsLoggedIn(true);
-        return true;
+        navigate("/home");
+      } else {
+        navigate("/login");
       }
-      setIsLoggedIn(false);
-      return false;
     } catch (error) {
       console.log(error);
       setIsLoggedIn(false);
-      return false;
+      setIsLoading(false);
+      navigate("/login");
     }
   };
 
   useEffect(() => {
-    const verifyToken = async () => {
-      await updateLoginState();
-    };
-
-    verifyToken();
+    updateLoginState();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, setIsLoggedIn, login, logout, updateLoginState }}
+      value={{
+        isLoading,
+        isLoggedIn,
+        setIsLoggedIn,
+        login,
+        logout,
+        updateLoginState,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -43,6 +43,9 @@ export const config = {
     tokenInfoUrl: "https://oauth2.googleapis.com/tokeninfo",
     redirectUri: isProd
       ? "https://sunday-heroes.netlify.app/auth/callback"
+      : "http://localhost:5000/auth/google/callback",
+    redirectClientUrl: isProd
+      ? "https://sunday-heroes.netlify.app/auth/callback"
       : "http://localhost:5173/auth/callback",
   },
   jwt: {

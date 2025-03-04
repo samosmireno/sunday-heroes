@@ -209,6 +209,7 @@ export const handleGoogleCallback = async (
   next: NextFunction
 ): Promise<any> => {
   try {
+    console.log("Entered google callback");
     const code = req.query.code as string;
 
     const response = await axios.post(config.google.accessTokenUrl, {
@@ -276,9 +277,7 @@ export const handleGoogleCallback = async (
       partitioned: true,
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    //res.redirect(config.client);
-    return res.status(200).json({ success: true });
+    res.redirect(config.google.redirectClientUrl);
   } catch (error) {
     if (error instanceof Error) {
       console.error(
