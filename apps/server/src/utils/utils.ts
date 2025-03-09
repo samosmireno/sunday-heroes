@@ -1,13 +1,19 @@
-import { MatchWithDetails } from "../repositories/match-repo";
-import { z } from "zod";
+import { MatchWithDetails, MatchWithTeams } from "../repositories/match-repo";
+import { map, z } from "zod";
 import {
+  CompetitionResponse,
   createMatchRequest,
+  DashboardCompetitionResponse,
+  DashboardMatchResponse,
+  DashboardResponse,
   DuelPlayerRequest,
   MatchResponse,
   PlayerResponse,
   VotingStatus,
 } from "@repo/logger";
-import { Match, MatchPlayer } from "@prisma/client";
+import { Competition, Match, MatchPlayer, MatchType } from "@prisma/client";
+import { DashboardWithDetails } from "../repositories/dashboard-repo";
+import { CompetitionWithMatches } from "../repositories/competition-repo";
 
 export function createStepSchema<T extends Record<string, z.ZodType>>(
   steps: T
@@ -99,4 +105,86 @@ export function transformAddMatchRequestToMatchPlayer(
   };
 
   return matchPlayerForService;
+}
+
+export function transformDashboardServiceToResponse(
+  data: DashboardWithDetails
+): DashboardResponse {
+  const mappedCompetitions: CompetitionResponse[] = data.competitions.map(
+    (comp) => {
+      const mappedMatches: MatchResponse[] = comp.matches.map((match) => {
+        const matchPlayers = match.matchPlayers.map((player) => ({
+          id: player.id,
+          nickname: player.player.nickname,
+          isHome: player.is_home,
+          goals: player.goals,
+          assists: player.assists,
+          position: player.position,
+          penalty_scored: player.penalty_scored ?? undefined,
+          votes: player.player.votes_given.map((vote) => vote.points),
+        }));
+
+        return {
+          id: match.id,
+          date: match.date.toLocaleDateString(),
+          match_type: match.match_type as MatchResponse["match_type"],
+          round: match.round,
+          home_team_score: match.home_team_score,
+          away_team_score: match.away_team_score,
+          penalty_home_score: match.penalty_home_score ?? undefined,
+          penalty_away_score: match.penalty_away_score ?? undefined,
+          teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
+          players: matchPlayers,
+        };
+      });
+
+      return {
+        id: comp.id,
+        name: comp.name,
+        type: comp.type as CompetitionResponse["type"],
+        matches: mappedMatches,
+      };
+    }
+  );
+
+  return {
+    id: data.id,
+    name: data.name,
+    user: data.admin.nickname,
+    competitions: mappedCompetitions,
+  };
+}
+
+export function transformDashboardMatchesToResponse(
+  data: MatchWithTeams[]
+): DashboardMatchResponse[] {
+  const matchesResponse: DashboardMatchResponse[] = data.map((match) => ({
+    id: match.id,
+    competition_type: match.competition
+      .type as DashboardMatchResponse["competition_type"],
+    competition_name: match.competition.name,
+    date: match.date.toLocaleDateString(),
+    match_type: match.match_type as DashboardMatchResponse["match_type"],
+    round: match.round,
+    home_team_score: match.home_team_score,
+    away_team_score: match.away_team_score,
+    penalty_home_score: match.penalty_home_score ?? undefined,
+    penalty_away_score: match.penalty_away_score ?? undefined,
+    teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
+  }));
+
+  return matchesResponse;
+}
+
+export function transformDashboardCompetitionsToResponse(
+  data: CompetitionWithMatches[]
+): DashboardCompetitionResponse[] {
+  const competitions: DashboardCompetitionResponse[] = data.map((comp) => ({
+    id: comp.id,
+    name: comp.name,
+    type: comp.type as DashboardCompetitionResponse["type"],
+    matches: comp.matches.length,
+  }));
+
+  return competitions;
 }

@@ -2,8 +2,11 @@ import {
   PartialAddDuelFormValues,
   MatchType,
   MatchResponse,
+  DashboardResponse,
 } from "@repo/logger";
 import { Team } from "../types/types";
+import Dashboard from "../pages/dashboard";
+import { Match } from "date-fns";
 
 export const capitalizeFirstLetter = (string: string) => {
   return string
@@ -103,4 +106,20 @@ export const createFootballFieldMatch = (
     round: 0,
     teams: ["Home Team", "Away Team"],
   };
+};
+
+const getTotalNumPlayersInMatches = (matches: MatchResponse[]): number => {
+  const uniqueNicknames = new Set(
+    matches.flatMap((match) => match.players.map((player) => player.nickname)),
+  );
+  return uniqueNicknames.size;
+};
+
+export const getTotalPlayersInDashboard = (
+  dashboard: DashboardResponse,
+): number => {
+  return dashboard.competitions.reduce(
+    (total, comp) => total + getTotalNumPlayersInMatches(comp.matches),
+    0,
+  );
 };

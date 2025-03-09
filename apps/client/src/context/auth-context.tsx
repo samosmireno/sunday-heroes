@@ -5,7 +5,10 @@ import {
   useState,
   ReactNode,
 } from "react";
-import axiosInstance from "../config/axiosConfig";
+import axiosInstance, {
+  setAuthUpdateCallback,
+  setLoadingStateCallback,
+} from "../config/axiosConfig";
 import { config } from "../config/config";
 import { useNavigate } from "react-router-dom";
 
@@ -23,6 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
+    console.error("useAuth called outside of AuthProvider");
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
@@ -33,47 +37,74 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    console.log("Registering auth update and loading state callbacks");
+    setAuthUpdateCallback((loggedIn) => {
+      console.log(`Auth update callback triggered: isLoggedIn = ${loggedIn}`);
+      setIsLoggedIn(isLoggedIn);
+    });
+
+    setLoadingStateCallback((loading) => {
+      console.log(`Loading state callback triggered: isLoading = ${loading}`);
+      setIsLoading(isLoading);
+    });
+
+    return () => {
+      setAuthUpdateCallback(() => {});
+      setLoadingStateCallback(() => {});
+    };
+  }, []);
+
   const login = () => {
+    console.log("Login initiated - Redirecting to Google Auth");
     const googleAuthUrl = `${config.google.authEndpoint}?client_id=${config.google.clientId}&redirect_uri=${config.redirect_uri}&response_type=code&scope=email profile`;
     window.location.href = googleAuthUrl;
   };
 
   const logout = () => {
+    console.log("Logout initiated");
     axiosInstance
       .get(`${config.server}/auth/logout`, { withCredentials: true })
-      .then(() => setIsLoggedIn(false))
+      .then(() => {
+        console.log("Logout successful");
+        setIsLoggedIn(false);
+      })
       .catch((error) => {
-        console.error("There was an error logging out", error);
+        console.error("Logout error:", error);
       });
   };
 
   const updateLoginState = async () => {
     try {
-      console.log("Entered updateLoginState");
+      console.log("Checking authentication status...");
       setIsLoading(true);
       const response = await axiosInstance.get(`${config.server}/auth/verify`, {
         withCredentials: true,
       });
 
-      console.log(response.data.loggedIn);
+      console.log("Auth verification response:", response.data);
 
       setIsLoggedIn(response.data.loggedIn);
       setIsLoading(false);
 
       if (response.data.loggedIn) {
-        navigate("/home");
+        console.log("User is authenticated, navigating to home");
+        //navigate("/home");
       } else {
+        console.log("User is not authenticated, navigating to login");
         navigate("/login");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Authentication verification failed:", error);
       setIsLoggedIn(false);
       setIsLoading(false);
+      console.log("Redirecting to login after auth error");
       navigate("/login");
     }
   };
 
   useEffect(() => {
+    console.log("AuthProvider mounted, initializing auth state");
     updateLoginState();
   }, []);
 

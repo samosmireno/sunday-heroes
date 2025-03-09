@@ -16,6 +16,17 @@ export type MatchWithDetails = Prisma.MatchGetPayload<{
   };
 }>;
 
+export type MatchWithTeams = Prisma.MatchGetPayload<{
+  include: {
+    match_teams: {
+      include: {
+        team: true;
+      };
+    };
+    competition: true;
+  };
+}>;
+
 export class MatchRepo {
   static async getAllMatches(): Promise<Match[]> {
     return prisma.match.findMany();
@@ -58,6 +69,29 @@ export class MatchRepo {
             team: true,
           },
         },
+      },
+    });
+  }
+
+  static async getAllMatchesFromDashboard(
+    dashboard_id: string
+  ): Promise<MatchWithTeams[]> {
+    return prisma.match.findMany({
+      where: {
+        competition: {
+          dashboard_id: dashboard_id,
+        },
+      },
+      include: {
+        match_teams: {
+          include: {
+            team: true,
+          },
+        },
+        competition: true,
+      },
+      orderBy: {
+        date: "desc",
       },
     });
   }

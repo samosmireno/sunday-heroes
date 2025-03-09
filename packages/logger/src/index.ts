@@ -1,33 +1,7 @@
+import { CompetitionType, MatchType } from "./enums";
+
 export * from "./schemas";
-
-export enum Team {
-  HOME = "Home",
-  AWAY = "Away",
-}
-
-export enum CompetitionType {
-  LEAGUE = "LEAGUE",
-  DUEL = "DUEL",
-  KNOCKOUT = "KNOCKOUT",
-}
-
-export enum MatchType {
-  FIVE_A_SIDE = "FIVE_A_SIDE",
-  SIX_A_SIDE = "SIX_A_SIDE",
-  SEVEN_A_SIDE = "SEVEN_A_SIDE",
-  ELEVEN_A_SIDE = "ELEVEN_A_SIDE",
-}
-
-export enum VotingStatus {
-  OPEN = "OPEN",
-  CLOSED = "CLOSED",
-}
-
-export enum Role {
-  ADMIN = "ADMIN",
-  MODERATOR = "MODERATOR",
-  PLAYER = "PLAYER",
-}
+export * from "./enums";
 
 export type PlayerResponse = {
   id: string;
@@ -60,4 +34,39 @@ export type DuelPlayerRequest = {
   assists: number;
   position: number;
   penaltyScored?: boolean;
+};
+
+export type CompetitionResponse = {
+  id: string;
+  name: string;
+  type: CompetitionType;
+  matches: MatchResponse[];
+};
+
+export type DashboardResponse = {
+  id: string;
+  name: string;
+  user: string;
+  competitions: CompetitionResponse[];
+};
+
+export type DashboardMatchResponse = {
+  id: string;
+  competition_type: CompetitionType;
+  competition_name: string;
+  date: string;
+  match_type: MatchType;
+  round: number;
+  home_team_score: number;
+  away_team_score: number;
+  penalty_home_score?: number;
+  penalty_away_score?: number;
+  teams: string[];
+};
+
+export type DashboardCompetitionResponse = {
+  id: string;
+  name: string;
+  type: CompetitionType;
+  matches: number;
 };

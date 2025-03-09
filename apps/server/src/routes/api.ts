@@ -4,12 +4,15 @@ import {
   createMatch,
   deleteMatch,
   getAllMatches,
+  getAllMatchesFromDashboard,
   getMatchById,
   updateMatch,
 } from "../handlers/match";
 import { getAllUsers, getUserById } from "../handlers/player";
 import { z } from "zod";
 import { createMatchRequestSchema } from "../schemas/create-match-request-schema";
+import { getDashboardDetails } from "../handlers/dashboard";
+import { getAllCompetitionsFromDashboard } from "../handlers/competition";
 
 const router = Router();
 
@@ -29,7 +32,24 @@ const validateRequestBody =
     }
   };
 
-router.get("/matches", getAllMatches);
+router.get("/dashboard/:id", getDashboardDetails);
+
+router.get(
+  "/competitions",
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.query.dashboardId) {
+      return getAllCompetitionsFromDashboard(req, res, next);
+    }
+    console.log("No dash ID");
+  }
+);
+
+router.get("/matches", (req: Request, res: Response, next: NextFunction) => {
+  if (req.query.dashboardId) {
+    return getAllMatchesFromDashboard(req, res, next);
+  }
+  return getAllMatches(req, res, next);
+});
 
 router.get("/matches/:id", getMatchById);
 

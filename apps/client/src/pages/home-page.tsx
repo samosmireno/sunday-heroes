@@ -2,12 +2,11 @@ import "../index.css";
 import MatchList from "../components/features/match-list/match-list";
 import StatsTable from "../components/features/stats-table/stats-table";
 import FootballField from "../components/features/football-field/football-field";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/auth-context";
 import { useQuery } from "@tanstack/react-query";
 import { config } from "../config/config";
-import { setAuthUpdateCallback } from "../config/axiosConfig";
 import { MatchResponse } from "@repo/logger";
 
 const fetchMatches = async (): Promise<MatchResponse[]> => {
@@ -17,7 +16,7 @@ const fetchMatches = async (): Promise<MatchResponse[]> => {
 
 function HomePage() {
   const [currentMatch, setCurrentMatch] = useState<number>(0);
-  const { isLoggedIn, login, logout, setIsLoggedIn } = useAuth();
+  const { isLoggedIn, login, logout } = useAuth();
 
   const {
     data: matches = [],
@@ -31,10 +30,6 @@ function HomePage() {
   function handleMatchClick(getCurrentMatch: number) {
     setCurrentMatch(getCurrentMatch);
   }
-
-  useEffect(() => {
-    setAuthUpdateCallback(setIsLoggedIn);
-  }, [setIsLoggedIn]);
 
   if (isLoading) {
     return <div>Loading...</div>;

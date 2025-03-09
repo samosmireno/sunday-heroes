@@ -8,9 +8,11 @@ import { createMatchRequest, DuelPlayerRequest } from "@repo/logger";
 import {
   transformAddMatchRequestToMatchPlayer,
   transformAddMatchRequestToService,
+  transformDashboardMatchesToResponse,
   transformMatchServiceToResponse,
 } from "../utils/utils";
 import { TeamRepo } from "../repositories/team-repo";
+import { error } from "console";
 
 export const getAllMatches = async (
   req: Request,
@@ -41,6 +43,24 @@ export const getMatchById = async (
     } else {
       res.status(404).send("Match not found");
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllMatchesFromDashboard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const dashboardId = req.query.dashboardId?.toString();
+    if (!dashboardId) {
+      return res.status(400).send("dashboardId query parameter is required");
+    }
+    const matches = await MatchRepo.getAllMatchesFromDashboard(dashboardId);
+    console.log(matches[0]);
+    res.json(transformDashboardMatchesToResponse(matches));
   } catch (error) {
     next(error);
   }

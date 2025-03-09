@@ -6,6 +6,7 @@ import ProtectedRoute from "./pages/protected-route";
 import AddMultiForm from "./pages/add-multi-form";
 import { AuthProvider } from "./context/auth-context.tsx";
 import AuthCallback from "./pages/auth-callback.tsx";
+import Dashboard from "./pages/dashboard.tsx";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route
             path="/home"
             element={
