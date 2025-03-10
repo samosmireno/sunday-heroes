@@ -4,6 +4,7 @@ import {
   DashboardCompetitionResponse,
   DashboardMatchResponse,
   DashboardResponse,
+  DashboardVoteResponse,
 } from "@repo/logger";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -31,8 +32,17 @@ const fetchDashboardCompetitions = async (
   return data;
 };
 
+const fetchDashboardVotes = async (
+  id: string,
+): Promise<DashboardVoteResponse[]> => {
+  const { data } = await axios.get(
+    `${config.server}/api/votes?dashboardId=${id}`,
+  );
+  return data;
+};
+
 export const useDashboard = (id: string) => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   const dashboardQuery = useQuery({
@@ -50,11 +60,17 @@ export const useDashboard = (id: string) => {
     queryFn: () => fetchDashboardCompetitions(id),
   });
 
+  const votesQuery = useQuery({
+    queryKey: ["dashboard_cvotes"],
+    queryFn: () => fetchDashboardVotes(id),
+  });
+
   return {
     isRefreshing,
     isLoading: dashboardQuery.isLoading,
     dashboardData: dashboardQuery.data,
     dashboardMatches: matchesQuery.data,
     dashboardCompetitions: competitionsQuery.data,
+    dashboardVotes: votesQuery.data,
   };
 };

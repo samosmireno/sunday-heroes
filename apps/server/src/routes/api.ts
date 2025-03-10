@@ -13,6 +13,7 @@ import { z } from "zod";
 import { createMatchRequestSchema } from "../schemas/create-match-request-schema";
 import { getDashboardDetails } from "../handlers/dashboard";
 import { getAllCompetitionsFromDashboard } from "../handlers/competition";
+import { getAllVotesFromDashboard } from "../handlers/vote";
 
 const router = Router();
 
@@ -50,27 +51,29 @@ router.get("/matches", (req: Request, res: Response, next: NextFunction) => {
   }
   return getAllMatches(req, res, next);
 });
-
 router.get("/matches/:id", getMatchById);
-
 router.post(
   "/matches",
   authenticateToken,
   validateRequestBody(createMatchRequestSchema),
   createMatch
 );
-
 router.put(
   "/matches/:id",
   authenticateToken,
   validateRequestBody(createMatchRequestSchema),
   updateMatch
 );
-
 router.delete("/matches/:id", authenticateToken, deleteMatch);
 
 router.get("/users", getAllUsers);
-
 router.get("/users/:id", getUserById);
+
+router.get("/votes", (req: Request, res: Response, next: NextFunction) => {
+  if (req.query.dashboardId) {
+    return getAllVotesFromDashboard(req, res, next);
+  }
+  console.log("No dash ID");
+});
 
 export default router;

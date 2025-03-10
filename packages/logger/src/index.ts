@@ -70,3 +70,30 @@ export type DashboardCompetitionResponse = {
   type: CompetitionType;
   matches: number;
 };
+
+export type DashboardVoteResponse = {
+  id: string;
+  points: number;
+  match: {
+    id: string;
+    home_team_score: number;
+    away_team_score: number;
+  };
+  competition: {
+    id: string;
+    name: string;
+    type: CompetitionType;
+  };
+  voter: {
+    id: string;
+    nickname: string;
+    email: string | null;
+  };
+  match_player: {
+    id: string;
+    player_id: string;
+    nickname: string;
+    team_id: string;
+    team: string;
+  };
+};

@@ -6,6 +6,7 @@ import {
   DashboardCompetitionResponse,
   DashboardMatchResponse,
   DashboardResponse,
+  DashboardVoteResponse,
   DuelPlayerRequest,
   MatchResponse,
   PlayerResponse,
@@ -14,6 +15,7 @@ import {
 import { Competition, Match, MatchPlayer, MatchType } from "@prisma/client";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
 import { CompetitionWithMatches } from "../repositories/competition-repo";
+import { DashboardVoteService } from "../repositories/vote-repo";
 
 export function createStepSchema<T extends Record<string, z.ZodType>>(
   steps: T
@@ -187,4 +189,38 @@ export function transformDashboardCompetitionsToResponse(
   }));
 
   return competitions;
+}
+
+export function transformDashboardVotesToResponse(
+  data: DashboardVoteService[]
+): DashboardVoteResponse[] {
+  const votes: DashboardVoteResponse[] = data.map((vote) => ({
+    id: vote.id,
+    points: vote.points,
+    match: {
+      id: vote.match.id,
+      home_team_score: vote.match.home_team_score,
+      away_team_score: vote.match.away_team_score,
+    },
+    competition: {
+      id: vote.match.competition.id,
+      name: vote.match.competition.name,
+      type: vote.match.competition
+        .type as DashboardVoteResponse["competition"]["type"],
+    },
+    voter: {
+      id: vote.voter.id,
+      nickname: vote.voter.nickname,
+      email: vote.voter.email ?? "",
+    },
+    match_player: {
+      id: vote.player_match.id,
+      player_id: vote.player_match.player.id,
+      nickname: vote.player_match.player.nickname,
+      team_id: vote.player_match.team.id,
+      team: vote.player_match.team.name,
+    },
+  }));
+
+  return votes;
 }
