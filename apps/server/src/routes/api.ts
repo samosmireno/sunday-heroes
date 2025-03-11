@@ -4,6 +4,7 @@ import {
   createMatch,
   deleteMatch,
   getAllMatches,
+  getAllMatchesFromCompetition,
   getAllMatchesFromDashboard,
   getMatchById,
   updateMatch,
@@ -12,7 +13,10 @@ import { getAllUsers, getUserById } from "../handlers/player";
 import { z } from "zod";
 import { createMatchRequestSchema } from "../schemas/create-match-request-schema";
 import { getDashboardDetails } from "../handlers/dashboard";
-import { getAllCompetitionsFromDashboard } from "../handlers/competition";
+import {
+  getAllCompetitionsFromDashboard,
+  getCompetitionStats,
+} from "../handlers/competition";
 import { getAllVotesFromDashboard } from "../handlers/vote";
 
 const router = Router();
@@ -45,9 +49,13 @@ router.get(
   }
 );
 
+router.get("/competition/:id", getCompetitionStats);
+
 router.get("/matches", (req: Request, res: Response, next: NextFunction) => {
   if (req.query.dashboardId) {
     return getAllMatchesFromDashboard(req, res, next);
+  } else if (req.query.competitionId) {
+    return getAllMatchesFromCompetition(req, res, next);
   }
   return getAllMatches(req, res, next);
 });

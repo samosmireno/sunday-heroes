@@ -7,7 +7,8 @@ import {
   DashboardVoteResponse,
 } from "@repo/logger";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { calculatePendingVotes } from "../utils/utils";
 
 const fetchDashboard = async (id: string): Promise<DashboardResponse> => {
   const { data } = await axios.get(`${config.server}/api/dashboard/${id}`);
@@ -43,6 +44,7 @@ const fetchDashboardVotes = async (
 
 export const useDashboard = (id: string) => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [pendingVotes, setPendingVotes] = useState<number>(0);
   const queryClient = useQueryClient();
 
   const dashboardQuery = useQuery({
@@ -65,6 +67,14 @@ export const useDashboard = (id: string) => {
     queryFn: () => fetchDashboardVotes(id),
   });
 
+  useEffect(() => {
+    if (matchesQuery.data && votesQuery.data) {
+      setPendingVotes(
+        calculatePendingVotes(matchesQuery.data, votesQuery.data),
+      );
+    }
+  }, [matchesQuery.data, votesQuery.data]);
+
   return {
     isRefreshing,
     isLoading: dashboardQuery.isLoading,
@@ -72,5 +82,6 @@ export const useDashboard = (id: string) => {
     dashboardMatches: matchesQuery.data,
     dashboardCompetitions: competitionsQuery.data,
     dashboardVotes: votesQuery.data,
+    pendingVotes,
   };
 };

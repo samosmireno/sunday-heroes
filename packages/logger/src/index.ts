@@ -14,6 +14,16 @@ export type PlayerResponse = {
   votes?: number[];
 };
 
+export type PlayerTotals = {
+  id: string;
+  nickname: string;
+  matches: number;
+  goals: number;
+  assists: number;
+  penalty_scored?: number;
+  votes?: number[];
+};
+
 export type MatchResponse = {
   id: string;
   date: string;
@@ -41,6 +51,7 @@ export type CompetitionResponse = {
   name: string;
   type: CompetitionType;
   matches: MatchResponse[];
+  player_stats: PlayerTotals[];
 };
 
 export type DashboardResponse = {
@@ -62,6 +73,7 @@ export type DashboardMatchResponse = {
   penalty_home_score?: number;
   penalty_away_score?: number;
   teams: string[];
+  match_players: number;
 };
 
 export type DashboardCompetitionResponse = {

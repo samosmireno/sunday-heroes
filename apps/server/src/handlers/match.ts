@@ -12,7 +12,6 @@ import {
   transformMatchServiceToResponse,
 } from "../utils/utils";
 import { TeamRepo } from "../repositories/team-repo";
-import { error } from "console";
 
 export const getAllMatches = async (
   req: Request,
@@ -59,8 +58,28 @@ export const getAllMatchesFromDashboard = async (
       return res.status(400).send("dashboardId query parameter is required");
     }
     const matches = await MatchRepo.getAllMatchesFromDashboard(dashboardId);
-    console.log(matches[0]);
     res.json(transformDashboardMatchesToResponse(matches));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllMatchesFromCompetition = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const competitionId = req.query.competitionId?.toString();
+    if (!competitionId) {
+      return res.status(400).send("competitionId query parameter is required");
+    }
+
+    const matches = await MatchRepo.getAllMatchesFromCompetition(competitionId);
+    const matchesResponse = matches.map((match) =>
+      transformMatchServiceToResponse(match)
+    );
+    res.json(matchesResponse);
   } catch (error) {
     next(error);
   }

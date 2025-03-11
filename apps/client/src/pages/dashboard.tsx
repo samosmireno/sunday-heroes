@@ -7,23 +7,24 @@ import { AppSidebar } from "../components/features/sidebar/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar";
 import { getTotalPlayersInDashboard } from "../utils/utils";
 import { useDashboard } from "../hooks/use-dashboard";
+import { useNavigate } from "react-router-dom";
+
+const dashboardId = "3cc0bd55-c60d-47c3-8039-90e747f953e9";
 
 export default function Dashboard() {
-  const { dashboardData, isLoading, dashboardMatches, dashboardCompetitions } =
-    useDashboard("3cc0bd55-c60d-47c3-8039-90e747f953e9");
+  const {
+    dashboardData,
+    isLoading,
+    dashboardMatches,
+    dashboardCompetitions,
+    pendingVotes,
+  } = useDashboard(dashboardId);
 
-  //console.log(dashboard);
-
-  const stats = {
-    activeCompetitions: 4,
-    totalPlayers: 87,
-    matchesThisWeek: 12,
-    pendingVotes: 8,
-    completedMatches: 143,
-  };
+  const navigate = useNavigate();
 
   const handleViewCompetitionDetails = (competitionId: string) => {
     console.log(`View details for competition ${competitionId}`);
+    navigate(`/competition/${competitionId}`);
   };
 
   const handleViewCalendar = () => {
@@ -32,6 +33,11 @@ export default function Dashboard() {
 
   const handleMatchClick = (matchId: string) => {
     console.log(`Match ${matchId} clicked`);
+  };
+
+  const handleCreateClick = (dashboardId: string) => {
+    console.log(`Creating competition for dash=${dashboardId}`);
+    navigate(`/create-competition?dashboardId=${dashboardId}`);
   };
 
   if (isLoading) {
@@ -48,7 +54,11 @@ export default function Dashboard() {
             SUNDAY HEROES
           </h1>
         </div>
-        <DashboardBanner />
+        <DashboardBanner
+          onCreateClick={() =>
+            handleCreateClick("3cc0bd55-c60d-47c3-8039-90e747f953e9")
+          }
+        />
         {dashboardData && (
           <>
             <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -66,7 +76,7 @@ export default function Dashboard() {
               />
               <DashboardStatCard
                 title="Pending Votes"
-                value={stats.pendingVotes}
+                value={pendingVotes}
                 icon={CheckSquare}
                 iconColor="gray"
               />{" "}

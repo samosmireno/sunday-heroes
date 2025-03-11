@@ -8,6 +8,31 @@ export type CompetitionWithMatches = Prisma.CompetitionGetPayload<{
   };
 }>;
 
+export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
+  include: {
+    dashboard: {
+      select: {
+        id: true;
+      };
+    };
+    matches: {
+      include: {
+        matchPlayers: {
+          include: {
+            player: true;
+            received_votes: true;
+          };
+        };
+        match_teams: {
+          include: {
+            team: true;
+          };
+        };
+      };
+    };
+  };
+}>;
+
 export class CompetitionRepo {
   static async getAllCompetitionsFromDashboard(
     dashboard_id: string
@@ -19,6 +44,38 @@ export class CompetitionRepo {
       include: {
         matches: true,
         team_competitions: true,
+      },
+    });
+  }
+
+  static async getCompetitionById(
+    competition_id: string
+  ): Promise<CompetitionWithDetails | null> {
+    return prisma.competition.findUnique({
+      where: {
+        id: competition_id,
+      },
+      include: {
+        dashboard: {
+          select: {
+            id: true,
+          },
+        },
+        matches: {
+          include: {
+            matchPlayers: {
+              include: {
+                player: true,
+                received_votes: true,
+              },
+            },
+            match_teams: {
+              include: {
+                team: true,
+              },
+            },
+          },
+        },
       },
     });
   }

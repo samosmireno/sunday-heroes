@@ -97,7 +97,7 @@ export default function AddMultiForm() {
           </div>
         </div>
       )}
-      <Link to="/" className="px-4 py-2 text-4xl">
+      <Link to="/dashboard" className="px-4 py-2 text-4xl">
         <MdArrowBack />
       </Link>
       <h1 className="p-8 text-2xl font-medium">

@@ -9,7 +9,6 @@ export const getDashboardDetails = async (
   next: NextFunction
 ) => {
   const dashboard = await DashboardRepo.getDashboardDetails(req.params.id);
-
   if (dashboard) {
     const dashboardResponse: DashboardResponse =
       transformDashboardServiceToResponse(dashboard);

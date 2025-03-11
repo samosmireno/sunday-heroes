@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
-import { UserTotals } from "../../../types/types";
+import { PlayerTotals } from "@repo/logger";
 
 export const useSortPlayers = (
-  playersStats: UserTotals[],
-  initialSortKey: keyof UserTotals,
+  playersStats: PlayerTotals[],
+  initialSortKey: keyof PlayerTotals,
   initialSortOrder: "asc" | "desc",
 ) => {
-  const [sortedPlayers, setSortedPlayers] = useState<UserTotals[]>([]);
+  const [sortedPlayers, setSortedPlayers] = useState<PlayerTotals[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
   const [sortColumn, setSortColumn] =
-    useState<keyof UserTotals>(initialSortKey);
+    useState<keyof PlayerTotals>(initialSortKey);
 
   useEffect(() => {
     sortPlayers(initialSortKey);
   }, [playersStats, initialSortKey]);
 
-  const sortPlayers = (key: keyof UserTotals) => {
+  const sortPlayers = (key: keyof PlayerTotals) => {
     const sorted = [...playersStats];
     const orderMultiplier = sortOrder === "asc" ? 1 : -1;
 
@@ -23,13 +23,17 @@ export const useSortPlayers = (
       let aValue = a[key];
       let bValue = b[key];
 
-      if (key === "totalRating") {
-        aValue = a.totalRating / a.totalMatches;
-        bValue = b.totalRating / b.totalMatches;
-      }
+      // if (key === "totalRating") {
+      //   aValue =
+      //     (a.votes?.reduce((total, vote) => total + vote, 0) ?? 0) / a.matches;
+      //   bValue =
+      //     (b.votes?.reduce((total, vote) => total + vote, 0) ?? 0) / b.matches;
+      // }
 
-      if (aValue > bValue) return 1 * orderMultiplier;
-      if (aValue < bValue) return -1 * orderMultiplier;
+      if (aValue !== undefined && bValue !== undefined) {
+        if (aValue > bValue) return 1 * orderMultiplier;
+        if (aValue < bValue) return -1 * orderMultiplier;
+      }
       return 0;
     });
 

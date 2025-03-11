@@ -3,10 +3,10 @@ import {
   MatchType,
   MatchResponse,
   DashboardResponse,
+  DashboardMatchResponse,
+  DashboardVoteResponse,
 } from "@repo/logger";
 import { Team } from "../types/types";
-import Dashboard from "../pages/dashboard";
-import { Match } from "date-fns";
 
 export const capitalizeFirstLetter = (string: string) => {
   return string
@@ -122,4 +122,16 @@ export const getTotalPlayersInDashboard = (
     (total, comp) => total + getTotalNumPlayersInMatches(comp.matches),
     0,
   );
+};
+
+export const calculatePendingVotes = (
+  matches: DashboardMatchResponse[],
+  votes: DashboardVoteResponse[],
+): number => {
+  const numPlayersToVote = matches.reduce((total, match) => {
+    return total + match.match_players;
+  }, 0);
+  const numVotes = votes.length;
+
+  return numPlayersToVote - numVotes;
 };

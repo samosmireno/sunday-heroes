@@ -10,11 +10,21 @@ import {
   DuelPlayerRequest,
   MatchResponse,
   PlayerResponse,
+  PlayerTotals,
   VotingStatus,
 } from "@repo/logger";
-import { Competition, Match, MatchPlayer, MatchType } from "@prisma/client";
+import {
+  Competition,
+  CompetitionType,
+  Match,
+  MatchPlayer,
+  MatchType,
+} from "@prisma/client";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
-import { CompetitionWithMatches } from "../repositories/competition-repo";
+import {
+  CompetitionWithDetails,
+  CompetitionWithMatches,
+} from "../repositories/competition-repo";
 import { DashboardVoteService } from "../repositories/vote-repo";
 
 export function createStepSchema<T extends Record<string, z.ZodType>>(
@@ -112,6 +122,7 @@ export function transformAddMatchRequestToMatchPlayer(
 export function transformDashboardServiceToResponse(
   data: DashboardWithDetails
 ): DashboardResponse {
+  console.log("transform:", data.competitions[0].matches);
   const mappedCompetitions: CompetitionResponse[] = data.competitions.map(
     (comp) => {
       const mappedMatches: MatchResponse[] = comp.matches.map((match) => {
@@ -140,11 +151,39 @@ export function transformDashboardServiceToResponse(
         };
       });
 
+      const playerStats: PlayerTotals[] = comp.matches
+        .flatMap((match) => match.matchPlayers)
+        .reduce((acc, matchPlayer) => {
+          const existingPlayer = acc.find(
+            (player) => player.id === matchPlayer.player_id
+          );
+          if (existingPlayer) {
+            existingPlayer.matches += 1;
+            existingPlayer.goals += matchPlayer.goals;
+            existingPlayer.assists += matchPlayer.assists;
+            existingPlayer.penalty_scored =
+              (existingPlayer.penalty_scored ?? 0) +
+              (matchPlayer.penalty_scored ? 1 : 0);
+          } else {
+            acc.push({
+              id: matchPlayer.player_id,
+              nickname: matchPlayer.player.nickname,
+              matches: 1,
+              goals: matchPlayer.goals,
+              assists: matchPlayer.assists,
+              penalty_scored: matchPlayer.penalty_scored ? 1 : 0,
+              votes: matchPlayer.received_votes.map((vote) => vote.points),
+            });
+          }
+          return acc;
+        }, [] as PlayerTotals[]);
+
       return {
         id: comp.id,
         name: comp.name,
         type: comp.type as CompetitionResponse["type"],
         matches: mappedMatches,
+        player_stats: playerStats,
       };
     }
   );
@@ -173,6 +212,7 @@ export function transformDashboardMatchesToResponse(
     penalty_home_score: match.penalty_home_score ?? undefined,
     penalty_away_score: match.penalty_away_score ?? undefined,
     teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
+    match_players: match.matchPlayers.length,
   }));
 
   return matchesResponse;
@@ -189,6 +229,67 @@ export function transformDashboardCompetitionsToResponse(
   }));
 
   return competitions;
+}
+
+export function transformCompetitionToResponse(
+  data: CompetitionWithDetails
+): CompetitionResponse {
+  const matches: MatchResponse[] = data.matches.map((match) => ({
+    id: match.id,
+    date: match.date.toLocaleDateString(),
+    match_type: match.match_type as MatchResponse["match_type"],
+    round: match.round,
+    home_team_score: match.home_team_score,
+    away_team_score: match.away_team_score,
+    penalty_home_score: match.penalty_home_score ?? undefined,
+    penalty_away_score: match.penalty_away_score ?? undefined,
+    teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
+    players: match.matchPlayers.map((player) => ({
+      id: player.id,
+      nickname: player.player.nickname,
+      isHome: player.is_home,
+      goals: player.goals,
+      assists: player.assists,
+      position: player.position,
+      penalty_scored: player.penalty_scored ?? undefined,
+      votes: player.received_votes.map((vote) => vote.points),
+    })),
+  }));
+
+  const playerStats: PlayerTotals[] = data.matches
+    .flatMap((match) => match.matchPlayers)
+    .reduce((acc, matchPlayer) => {
+      const existingPlayer = acc.find(
+        (player) => player.id === matchPlayer.player_id
+      );
+      if (existingPlayer) {
+        existingPlayer.matches += 1;
+        existingPlayer.goals += matchPlayer.goals;
+        existingPlayer.assists += matchPlayer.assists;
+        existingPlayer.penalty_scored =
+          (existingPlayer.penalty_scored ?? 0) +
+          (matchPlayer.penalty_scored ? 1 : 0);
+      } else {
+        acc.push({
+          id: matchPlayer.player_id,
+          nickname: matchPlayer.player.nickname,
+          matches: 1,
+          goals: matchPlayer.goals,
+          assists: matchPlayer.assists,
+          penalty_scored: matchPlayer.penalty_scored ? 1 : 0,
+          votes: matchPlayer.received_votes.map((vote) => vote.points),
+        });
+      }
+      return acc;
+    }, [] as PlayerTotals[]);
+
+  return {
+    id: data.id,
+    name: data.name,
+    type: data.type as CompetitionResponse["type"],
+    matches: matches,
+    player_stats: playerStats,
+  };
 }
 
 export function transformDashboardVotesToResponse(

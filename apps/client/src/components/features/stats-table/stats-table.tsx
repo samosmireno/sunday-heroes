@@ -1,17 +1,15 @@
-import { usePlayerStats } from "./use-player-stats";
 import { useSortPlayers } from "./use-sort-players";
-import { MatchResponse } from "@repo/logger";
+import { PlayerTotals } from "@repo/logger";
 import { UserTotals } from "../../../types/types";
 
 interface StatsTableProps {
-  matches: MatchResponse[];
+  playerStats: PlayerTotals[];
 }
 
-export default function StatsTable({ matches }: StatsTableProps) {
-  const playersStats = usePlayerStats(matches);
+export default function StatsTable({ playerStats }: StatsTableProps) {
   const { sortedPlayers, sortOrder, sortColumn, sortPlayers } = useSortPlayers(
-    playersStats,
-    "totalRating",
+    playerStats,
+    "goals",
     "asc",
   );
 
@@ -34,20 +32,20 @@ export default function StatsTable({ matches }: StatsTableProps) {
               </th>
               <th
                 className="p-2 text-left text-sm font-medium duration-300 hover:cursor-pointer hover:text-green-600 md:text-base"
-                onClick={() => sortPlayers("totalMatches")}
+                onClick={() => sortPlayers("matches")}
               >
                 Matches
                 {getSortArrow("totalMatches")}
               </th>
               <th
                 className="p-2 text-left text-sm font-medium duration-300 hover:cursor-pointer hover:text-green-600 md:text-base"
-                onClick={() => sortPlayers("totalGoals")}
+                onClick={() => sortPlayers("goals")}
               >
                 Goals{getSortArrow("totalGoals")}
               </th>
               <th
                 className="p-2 text-left text-sm font-medium duration-300 hover:cursor-pointer hover:text-green-600 md:text-base"
-                onClick={() => sortPlayers("totalAssists")}
+                onClick={() => sortPlayers("assists")}
               >
                 Assists{getSortArrow("totalAssists")}
               </th>
@@ -67,16 +65,20 @@ export default function StatsTable({ matches }: StatsTableProps) {
                     {player.nickname}
                   </td>
                   <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
-                    {player.totalMatches}
+                    {player.matches}
                   </td>
                   <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
-                    {player.totalGoals}
+                    {player.goals}
                   </td>
                   <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
-                    {player.totalAssists}
+                    {player.assists}
                   </td>
                   {/* <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
-                    {(player.totalRating / player.totalMatches).toFixed(2)}
+                    {(player.votes
+                      ? player.votes.reduce((total, vote) => total + vote, 0) /
+                        player.matches
+                      : 0
+                    ).toFixed(2)}
                   </td> */}
                 </tr>
               ))}
