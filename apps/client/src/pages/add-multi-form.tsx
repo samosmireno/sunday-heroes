@@ -18,7 +18,7 @@ import AddPlayerDetailsForm from "../components/features/add-match-form/add-play
 import AddPlayersForm from "../components/features/add-match-form/add-players-form";
 import StepNavigation from "../components/features/add-match-form/form-step-navigation";
 import { MatchResponse, AddDuelFormValues } from "@repo/logger";
-import { AddDuelFormSchema } from "../components/features/multi-step-form/schema";
+import { AddDuelFormSchema } from "../components/features/add-match-form/schema";
 import { transformDuelFormToRequest } from "../utils/transform";
 
 export default function AddMultiForm() {
@@ -98,7 +98,7 @@ export default function AddMultiForm() {
         </div>
       )}
       <Link to="/dashboard" className="px-4 py-2 text-4xl">
-        <MdArrowBack />
+        <MdArrowBack onClick={() => navigate(-1)} />
       </Link>
       <h1 className="p-8 text-2xl font-medium">
         {matchId ? "Edit match" : "Add match"}

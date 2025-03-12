@@ -1,11 +1,6 @@
 import { z } from "zod";
 import { MatchType } from "@repo/logger";
-
-export function createStepSchema<T extends Record<string, z.ZodType>>(
-  steps: T,
-) {
-  return z.object(steps);
-}
+import { createStepSchema } from "../multi-step-form/utils";
 
 export const AddDuelFormSchema = createStepSchema({
   match: z.object({
