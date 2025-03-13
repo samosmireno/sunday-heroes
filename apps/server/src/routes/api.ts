@@ -14,10 +14,12 @@ import { z } from "zod";
 import { createMatchRequestSchema } from "../schemas/create-match-request-schema";
 import { getDashboardDetails } from "../handlers/dashboard";
 import {
+  createCompetition,
   getAllCompetitionsFromDashboard,
   getCompetitionStats,
 } from "../handlers/competition";
 import { getAllVotesFromDashboard } from "../handlers/vote";
+import { createCompetitionRequestSchema } from "../schemas/create-competition-request-schema";
 
 const router = Router();
 
@@ -25,6 +27,7 @@ const validateRequestBody =
   (schema: z.ZodSchema<any>) =>
   (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log(req.body);
       schema.parse(req.body);
       next();
     } catch (e) {
@@ -50,6 +53,12 @@ router.get(
 );
 
 router.get("/competition/:id", getCompetitionStats);
+router.post(
+  "/competition",
+  authenticateToken,
+  validateRequestBody(createCompetitionRequestSchema),
+  createCompetition
+);
 
 router.get("/matches", (req: Request, res: Response, next: NextFunction) => {
   if (req.query.dashboardId) {

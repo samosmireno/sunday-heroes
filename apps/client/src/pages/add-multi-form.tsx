@@ -31,7 +31,10 @@ export default function AddMultiForm() {
   const formValues = useWatch({ control: form.control });
 
   const navigate = useNavigate();
-  const { matchId } = useParams<{ matchId: string }>();
+  const { matchId, competitionId } = useParams<{
+    matchId: string;
+    competitionId: string;
+  }>();
   const { formData } = useMatchData(matchId);
   const [footballFieldMatch, setFootballFieldMatch] =
     useState<MatchResponse | null>(
@@ -42,11 +45,12 @@ export default function AddMultiForm() {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    const reqData = transformDuelFormToRequest(
-      data,
-      "fedf74da-68d0-4476-93f8-298931efc52b",
-      1,
-    );
+    if (!competitionId) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const reqData = transformDuelFormToRequest(data, competitionId, 1);
 
     console.log("ReqData:", reqData);
 

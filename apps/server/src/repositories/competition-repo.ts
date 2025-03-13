@@ -79,4 +79,10 @@ export class CompetitionRepo {
       },
     });
   }
+
+  static async createCompetition(
+    data: Omit<Competition, "id">
+  ): Promise<Competition> {
+    return prisma.competition.create({ data });
+  }
 }

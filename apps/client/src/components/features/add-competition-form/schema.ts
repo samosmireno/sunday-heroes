@@ -1,11 +1,15 @@
 import { CompetitionType } from "@repo/logger";
 import { z } from "zod";
 
+export type CreateCompetitionFormValues = z.infer<
+  typeof CreateCompetitionFormSchema
+>;
+
 export const CreateCompetitionFormSchema = z
   .object({
     name: z.string(),
     type: z.nativeEnum(CompetitionType),
-    track_season: z.boolean().default(false),
+    track_seasons: z.boolean().default(false),
     voting_enabled: z.boolean().default(false),
     voting_period_days: z.coerce.number().min(0).nonnegative().optional(),
     reminder_days: z.coerce.number().min(0).nonnegative().optional(),

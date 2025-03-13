@@ -3,7 +3,10 @@ import { CompetitionRepo } from "../repositories/competition-repo";
 import {
   transformCompetitionToResponse,
   transformDashboardCompetitionsToResponse,
+  transformAddCompetitionRequestToService,
 } from "../utils/utils";
+import { createCompetitionRequest } from "@repo/logger";
+import { Competition } from "@prisma/client";
 
 export const getAllCompetitionsFromDashboard = async (
   req: Request,
@@ -39,6 +42,26 @@ export const getCompetitionStats = async (
     } else {
       res.status(404).send("Competition not found");
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createCompetition = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log("Entered create comptetition");
+  const data: createCompetitionRequest = req.body;
+
+  const competitionToAdd: Omit<Competition, "id"> =
+    transformAddCompetitionRequestToService(data);
+
+  try {
+    const match = await CompetitionRepo.createCompetition(competitionToAdd);
+
+    res.status(201).json(match);
   } catch (error) {
     next(error);
   }

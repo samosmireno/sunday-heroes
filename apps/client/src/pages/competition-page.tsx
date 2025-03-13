@@ -28,7 +28,7 @@ function CompetitionPage() {
     return <div>Loading...</div>;
   }
 
-  if (!competition) {
+  if (!competition || !competitionId) {
     return <ErrorPage />;
   }
 
@@ -52,6 +52,7 @@ function CompetitionPage() {
         <div className="flex flex-col justify-around xl:flex-row">
           <div className="flex w-full max-w-2xl flex-col p-4 md:mx-auto">
             <MatchList
+              competitionId={competitionId}
               matches={competition.matches}
               selectedMatch={currentMatch}
               onMatchClick={handleMatchClick}

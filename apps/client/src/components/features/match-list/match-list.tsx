@@ -12,6 +12,7 @@ import { Button } from "../../ui/button";
 import { MatchResponse } from "@repo/logger";
 
 interface MatchListProps {
+  competitionId: string;
   matches: MatchResponse[];
   selectedMatch: number;
   onMatchClick: (arg0: number) => void;
@@ -20,6 +21,7 @@ interface MatchListProps {
 }
 
 export default function MatchList({
+  competitionId,
   matches,
   selectedMatch,
   onMatchClick,
@@ -58,7 +60,7 @@ export default function MatchList({
       <div className="m-4 flex touch-none justify-between">
         <h2 className="text-xl font-semibold">Match Results</h2>
         {isLoggedIn && (
-          <Link to="/add-match">
+          <Link to={`/add-match/${competitionId}`}>
             <Button className="border-green-300 bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 ease-linear hover:from-green-400 hover:to-green-800">
               Add Match
             </Button>

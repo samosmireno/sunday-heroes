@@ -37,7 +37,7 @@ export default function Dashboard() {
 
   const handleCreateClick = (dashboardId: string) => {
     console.log(`Creating competition for dash=${dashboardId}`);
-    navigate(`/create-competition?dashboardId=${dashboardId}`);
+    navigate(`/create-competition/${dashboardId}`);
   };
 
   if (isLoading) {

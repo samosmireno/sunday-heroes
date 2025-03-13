@@ -12,6 +12,7 @@ import {
   PlayerResponse,
   PlayerTotals,
   VotingStatus,
+  createCompetitionRequest,
 } from "@repo/logger";
 import {
   Competition,
@@ -119,10 +120,29 @@ export function transformAddMatchRequestToMatchPlayer(
   return matchPlayerForService;
 }
 
+export function transformAddCompetitionRequestToService(
+  data: createCompetitionRequest
+): Omit<Competition, "id"> {
+  const competition: Omit<Competition, "id"> = {
+    dashboard_id: data.dashboardId,
+    name: data.name,
+    type: data.type,
+    created_at: new Date(Date.now()),
+    track_seasons: data.track_seasons,
+    current_season: data.current_season ?? 1,
+    voting_enabled: data.voting_enabled,
+    voting_period_days: data.voting_period_days ?? null,
+    knockout_voting_period_days: data.knockout_voting_period_days ?? null,
+    reminder_days: data.reminder_days ?? null,
+    min_players: data.min_players ?? 4,
+  };
+
+  return competition;
+}
+
 export function transformDashboardServiceToResponse(
   data: DashboardWithDetails
 ): DashboardResponse {
-  console.log("transform:", data.competitions[0].matches);
   const mappedCompetitions: CompetitionResponse[] = data.competitions.map(
     (comp) => {
       const mappedMatches: MatchResponse[] = comp.matches.map((match) => {

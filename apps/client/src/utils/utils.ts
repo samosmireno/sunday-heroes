@@ -118,10 +118,8 @@ const getTotalNumPlayersInMatches = (matches: MatchResponse[]): number => {
 export const getTotalPlayersInDashboard = (
   dashboard: DashboardResponse,
 ): number => {
-  return dashboard.competitions.reduce(
-    (total, comp) => total + getTotalNumPlayersInMatches(comp.matches),
-    0,
-  );
+  const allMatches = dashboard.competitions.flatMap((comp) => comp.matches);
+  return getTotalNumPlayersInMatches(allMatches);
 };
 
 export const calculatePendingVotes = (

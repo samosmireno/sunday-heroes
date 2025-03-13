@@ -1,6 +1,9 @@
-import { startTransition, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CreateCompetitionFormSchema } from "../components/features/add-competition-form/schema";
+import {
+  CreateCompetitionFormSchema,
+  CreateCompetitionFormValues,
+} from "../components/features/add-competition-form/schema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CompetitionType } from "@repo/logger";
@@ -25,23 +28,44 @@ import { Checkbox } from "../components/ui/checkbox";
 import { ChevronLeft, HelpCircle, Info, Save } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { transformCompetitionFormToRequest } from "../utils/transform";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../config/axiosConfig";
 
 const CreateCompetitionForm = () => {
-  const [competitionType, setCompetitionType] = useState<CompetitionType>(
-    CompetitionType.DUEL,
-  );
-  const form = useForm<z.infer<typeof CreateCompetitionFormSchema>>({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const form = useForm<CreateCompetitionFormValues>({
     resolver: zodResolver(CreateCompetitionFormSchema),
+    defaultValues: {
+      track_seasons: false,
+      voting_enabled: false,
+    },
   });
   const navigate = useNavigate();
+  const { dashboardId } = useParams() as { dashboardId: string };
 
   const votingEnabled: boolean = form.watch("voting_enabled");
+  const competitionType: CompetitionType = form.watch("type");
 
-  async function onSubmit(values: z.infer<typeof CreateCompetitionFormSchema>) {
+  async function onSubmit(values: CreateCompetitionFormValues) {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    if (!dashboardId) {
+      setIsSubmitting(false);
+      return;
+    }
+    const reqData = transformCompetitionFormToRequest(values, dashboardId);
     try {
-      console.log("Form submitted with values:", values);
+      const response = await axiosInstance.post(`/api/competition`, reqData, {
+        withCredentials: true,
+      });
+      console.log("Form submitted with values:", response.data);
+      navigate(-1);
     } catch (error) {
       console.error("Error submitting form:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -49,11 +73,20 @@ const CreateCompetitionForm = () => {
     if (votingEnabled === false) {
       form.setValue("voting_period_days", undefined);
       form.setValue("reminder_days", undefined);
+      form.setValue("knockout_voting_period_days", undefined);
     }
   }, [votingEnabled, form]);
 
   return (
     <div className="mx-auto max-w-4xl p-6">
+      {isSubmitting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="flex flex-col justify-center rounded-lg bg-white p-6 text-center">
+            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-green-600 border-t-transparent"></div>
+            <p className="text-lg font-semibold">Submitting form...</p>
+          </div>
+        </div>
+      )}
       <div className="mb-6">
         <Button
           className="mb-4 flex items-center bg-transparent text-sm text-green-600 shadow-none"
@@ -141,7 +174,7 @@ const CreateCompetitionForm = () => {
               </h2>
               <div className="space-y-4">
                 <FormField
-                  name="track_season"
+                  name="track_seasons"
                   control={form.control}
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-2">
@@ -223,6 +256,28 @@ const CreateCompetitionForm = () => {
                           </FormItem>
                         )}
                       />
+                      {competitionType !== CompetitionType.DUEL && (
+                        <FormField
+                          name="knockout_voting_period_days"
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormItem className="flex max-w-max flex-col">
+                              <FormLabel className="mb-1 block text-sm font-medium text-gray-700">
+                                Knockout Voting Period (Days)
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  type="number"
+                                  min={0}
+                                  className="w-full rounded-lg border-2 border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                     </div>
                   </div>
                 )}

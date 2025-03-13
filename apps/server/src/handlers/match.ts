@@ -92,8 +92,6 @@ export const createMatch = async (
 ) => {
   const data: createMatchRequest = req.body;
 
-  console.log("Request: ", data);
-
   const matchToAdd = transformAddMatchRequestToService(data);
 
   const hometeamID = await TeamRepo.getTeamIDFromName(data.teams[0]);

@@ -10,7 +10,7 @@ const AuthCallback = () => {
     const handleCallback = async () => {
       try {
         await updateLoginState();
-        navigate("/home");
+        navigate(-1);
       } catch (error) {
         console.error("Authentication callback failed:", error);
         navigate("/login");

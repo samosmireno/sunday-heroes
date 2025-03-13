@@ -1,4 +1,9 @@
-import { AddDuelFormValues, createMatchRequest } from "@repo/logger";
+import {
+  AddDuelFormValues,
+  createCompetitionRequest,
+  createMatchRequest,
+} from "@repo/logger";
+import { CreateCompetitionFormValues } from "../components/features/add-competition-form/schema";
 
 const isPlayerHome = (nickname: string, homePlayers: string[]): boolean => {
   return homePlayers.includes(nickname);
@@ -29,4 +34,24 @@ export const transformDuelFormToRequest = (
   };
 
   return reqData;
+};
+
+export const transformCompetitionFormToRequest = (
+  data: CreateCompetitionFormValues,
+  dashboardId: string,
+): createCompetitionRequest => {
+  const competitionRequest: createCompetitionRequest = {
+    dashboardId: dashboardId,
+    type: data.type,
+    name: data.name,
+    track_seasons: data.track_seasons,
+    voting_enabled: data.voting_enabled,
+    current_season: 1,
+    min_players: 4,
+    voting_period_days: data.voting_period_days ?? undefined,
+    knockout_voting_period_days: data.knockout_voting_period_days ?? undefined,
+    reminder_days: data.reminder_days ?? undefined,
+  };
+
+  return competitionRequest;
 };

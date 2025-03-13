@@ -14,7 +14,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -27,7 +27,7 @@ export default function App() {
             }
           />
           <Route
-            path="/create-competition"
+            path="/create-competition/:dashboardId"
             element={
               <ProtectedRoute>
                 <CreateCompetitionForm />
@@ -35,7 +35,7 @@ export default function App() {
             }
           />
           <Route
-            path="/add-match"
+            path="/add-match/:competitionId"
             element={
               <ProtectedRoute>
                 <AddMultiForm />
