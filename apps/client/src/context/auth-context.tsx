@@ -73,6 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .then(() => {
         console.log("Logout successful");
         setIsLoggedIn(false);
+        navigate("/login");
       })
       .catch((error) => {
         console.error("Logout error:", error);

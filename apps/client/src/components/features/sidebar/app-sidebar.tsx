@@ -2,8 +2,10 @@ import {
   BarChart,
   Calendar,
   CheckSquare,
+  ChevronUp,
   Home,
   Trophy,
+  User2,
   Users,
 } from "lucide-react";
 
@@ -20,6 +22,12 @@ import {
 } from "../../ui/sidebar";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/auth-context";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../ui/dropdown-menu";
 
 const items = [
   {
@@ -55,7 +63,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <Sidebar collapsible="icon">
@@ -78,7 +86,28 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>{user?.name}</SidebarFooter>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton>
+                  <User2 /> {user?.name}
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                className="w-[--radix-popper-anchor-width]"
+              >
+                <DropdownMenuItem onClick={logout}>
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
