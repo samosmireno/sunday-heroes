@@ -1,4 +1,4 @@
-import { CompetitionType, MatchType } from "./enums";
+import { CompetitionType, MatchType, Role } from "./enums";
 
 export * from "./schemas";
 export * from "./enums";
@@ -107,4 +107,11 @@ export type DashboardVoteResponse = {
     team_id: string;
     team: string;
   };
+};
+
+export type UserResponse = {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
 };

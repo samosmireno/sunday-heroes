@@ -12,7 +12,7 @@ import { useAuth } from "../context/auth-context";
 import { useEffect } from "react";
 
 export default function Dashboard() {
-  const { dashboardId } = useAuth();
+  const { dashboardId, user } = useAuth();
   const {
     dashboardData,
     isLoading,
@@ -21,7 +21,7 @@ export default function Dashboard() {
     pendingVotes,
     refreshData,
   } = useDashboard(dashboardId);
-  console.log("dashboardMatches", dashboardMatches);
+  console.log("user", user);
 
   const navigate = useNavigate();
 
@@ -63,7 +63,10 @@ export default function Dashboard() {
             SUNDAY HEROES
           </h1>
         </div>
-        <DashboardBanner onCreateClick={() => handleCreateClick(dashboardId)} />
+        <DashboardBanner
+          name={user?.name}
+          onCreateClick={() => handleCreateClick(dashboardId)}
+        />
         {dashboardData && (
           <>
             <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -11,6 +11,7 @@ import axiosInstance, {
 } from "../config/axiosConfig";
 import { config } from "../config/config";
 import { useNavigate } from "react-router-dom";
+import { UserResponse } from "@repo/logger";
 
 interface AuthContextType {
   isLoading: boolean;
@@ -20,6 +21,7 @@ interface AuthContextType {
   logout: () => void;
   updateLoginState: () => Promise<void>;
   dashboardId: string;
+  user: UserResponse | undefined;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,6 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dashboardId, setDashboardId] = useState<string>("");
+  const [user, setUser] = useState<UserResponse>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -90,6 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (response.data.dashboardId) {
         setDashboardId(response.data.dashboardId);
+        setUser(response.data.user);
       }
 
       setIsLoading(false);
@@ -105,6 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Authentication verification failed:", error);
       setIsLoggedIn(false);
       setDashboardId("");
+      setUser(undefined);
       setIsLoading(false);
       console.log("Redirecting to login after auth error");
       navigate("/login");
@@ -126,6 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout,
         updateLoginState,
         dashboardId,
+        user,
       }}
     >
       {children}

@@ -2,15 +2,19 @@ import { Button } from "../../ui/button";
 import { Plus } from "lucide-react";
 
 interface DashboardBannerProps {
+  name: string | undefined;
   onCreateClick: () => void;
 }
 
 export default function DashboardBanner({
+  name,
   onCreateClick,
 }: DashboardBannerProps) {
   return (
     <div className="mb-6 rounded-xl bg-green-500 p-6 text-white">
-      <h1 className="mb-2 text-2xl font-bold">Welcome to your Dashboard</h1>
+      <h1 className="mb-2 text-2xl font-bold">
+        Hello {name}, Welcome to your Dashboard
+      </h1>
       <p className="font-exo text-white">
         Track your competitions, manage teams, and analyze stats in one place.
       </p>

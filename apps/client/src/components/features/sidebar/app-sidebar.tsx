@@ -10,6 +10,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -18,6 +19,7 @@ import {
   SidebarMenuItem,
 } from "../../ui/sidebar";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../../context/auth-context";
 
 const items = [
   {
@@ -53,6 +55,8 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { user } = useAuth();
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -74,6 +78,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>{user?.name}</SidebarFooter>
     </Sidebar>
   );
 }
