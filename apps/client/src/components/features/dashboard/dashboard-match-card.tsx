@@ -18,6 +18,7 @@ export default function DashboardMatchCard({
   venue,
   onClick,
 }: MatchCardProps) {
+  console.log("match", match);
   const { bg, text } = matchTypeStyles[match.competition_type];
 
   return (

@@ -40,9 +40,8 @@ enum Role {
 model User {
   id             String     @id @default(uuid())
   email          String?    @unique
-  given_name     String?
+  given_name     String
   family_name    String?
-  nickname       String     @unique
   role           Role       @default(PLAYER)
   is_registered  Boolean    @default(false)
   last_login     DateTime?
@@ -50,12 +49,9 @@ model User {
 
   refresh_tokens         RefreshToken[]
   dashboard             Dashboard?
-  moderated_competitions CompetitionModerator[]
-  match_players        MatchPlayer[]
-  votes_given          PlayerVote[]      @relation("VoterToVote")
+  dashboard_players     DashboardPlayer[]
 
   @@index([email])
-  @@index([nickname])
   @@index([role])
 }
 
@@ -81,8 +77,28 @@ model Dashboard {
 
   admin        User          @relation(fields: [admin_id], references: [id])
   competitions Competition[]
+  dashboard_players DashboardPlayer[]
 
   @@index([admin_id])
+}
+
+model DashboardPlayer {
+  id           String   @id @default(uuid())
+  dashboard_id String
+  user_id      String?
+  nickname     String
+  created_at   DateTime @default(now())
+  
+  dashboard             Dashboard                 @relation(fields: [dashboard_id], references: [id])
+  user                  User?                     @relation(fields: [user_id], references: [id])
+  match_players        MatchPlayer[]
+  moderated_competitions CompetitionModerator[]
+  votes_given           PlayerVote[]              @relation("VoterToVote")
+
+  @@unique([dashboard_id, nickname])
+  @@index([dashboard_id])
+  @@index([user_id])
+  @@index([dashboard_id, user_id])
 }
 
 model Competition {
@@ -110,15 +126,15 @@ model Competition {
 model CompetitionModerator {
   id             String   @id @default(uuid())
   competition_id String
-  user_id        String
+  dashboard_player_id String
   created_at     DateTime @default(now())
 
   competition    Competition @relation(fields: [competition_id], references: [id])
-  user           User        @relation(fields: [user_id], references: [id])
+dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id])
 
-  @@unique([competition_id, user_id])
+  @@unique([competition_id, dashboard_player_id])
   @@index([competition_id])
-  @@index([user_id])
+  @@index([dashboard_player_id])
 }
 
 model Team {
@@ -195,7 +211,7 @@ model MatchTeam {
 model MatchPlayer {
   id             String   @id @default(uuid())
   match_id       String
-  player_id      String
+  dashboard_player_id String
   team_id        String
   is_home        Boolean
   goals          Int      @default(0)
@@ -205,13 +221,13 @@ model MatchPlayer {
   created_at     DateTime @default(now())
 
   match         Match        @relation(fields: [match_id], references: [id], onDelete: Cascade)
-  player        User         @relation(fields: [player_id], references: [id], onDelete: Cascade)
+  dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
   team          Team         @relation(fields: [team_id], references: [id])
   received_votes PlayerVote[] 
 
-  @@unique([match_id, player_id])
+  @@unique([match_id, dashboard_player_id])
   @@index([match_id])
-  @@index([player_id])
+  @@index([dashboard_player_id])
   @@index([team_id])
   @@index([is_home])
 }
@@ -225,7 +241,7 @@ model PlayerVote {
   created_at      DateTime @default(now())
 
   match          Match       @relation(fields: [match_id], references: [id])
-  voter          User        @relation("VoterToVote", fields: [voter_id], references: [id])
+  voter          DashboardPlayer @relation("VoterToVote", fields: [voter_id], references: [id])
   player_match   MatchPlayer @relation(fields: [match_player_id], references: [id])
 
   @@unique([match_id, voter_id, match_player_id])

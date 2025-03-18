@@ -99,7 +99,6 @@ export type DashboardVoteResponse = {
   voter: {
     id: string;
     nickname: string;
-    email: string | null;
   };
   match_player: {
     id: string;

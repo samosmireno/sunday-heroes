@@ -8,17 +8,20 @@ import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar";
 import { getTotalPlayersInDashboard } from "../utils/utils";
 import { useDashboard } from "../hooks/use-dashboard";
 import { useNavigate } from "react-router-dom";
-
-const dashboardId = "3cc0bd55-c60d-47c3-8039-90e747f953e9";
+import { useAuth } from "../context/auth-context";
+import { useEffect } from "react";
 
 export default function Dashboard() {
+  const { dashboardId } = useAuth();
   const {
     dashboardData,
     isLoading,
     dashboardMatches,
     dashboardCompetitions,
     pendingVotes,
+    refreshData,
   } = useDashboard(dashboardId);
+  console.log("dashboardMatches", dashboardMatches);
 
   const navigate = useNavigate();
 
@@ -40,6 +43,12 @@ export default function Dashboard() {
     navigate(`/create-competition/${dashboardId}`);
   };
 
+  useEffect(() => {
+    if (dashboardId) {
+      refreshData();
+    }
+  }, [dashboardId, refreshData]);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -54,11 +63,7 @@ export default function Dashboard() {
             SUNDAY HEROES
           </h1>
         </div>
-        <DashboardBanner
-          onCreateClick={() =>
-            handleCreateClick("3cc0bd55-c60d-47c3-8039-90e747f953e9")
-          }
-        />
+        <DashboardBanner onCreateClick={() => handleCreateClick(dashboardId)} />
         {dashboardData && (
           <>
             <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

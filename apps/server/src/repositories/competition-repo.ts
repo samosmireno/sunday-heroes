@@ -1,4 +1,4 @@
-import { Competition, Prisma } from "@prisma/client";
+import { Competition, CompetitionType, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 
 export type CompetitionWithMatches = Prisma.CompetitionGetPayload<{
@@ -19,7 +19,7 @@ export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
       include: {
         matchPlayers: {
           include: {
-            player: true;
+            dashboard_player: true;
             received_votes: true;
           };
         };
@@ -65,7 +65,7 @@ export class CompetitionRepo {
           include: {
             matchPlayers: {
               include: {
-                player: true,
+                dashboard_player: true,
                 received_votes: true,
               },
             },
@@ -78,6 +78,16 @@ export class CompetitionRepo {
         },
       },
     });
+  }
+
+  static async getCompetitionType(
+    competition_id: string
+  ): Promise<CompetitionType | undefined> {
+    const competition = await prisma.competition.findUnique({
+      where: { id: competition_id },
+    });
+
+    return competition?.type;
   }
 
   static async createCompetition(

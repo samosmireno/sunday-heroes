@@ -52,11 +52,12 @@ export const createCompetition = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("Entered create comptetition");
   const data: createCompetitionRequest = req.body;
 
   const competitionToAdd: Omit<Competition, "id"> =
     transformAddCompetitionRequestToService(data);
+
+  console.log("Competition to add:", competitionToAdd);
 
   try {
     const match = await CompetitionRepo.createCompetition(competitionToAdd);

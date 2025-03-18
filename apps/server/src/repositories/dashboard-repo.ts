@@ -4,13 +4,14 @@ import prisma from "./prisma-client";
 export type DashboardWithDetails = Prisma.DashboardGetPayload<{
   include: {
     admin: true;
+    dashboard_players: true;
     competitions: {
       include: {
         matches: {
           include: {
             matchPlayers: {
               include: {
-                player: {
+                dashboard_player: {
                   include: {
                     votes_given: true;
                   };
@@ -44,13 +45,14 @@ export class DashboardRepo {
       where: { id },
       include: {
         admin: true,
+        dashboard_players: true,
         competitions: {
           include: {
             matches: {
               include: {
                 matchPlayers: {
                   include: {
-                    player: {
+                    dashboard_player: {
                       include: {
                         votes_given: true,
                       },
@@ -70,5 +72,18 @@ export class DashboardRepo {
       },
     });
     return dashboard;
+  }
+
+  static async getDashboardIdFromCompetitionId(
+    competitionId: string
+  ): Promise<string> {
+    const competition = await prisma.competition.findUnique({
+      where: { id: competitionId },
+      select: { dashboard_id: true },
+    });
+    if (!competition) {
+      throw new Error(`Competition with id ${competitionId} not found`);
+    }
+    return competition.dashboard_id;
   }
 }

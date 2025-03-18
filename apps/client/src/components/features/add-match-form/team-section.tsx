@@ -7,6 +7,7 @@ import { useTeamPlayers } from "./use-team-players";
 import { UseFormReturn } from "react-hook-form";
 import { capitalizeFirstLetter } from "../../../utils/utils";
 import PlayerList from "./player-list";
+import { useAuth } from "../../../context/auth-context";
 
 interface TeamSectionProps {
   team: Team;
@@ -25,9 +26,10 @@ export default function TeamSection({
 }: TeamSectionProps) {
   const [searchValue, setSearchValue] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<string>("");
+  const { dashboardId } = useAuth();
 
   const { players, addPlayer, removePlayer, fetchSuggestions, setPlayers } =
-    useTeamPlayers();
+    useTeamPlayers(dashboardId);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["data", searchValue],

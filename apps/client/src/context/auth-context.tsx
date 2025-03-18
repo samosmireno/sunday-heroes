@@ -19,6 +19,7 @@ interface AuthContextType {
   login: () => void;
   logout: () => void;
   updateLoginState: () => Promise<void>;
+  dashboardId: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,6 +36,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [dashboardId, setDashboardId] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -85,6 +87,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("Auth verification response:", response.data);
 
       setIsLoggedIn(response.data.loggedIn);
+
+      if (response.data.dashboardId) {
+        setDashboardId(response.data.dashboardId);
+      }
+
       setIsLoading(false);
 
       if (response.data.loggedIn) {
@@ -97,6 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error("Authentication verification failed:", error);
       setIsLoggedIn(false);
+      setDashboardId("");
       setIsLoading(false);
       console.log("Redirecting to login after auth error");
       navigate("/login");
@@ -117,6 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         updateLoginState,
+        dashboardId,
       }}
     >
       {children}

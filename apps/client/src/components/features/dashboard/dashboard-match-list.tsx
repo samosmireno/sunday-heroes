@@ -14,6 +14,7 @@ export default function MatchList({
   onViewCalendar,
   onMatchClick,
 }: MatchListProps) {
+  console.log("matches", matches);
   return (
     <div className="rounded-xl bg-white p-6 shadow">
       <div className="mb-4 flex items-center justify-between">

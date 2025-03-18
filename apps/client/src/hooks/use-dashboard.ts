@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { calculatePendingVotes } from "../utils/utils";
 
 const fetchDashboard = async (id: string): Promise<DashboardResponse> => {
+  if (!id) return {} as DashboardResponse;
   const { data } = await axios.get(`${config.server}/api/dashboard/${id}`);
   return data;
 };
@@ -18,6 +19,7 @@ const fetchDashboard = async (id: string): Promise<DashboardResponse> => {
 const fetchDashboardMatches = async (
   id: string,
 ): Promise<DashboardMatchResponse[]> => {
+  if (!id) return [];
   const { data } = await axios.get(
     `${config.server}/api/matches?dashboardId=${id}`,
   );
@@ -27,6 +29,7 @@ const fetchDashboardMatches = async (
 const fetchDashboardCompetitions = async (
   id: string,
 ): Promise<DashboardCompetitionResponse[]> => {
+  if (!id) return [];
   const { data } = await axios.get(
     `${config.server}/api/competitions?dashboardId=${id}`,
   );
@@ -36,6 +39,7 @@ const fetchDashboardCompetitions = async (
 const fetchDashboardVotes = async (
   id: string,
 ): Promise<DashboardVoteResponse[]> => {
+  if (!id) return [];
   const { data } = await axios.get(
     `${config.server}/api/votes?dashboardId=${id}`,
   );
@@ -50,21 +54,25 @@ export const useDashboard = (id: string) => {
   const dashboardQuery = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => fetchDashboard(id),
+    enabled: !!id,
   });
 
   const matchesQuery = useQuery({
     queryKey: ["dashboard_matches"],
     queryFn: () => fetchDashboardMatches(id),
+    enabled: !!id,
   });
 
   const competitionsQuery = useQuery({
     queryKey: ["dashboard_competitions"],
     queryFn: () => fetchDashboardCompetitions(id),
+    enabled: !!id,
   });
 
   const votesQuery = useQuery({
     queryKey: ["dashboard_cvotes"],
     queryFn: () => fetchDashboardVotes(id),
+    enabled: !!id,
   });
 
   useEffect(() => {
@@ -75,13 +83,34 @@ export const useDashboard = (id: string) => {
     }
   }, [matchesQuery.data, votesQuery.data]);
 
+  const refreshData = async () => {
+    if (!id) return;
+
+    setIsRefreshing(true);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["dashboard", id] }),
+      queryClient.invalidateQueries({ queryKey: ["dashboard_matches", id] }),
+      queryClient.invalidateQueries({
+        queryKey: ["dashboard_competitions", id],
+      }),
+      queryClient.invalidateQueries({ queryKey: ["dashboard_votes", id] }),
+    ]);
+    setIsRefreshing(false);
+  };
+
   return {
-    isRefreshing,
-    isLoading: dashboardQuery.isLoading,
     dashboardData: dashboardQuery.data,
     dashboardMatches: matchesQuery.data,
     dashboardCompetitions: competitionsQuery.data,
     dashboardVotes: votesQuery.data,
+    isLoading:
+      !id ||
+      dashboardQuery.isLoading ||
+      matchesQuery.isLoading ||
+      competitionsQuery.isLoading ||
+      votesQuery.isLoading,
+    isRefreshing,
+    refreshData,
     pendingVotes,
   };
 };

@@ -1,5 +1,5 @@
 import { MatchWithDetails, MatchWithTeams } from "../repositories/match-repo";
-import { map, z } from "zod";
+import { z } from "zod";
 import {
   CompetitionResponse,
   createMatchRequest,
@@ -52,7 +52,7 @@ export function transformMatchServiceToResponse(
 ): MatchResponse {
   const mappedPlayers = data.matchPlayers.map((player) => ({
     id: player.id,
-    nickname: player.player.nickname,
+    nickname: player.dashboard_player.nickname,
     isHome: player.is_home,
     goals: player.goals,
     assists: player.assists,
@@ -108,7 +108,7 @@ export function transformAddMatchRequestToMatchPlayer(
   const matchPlayerForService: Omit<MatchPlayer, "id"> = {
     created_at: new Date(Date.now()),
     match_id: match_id,
-    player_id: player_id,
+    dashboard_player_id: player_id,
     team_id: team_id,
     is_home: data.isHome,
     goals: data.goals,
@@ -148,13 +148,13 @@ export function transformDashboardServiceToResponse(
       const mappedMatches: MatchResponse[] = comp.matches.map((match) => {
         const matchPlayers = match.matchPlayers.map((player) => ({
           id: player.id,
-          nickname: player.player.nickname,
+          nickname: player.dashboard_player.nickname,
           isHome: player.is_home,
           goals: player.goals,
           assists: player.assists,
           position: player.position,
           penalty_scored: player.penalty_scored ?? undefined,
-          votes: player.player.votes_given.map((vote) => vote.points),
+          votes: player.dashboard_player.votes_given.map((vote) => vote.points),
         }));
 
         return {
@@ -175,7 +175,7 @@ export function transformDashboardServiceToResponse(
         .flatMap((match) => match.matchPlayers)
         .reduce((acc, matchPlayer) => {
           const existingPlayer = acc.find(
-            (player) => player.id === matchPlayer.player_id
+            (player) => player.id === matchPlayer.dashboard_player_id
           );
           if (existingPlayer) {
             existingPlayer.matches += 1;
@@ -186,8 +186,8 @@ export function transformDashboardServiceToResponse(
               (matchPlayer.penalty_scored ? 1 : 0);
           } else {
             acc.push({
-              id: matchPlayer.player_id,
-              nickname: matchPlayer.player.nickname,
+              id: matchPlayer.dashboard_player_id,
+              nickname: matchPlayer.dashboard_player.nickname,
               matches: 1,
               goals: matchPlayer.goals,
               assists: matchPlayer.assists,
@@ -211,7 +211,7 @@ export function transformDashboardServiceToResponse(
   return {
     id: data.id,
     name: data.name,
-    user: data.admin.nickname,
+    user: data.admin.given_name,
     competitions: mappedCompetitions,
   };
 }
@@ -266,7 +266,7 @@ export function transformCompetitionToResponse(
     teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
     players: match.matchPlayers.map((player) => ({
       id: player.id,
-      nickname: player.player.nickname,
+      nickname: player.dashboard_player.nickname,
       isHome: player.is_home,
       goals: player.goals,
       assists: player.assists,
@@ -280,7 +280,7 @@ export function transformCompetitionToResponse(
     .flatMap((match) => match.matchPlayers)
     .reduce((acc, matchPlayer) => {
       const existingPlayer = acc.find(
-        (player) => player.id === matchPlayer.player_id
+        (player) => player.id === matchPlayer.dashboard_player_id
       );
       if (existingPlayer) {
         existingPlayer.matches += 1;
@@ -291,8 +291,8 @@ export function transformCompetitionToResponse(
           (matchPlayer.penalty_scored ? 1 : 0);
       } else {
         acc.push({
-          id: matchPlayer.player_id,
-          nickname: matchPlayer.player.nickname,
+          id: matchPlayer.dashboard_player_id,
+          nickname: matchPlayer.dashboard_player.nickname,
           matches: 1,
           goals: matchPlayer.goals,
           assists: matchPlayer.assists,
@@ -332,12 +332,11 @@ export function transformDashboardVotesToResponse(
     voter: {
       id: vote.voter.id,
       nickname: vote.voter.nickname,
-      email: vote.voter.email ?? "",
     },
     match_player: {
       id: vote.player_match.id,
-      player_id: vote.player_match.player.id,
-      nickname: vote.player_match.player.nickname,
+      player_id: vote.player_match.dashboard_player.id,
+      nickname: vote.player_match.dashboard_player.nickname,
       team_id: vote.player_match.team.id,
       team: vote.player_match.team.name,
     },

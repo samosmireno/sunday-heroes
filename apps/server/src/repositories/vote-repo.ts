@@ -21,13 +21,12 @@ export type DashboardVoteService = Prisma.PlayerVoteGetPayload<{
       select: {
         id: true;
         nickname: true;
-        email: true;
       };
     };
     player_match: {
       select: {
         id: true;
-        player: {
+        dashboard_player: {
           select: {
             id: true;
             nickname: true;
@@ -89,13 +88,12 @@ export class VoteRepo {
           select: {
             id: true,
             nickname: true,
-            email: true,
           },
         },
         player_match: {
           select: {
             id: true,
-            player: {
+            dashboard_player: {
               select: {
                 id: true,
                 nickname: true,

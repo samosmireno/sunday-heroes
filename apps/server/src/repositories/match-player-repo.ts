@@ -3,7 +3,7 @@ import prisma from "./prisma-client";
 
 type MatchPlayerWithDetails = Prisma.MatchPlayerGetPayload<{
   include: {
-    player: true;
+    dashboard_player: true;
   };
 }>;
 
@@ -11,7 +11,7 @@ export class MatchPlayerRepo {
   static async getAllMatchPlayers(): Promise<MatchPlayerWithDetails[]> {
     return prisma.matchPlayer.findMany({
       include: {
-        player: true,
+        dashboard_player: true,
       },
     });
   }
@@ -22,7 +22,7 @@ export class MatchPlayerRepo {
     return prisma.matchPlayer.findUnique({
       where: { id },
       include: {
-        player: true,
+        dashboard_player: true,
       },
     });
   }
@@ -33,7 +33,7 @@ export class MatchPlayerRepo {
     return prisma.matchPlayer.findMany({
       where: { match_id },
       include: {
-        player: true,
+        dashboard_player: true,
       },
     });
   }

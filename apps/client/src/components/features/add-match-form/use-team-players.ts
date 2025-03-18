@@ -4,7 +4,7 @@ import { User } from "../../../types/types";
 import { Team } from "../../../types/types";
 import { config } from "../../../config/config";
 
-export function useTeamPlayers() {
+export function useTeamPlayers(dashboard_id: string | null) {
   const [players, setPlayers] = useState<{ Home: string[]; Away: string[] }>({
     Home: [],
     Away: [],
@@ -46,7 +46,7 @@ export function useTeamPlayers() {
     selectedPlayers: string[],
   ) => {
     const response = await axios.get(
-      `${config.server}/api/users?query=${query}`,
+      `${config.server}/api/users?dashboardId=${dashboard_id}&query=${query}`,
     );
     const data = response.data as User[];
     const playerNames = data.map((player) => player.nickname);

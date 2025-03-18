@@ -12,6 +12,8 @@ import {
   transformMatchServiceToResponse,
 } from "../utils/utils";
 import { TeamRepo } from "../repositories/team-repo";
+import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
+import { DashboardRepo } from "../repositories/dashboard-repo";
 
 export const getAllMatches = async (
   req: Request,
@@ -97,15 +99,23 @@ export const createMatch = async (
   const hometeamID = await TeamRepo.getTeamIDFromName(data.teams[0]);
   const awayteamID = await TeamRepo.getTeamIDFromName(data.teams[1]);
 
+  const dashboardId = await DashboardRepo.getDashboardIdFromCompetitionId(
+    data.competitionId
+  );
+
   try {
     const match = await MatchRepo.createMatch(matchToAdd);
-    await UserRepo.addMissingUsers([
-      ...data.players.map((player) => player.nickname),
-    ]);
+    await DashboardPlayerRepo.addMissingUsers(
+      [...data.players.map((player) => player.nickname)],
+      dashboardId
+    );
 
     await Promise.all(
       data.players.map(async (player: DuelPlayerRequest) => {
-        const user = await UserRepo.getUserByNickname(player.nickname);
+        const user = await DashboardPlayerRepo.getDashboardPlayerByNickname(
+          player.nickname,
+          dashboardId
+        );
         if (user === null) {
           throw new Error(`Player ID not found for player: ${player.nickname}`);
         }
@@ -149,17 +159,25 @@ export const updateMatch = async (
   const hometeamID = await TeamRepo.getTeamIDFromName(data.teams[0]);
   const awayteamID = await TeamRepo.getTeamIDFromName(data.teams[1]);
 
+  const dashboardId = await DashboardRepo.getDashboardIdFromCompetitionId(
+    data.competitionId
+  );
+
   try {
     const updatedMatch = await MatchRepo.updateMatch(matchId, matchToUpdate);
-    await UserRepo.addMissingUsers([
-      ...data.players.map((player) => player.nickname),
-    ]);
+    await DashboardPlayerRepo.addMissingUsers(
+      [...data.players.map((player) => player.nickname)],
+      dashboardId
+    );
 
     await MatchPlayerRepo.deleteMatchPlayersFromMatch(matchId);
 
     await Promise.all(
       data.players.map(async (player) => {
-        const user = await UserRepo.getUserByNickname(player.nickname);
+        const user = await DashboardPlayerRepo.getDashboardPlayerByNickname(
+          player.nickname,
+          dashboardId
+        );
         if (user === null) {
           throw new Error(`Player ID not found for player: ${player.nickname}`);
         }
@@ -175,7 +193,7 @@ export const updateMatch = async (
       })
     );
 
-    await UserRepo.deleteUsersWithNoMatches();
+    await DashboardPlayerRepo.deleteDashboardPlayersWithNoMatches();
 
     res.status(200).json(updatedMatch);
   } catch (error) {

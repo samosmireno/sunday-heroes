@@ -9,7 +9,7 @@ import {
   getMatchById,
   updateMatch,
 } from "../handlers/match";
-import { getAllUsers, getUserById } from "../handlers/player";
+import { getAllDashboardPlayers, getUserById } from "../handlers/player";
 import { z } from "zod";
 import { createMatchRequestSchema } from "../schemas/create-match-request-schema";
 import { getDashboardDetails } from "../handlers/dashboard";
@@ -83,7 +83,7 @@ router.put(
 );
 router.delete("/matches/:id", authenticateToken, deleteMatch);
 
-router.get("/users", getAllUsers);
+router.get("/users", getAllDashboardPlayers);
 router.get("/users/:id", getUserById);
 
 router.get("/votes", (req: Request, res: Response, next: NextFunction) => {

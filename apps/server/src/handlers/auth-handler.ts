@@ -4,8 +4,29 @@ import axios from "axios";
 import { UserRepo } from "../repositories/user-repo";
 import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
 import { config } from "../config/config";
+import { AuthResponse } from "../types";
 
-export const handleVerifyToken = (
+const createUserAuthResponse = async (
+  userId: string
+): Promise<AuthResponse> => {
+  const user = await UserRepo.getUserById(userId);
+  if (!user) {
+    return { loggedIn: false, message: "User not found" };
+  }
+
+  return {
+    loggedIn: true,
+    user: {
+      id: user.id,
+      email: user.email || "",
+      name: user.given_name,
+      role: user.role,
+    },
+    dashboardId: user.dashboard?.id,
+  };
+};
+
+export const handleVerifyToken = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -22,21 +43,19 @@ export const handleVerifyToken = (
       return;
     }
 
-    return jwt.verify(token, config.jwt.accessSecret, (err: any) => {
-      if (err) {
-        console.log("Token verification failed:", err.message);
-        res.status(401).json({
-          loggedIn: false,
-          message: "Access token expired",
-        });
-        return;
-      }
+    const decoded: any = jwt.verify(token, config.jwt.accessSecret);
+    console.log("decoded", decoded);
 
-      res.status(200).json({
-        loggedIn: true,
+    try {
+      const userResponse = await createUserAuthResponse(decoded.userId);
+      return res.status(200).json(userResponse);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return res.status(500).json({
+        loggedIn: false,
+        message: "Error retrieving user information",
       });
-      return;
-    });
+    }
   } catch (error) {
     console.error("Verify error:", error);
     next(error);
@@ -92,6 +111,14 @@ export const handleRefreshToken = async (
         });
       }
 
+      const user = await UserRepo.getUserById(foundUserId);
+      if (!user) {
+        return res.status(404).json({
+          loggedIn: false,
+          message: "User not found",
+        });
+      }
+
       const accessToken = jwt.sign(
         {
           userId: decoded.id,
@@ -108,12 +135,6 @@ export const handleRefreshToken = async (
           expiresIn: "30 days",
         }
       );
-
-      //create umesto upsert
-      /*await RefreshTokenRepo.upsertRefreshToken(foundUserId, {
-        createdAt: new Date(),
-        token: newRefreshToken,
-      });*/
 
       await RefreshTokenRepo.deleteExpiredRefreshTokens();
 
@@ -143,9 +164,8 @@ export const handleRefreshToken = async (
         partitioned: true,
       });
 
-      return res.status(200).json({
-        loggedIn: true,
-      });
+      const authResponse = await createUserAuthResponse(user.id);
+      return res.status(200).json(authResponse);
     } catch (err) {
       return res.status(403).json({
         loggedIn: false,

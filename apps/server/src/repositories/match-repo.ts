@@ -5,7 +5,7 @@ export type MatchWithDetails = Prisma.MatchGetPayload<{
   include: {
     matchPlayers: {
       include: {
-        player: true;
+        dashboard_player: true;
       };
     };
     match_teams: {
@@ -46,7 +46,7 @@ export class MatchRepo {
       include: {
         matchPlayers: {
           include: {
-            player: true,
+            dashboard_player: true,
           },
         },
         match_teams: {
@@ -66,7 +66,7 @@ export class MatchRepo {
       include: {
         matchPlayers: {
           include: {
-            player: true,
+            dashboard_player: true,
           },
         },
         match_teams: {
@@ -116,7 +116,7 @@ export class MatchRepo {
       include: {
         matchPlayers: {
           include: {
-            player: true,
+            dashboard_player: true,
           },
         },
         match_teams: {

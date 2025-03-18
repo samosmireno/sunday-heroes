@@ -1,4 +1,3 @@
-import { Team } from "@prisma/client";
 import prisma from "./prisma-client";
 
 export class TeamRepo {
