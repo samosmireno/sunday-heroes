@@ -1,5 +1,6 @@
+import { UserResponse } from "@repo/logger";
+
 export type AuthResponse = {
-  loggedIn: boolean;
   message?: string;
   user?: {
     id: string;
@@ -7,5 +8,4 @@ export type AuthResponse = {
     name: string;
     role?: string;
   };
-  dashboardId?: string | null;
 };

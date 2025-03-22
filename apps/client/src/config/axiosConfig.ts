@@ -8,20 +8,6 @@ const axiosInstance = axios.create({
 });
 
 let isRefreshing = false;
-let authUpdateCallback: ((isLoggedIn: boolean) => void) | null = null;
-let loadingStateCallback: ((isLoading: boolean) => void) | null = null;
-
-export const setAuthUpdateCallback = (
-  callback: (isLoggedIn: boolean) => void,
-) => {
-  authUpdateCallback = callback;
-};
-
-export const setLoadingStateCallback = (
-  callback: (isLoading: boolean) => void,
-) => {
-  loadingStateCallback = callback;
-};
 
 const refreshAuthLogic = async (failedRequest: AxiosError) => {
   try {
@@ -30,10 +16,6 @@ const refreshAuthLogic = async (failedRequest: AxiosError) => {
     }
 
     isRefreshing = true;
-    if (loadingStateCallback) {
-      console.log("Setting loading state to true for token refresh");
-      loadingStateCallback(true);
-    }
 
     console.log("Attempting to refresh auth token...");
 
@@ -41,28 +23,13 @@ const refreshAuthLogic = async (failedRequest: AxiosError) => {
     console.log("Auth token refresh successful");
 
     isRefreshing = false;
-
-    if (loadingStateCallback) {
-      console.log("Setting loading state to false after token refresh");
-      loadingStateCallback(false);
-    }
-
-    if (authUpdateCallback) {
-      authUpdateCallback(true);
-    }
-
+    //todo
+    window.location.href = "/dashboard";
     return Promise.resolve();
   } catch (error) {
     isRefreshing = false;
-
-    if (loadingStateCallback) {
-      console.log("Setting loading state to false after token refresh failure");
-      loadingStateCallback(false);
-    }
-
-    if (authUpdateCallback) {
-      authUpdateCallback(false);
-    }
+    localStorage.removeItem("user");
+    window.location.href = "/login";
     return Promise.reject(error);
   }
 };

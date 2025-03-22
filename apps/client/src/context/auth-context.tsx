@@ -5,23 +5,19 @@ import {
   useState,
   ReactNode,
 } from "react";
-import axiosInstance, {
-  setAuthUpdateCallback,
-  setLoadingStateCallback,
-} from "../config/axiosConfig";
+import axiosInstance from "../config/axiosConfig";
 import { config } from "../config/config";
 import { useNavigate } from "react-router-dom";
 import { UserResponse } from "@repo/logger";
 
 interface AuthContextType {
   isLoading: boolean;
-  isLoggedIn: boolean;
-  setIsLoggedIn: (value: boolean) => void;
   login: () => void;
   logout: () => void;
-  updateLoginState: () => Promise<void>;
-  dashboardId: string;
   user: UserResponse | undefined;
+  isAuthenticated: boolean;
+  processAuthSuccess: (arg0: string) => UserResponse;
+  error: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,30 +32,10 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [dashboardId, setDashboardId] = useState<string>("");
   const [user, setUser] = useState<UserResponse>();
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log("Registering auth update and loading state callbacks");
-    setAuthUpdateCallback((loggedIn) => {
-      console.log(`Auth update callback triggered: isLoggedIn = ${loggedIn}`);
-      setIsLoggedIn(isLoggedIn);
-    });
-
-    setLoadingStateCallback((loading) => {
-      console.log(`Loading state callback triggered: isLoading = ${loading}`);
-      setIsLoading(isLoading);
-    });
-
-    return () => {
-      setAuthUpdateCallback(() => {});
-      setLoadingStateCallback(() => {});
-    };
-  }, []);
-
   const login = () => {
     console.log("Login initiated - Redirecting to Google Auth");
     const googleAuthUrl = `${config.google.authEndpoint}?client_id=${config.google.clientId}&redirect_uri=${config.redirect_uri}&response_type=code&scope=email profile`;
@@ -72,67 +48,77 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .get(`${config.server}/auth/logout`, { withCredentials: true })
       .then(() => {
         console.log("Logout successful");
-        setIsLoggedIn(false);
         navigate("/login");
       })
       .catch((error) => {
         console.error("Logout error:", error);
       });
+    localStorage.removeItem("user");
   };
 
-  const updateLoginState = async () => {
+  const processAuthSuccess = (userDataBase64: string) => {
     try {
-      console.log("Checking authentication status...");
-      setIsLoading(true);
-      const response = await axiosInstance.get(`${config.server}/auth/verify`, {
-        withCredentials: true,
-      });
-
-      console.log("Auth verification response:", response.data);
-
-      setIsLoggedIn(response.data.loggedIn);
-
-      if (response.data.dashboardId) {
-        setDashboardId(response.data.dashboardId);
-        setUser(response.data.user);
+      if (!userDataBase64) {
+        throw new Error("No user data received");
       }
 
-      setIsLoading(false);
+      const userData = JSON.parse(atob(userDataBase64));
 
-      if (response.data.loggedIn) {
-        console.log("User is authenticated, navigating to home");
-        //navigate("/home");
-      } else {
-        console.log("User is not authenticated, navigating to login");
-        navigate("/login");
-      }
-    } catch (error) {
-      console.error("Authentication verification failed:", error);
-      setIsLoggedIn(false);
-      setDashboardId("");
-      setUser(undefined);
-      setIsLoading(false);
-      console.log("Redirecting to login after auth error");
-      navigate("/login");
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      return userData;
+    } catch (err) {
+      console.error("Error processing auth success:", err);
+      setError("Authentication success processing failed");
+      return null;
     }
   };
 
   useEffect(() => {
     console.log("AuthProvider mounted, initializing auth state");
-    updateLoginState();
+    const initializeAuth = async () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+
+          // try {
+          //   const response = await axiosInstance.get(
+          //     `${config.server}/auth/me`,
+          //   );
+          //   setUser(response.data);
+          //   localStorage.setItem("user", JSON.stringify(response.data));
+          // } catch (verifyError) {
+          //   console.error("Stored user verification failed:", verifyError);
+          //   localStorage.removeItem("user");
+          //   setUser(undefined);
+          // }
+        }
+      } catch (err) {
+        console.error("Error initializing auth:", err);
+        setError("Failed to initialize authentication");
+        localStorage.removeItem("user");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
         isLoading,
-        isLoggedIn,
-        setIsLoggedIn,
         login,
         logout,
-        updateLoginState,
-        dashboardId,
         user,
+        isAuthenticated: !!user,
+        processAuthSuccess,
+        error,
       }}
     >
       {children}

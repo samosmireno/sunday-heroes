@@ -1,24 +1,33 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 
 const AuthCallback = () => {
-  const { updateLoginState } = useAuth();
+  const { processAuthSuccess } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const handleCallback = async () => {
-      try {
-        await updateLoginState();
-        navigate(-1);
-      } catch (error) {
-        console.error("Authentication callback failed:", error);
-        navigate("/login");
-      }
-    };
+    const userParam = searchParams.get("user");
+    const errorParam = searchParams.get("error");
 
-    handleCallback();
-  }, [updateLoginState, navigate]);
+    if (errorParam) {
+      console.error("Authentication error:", errorParam);
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    if (userParam) {
+      const userData = processAuthSuccess(userParam);
+      if (userData) {
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate("/login", { replace: true });
+      }
+    } else {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate, processAuthSuccess, searchParams]);
 
   return <div>Completing authentication...</div>;
 };

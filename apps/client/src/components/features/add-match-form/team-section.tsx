@@ -26,10 +26,10 @@ export default function TeamSection({
 }: TeamSectionProps) {
   const [searchValue, setSearchValue] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<string>("");
-  const { dashboardId } = useAuth();
+  const { user } = useAuth();
 
   const { players, addPlayer, removePlayer, fetchSuggestions, setPlayers } =
-    useTeamPlayers(dashboardId);
+    useTeamPlayers(user?.id ?? null);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["data", searchValue],

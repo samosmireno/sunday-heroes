@@ -38,10 +38,10 @@ export const transformDuelFormToRequest = (
 
 export const transformCompetitionFormToRequest = (
   data: CreateCompetitionFormValues,
-  dashboardId: string,
+  userId: string,
 ): createCompetitionRequest => {
   const competitionRequest: createCompetitionRequest = {
-    dashboardId: dashboardId,
+    userId: userId,
     type: data.type,
     name: data.name,
     track_seasons: data.track_seasons,

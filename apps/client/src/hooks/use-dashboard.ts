@@ -20,9 +20,7 @@ const fetchDashboardMatches = async (
   id: string,
 ): Promise<DashboardMatchResponse[]> => {
   if (!id) return [];
-  const { data } = await axios.get(
-    `${config.server}/api/matches?dashboardId=${id}`,
-  );
+  const { data } = await axios.get(`${config.server}/api/matches?userId=${id}`);
   return data;
 };
 
@@ -31,7 +29,7 @@ const fetchDashboardCompetitions = async (
 ): Promise<DashboardCompetitionResponse[]> => {
   if (!id) return [];
   const { data } = await axios.get(
-    `${config.server}/api/competitions?dashboardId=${id}`,
+    `${config.server}/api/competitions?userId=${id}`,
   );
   return data;
 };
@@ -40,9 +38,7 @@ const fetchDashboardVotes = async (
   id: string,
 ): Promise<DashboardVoteResponse[]> => {
   if (!id) return [];
-  const { data } = await axios.get(
-    `${config.server}/api/votes?dashboardId=${id}`,
-  );
+  const { data } = await axios.get(`${config.server}/api/votes?userId=${id}`);
   return data;
 };
 

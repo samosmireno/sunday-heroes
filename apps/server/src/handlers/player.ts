@@ -8,7 +8,17 @@ export const getAllDashboardPlayers = async (
   next: NextFunction
 ) => {
   try {
-    const dashboardId = req.query.dashboardId?.toString();
+    const userId = req.query.userId?.toString();
+    if (!userId) {
+      return res.status(400).send("userId query parameter is required");
+    }
+
+    const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
+
+    if (!dashboardId) {
+      return res.status(400).send("No dashboard for the given userId");
+    }
+
     const query = req.query.query as string;
     let players;
 

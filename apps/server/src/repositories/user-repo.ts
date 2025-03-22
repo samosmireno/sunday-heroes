@@ -24,6 +24,18 @@ export class UserRepo {
     return prisma.user.findUnique({ where: { email } });
   }
 
+  static async getDashboardIdFromUserId(
+    userId: string
+  ): Promise<string | null> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { dashboard: true },
+    });
+    return user && user.dashboard && user.dashboard.id
+      ? user.dashboard.id
+      : null;
+  }
+
   static async getAdmins(): Promise<User[]> {
     return prisma.user.findMany({ where: { role: "ADMIN" } });
   }

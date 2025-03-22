@@ -2,19 +2,27 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 
+export interface AuthenticatedRequest extends Request {
+  userId: string;
+}
+
 export const authenticateToken = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies["access-token"];
+  const authenticatedReq = req as AuthenticatedRequest;
+  const token = authenticatedReq.cookies["access-token"];
 
-  jwt.verify(token, config.jwt.accessSecret, (err: any, user: any) => {
-    if (err) {
-      res.status(401).send("Invalid token");
-    }
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized: Missing token" });
+  }
 
-    req.user = user;
+  try {
+    const decoded: any = jwt.verify(token, config.jwt.accessSecret);
+    authenticatedReq.userId = decoded.userId;
     next();
-  });
+  } catch (error) {
+    return res.status(401).json({ message: "Forbidden: Invalid token" });
+  }
 };

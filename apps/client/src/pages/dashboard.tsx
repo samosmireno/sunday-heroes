@@ -12,7 +12,7 @@ import { useAuth } from "../context/auth-context";
 import { useEffect } from "react";
 
 export default function Dashboard() {
-  const { dashboardId, user } = useAuth();
+  const { user } = useAuth();
   const {
     dashboardData,
     isLoading,
@@ -20,8 +20,7 @@ export default function Dashboard() {
     dashboardCompetitions,
     pendingVotes,
     refreshData,
-  } = useDashboard(dashboardId);
-  console.log("user", user);
+  } = useDashboard(user?.id || "");
 
   const navigate = useNavigate();
 
@@ -38,16 +37,16 @@ export default function Dashboard() {
     console.log(`Match ${matchId} clicked`);
   };
 
-  const handleCreateClick = (dashboardId: string) => {
-    console.log(`Creating competition for dash=${dashboardId}`);
-    navigate(`/create-competition/${dashboardId}`);
+  const handleCreateClick = (userId: string) => {
+    console.log(`Creating competition for user=${userId}`);
+    navigate(`/create-competition/${userId}`);
   };
 
   useEffect(() => {
-    if (dashboardId) {
+    if (user) {
       refreshData();
     }
-  }, [dashboardId, refreshData]);
+  }, [user, refreshData]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -65,7 +64,7 @@ export default function Dashboard() {
         </div>
         <DashboardBanner
           name={user?.name}
-          onCreateClick={() => handleCreateClick(dashboardId)}
+          onCreateClick={() => user && handleCreateClick(user.id)}
         />
         {dashboardData && (
           <>

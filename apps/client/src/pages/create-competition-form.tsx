@@ -4,7 +4,6 @@ import {
   CreateCompetitionFormSchema,
   CreateCompetitionFormValues,
 } from "../components/features/add-competition-form/schema";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CompetitionType } from "@repo/logger";
 import {
@@ -42,7 +41,7 @@ const CreateCompetitionForm = () => {
     },
   });
   const navigate = useNavigate();
-  const { dashboardId } = useParams() as { dashboardId: string };
+  const { userId } = useParams() as { userId: string };
 
   const votingEnabled: boolean = form.watch("voting_enabled");
   const competitionType: CompetitionType = form.watch("type");
@@ -51,11 +50,11 @@ const CreateCompetitionForm = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    if (!dashboardId) {
+    if (!userId) {
       setIsSubmitting(false);
       return;
     }
-    const reqData = transformCompetitionFormToRequest(values, dashboardId);
+    const reqData = transformCompetitionFormToRequest(values, userId);
     try {
       const response = await axiosInstance.post(`/api/competition`, reqData, {
         withCredentials: true,

@@ -27,7 +27,6 @@ const validateRequestBody =
   (schema: z.ZodSchema<any>) =>
   (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.body);
       schema.parse(req.body);
       next();
     } catch (e) {
@@ -45,7 +44,7 @@ router.get("/dashboard/:id", getDashboardDetails);
 router.get(
   "/competitions",
   (req: Request, res: Response, next: NextFunction) => {
-    if (req.query.dashboardId) {
+    if (req.query.userId) {
       return getAllCompetitionsFromDashboard(req, res, next);
     }
     console.log("No dash ID");
@@ -61,7 +60,7 @@ router.post(
 );
 
 router.get("/matches", (req: Request, res: Response, next: NextFunction) => {
-  if (req.query.dashboardId) {
+  if (req.query.userId) {
     return getAllMatchesFromDashboard(req, res, next);
   } else if (req.query.competitionId) {
     return getAllMatchesFromCompetition(req, res, next);
@@ -87,7 +86,7 @@ router.get("/users", getAllDashboardPlayers);
 router.get("/users/:id", getUserById);
 
 router.get("/votes", (req: Request, res: Response, next: NextFunction) => {
-  if (req.query.dashboardId) {
+  if (req.query.userId) {
     return getAllVotesFromDashboard(req, res, next);
   }
   console.log("No dash ID");

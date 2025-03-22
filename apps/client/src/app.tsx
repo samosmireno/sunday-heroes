@@ -17,7 +17,14 @@ export default function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/competition/:competitionId"
             element={
@@ -27,7 +34,7 @@ export default function App() {
             }
           />
           <Route
-            path="/create-competition/:dashboardId"
+            path="/create-competition/:userId"
             element={
               <ProtectedRoute>
                 <CreateCompetitionForm />

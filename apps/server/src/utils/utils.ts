@@ -121,10 +121,11 @@ export function transformAddMatchRequestToMatchPlayer(
 }
 
 export function transformAddCompetitionRequestToService(
-  data: createCompetitionRequest
+  data: createCompetitionRequest,
+  dashboardId: string
 ): Omit<Competition, "id"> {
   const competition: Omit<Competition, "id"> = {
-    dashboard_id: data.dashboardId,
+    dashboard_id: dashboardId,
     name: data.name,
     type: data.type,
     created_at: new Date(Date.now()),

@@ -5,61 +5,25 @@ import { UserRepo } from "../repositories/user-repo";
 import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
 import { config } from "../config/config";
 import { AuthResponse } from "../types";
+import { UserResponse } from "@repo/logger";
+import { AuthenticatedRequest } from "../middleware/auth-middleware";
 
 const createUserAuthResponse = async (
   userId: string
 ): Promise<AuthResponse> => {
   const user = await UserRepo.getUserById(userId);
   if (!user) {
-    return { loggedIn: false, message: "User not found" };
+    return { message: "User not found" };
   }
 
   return {
-    loggedIn: true,
     user: {
       id: user.id,
-      email: user.email || "",
+      email: user.email,
       name: user.given_name,
-      role: user.role,
+      role: user.role as UserResponse["role"],
     },
-    dashboardId: user.dashboard?.id,
   };
-};
-
-export const handleVerifyToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const token = req.cookies["access-token"];
-
-    if (!token) {
-      console.log("No access token found");
-      res.status(401).json({
-        loggedIn: false,
-        message: "No access token provided",
-      });
-      return;
-    }
-
-    const decoded: any = jwt.verify(token, config.jwt.accessSecret);
-    console.log("decoded", decoded);
-
-    try {
-      const userResponse = await createUserAuthResponse(decoded.userId);
-      return res.status(200).json(userResponse);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      return res.status(500).json({
-        loggedIn: false,
-        message: "Error retrieving user information",
-      });
-    }
-  } catch (error) {
-    console.error("Verify error:", error);
-    next(error);
-  }
 };
 
 export const handleRefreshToken = async (
@@ -121,7 +85,7 @@ export const handleRefreshToken = async (
 
       const accessToken = jwt.sign(
         {
-          userId: decoded.id,
+          userId: decoded.userId,
           email: decoded.email,
         },
         config.jwt.accessSecret,
@@ -151,8 +115,6 @@ export const handleRefreshToken = async (
         secure: true,
         maxAge: 30 * 60 * 1000,
         sameSite: "none",
-        path: "/",
-        partitioned: true,
       });
 
       res.cookie("refresh-token", newRefreshToken, {
@@ -160,8 +122,6 @@ export const handleRefreshToken = async (
         secure: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
         sameSite: "none",
-        path: "/",
-        partitioned: true,
       });
 
       const authResponse = await createUserAuthResponse(user.id);
@@ -189,16 +149,12 @@ export const handleLogout = async (
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      path: "/",
-      partitioned: true,
     });
 
     res.clearCookie("access-token", {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      path: "/",
-      partitioned: true,
     });
 
     if (!refreshToken) {
@@ -229,7 +185,6 @@ export const handleGoogleCallback = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    console.log("Entered google callback");
     const code = req.query.code as string;
 
     const response = await axios.post(config.google.accessTokenUrl, {
@@ -241,12 +196,11 @@ export const handleGoogleCallback = async (
     });
 
     const { id_token } = response.data;
-    const userInfo = JSON.parse(
+    const googleUser = JSON.parse(
       Buffer.from(id_token.split(".")[1], "base64").toString()
     );
 
-    //const username = parseUsernameFromMail(userInfo.email);
-    const user = await UserRepo.getUserByEmail(userInfo.email);
+    const user = await UserRepo.getUserByEmail(googleUser.email);
 
     if (!user) {
       return res.status(500).send("User not found");
@@ -255,7 +209,7 @@ export const handleGoogleCallback = async (
     const accessToken = jwt.sign(
       {
         userId: user.id,
-        email: userInfo.email,
+        email: googleUser.email,
       },
       config.jwt.accessSecret,
       { expiresIn: "30m" }
@@ -284,8 +238,6 @@ export const handleGoogleCallback = async (
       secure: true,
       maxAge: 30 * 60 * 1000,
       sameSite: "none",
-      path: "/",
-      partitioned: true,
     });
 
     res.cookie("refresh-token", refreshToken, {
@@ -293,11 +245,18 @@ export const handleGoogleCallback = async (
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
-      path: "/",
-      partitioned: true,
     });
 
-    res.redirect(config.google.redirectClientUrl);
+    const userInfo: UserResponse = {
+      id: user.id,
+      email: user.email,
+      name: user.given_name,
+      role: user.role as UserResponse["role"],
+    };
+
+    res.redirect(
+      `${config.google.redirectClientUrl}?user=${Buffer.from(JSON.stringify(userInfo)).toString("base64")}`
+    );
   } catch (error) {
     if (error instanceof Error) {
       console.error(
@@ -305,6 +264,35 @@ export const handleGoogleCallback = async (
         (error as any).response?.data || error.message
       );
     }
+    next(error);
+  }
+};
+
+export const getCurrentUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authenticatedReq = req as AuthenticatedRequest;
+  try {
+    const userId = authenticatedReq.userId;
+
+    const userFromService = await UserRepo.getUserById(userId);
+
+    if (!userFromService) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const user: UserResponse = {
+      id: userFromService.id,
+      email: userFromService.email,
+      name: userFromService.given_name,
+      role: userFromService.role as UserResponse["role"],
+    };
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
     next(error);
   }
 };

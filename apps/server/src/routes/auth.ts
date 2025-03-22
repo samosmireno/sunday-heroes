@@ -1,14 +1,15 @@
 import { Router } from "express";
 import {
-  handleVerifyToken,
   handleRefreshToken,
   handleLogout,
   handleGoogleCallback,
+  getCurrentUser,
 } from "../handlers/auth-handler";
+import { authenticateToken } from "../middleware/auth-middleware";
 
 const router = Router();
 
-router.get("/verify", handleVerifyToken);
+router.get("/me", authenticateToken, getCurrentUser);
 router.get("/refresh", handleRefreshToken);
 router.post("/refresh", handleRefreshToken);
 router.delete("/refresh", handleRefreshToken);

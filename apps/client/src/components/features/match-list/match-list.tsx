@@ -16,7 +16,6 @@ interface MatchListProps {
   matches: MatchResponse[];
   selectedMatch: number;
   onMatchClick: (arg0: number) => void;
-  isLoggedIn: boolean;
   refetchMatches: () => void;
 }
 
@@ -25,7 +24,6 @@ export default function MatchList({
   matches,
   selectedMatch,
   onMatchClick,
-  isLoggedIn,
   refetchMatches,
 }: MatchListProps) {
   const [api, setApi] = useState<CarouselApi>();
@@ -59,13 +57,11 @@ export default function MatchList({
     <>
       <div className="m-4 flex touch-none justify-between">
         <h2 className="text-xl font-semibold">Match Results</h2>
-        {isLoggedIn && (
-          <Link to={`/add-match/${competitionId}`}>
-            <Button className="border-green-300 bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 ease-linear hover:from-green-400 hover:to-green-800">
-              Add Match
-            </Button>
-          </Link>
-        )}
+        <Link to={`/add-match/${competitionId}`}>
+          <Button className="border-green-300 bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 ease-linear hover:from-green-400 hover:to-green-800">
+            Add Match
+          </Button>
+        </Link>
       </div>
       <Carousel
         className="flex max-w-xs flex-row items-center self-center py-4 md:max-w-xl"

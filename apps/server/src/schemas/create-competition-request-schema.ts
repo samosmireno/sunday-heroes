@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const createCompetitionRequestSchema = z
   .object({
-    dashboardId: z.string(),
+    userId: z.string(),
     name: z.string(),
     type: z.nativeEnum(CompetitionType),
     track_seasons: z.boolean(),
