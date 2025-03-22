@@ -5,8 +5,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
-  console.log("isAuth", isAuthenticated);
-
   if (isLoading) {
     return <div>Loading...</div>;
   }

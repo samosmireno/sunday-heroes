@@ -70,8 +70,6 @@ export const createCompetition = async (
   const competitionToAdd: Omit<Competition, "id"> =
     transformAddCompetitionRequestToService(data, dashboardId);
 
-  console.log("Competition to add:", competitionToAdd);
-
   try {
     const match = await CompetitionRepo.createCompetition(competitionToAdd);
 
