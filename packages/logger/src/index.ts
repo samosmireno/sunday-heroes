@@ -83,6 +83,17 @@ export type DashboardCompetitionResponse = {
   matches: number;
 };
 
+export type DetailedCompetitionResponse = {
+  id: string;
+  name: string;
+  type: CompetitionType;
+  teams: number;
+  players: number;
+  matches: number;
+  votingEnabled: boolean;
+  pendingVotes?: number;
+};
+
 export type DashboardVoteResponse = {
   id: string;
   points: number;

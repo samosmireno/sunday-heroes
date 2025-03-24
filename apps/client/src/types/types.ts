@@ -68,6 +68,11 @@ export enum Role {
   PLAYER = "PLAYER",
 }
 
+export enum ViewType {
+  GRID,
+  LIST,
+}
+
 export function convertMatchType(matchType: string): string {
   return matchType
     .toLowerCase()

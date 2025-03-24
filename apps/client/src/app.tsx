@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/auth-context.tsx";
 import AuthCallback from "./pages/auth-callback.tsx";
 import Dashboard from "./pages/dashboard.tsx";
 import CreateCompetitionForm from "./pages/create-competition-form.tsx";
+import CompetitionListPage from "./pages/competition-list-page.tsx";
 
 export default function App() {
   return (
@@ -57,7 +58,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
+          <Route
+            path="/competitions"
+            element={
+              <ProtectedRoute>
+                <CompetitionListPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </AuthProvider>

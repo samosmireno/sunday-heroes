@@ -130,7 +130,7 @@ model CompetitionModerator {
   created_at     DateTime @default(now())
 
   competition    Competition @relation(fields: [competition_id], references: [id])
-dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id])
+  dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id])
 
   @@unique([competition_id, dashboard_player_id])
   @@index([competition_id])

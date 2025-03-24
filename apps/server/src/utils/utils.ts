@@ -13,20 +13,16 @@ import {
   PlayerTotals,
   VotingStatus,
   createCompetitionRequest,
+  DetailedCompetitionResponse,
 } from "@repo/logger";
-import {
-  Competition,
-  CompetitionType,
-  Match,
-  MatchPlayer,
-  MatchType,
-} from "@prisma/client";
+import { Competition, Match, MatchPlayer } from "@prisma/client";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
 import {
   CompetitionWithDetails,
   CompetitionWithMatches,
 } from "../repositories/competition-repo";
 import { DashboardVoteService } from "../repositories/vote-repo";
+import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
 
 export function createStepSchema<T extends Record<string, z.ZodType>>(
   steps: T
@@ -247,6 +243,34 @@ export function transformDashboardCompetitionsToResponse(
     name: comp.name,
     type: comp.type as DashboardCompetitionResponse["type"],
     matches: comp.matches.length,
+  }));
+
+  return competitions;
+}
+
+const getNumUniquePlayers = (
+  matchPlayers: MatchPlayerWithDetails[]
+): number => {
+  const uniqueNicknames = new Set(
+    matchPlayers.map((player) => player.dashboard_player.nickname)
+  );
+  return uniqueNicknames.size;
+};
+
+export function transformDashboardCompetitionsToDetailedResponse(
+  data: CompetitionWithDetails[]
+): DetailedCompetitionResponse[] {
+  const competitions: DetailedCompetitionResponse[] = data.map((comp) => ({
+    id: comp.id,
+    name: comp.name,
+    type: comp.type as DetailedCompetitionResponse["type"],
+    teams: comp.team_competitions.length,
+    players: getNumUniquePlayers(
+      comp.matches.flatMap((match) => match.matchPlayers)
+    ),
+    matches: comp.matches.length,
+    votingEnabled: comp.voting_enabled,
+    pendingVotes: comp.voting_enabled ? 0 : undefined,
   }));
 
   return competitions;

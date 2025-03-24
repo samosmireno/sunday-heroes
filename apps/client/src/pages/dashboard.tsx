@@ -22,6 +22,8 @@ export default function Dashboard() {
     refreshData,
   } = useDashboard(user?.id || "");
 
+  console.log(dashboardCompetitions);
+
   const navigate = useNavigate();
 
   const handleViewCompetitionDetails = (competitionId: string) => {

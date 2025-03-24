@@ -1,7 +1,7 @@
 import { MatchPlayer, Prisma, Team } from "@prisma/client";
 import prisma from "./prisma-client";
 
-type MatchPlayerWithDetails = Prisma.MatchPlayerGetPayload<{
+export type MatchPlayerWithDetails = Prisma.MatchPlayerGetPayload<{
   include: {
     dashboard_player: true;
   };

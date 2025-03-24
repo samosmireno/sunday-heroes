@@ -37,7 +37,7 @@ const items = [
   },
   {
     title: "Competitions",
-    url: "#",
+    url: "/competitions",
     icon: Trophy,
   },
   {

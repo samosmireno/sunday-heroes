@@ -4,6 +4,7 @@ import {
   transformCompetitionToResponse,
   transformDashboardCompetitionsToResponse,
   transformAddCompetitionRequestToService,
+  transformDashboardCompetitionsToDetailedResponse,
 } from "../utils/utils";
 import { createCompetitionRequest } from "@repo/logger";
 import { Competition } from "@prisma/client";
@@ -24,10 +25,19 @@ export const getAllCompetitionsFromDashboard = async (
     if (!dashboardId) {
       return res.status(400).send("No dashboard for the given userId");
     }
+    const detailedQuery = req.query.detailed === "true";
 
-    const competitions =
-      await CompetitionRepo.getAllCompetitionsFromDashboard(dashboardId);
-    res.json(transformDashboardCompetitionsToResponse(competitions));
+    if (detailedQuery) {
+      const competitions =
+        await CompetitionRepo.getAllDetailedCompetitionsFromDashboard(
+          dashboardId
+        );
+      res.json(transformDashboardCompetitionsToDetailedResponse(competitions));
+    } else {
+      const competitions =
+        await CompetitionRepo.getAllCompetitionsFromDashboard(dashboardId);
+      res.json(transformDashboardCompetitionsToResponse(competitions));
+    }
   } catch (error) {
     next(error);
   }

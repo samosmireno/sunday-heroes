@@ -28,8 +28,11 @@ const fetchDashboardCompetitions = async (
   id: string,
 ): Promise<DashboardCompetitionResponse[]> => {
   if (!id) return [];
+
+  const params = new URLSearchParams({ userId: id, detailed: "false" });
+
   const { data } = await axios.get(
-    `${config.server}/api/competitions?userId=${id}`,
+    `${config.server}/api/competitions?${params.toString()}`,
   );
   return data;
 };
@@ -60,13 +63,13 @@ export const useDashboard = (id: string) => {
   });
 
   const competitionsQuery = useQuery({
-    queryKey: ["dashboard_competitions"],
+    queryKey: ["dashboard_competitions", id],
     queryFn: () => fetchDashboardCompetitions(id),
     enabled: !!id,
   });
 
   const votesQuery = useQuery({
-    queryKey: ["dashboard_cvotes"],
+    queryKey: ["dashboard_votes"],
     queryFn: () => fetchDashboardVotes(id),
     enabled: !!id,
   });

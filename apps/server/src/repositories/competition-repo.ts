@@ -15,6 +15,7 @@ export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
         id: true;
       };
     };
+    team_competitions: true;
     matches: {
       include: {
         matchPlayers: {
@@ -48,6 +49,39 @@ export class CompetitionRepo {
     });
   }
 
+  static async getAllDetailedCompetitionsFromDashboard(
+    dashboard_id: string
+  ): Promise<CompetitionWithDetails[]> {
+    return prisma.competition.findMany({
+      where: {
+        dashboard_id,
+      },
+      include: {
+        dashboard: {
+          select: {
+            id: true,
+          },
+        },
+        team_competitions: true,
+        matches: {
+          include: {
+            matchPlayers: {
+              include: {
+                dashboard_player: true,
+                received_votes: true,
+              },
+            },
+            match_teams: {
+              include: {
+                team: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   static async getCompetitionById(
     competition_id: string
   ): Promise<CompetitionWithDetails | null> {
@@ -61,6 +95,7 @@ export class CompetitionRepo {
             id: true,
           },
         },
+        team_competitions: true,
         matches: {
           include: {
             matchPlayers: {
