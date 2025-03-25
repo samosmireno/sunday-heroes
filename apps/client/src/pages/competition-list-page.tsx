@@ -9,34 +9,44 @@ import { useCompetitions } from "../hooks/use-competitions";
 import { ViewType } from "../types/types";
 import { CompetitionType } from "@repo/logger";
 import { SearchViewToggle } from "../components/features/match-list/search-view-toggle";
+import useDebounce from "../hooks/use-debounce";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../components/ui/pagination";
+import { Button } from "../components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function CompetitionListPage() {
   const [activeFilter, setActiveFilter] = useState<CompetitionType | null>(
     null,
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [viewType, setViewType] = useState<ViewType>(ViewType.GRID);
+  const debouncedQuery = useDebounce(searchQuery, 500);
 
   const { user } = useAuth();
-  const { competitions } = user
-    ? useCompetitions(user.id)
-    : { competitions: [] };
+  const navigate = useNavigate();
+  const { competitions, isLoading, totalPages } = user
+    ? useCompetitions({
+        id: user.id,
+        page: currentPage - 1,
+        type: activeFilter,
+        searchTerm: debouncedQuery,
+      })
+    : { competitions: [], totalPages: 1 };
 
-  const filteredCompetitions = (competitions ?? []).filter((comp) => {
-    const matchesSearch = comp.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+  console.log(totalPages);
 
-    if (activeFilter === null) return matchesSearch;
-    if (activeFilter === CompetitionType.LEAGUE)
-      return comp.type === CompetitionType.LEAGUE && matchesSearch;
-    if (activeFilter === CompetitionType.DUEL)
-      return comp.type === CompetitionType.DUEL && matchesSearch;
-    if (activeFilter === CompetitionType.KNOCKOUT)
-      return comp.type === CompetitionType.KNOCKOUT && matchesSearch;
-
-    return matchesSearch;
-  });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <SidebarProvider>
@@ -50,10 +60,13 @@ export default function CompetitionListPage() {
               Manage your leagues, duels, and tournaments
             </p>
           </div>
-          <button className="mt-4 flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 md:mt-0">
+          <Button
+            onClick={() => navigate(`/create-competition/${user?.id}`)}
+            className="mt-4 flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 md:mt-0"
+          >
             <Plus size={18} className="mr-2" />
             Create New Competition
-          </button>
+          </Button>
         </div>
         <div className="mb-6 rounded-xl bg-white shadow">
           <SearchViewToggle
@@ -65,58 +78,78 @@ export default function CompetitionListPage() {
 
           <div className="overflow-x-auto p-2">
             <div className="flex space-x-2">
-              <button
-                className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium ${activeFilter === null ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100"}`}
+              <Button
+                className={`whitespace-nowrap rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium ${activeFilter === null ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100"}`}
                 onClick={() => setActiveFilter(null)}
               >
                 All
-              </button>
-              <button
-                className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.LEAGUE ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100"}`}
+              </Button>
+              <Button
+                className={`whitespace-nowrap rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.LEAGUE ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100"}`}
                 onClick={() => setActiveFilter(CompetitionType.LEAGUE)}
               >
                 Leagues
-              </button>
-              <button
-                className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.DUEL ? "bg-green-100 text-green-700" : "text-gray-600 hover:bg-gray-100"}`}
+              </Button>
+              <Button
+                className={`whitespace-nowrap rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.DUEL ? "bg-green-100 text-green-700" : "text-gray-600 hover:bg-gray-100"}`}
                 onClick={() => setActiveFilter(CompetitionType.DUEL)}
               >
                 Duels
-              </button>
-              <button
-                className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.KNOCKOUT ? "bg-purple-100 text-purple-700" : "text-gray-600 hover:bg-gray-100"}`}
+              </Button>
+              <Button
+                className={`whitespace-nowrap rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.KNOCKOUT ? "bg-purple-100 text-purple-700" : "text-gray-600 hover:bg-gray-100"}`}
                 onClick={() => setActiveFilter(CompetitionType.KNOCKOUT)}
               >
                 Knockouts
-              </button>
+              </Button>
             </div>
           </div>
         </div>
 
         {viewType === ViewType.GRID ? (
-          <CompetitionGrid competitions={filteredCompetitions ?? []} />
+          <CompetitionGrid competitions={competitions ?? []} />
         ) : (
-          <CompetitionList competitions={filteredCompetitions ?? []} />
+          <CompetitionList competitions={competitions ?? []} />
         )}
         <div className="mt-6 flex items-center justify-between">
           <div className="text-sm text-gray-600">
-            Showing{" "}
-            <span className="font-medium">{filteredCompetitions.length}</span>{" "}
-            competitions
+            Showing <span className="font-medium">{competitions.length}</span>{" "}
+            {competitions.length > 1 ? "competitions" : "competition"}
           </div>
           <div className="flex space-x-1">
-            <button className="rounded-lg border-2 border-gray-300 px-3 py-1 text-sm text-gray-600">
-              Previous
-            </button>
-            <button className="rounded-lg border-2 border-blue-200 bg-blue-50 px-3 py-1 text-sm text-blue-600">
-              1
-            </button>
-            <button className="rounded-lg border-2 border-gray-300 px-3 py-1 text-sm text-gray-600">
-              2
-            </button>
-            <button className="rounded-lg border-2 border-gray-300 px-3 py-1 text-sm text-gray-600">
-              Next
-            </button>
+            <Pagination>
+              <PaginationContent>
+                {currentPage > 1 && (
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      className="cursor-pointer border-2 border-gray-200 hover:bg-gray-200"
+                    />
+                  </PaginationItem>
+                )}
+                {Array.from({ length: totalPages }).map((_, index) => (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      onClick={() => setCurrentPage(index + 1)}
+                      className="cursor-pointer border-2 border-gray-200 hover:bg-gray-200"
+                    >
+                      {index + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                {currentPage !== totalPages && (
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      className="cursor-pointer border-2 border-gray-200 hover:bg-gray-200"
+                    />
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
           </div>
         </div>
       </div>

@@ -50,11 +50,25 @@ export class CompetitionRepo {
   }
 
   static async getAllDetailedCompetitionsFromDashboard(
-    dashboard_id: string
+    dashboard_id: string,
+    page: number,
+    limit: number,
+    type?: CompetitionType,
+    search?: string
   ): Promise<CompetitionWithDetails[]> {
     return prisma.competition.findMany({
       where: {
         dashboard_id,
+        type: type,
+        name: {
+          startsWith: search,
+          mode: "insensitive",
+        },
+      },
+      skip: page * limit,
+      take: limit,
+      orderBy: {
+        created_at: "desc",
       },
       include: {
         dashboard: {
@@ -80,6 +94,51 @@ export class CompetitionRepo {
         },
       },
     });
+  }
+
+  static async getNumCompetitionsFromQuery(
+    dashboard_id: string,
+    type?: CompetitionType,
+    search?: string
+  ): Promise<number> {
+    const competitions = await prisma.competition.findMany({
+      where: {
+        dashboard_id,
+        type: type,
+        name: {
+          startsWith: search,
+          mode: "insensitive",
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      include: {
+        dashboard: {
+          select: {
+            id: true,
+          },
+        },
+        team_competitions: true,
+        matches: {
+          include: {
+            matchPlayers: {
+              include: {
+                dashboard_player: true,
+                received_votes: true,
+              },
+            },
+            match_teams: {
+              include: {
+                team: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return competitions.length;
   }
 
   static async getCompetitionById(

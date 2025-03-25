@@ -17,6 +17,7 @@ import {
   createCompetition,
   getAllCompetitionsFromDashboard,
   getCompetitionStats,
+  getDetailedCompetitions,
 } from "../handlers/competition";
 import { getAllVotesFromDashboard } from "../handlers/vote";
 import { createCompetitionRequestSchema } from "../schemas/create-competition-request-schema";
@@ -45,9 +46,13 @@ router.get(
   "/competitions",
   (req: Request, res: Response, next: NextFunction) => {
     if (req.query.userId) {
-      return getAllCompetitionsFromDashboard(req, res, next);
+      if (req.query.detailed === "true") {
+        return getDetailedCompetitions(req, res, next);
+      } else {
+        return getAllCompetitionsFromDashboard(req, res, next);
+      }
     }
-    console.log("No dash ID");
+    console.log("No user ID");
   }
 );
 

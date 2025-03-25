@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import e, { Request, Response, NextFunction } from "express";
 import { CompetitionRepo } from "../repositories/competition-repo";
 import {
   transformCompetitionToResponse,
@@ -6,7 +6,7 @@ import {
   transformAddCompetitionRequestToService,
   transformDashboardCompetitionsToDetailedResponse,
 } from "../utils/utils";
-import { createCompetitionRequest } from "@repo/logger";
+import { CompetitionType, createCompetitionRequest } from "@repo/logger";
 import { Competition } from "@prisma/client";
 import { UserRepo } from "../repositories/user-repo";
 
@@ -25,19 +25,54 @@ export const getAllCompetitionsFromDashboard = async (
     if (!dashboardId) {
       return res.status(400).send("No dashboard for the given userId");
     }
-    const detailedQuery = req.query.detailed === "true";
 
-    if (detailedQuery) {
-      const competitions =
-        await CompetitionRepo.getAllDetailedCompetitionsFromDashboard(
-          dashboardId
-        );
-      res.json(transformDashboardCompetitionsToDetailedResponse(competitions));
-    } else {
-      const competitions =
-        await CompetitionRepo.getAllCompetitionsFromDashboard(dashboardId);
-      res.json(transformDashboardCompetitionsToResponse(competitions));
+    const competitions =
+      await CompetitionRepo.getAllCompetitionsFromDashboard(dashboardId);
+    res.json(transformDashboardCompetitionsToResponse(competitions));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDetailedCompetitions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log(req.query);
+    const userId = req.query.userId?.toString();
+    if (!userId) {
+      return res.status(400).send("userId query parameter is required");
     }
+
+    const page = parseInt(req.query.page?.toString() || "0", 10);
+    const limit = parseInt(req.query.limit?.toString() || "0", 10);
+    const type = req.query.type as CompetitionType;
+    const search = req.query.search?.toString();
+
+    const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
+    if (!dashboardId) {
+      return res.status(400).send("No dashboard for the given userId");
+    }
+
+    const competitions =
+      await CompetitionRepo.getAllDetailedCompetitionsFromDashboard(
+        dashboardId,
+        page,
+        limit,
+        type,
+        search
+      );
+
+    const totalCount = await CompetitionRepo.getNumCompetitionsFromQuery(
+      dashboardId,
+      type,
+      search
+    );
+    res.setHeader("X-Total-Count", totalCount.toString());
+
+    res.json(transformDashboardCompetitionsToDetailedResponse(competitions));
   } catch (error) {
     next(error);
   }
