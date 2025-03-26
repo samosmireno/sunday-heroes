@@ -23,6 +23,7 @@
   },
   "scripts": {
     "build": "bunchee",
+    "build:vercel": "bunchee && mkdir -p ../../dist/node_modules/@repo/logger && cp -r ./dist ../../dist/node_modules/@repo/logger/",
     "lint": "eslint src/",
     "check-types": "tsc --noEmit",
     "test": "jest",

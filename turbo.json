@@ -13,6 +13,12 @@
         "!.next/cache/**"
       ]
     },
+    "build:vercel": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": ["NODE_ENV=production", "VITE_MODE=production"],
+      "cache": false
+    },
     "test": {
       "outputs": ["coverage/**"],
       "dependsOn": []
