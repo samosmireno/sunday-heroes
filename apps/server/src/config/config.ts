@@ -42,7 +42,7 @@ export const config = {
     accessTokenUrl: "https://oauth2.googleapis.com/token",
     tokenInfoUrl: "https://oauth2.googleapis.com/tokeninfo",
     redirectUri: isProd
-      ? "https://sunday-heroes-client.vercel.app/auth/callback"
+      ? "https://sunday-heroes-client.vercel.app/auth/google/callback"
       : "http://localhost:5000/auth/google/callback",
     redirectClientUrl: isProd
       ? "https://sunday-heroes-client.vercel.app/auth/callback"
