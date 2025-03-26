@@ -30,6 +30,8 @@
     "@repo/logger": "^0.0.0",
     "@tanstack/react-query": "^5.62.3",
     "@tanstack/react-query-devtools": "^5.62.3",
+    "@types/node": "^22.10.1",
+    "@vitejs/plugin-react": "^4.3.2",
     "axios": "^1.7.7",
     "axios-auth-refresh": "^3.3.6",
     "class-variance-authority": "^0.7.1",
@@ -49,7 +51,9 @@
     "react-router-dom": "^6.28.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
