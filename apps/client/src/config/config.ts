@@ -13,7 +13,7 @@ const isProd = import.meta.env.VITE_MODE === "production";
 export const config = {
   server: isProd
     ? "https://sunday-heroes-client.vercel.app"
-    : "http://localhost:5000", //"http://localhost:5000", //"https://sunday-squad.onrender.com",
+    : "http://localhost:5000",
   redirect_uri: isProd
     ? "https://sunday-heroes-client.vercel.app/auth/google/callback"
     : "http://localhost:5000/auth/google/callback",
