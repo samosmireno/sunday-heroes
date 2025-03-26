@@ -34,7 +34,7 @@ app.use(
   cors({
     origin:
       config.env === "production"
-        ? "https://sunday-heroes.netlify.app"
+        ? "https://sunday-heroes-client.vercel.app"
         : "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],

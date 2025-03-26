@@ -12,10 +12,10 @@ const isProd = import.meta.env.VITE_MODE === "production";
 
 export const config = {
   server: isProd
-    ? "https://sunday-squad.onrender.com"
+    ? "https://sunday-heroes-client.vercel.app"
     : "http://localhost:5000", //"http://localhost:5000", //"https://sunday-squad.onrender.com",
   redirect_uri: isProd
-    ? "https://sunday-heroes.netlify.app/auth/callback"
+    ? "https://sunday-heroes-client.vercel.app/auth/callback"
     : "http://localhost:5000/auth/google/callback",
   google: {
     authEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",

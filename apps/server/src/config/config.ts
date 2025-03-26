@@ -34,7 +34,7 @@ export const config = {
   env: process.env.NODE_ENV,
   port: process.env.PORT || 5000,
   client: isProd
-    ? "https://sunday-heroes.netlify.app"
+    ? "https://sunday-heroes-client.vercel.app"
     : "http://localhost:5173",
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
@@ -42,10 +42,10 @@ export const config = {
     accessTokenUrl: "https://oauth2.googleapis.com/token",
     tokenInfoUrl: "https://oauth2.googleapis.com/tokeninfo",
     redirectUri: isProd
-      ? "https://sunday-heroes.netlify.app/auth/callback"
+      ? "https://sunday-heroes-client.vercel.app/auth/callback"
       : "http://localhost:5000/auth/google/callback",
     redirectClientUrl: isProd
-      ? "https://sunday-heroes.netlify.app/auth/callback"
+      ? "https://sunday-heroes-client.vercel.app/auth/callback"
       : "http://localhost:5173/auth/callback",
   },
   jwt: {
