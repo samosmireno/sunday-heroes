@@ -1,7 +1,7 @@
-const requiredEnvVars = ["VITE_CLIENT_ID", "VITE_MODE"];
+const requiredEnvVars = ["VITE_CLIENT_ID", "VITE_MODE"] as const;
 
 requiredEnvVars.forEach((varName) => {
-  if (!import.meta.env[varName]) {
+  if (!import.meta.env[varName as keyof ImportMetaEnv]) {
     console.warn(`Environment variable ${varName} is missing.`);
   }
 });
