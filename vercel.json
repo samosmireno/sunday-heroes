@@ -4,16 +4,10 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/auth/(.*)", "destination": "/api" },
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/auth/(.*)", "destination": "/api/index" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
-  "functions": {
-    "api": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
   "env": {
     "VERCEL_URL": "https://sunday-heroes-client.vercel.app"
   }

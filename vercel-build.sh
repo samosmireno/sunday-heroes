@@ -28,6 +28,15 @@ echo "Building server application..."
 cd apps/server
 npm ci
 npm run build:vercel
+
+# Ensure API directory exists and has an index.js
+mkdir -p ../../dist/api
+if [ ! -f "../../dist/api/index.js" ]; then
+  echo "Creating API entry point..."
+  # Create a simple API entry point if it doesn't exist
+  echo 'export { default } from "../server";' > ../../dist/api/index.js
+fi
+
 cd ../..
 echo "Server build completed"
 
