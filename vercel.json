@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "turbo run build -- --filter=@repo/logger && npm run build",
+  "buildCommand": "npm run build -- --filter=@repo/logger && npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "rewrites": [
