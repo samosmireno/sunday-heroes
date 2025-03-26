@@ -12,7 +12,6 @@ import { useState, useEffect } from "react";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { UseFormReturn } from "react-hook-form";
 import { Team } from "../../../types/types";
-import { useParams } from "react-router-dom";
 import SortableItem from "./sortable-item";
 import { DuelMatchPlayersForm } from "@repo/logger";
 
@@ -39,8 +38,6 @@ export default function PlayerList({
   const [matchPlayers, setMatchPlayers] = useState<DuelMatchPlayersForm>(
     form.getValues("matchPlayers") || null,
   );
-  const { matchId } = useParams<{ matchId: string }>();
-  const isEdited = matchId ? true : false;
 
   useEffect(() => {
     setItems(players);

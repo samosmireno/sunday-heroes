@@ -88,7 +88,7 @@ export default function AddMultiForm() {
   useEffect(() => {
     console.log(formValues);
     if (form.getValues("match") && form.getValues("players"))
-      setFootballFieldMatch(createFootballFieldMatch(formValues));
+      setFootballFieldMatch(createFootballFieldMatch(form.getValues()));
   }, [form, formValues]);
 
   return (
