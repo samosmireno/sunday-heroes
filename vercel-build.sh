@@ -13,7 +13,7 @@ echo "======================================"
 echo "Building @repo/logger package..."
 cd packages/logger
 npm ci
-npm run build
+turbo run build
 echo "@repo/logger build completed"
 
 # 2. Create node_modules structure in dist
