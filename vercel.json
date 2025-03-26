@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd packages/logger && npm run build && cd ../../apps/server && npm run build:vercel && cd ../../apps/client && npm run build:vercel",
+  "buildCommand": "bash ./vercel-build.sh",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "rewrites": [

@@ -11,9 +11,7 @@ console.log("environment", import.meta.env.VITE_MODE);
 const isProd = import.meta.env.VITE_MODE === "production";
 
 export const config = {
-  server: isProd
-    ? "https://sunday-heroes-client.vercel.app"
-    : "http://localhost:5000",
+  server: isProd ? "" : "http://localhost:5000",
   redirect_uri: isProd
     ? "https://sunday-heroes-client.vercel.app/auth/google/callback"
     : "http://localhost:5000/auth/google/callback",
