@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "turbo run build -- --filter=@repo/logger && npm run build -w apps/server && npm run build -w apps/client",
+  "buildCommand": "cd packages/logger && npm run build && cd ../../apps/server && npm run build:vercel && cd ../../apps/client && npm run build:vercel",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "rewrites": [
