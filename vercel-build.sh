@@ -5,6 +5,7 @@ set -e  # Exit immediately if a command exits with non-zero status
 echo "======================================"
 echo "Starting build process for Vercel deployment"
 echo "Current directory: $(pwd)"
+rm -rf node_modules
 echo "Directory contents:"
 ls -la
 echo "======================================"
@@ -44,7 +45,6 @@ echo "Server build completed"
 echo "Building client application..."
 cd apps/client
 npm ci
-npm install @types/node vite vitest @vitejs/plugin-react
 VITE_MODE=production npm run build:vercel
 cd ../..
 echo "Client build completed"
