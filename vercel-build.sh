@@ -44,6 +44,7 @@ echo "Server build completed"
 echo "Building client application..."
 cd apps/client
 npm ci
+npm install @types/node vite vitest @vitejs/plugin-react
 VITE_MODE=production npm run build:vercel
 cd ../..
 echo "Client build completed"
