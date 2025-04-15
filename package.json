@@ -2,7 +2,7 @@
   "name": "sunday-heroes",
   "private": true,
   "scripts": {
-    "build": "turbo run build:vercel",
+    "build": "turbo run build",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

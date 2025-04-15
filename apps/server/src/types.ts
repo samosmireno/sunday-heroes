@@ -1,5 +1,3 @@
-import { UserResponse } from "@repo/logger";
-
 export type AuthResponse = {
   message?: string;
   user?: {
