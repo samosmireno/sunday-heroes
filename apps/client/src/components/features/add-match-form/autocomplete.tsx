@@ -24,6 +24,7 @@ type Props<T extends string> = {
   emptyMessage?: string;
   placeholder?: string;
   onItemSelect?: (value: T) => void;
+  className?: string;
 };
 
 export function AutoComplete<T extends string>({
@@ -36,6 +37,7 @@ export function AutoComplete<T extends string>({
   emptyMessage = "No items.",
   placeholder = "Search...",
   onItemSelect,
+  className,
 }: Props<T>) {
   const [open, setOpen] = useState(false);
 
@@ -80,7 +82,7 @@ export function AutoComplete<T extends string>({
   };
 
   return (
-    <div className="flex w-40 items-center">
+    <div className={cn("relative flex w-2/5 items-center", className)}>
       <Popover open={open} onOpenChange={setOpen}>
         <Command shouldFilter={false}>
           <PopoverAnchor asChild>
@@ -95,7 +97,10 @@ export function AutoComplete<T extends string>({
               onMouseDown={() => setOpen((open) => !!searchValue || !open)}
               onFocus={() => setOpen(true)}
             >
-              <Input placeholder={placeholder} />
+              <Input
+                placeholder={placeholder}
+                className="w-full border-2 border-accent/30 bg-bg/30 py-1.5 pr-3 text-xs text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+              />
             </CommandPrimitive.Input>
           </PopoverAnchor>
           {!open && <CommandList aria-hidden="true" className="hidden" />}
@@ -110,7 +115,7 @@ export function AutoComplete<T extends string>({
                 e.preventDefault();
               }
             }}
-            className="max-h-36 w-[--radix-popover-trigger-width] p-0"
+            className="z-50 max-h-56 w-[--radix-popover-trigger-width] overflow-hidden border-2 border-accent/50 bg-panel-bg p-0 shadow-md"
           >
             <CommandList>
               {isLoading && (
@@ -128,6 +133,7 @@ export function AutoComplete<T extends string>({
                       value={option.value}
                       onMouseDown={(e) => e.preventDefault()}
                       onSelect={onSelectItem}
+                      className="flex px-2 py-1.5 text-sm text-gray-200 hover:cursor-pointer hover:bg-accent/30 hover:text-gray-100 aria-selected:bg-accent/20 aria-selected:text-accent"
                     >
                       <Check
                         className={cn(
@@ -143,7 +149,7 @@ export function AutoComplete<T extends string>({
                 </CommandGroup>
               ) : null}
               {!isLoading ? (
-                <CommandEmpty className="text-white">
+                <CommandEmpty className="py-3 pl-2 text-sm text-gray-400">
                   {emptyMessage ?? "No items."}
                 </CommandEmpty>
               ) : null}

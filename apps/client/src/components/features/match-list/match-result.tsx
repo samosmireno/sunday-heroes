@@ -26,7 +26,6 @@ export default function MatchResult({
   round,
   penaltyHomeScore,
   penaltyAwayScore,
-  isSelectedMatch,
   refetchMatches,
 }: MatchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,29 +61,31 @@ export default function MatchResult({
 
   return (
     <div>
-      <div
-        className={`mx-2 flex w-auto flex-row justify-between rounded-2xl border-2 border-solid border-gray-200 bg-gradient-to-br from-gray-100 to-white p-2 transition-all duration-300 ${isSelectedMatch ? "bg-gray-200 shadow-inner" : ""}`}
-      >
+      <div className="relative mb-3 rounded-lg border-2 border-accent bg-secondary p-3 text-center shadow-inner sm:mb-4 sm:p-4 md:mb-6 md:p-6">
         <div className="flex w-full flex-col">
-          <div className="flex justify-center pt-4 font-semibold">
+          <div className="mb-2 text-xs text-accent sm:mb-4 sm:text-sm">
             Round {round}
           </div>
-          <div className="flex flex-row items-center justify-around rounded-2xl pb-4">
-            <div className="flex flex-col gap-4 text-center">
-              <div className="font-normal">Home</div>
-              <div className="text-2xl font-semibold">
+          <div className="mb-3 flex items-center justify-center gap-4 text-2xl font-bold sm:mb-4 sm:text-3xl md:mb-6 md:text-4xl">
+            <div className="flex flex-col gap-2 text-center sm:gap-3 md:gap-4">
+              <div className="mx-2 text-xs sm:mx-4 sm:text-sm md:text-base">
+                Home
+              </div>
+              <div className="min-w-fit rounded border-2 border-accent bg-bg px-3 py-2 shadow-inner sm:px-4 sm:py-3 md:px-6">
                 {homeScore} {penaltyHomeScore ? `(${penaltyHomeScore})` : ""}
               </div>
             </div>
-            <div className="flex flex-col gap-4 text-center">
-              <div className="font-normal">Away</div>
-              <div className="text-2xl font-semibold">
+            <div className="flex flex-col gap-2 text-center sm:gap-3 md:gap-4">
+              <div className="mx-2 text-xs sm:mx-4 sm:text-sm md:text-base">
+                Away
+              </div>
+              <div className="min-w-fit rounded border-2 border-accent bg-bg px-3 py-2 shadow-inner sm:px-4 sm:py-3 md:px-6">
                 {awayScore} {penaltyAwayScore ? `(${penaltyAwayScore})` : ""}
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-between px-4 pt-2 text-center">
-            <div className="flex-1 text-center text-sm font-light">
+          <div className="flex flex-col items-center justify-between px-2 pt-1 text-center sm:px-4 sm:pt-2">
+            <div className="text-xs text-accent sm:text-sm">
               {new Date(date)
                 .toLocaleDateString("en-GB", {
                   day: "numeric",
@@ -93,12 +94,12 @@ export default function MatchResult({
                 })
                 .replace(/(\d+)(?=\s)/, (d) => `${d}th`)}
             </div>
-            <div className="m-4 flex w-fit flex-row items-center space-x-2 hover:cursor-pointer md:space-x-4">
+            <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">
               <Link to={`/edit-match/${matchId}`}>
-                <MdEdit className="items-center text-lg text-black md:text-xl" />
+                <MdEdit className="text-lg text-accent sm:text-xl" />
               </Link>
               <MdDelete
-                className="items-center text-lg text-black md:text-xl"
+                className="text-lg text-accent hover:cursor-pointer sm:text-xl"
                 onClick={handleDeleteClick}
               />
             </div>

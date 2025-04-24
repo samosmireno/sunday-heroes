@@ -1,5 +1,6 @@
 import { DetailedCompetitionResponse } from "@repo/logger";
-import { Edit, Eye, Trash2 } from "lucide-react";
+import { Calendar, CheckSquare, Trophy, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CompetitionListProps {
   competitions: DetailedCompetitionResponse[];
@@ -8,94 +9,139 @@ interface CompetitionListProps {
 export default function CompetitionList({
   competitions,
 }: CompetitionListProps) {
+  const navigate = useNavigate();
+
   return (
-    <div className="overflow-hidden rounded-xl bg-white shadow">
-      <table className="min-w-full">
-        <thead>
-          <tr className="border-b border-gray-200 bg-gray-50">
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Name
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Type
-            </th>
-            <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
-              Teams
-            </th>
-            <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
-              Matches
-            </th>
-            <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
-              Voting
-            </th>
-            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-          {competitions.map((competition) => (
-            <tr key={competition.id} className="hover:bg-gray-50">
-              <td className="px-4 py-4">
-                <div className="font-medium">{competition.name}</div>
-              </td>
-              <td className="px-4 py-4">
-                <span
-                  className={`rounded px-2 py-1 text-xs font-medium ${
-                    competition.type === "LEAGUE"
-                      ? "bg-blue-100 text-blue-700"
-                      : competition.type === "DUEL"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-purple-100 text-purple-700"
-                  }`}
-                >
-                  {competition.type}
-                </span>
-              </td>
-              <td className="px-4 py-4 text-center">
-                <div className="font-medium">{competition.teams}</div>
-                <div className="text-xs text-gray-500">
-                  {competition.players} players
-                </div>
-              </td>
-              <td className="px-4 py-4 text-center">
-                <div className="font-medium">{competition.matches}</div>
-              </td>
-              <td className="px-4 py-4 text-center">
-                {competition.votingEnabled ? (
-                  <>
-                    <span className="inline-flex items-center rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                      Enabled
-                    </span>
-                    {(competition.pendingVotes ?? 0) > 0 && (
-                      <span className="ml-1 inline-flex items-center rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
-                        {competition.pendingVotes} pending
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <span className="inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">
-                    Disabled
-                  </span>
-                )}
-              </td>
-              <td className="px-4 py-4 text-right">
-                <div className="flex justify-end space-x-1">
-                  <button className="rounded-full p-1 text-blue-600 hover:bg-blue-100 hover:text-blue-800">
-                    <Eye size={16} />
-                  </button>
-                  <button className="rounded-full p-1 text-gray-600 hover:bg-gray-100 hover:text-gray-800">
-                    <Edit size={16} />
-                  </button>
-                  <button className="rounded-full p-1 text-red-600 hover:bg-red-100 hover:text-red-800">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </td>
+    <div className="relative -mx-4 sm:-mx-0">
+      <div className="overflow-x-auto pb-2">
+        <table className="min-w-full divide-y divide-accent/30">
+          <thead>
+            <tr className="border-b-2 border-accent/50">
+              <th
+                scope="col"
+                className="whitespace-nowrap px-3 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+              >
+                Name
+              </th>
+              <th
+                scope="col"
+                className="whitespace-nowrap px-3 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+              >
+                Type
+              </th>
+              <th
+                scope="col"
+                className="whitespace-nowrap px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+              >
+                Teams
+              </th>
+              <th
+                scope="col"
+                className="whitespace-nowrap px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+              >
+                Matches
+              </th>
+              <th
+                scope="col"
+                className="whitespace-nowrap px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+              >
+                Voting
+              </th>
+              <th
+                scope="col"
+                className="whitespace-nowrap px-3 py-2 text-right text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+              >
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-accent/30">
+            {competitions.map((competition) => (
+              <tr key={competition.id} className="hover:bg-bg/30">
+                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4">
+                  <div
+                    className="max-w-[100px] truncate text-sm font-bold text-gray-200 sm:max-w-[180px] md:max-w-[250px]"
+                    title={competition.name}
+                  >
+                    {competition.name}
+                  </div>
+                </td>
+                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4">
+                  <span
+                    className={`text-2xs inline-block rounded px-1.5 py-0.5 font-bold sm:px-2 sm:py-1 sm:text-xs ${
+                      competition.type === "LEAGUE"
+                        ? "bg-blue-700/30 text-blue-300"
+                        : competition.type === "DUEL"
+                          ? "bg-green-700/30 text-green-300"
+                          : "bg-purple-700/30 text-purple-300"
+                    }`}
+                  >
+                    {competition.type}
+                  </span>
+                </td>
+                <td className="whitespace-nowrap px-3 py-3 text-center sm:px-4 sm:py-4">
+                  <div className="text-sm font-bold text-accent">
+                    {competition.teams}
+                  </div>
+                  <div className="text-2xs text-gray-400 sm:text-xs">
+                    {competition.players} players
+                  </div>
+                </td>
+                <td className="whitespace-nowrap px-3 py-3 text-center sm:px-4 sm:py-4">
+                  <div className="text-sm font-bold text-accent">
+                    {competition.matches}
+                  </div>
+                </td>
+                <td className="whitespace-nowrap px-3 py-3 text-center sm:px-4 sm:py-4">
+                  {competition.votingEnabled ? (
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-2xs inline-flex items-center rounded bg-amber-900/30 px-1.5 py-0.5 font-bold text-amber-400 sm:text-xs">
+                        <CheckSquare
+                          size={12}
+                          className="mr-1 hidden sm:inline"
+                        />
+                        Enabled
+                      </span>
+                      {(competition.pendingVotes ?? 0) > 0 && (
+                        <span className="text-2xs inline-flex items-center rounded bg-amber-900/30 px-1.5 py-0.5 font-bold text-amber-400 sm:text-xs">
+                          {competition.pendingVotes} pending
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-2xs inline-flex items-center rounded bg-bg/40 px-1.5 py-0.5 font-medium text-gray-400 sm:text-xs">
+                      Disabled
+                    </span>
+                  )}
+                </td>
+                <td className="whitespace-nowrap px-3 py-3 text-right sm:px-4 sm:py-4">
+                  <div className="flex justify-end space-x-1 sm:space-x-2">
+                    <button
+                      onClick={() => navigate(`/competition/${competition.id}`)}
+                      className="rounded-full bg-accent/20 p-1 text-accent hover:bg-accent/30 sm:p-1.5"
+                      title="View competition"
+                    >
+                      <Trophy size={14} className="sm:h-4 sm:w-4" />
+                    </button>
+                    <button
+                      className="rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:p-1.5"
+                      title="View matches"
+                    >
+                      <Calendar size={14} className="sm:h-4 sm:w-4" />
+                    </button>
+                    <button
+                      className="rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:p-1.5"
+                      title="View teams"
+                    >
+                      <Users size={14} className="sm:h-4 sm:w-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

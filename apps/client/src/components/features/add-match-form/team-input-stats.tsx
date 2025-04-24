@@ -40,32 +40,38 @@ export default function TeamInputStats({
   }, [form, offset, players]);
 
   return (
-    <div className="flex flex-col space-y-4 py-4">
-      <h2 className="px-8 font-medium">{team} Team</h2>
+    <div className="flex flex-col space-y-6 py-4">
+      <h2 className="px-4 text-lg font-bold text-accent sm:px-6">
+        {team} Team
+      </h2>
       {players.map((player, index) => (
         <div
-          className="mx-12 flex flex-col space-y-4 rounded-xl border-2 border-green-500 px-8 py-4"
+          className="rounded-lg border-2 border-accent/30 bg-bg/30 p-4 shadow-md sm:p-5"
           key={`${team}-${index}`}
         >
-          <h3 className="font-bold">{player}</h3>
+          <h3 className="mb-4 border-b border-accent/30 pb-2 text-base font-medium text-gray-200">
+            {player}
+          </h3>
           <FormField
             key={`${team}-goals-${index}`}
             name={`matchPlayers.players.${index + offset}.goals`}
             render={({ field }) => (
-              <div className="flex flex-col space-y-8">
+              <div className="mb-4">
                 <FormItem>
-                  <div className="flex flex-row items-center justify-between px-4">
-                    <FormLabel>Goals</FormLabel>
-                    <div className="flex flex-col items-end">
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="text-sm font-medium text-gray-300">
+                      Goals
+                    </FormLabel>
+                    <div>
                       <FormControl>
                         <Input
                           {...field}
                           type="number"
                           min={0}
-                          className="border-1 w-20 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2"
+                          className="no-spinner w-20 rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-center text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-400" />
                     </div>
                   </div>
                 </FormItem>
@@ -76,20 +82,22 @@ export default function TeamInputStats({
             key={`${team}-assist-${index}`}
             name={`matchPlayers.players.${index + offset}.assists`}
             render={({ field }) => (
-              <div className="flex flex-col space-y-8">
+              <div>
                 <FormItem>
-                  <div className="flex flex-row items-center justify-between px-4">
-                    <FormLabel>Assists</FormLabel>
-                    <div className="flex flex-col items-end">
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="text-sm font-medium text-gray-300">
+                      Assists
+                    </FormLabel>
+                    <div>
                       <FormControl>
                         <Input
                           {...field}
                           type="number"
                           min={0}
-                          className="border-1 w-20 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2"
+                          className="no-spinner w-20 rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-center text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-400" />
                     </div>
                   </div>
                 </FormItem>
@@ -100,21 +108,21 @@ export default function TeamInputStats({
             key={`${team}-rating-${index}`}
             name={`matchPlayers.players.${index + offset}.rating`}
             render={({ field }) => (
-              <div className="flex flex-col space-y-8">
+              <div className="mt-4">
                 <FormItem>
-                  <div className="flex flex-row items-center justify-between px-4">
-                    <FormLabel>Rating</FormLabel>
-                    <div className="flex flex-col items-end">
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="text-sm font-medium text-gray-300">Rating</FormLabel>
+                    <div>
                       <FormControl>
                         <Input
                           {...field}
                           type="number"
                           min={0}
                           step={0.01}
-                          className="border-1 w-20 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2"
+                          className="no-spinner w-20 rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-center text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-400" />
                     </div>
                   </div>
                 </FormItem>

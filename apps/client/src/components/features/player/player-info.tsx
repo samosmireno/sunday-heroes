@@ -20,13 +20,6 @@ export default function PlayerInfo({
 }: PlayerInfoProps) {
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  /*console.log(
-    "player: ",
-    matchPlayer.player.name,
-    "position: ",
-    matchPlayer.position,
-  );*/
-
   const style: React.CSSProperties | undefined =
     isOnPitch && position
       ? {
@@ -51,7 +44,10 @@ export default function PlayerInfo({
         isEdited={isEdited}
         playerPosition={matchPlayer.position}
       />
-      <div className="hidden text-center text-white md:inline">
+      <div
+        className="mt-1 hidden max-w-20 overflow-hidden truncate whitespace-nowrap rounded-sm bg-black/50 px-1 text-center text-xs text-white md:inline"
+        title={matchPlayer.nickname}
+      >
         {matchPlayer.nickname}
       </div>
       {isHovered && !isEdited && <PlayerCard matchPlayer={matchPlayer} />}

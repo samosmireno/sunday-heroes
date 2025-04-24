@@ -15,25 +15,27 @@ export default function StepNavigation({
   useEffect(() => {}, []);
 
   return (
-    <div className="flex flex-row justify-center gap-4 pb-8">
-      {steps.map((_step, index) => (
-        <div
-          key={index}
-          className="flex w-24 flex-col gap-1 hover:cursor-pointer"
-          onClick={() => goToStep(index)}
-        >
-          <div className="text-center">{steps[index]}</div>
+    <div className="relative mb-6 w-full">
+      <div className="flex items-center justify-between">
+        {steps.map((_step, index) => (
           <div
-            className={`h-2 w-full rounded-xl ${
-              currentStep === index
-                ? "bg-green-500"
-                : checkStepValid(index)
-                  ? "bg-green-500/30"
-                  : "bg-gray-500/30"
-            }`}
-          ></div>
-        </div>
-      ))}
+            key={index}
+            className="flex flex-1 flex-col items-center hover:cursor-pointer"
+            onClick={() => goToStep(index)}
+          >
+            <div className="text-center">{steps[index]}</div>
+            <div
+              className={`h-2 w-full rounded-xl ${
+                currentStep === index
+                  ? "border-accent bg-accent text-accent"
+                  : checkStepValid(index)
+                    ? "border-accent/50 bg-accent/20 text-gray-300 hover:bg-accent/40"
+                    : "border-accent/30 bg-bg/30 text-gray-400"
+              }`}
+            ></div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

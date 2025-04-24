@@ -22,29 +22,36 @@ export default function StatsTable({ playerStats }: StatsTableProps) {
 
   return (
     <>
-      <h2 className="pb-4 text-xl font-semibold">Stats</h2>
-      <div className="rounded-xl bg-green-100 px-4 py-2 shadow-sm md:px-8 md:py-4">
-        <table>
-          <thead className="-top-4 text-base font-extrabold text-gray-500">
-            <tr>
-              <th className="text-left text-sm font-medium md:text-base lg:p-2">
+      <div className="mb-6 flex items-center justify-between border-b-2 border-dashed border-accent pb-3">
+        <h2
+          className="py-1 text-xl uppercase text-accent"
+          style={{ textShadow: "1px 1px 0 #000" }}
+        >
+          Stats
+        </h2>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="bg-primary">
+              <th className="border-b-2 border-accent p-2 text-left text-sm uppercase tracking-wider text-accent lg:p-3">
                 Name
               </th>
               <th
-                className="p-2 text-left text-sm font-medium duration-300 hover:cursor-pointer hover:text-green-600 md:text-base"
+                className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
                 onClick={() => sortPlayers("matches")}
               >
                 Matches
                 {getSortArrow("totalMatches")}
               </th>
               <th
-                className="p-2 text-left text-sm font-medium duration-300 hover:cursor-pointer hover:text-green-600 md:text-base"
+                className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
                 onClick={() => sortPlayers("goals")}
               >
                 Goals{getSortArrow("totalGoals")}
               </th>
               <th
-                className="p-2 text-left text-sm font-medium duration-300 hover:cursor-pointer hover:text-green-600 md:text-base"
+                className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
                 onClick={() => sortPlayers("assists")}
               >
                 Assists{getSortArrow("totalAssists")}
@@ -60,7 +67,10 @@ export default function StatsTable({ playerStats }: StatsTableProps) {
           <tbody>
             {sortedPlayers &&
               sortedPlayers.map((player) => (
-                <tr className="" key={player.id}>
+                <tr
+                  className="border-b border-white/10 hover:bg-white/5"
+                  key={player.id}
+                >
                   <td className="text-left text-sm font-medium md:text-base md:font-semibold lg:p-2">
                     {player.nickname}
                   </td>

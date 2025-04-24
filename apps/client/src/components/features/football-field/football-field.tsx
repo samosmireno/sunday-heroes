@@ -58,10 +58,10 @@ export default function FootballField({
                 }
               }}
             >
-              <SelectTrigger className="h-8 w-8 -rotate-90 rounded-tr-none bg-green-50 md:w-40 md:rotate-0 md:rounded-tl-none">
+              <SelectTrigger className="h-8 w-8 -rotate-90 rounded-tr-none bg-secondary md:w-40 md:rotate-0 md:rounded-tl-none">
                 <SelectValue placeholder="Formation" />
               </SelectTrigger>
-              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 md:translate-x-0">
+              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary text-gray-300 md:translate-x-0">
                 {formations.map((formation, index) => {
                   return (
                     <SelectItem key={index} value={formation.name}>
@@ -88,10 +88,10 @@ export default function FootballField({
                 }
               }}
             >
-              <SelectTrigger className="w-8 -translate-x-1 -translate-y-1 -rotate-90 rounded-br-none bg-green-50 md:w-40 md:translate-x-0 md:translate-y-0 md:rotate-0 md:rounded-tr-none">
+              <SelectTrigger className="w-8 -translate-x-1 -translate-y-1 -rotate-90 rounded-br-none bg-secondary md:w-40 md:translate-x-0 md:translate-y-0 md:rotate-0 md:rounded-tr-none">
                 <SelectValue placeholder="Formation" />
               </SelectTrigger>
-              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 md:translate-x-0">
+              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary text-gray-300 md:translate-x-0">
                 {formations.map((formation, index) => {
                   return (
                     <SelectItem key={index} value={formation.name}>
@@ -111,7 +111,7 @@ export default function FootballField({
           />
         </>
       </FieldLayout>
-      <div className="relative z-10 flex h-8 w-80 justify-between bg-green-700 md:h-16 md:w-[640px]">
+      <div className="relative z-10 flex h-1/4 w-full justify-between bg-secondary">
         <OffFieldPlayers
           match={match}
           homeTeam={true}

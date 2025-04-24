@@ -24,8 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { convertMatchType, MatchType } from "../../../types/types";
-
+import { MatchType, convertMatchType } from "../../../types/types";
 interface AddMatchFormProps {
   isEdited: boolean;
 }
@@ -36,16 +35,15 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
   const hasPenalties = form.watch("match.hasPenalties");
 
   return (
-    <FormLayout title="Add match information">
+    <FormLayout title="Match Information">
       <Form {...form}>
-        <div className="my-8 flex h-full flex-col space-y-6 py-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <FormField
-            control={form.control}
             name="match.date"
             render={({ field }) => (
-              <FormItem className="flex max-w-max flex-col">
-                <FormLabel className="mb-2 font-semibold text-gray-400">
-                  Date
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                  Match Date
                 </FormLabel>
                 <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                   <PopoverTrigger asChild>
@@ -53,9 +51,8 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground",
-                          "border-1 w-60 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2",
+                          "w-full justify-start rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-left text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2",
+                          !field.value && "text-gray-400",
                         )}
                         onClick={() => setPopoverOpen(true)}
                       >
@@ -64,14 +61,17 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
                         ) : (
                           <span>Pick a date</span>
                         )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        <CalendarIcon className="ml-auto h-4 w-4 text-accent/60" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent
+                    className="w-auto rounded-lg border-2 border-accent/60 bg-panel-bg p-0"
+                    align="start"
+                  >
                     <Calendar
                       mode="single"
-                      className="border-1 w-60 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2"
+                      className="rounded-lg border-accent/30 bg-panel-bg text-gray-200"
                       selected={field.value}
                       onSelect={(date) => {
                         field.onChange(date);
@@ -84,82 +84,87 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
                     />
                   </PopoverContent>
                 </Popover>
-                <FormMessage />
+                <FormMessage className="text-red-400" />
               </FormItem>
             )}
           />
           <FormField
             name="match.matchType"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel
-                  htmlFor="matchType"
-                  className="font-semibold text-gray-400"
-                >
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
                   Match Type
                 </FormLabel>
-                <FormControl>
-                  <Select
-                    name="matchType"
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger id="matchType" className="w-60 bg-green-100">
-                      <SelectValue />
+                <Select
+                  name="match_type"
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2">
+                      <SelectValue placeholder="Select match type" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(MatchType).map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {convertMatchType(type)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
+                  </FormControl>
+                  <SelectContent className="border-accent/60 bg-panel-bg text-gray-200">
+                    {Object.values(MatchType).map((matchType) => (
+                      <SelectItem
+                        key={matchType}
+                        value={matchType}
+                        className="hover:bg-accent/20 focus:bg-accent/20"
+                      >
+                        {convertMatchType(matchType)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage className="text-red-400" />
               </FormItem>
             )}
           />
-          <FormField
-            name="match.homeTeamScore"
-            render={({ field }) => (
-              <FormItem className="flex max-w-max flex-col">
-                <FormLabel className="mb-2 font-semibold text-gray-400">
-                  Home Team Score
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    min={0}
-                    className="border-1 w-60 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="match.awayTeamScore"
-            render={({ field }) => (
-              <FormItem className="flex max-w-max flex-col">
-                <FormLabel className="mb-2 font-semibold text-gray-400">
-                  Away Team Score
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    min={0}
-                    className="border-1 w-60 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="col-span-1 sm:col-span-2">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <FormField
+                name="match.homeTeamScore"
+                render={({ field }) => (
+                  <FormItem className="flex w-full flex-col">
+                    <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                      Home Team Score
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        min={0}
+                        className="no-spinner w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-400" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="match.awayTeamScore"
+                render={({ field }) => (
+                  <FormItem className="flex w-full flex-col">
+                    <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                      Away Team Score
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        min={0}
+                        className="no-spinner w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-400" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
           <FormField
             name="match.hasPenalties"
-            control={form.control}
             defaultValue={false}
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-2">
@@ -167,11 +172,12 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className="border-accent text-accent"
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel className="mb-2 font-semibold text-gray-500">
-                    Penalties
+                  <FormLabel className="font-medium text-gray-300">
+                    Include Penalties
                   </FormLabel>
                 </div>
               </FormItem>
@@ -179,52 +185,57 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
           />
           {hasPenalties && (
             <>
-              <FormField
-                name="match.penaltyHomeScore"
-                render={({ field }) => (
-                  <FormItem className="flex max-w-max flex-col">
-                    <FormLabel className="mb-2 font-semibold text-gray-400">
-                      Home Team Penalty Score
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="number"
-                        min={0}
-                        className="border-1 w-60 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="match.penaltyAwayScore"
-                render={({ field }) => (
-                  <FormItem className="flex max-w-max flex-col">
-                    <FormLabel className="mb-2 font-semibold text-gray-400">
-                      Away Team Penalty Score
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="number"
-                        min={0}
-                        className="border-1 w-60 rounded-md bg-green-100 p-2 focus:outline-none focus:ring-2"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="col-span-1 sm:col-span-2">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <FormField
+                    name="match.penaltyHomeScore"
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col">
+                        <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                          Home Team Penalty Score
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            min={0}
+                            className="no-spinner w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="match.penaltyAwayScore"
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col">
+                        <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                          Away Team Penalty Score
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            min={0}
+                            className="no-spinner w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </>
           )}
         </div>
-        <div className="self-end p-10">
+
+        <div className="mt-8 flex justify-end">
           <Button
-            className="border-green-300 bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 ease-linear hover:from-green-400 hover:to-green-800"
             onClick={isEdited ? undefined : nextStep}
             type={isEdited ? "submit" : "button"}
+            className="transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30"
             disabled={!isStepValid()}
           >
             {isEdited ? "Save Changes" : "Next"}

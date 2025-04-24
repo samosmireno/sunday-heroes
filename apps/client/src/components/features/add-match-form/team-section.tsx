@@ -96,6 +96,8 @@ export default function TeamSection({
             addPlayerToForm(capitalizeFirstLetter(searchValue));
             reset();
           }}
+          className="border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent transition-all hover:bg-accent/30"
+          disabled={!searchValue.trim()}
         >
           Add
         </Button>

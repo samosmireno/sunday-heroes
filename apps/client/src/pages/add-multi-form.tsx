@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../config/axiosConfig";
 import { useMatchData } from "../hooks/use-match-data";
 import { createFootballFieldMatch } from "../utils/utils";
-import { MdArrowBack } from "react-icons/md";
 import FootballField from "../components/features/football-field/football-field";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,15 +19,13 @@ import StepNavigation from "../components/features/add-match-form/form-step-navi
 import { MatchResponse, AddDuelFormValues } from "@repo/logger";
 import { AddDuelFormSchema } from "../components/features/add-match-form/schema";
 import { transformDuelFormToRequest } from "../utils/transform";
+import { Trophy } from "lucide-react";
+import { config } from "../config/config";
 
 export default function AddMultiForm() {
-  const form = useForm<AddDuelFormValues>({
-    resolver: zodResolver(AddDuelFormSchema),
-    reValidateMode: "onBlur",
-    mode: "onBlur",
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const formValues = useWatch({ control: form.control });
+  const [footballFieldMatch, setFootballFieldMatch] =
+    useState<MatchResponse | null>(null);
 
   const navigate = useNavigate();
   const { matchId, competitionId } = useParams<{
@@ -36,10 +33,14 @@ export default function AddMultiForm() {
     competitionId: string;
   }>();
   const { formData } = useMatchData(matchId);
-  const [footballFieldMatch, setFootballFieldMatch] =
-    useState<MatchResponse | null>(
-      formData ? createFootballFieldMatch(formData) : null,
-    );
+
+  const form = useForm<AddDuelFormValues>({
+    resolver: zodResolver(AddDuelFormSchema),
+    reValidateMode: "onBlur",
+    mode: "onBlur",
+  });
+
+  const formValues = useWatch({ control: form.control });
 
   const handleSubmit = async (data: AddDuelFormValues) => {
     if (isSubmitting) return;
@@ -52,25 +53,30 @@ export default function AddMultiForm() {
 
     const reqData = transformDuelFormToRequest(data, competitionId, 1);
 
-    console.log("ReqData:", reqData);
-
     try {
       let response;
       if (matchId) {
-        response = await axiosInstance.put(`/api/matches/${matchId}`, reqData, {
-          withCredentials: true,
-        });
+        response = await axiosInstance.put(
+          `${config.server}/api/matches/${matchId}`,
+          reqData,
+          {
+            withCredentials: true,
+          },
+        );
       } else {
-        console.log(axiosInstance);
-        response = await axiosInstance.post(`/api/matches`, reqData, {
-          withCredentials: true,
-        });
+        response = await axiosInstance.post(
+          `${config.server}/api/matches`,
+          reqData,
+          {
+            withCredentials: true,
+          },
+        );
       }
 
-      console.log("Match added successfully:", response.data);
-      navigate("/");
+      console.log("Match saved successfully:", response.data);
+      navigate(`/competition/${competitionId}`);
     } catch (error) {
-      console.error("Error adding match:", error);
+      console.error("Error saving match:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -81,66 +87,102 @@ export default function AddMultiForm() {
       form.setValue("match", formData.match);
       form.setValue("players", formData.players);
       form.setValue("matchPlayers", formData.matchPlayers);
-      console.log("effect: ", formData);
     }
   }, [matchId, form, formData]);
 
   useEffect(() => {
-    console.log(formValues);
     if (form.getValues("match") && form.getValues("players"))
       setFootballFieldMatch(createFootballFieldMatch(form.getValues()));
   }, [form, formValues]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-gray-200 to-white font-exo">
+    <div className="relative flex-1 p-3 sm:p-4 md:p-6">
+      <div
+        className="pointer-events-none fixed inset-0 z-50 bg-repeat"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px)",
+        }}
+      ></div>
+
+      <div
+        className="animate-scanline pointer-events-none fixed inset-0 z-40"
+        style={{
+          background:
+            "linear-gradient(to bottom, transparent, rgba(0,0,0,0.03), transparent)",
+        }}
+      ></div>
+
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2) 75%, transparent 75%, transparent)",
+          backgroundSize: "10px 10px",
+        }}
+      ></div>
+
+      <header className="relative mb-4 rounded-lg border-2 border-accent bg-panel-bg p-3 shadow-lg sm:mb-6 sm:p-4 md:mb-8">
+        <div className="flex items-center">
+          <h1
+            className="text-xl font-bold uppercase tracking-wider text-accent sm:text-2xl md:text-3xl"
+            style={{ textShadow: "2px 2px 0 #000" }}
+          >
+            <Trophy className="mr-2 inline-block h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
+            {matchId ? "Edit Match" : "Add Match"}
+          </h1>
+        </div>
+      </header>
+
       {isSubmitting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="flex flex-col justify-center rounded-lg bg-white p-6 text-center">
-            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-green-600 border-t-transparent"></div>
-            <p className="text-lg font-semibold">Submitting form...</p>
+          <div className="flex flex-col justify-center rounded-lg border-2 border-accent bg-panel-bg p-4 text-center sm:p-6">
+            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-accent border-t-transparent sm:h-12 sm:w-12"></div>
+            <p className="text-base font-bold text-accent sm:text-lg">
+              {matchId ? "Updating match..." : "Creating match..."}
+            </p>
           </div>
         </div>
       )}
-      <Link to="/dashboard" className="px-4 py-2 text-4xl">
-        <MdArrowBack onClick={() => navigate(-1)} />
-      </Link>
-      <h1 className="p-8 text-2xl font-medium">
-        {matchId ? "Edit match" : "Add match"}
-      </h1>
-      <div className="flex h-full flex-row items-start justify-center space-x-32">
-        <div className="flex h-full max-w-2xl flex-grow flex-col">
-          <MultiStepForm
-            schema={AddDuelFormSchema}
-            form={form}
-            onSubmit={handleSubmit}
-          >
-            <MultiStepFormHeader>
-              <MultiStepFormContextProvider>
-                {({ currentStepIndex }) => (
-                  <StepNavigation
-                    steps={["Match Info", "Players", "Player Stats"]}
-                    currentStep={currentStepIndex}
-                  />
-                )}
-              </MultiStepFormContextProvider>
-            </MultiStepFormHeader>
 
-            <MultiStepFormStep name="match">
-              <AddMatchForm isEdited={matchId ? true : false} />
-            </MultiStepFormStep>
-            <MultiStepFormStep name="players">
-              <AddPlayersForm isEdited={matchId ? true : false} />
-            </MultiStepFormStep>
-            <MultiStepFormStep name="matchPlayers">
-              <AddPlayerDetailsForm isEdited={matchId ? true : false} />
-            </MultiStepFormStep>
-          </MultiStepForm>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <div className="xl:col-span-2">
+          <div className="relative rounded-lg border-2 border-accent bg-panel-bg p-4 shadow-lg sm:p-6">
+            <MultiStepForm
+              schema={AddDuelFormSchema}
+              form={form}
+              onSubmit={handleSubmit}
+            >
+              <MultiStepFormHeader>
+                <MultiStepFormContextProvider>
+                  {({ currentStepIndex }) => (
+                    <StepNavigation
+                      steps={["Match Info", "Players", "Player Stats"]}
+                      currentStep={currentStepIndex}
+                    />
+                  )}
+                </MultiStepFormContextProvider>
+              </MultiStepFormHeader>
+
+              <MultiStepFormStep name="match">
+                <AddMatchForm isEdited={matchId ? true : false} />
+              </MultiStepFormStep>
+              <MultiStepFormStep name="players">
+                <AddPlayersForm isEdited={matchId ? true : false} />
+              </MultiStepFormStep>
+              <MultiStepFormStep name="matchPlayers">
+                <AddPlayerDetailsForm isEdited={matchId ? true : false} />
+              </MultiStepFormStep>
+            </MultiStepForm>
+          </div>
         </div>
-        <div className="hidden xl:sticky xl:top-1/4 xl:block">
-          <FootballField
-            match={footballFieldMatch}
-            isEdited={true}
-          ></FootballField>
+        <div className="hidden xl:block">
+          <div className="sticky top-20 rounded-lg border-2 border-accent bg-panel-bg p-4 shadow-lg">
+            <h2 className="mb-4 text-lg font-bold text-accent">
+              Match Preview
+            </h2>
+            <FootballField match={footballFieldMatch} isEdited={true} />
+          </div>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ export default function SortableItem({ id, onSelect }: SortableItemProps) {
       ref={setNodeRef}
       type="button"
       style={style}
-      className="m-1 touch-none items-center justify-center space-x-2 border-2 border-green-500 bg-green-200 p-0 text-black hover:bg-green-600"
+      className="m-1 touch-none items-center justify-center space-x-2 border-2 border-accent/40 bg-primary/30 p-0 text-gray-300 hover:bg-bg/60"
     >
       <span
         ref={setActivatorNodeRef}
@@ -32,7 +32,10 @@ export default function SortableItem({ id, onSelect }: SortableItemProps) {
       >
         {id}
       </span>
-      <div className="cursor-pointer p-1" onClick={() => onSelect(id)}>
+      <div
+        className="cursor-pointer p-1 hover:text-red-400"
+        onClick={() => onSelect(id)}
+      >
         <XIcon />
       </div>
     </Button>

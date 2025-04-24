@@ -54,33 +54,41 @@ export default function MatchList({
   }, [current, onMatchClick, sortedMatchIndexes]);
 
   return (
-    <>
-      <div className="m-4 flex touch-none justify-between">
-        <h2 className="text-xl font-semibold">Match Results</h2>
+    <div className="flex w-full flex-col">
+      <div className="mb-6 flex items-center justify-between border-b-2 border-dashed border-accent pb-3">
+        <h2
+          className="text-xl uppercase text-accent"
+          style={{ textShadow: "1px 1px 0 #000" }}
+        >
+          Match Results
+        </h2>
         <Link to={`/add-match/${competitionId}`}>
-          <Button className="border-green-300 bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 ease-linear hover:from-green-400 hover:to-green-800">
+          <Button className="transform rounded bg-accent px-4 py-2 font-bold uppercase text-bg shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent">
             Add Match
           </Button>
         </Link>
       </div>
       <Carousel
-        className="flex max-w-xs flex-row items-center self-center py-4 md:max-w-xl"
+        className="flex w-full max-w-xs flex-row items-center self-center py-2 sm:max-w-sm sm:py-4 md:max-w-xl"
         setApi={setApi}
       >
         <Button
-          className="rounded-full bg-transparent p-2 text-black shadow-none hover:bg-green-50 disabled:bg-transparent"
+          className="hidden rounded-full bg-transparent p-1 text-accent shadow-none hover:bg-primary disabled:bg-transparent sm:flex sm:p-2"
           onClick={() => {
             api?.scrollPrev();
           }}
           disabled={!api?.canScrollPrev()}
         >
-          <ArrowLeft />
+          <ArrowLeft size={18} className="sm:size-20" />
         </Button>
-        <CarouselContent>
-          {matches &&
+        <CarouselContent className="px-2">
+          {matches && matches.length > 0 ? (
             matches
               .slice()
-              .sort((a, b) => b.round - a.round)
+              .sort(
+                (a, b) =>
+                  new Date(a.date).getTime() - new Date(b.date).getTime(),
+              )
               .map((match) => {
                 if (!match) return null;
                 return (
@@ -102,21 +110,23 @@ export default function MatchList({
                     />
                   </CarouselItem>
                 );
-              })}
+              })
+          ) : (
+            <div className="w-full rounded-lg bg-primary/20 py-8 text-center text-sm sm:text-base">
+              Add your first match
+            </div>
+          )}
         </CarouselContent>
-        {matches && matches.length === 0 && (
-          <div className="">Add your first match</div>
-        )}
         <Button
-          className="rounded-full bg-transparent p-2 text-black shadow-none hover:bg-green-50 disabled:bg-transparent"
+          className="hidden rounded-full bg-transparent p-1 text-accent shadow-none hover:bg-primary disabled:bg-transparent sm:flex sm:p-2"
           onClick={() => {
             api?.scrollNext();
           }}
           disabled={!api?.canScrollNext()}
         >
-          <ArrowRight />
+          <ArrowRight size={18} className="sm:size-20" />
         </Button>
       </Carousel>
-    </>
+    </div>
   );
 }

@@ -1,28 +1,72 @@
-import GoogleButton from "react-google-button";
+import { Trophy } from "lucide-react";
 import { useAuth } from "../context/auth-context";
 
 export default function LoginPage() {
-  console.log("LoginPage: Component initialized");
   const { login, isLoading } = useAuth();
-  console.log("LoginPage: Auth state loaded", { isLoading });
 
   if (isLoading) {
-    console.log("LoginPage: Showing loading state");
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-accent border-t-transparent"></div>
+        <p className="text-accent">Loading...</p>
+      </div>
+    );
   }
 
-  const handleLogin = () => {
-    console.log("LoginPage: Login button clicked");
-    login();
-  };
-
-  console.log("LoginPage: Rendering login page");
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center space-y-4">
-      <h1 className="text-center font-oswald text-3xl font-semibold">
-        SUNDAY HEROES
-      </h1>
-      <GoogleButton type="light" onClick={handleLogin} />
+    <div className="relative flex min-h-screen flex-col bg-secondary">
+      <div
+        className="pointer-events-none fixed inset-0 z-50 bg-repeat"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px)",
+        }}
+      ></div>
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2) 75%, transparent 75%, transparent)",
+          backgroundSize: "10px 10px",
+        }}
+      ></div>
+      <div className="relative flex flex-1 items-center justify-center p-6">
+        <div className="w-full max-w-md space-y-8">
+          <div className="rounded-lg border-2 border-accent bg-panel-bg p-6 shadow-lg">
+            <div className="mb-6 flex flex-col items-center">
+              <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-accent/20">
+                <Trophy className="h-12 w-12 text-accent" />
+              </div>
+              <h1
+                className="text-center font-oswald text-3xl font-bold uppercase tracking-wider text-accent"
+                style={{ textShadow: "2px 2px 0 #000" }}
+              >
+                Sunday Heroes
+              </h1>
+              <p className="mt-2 text-center text-sm text-gray-400">
+                Sign in to manage your football competitions
+              </p>
+            </div>
+
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={login}
+                className="w-full transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-3 font-bold text-accent shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                    <path
+                      fill="currentColor"
+                      d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.2,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.1,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.16,22 12.25,22C17.6,22 21.5,18.33 21.5,12.91C21.5,11.76 21.35,11.1 21.35,11.1V11.1Z"
+                    />
+                  </svg>
+                  <span>Sign in with Google</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

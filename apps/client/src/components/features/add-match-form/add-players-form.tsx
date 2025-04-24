@@ -48,18 +48,19 @@ export default function AddPlayersForm({ isEdited }: AddPlayersFormProps) {
             <FormMessage />
           </FormItem>
         </div>
-        <div
-          className={`flex w-full flex-row p-10 ${isEdited ? "justify-end" : "justify-between"}`}
-        >
-          {!isEdited && (
-            <Button type={"button"} variant={"outline"} onClick={prevStep}>
-              Previous
-            </Button>
-          )}
+        <div className="mt-8 flex justify-between">
           <Button
-            className="border-green-300 bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 ease-linear hover:from-green-400 hover:to-green-800"
+            type="button"
+            variant="outline"
+            onClick={prevStep}
+            className="rounded-lg border-2 border-accent/50 bg-transparent px-4 py-2 font-bold text-gray-300 transition-all hover:bg-accent/10"
+          >
+            Previous
+          </Button>
+          <Button
             onClick={isEdited ? undefined : nextStep}
             type={isEdited ? "submit" : "button"}
+            className="transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30"
             disabled={!isStepValid()}
           >
             {isEdited ? "Save Changes" : "Next"}

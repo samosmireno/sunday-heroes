@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Trophy } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar";
-import { AppSidebar } from "../components/features/sidebar/app-sidebar";
 import CompetitionGrid from "../components/features/competition-list/competition-grid";
 import CompetitionList from "../components/features/competition-list/competition-list";
 import { useAuth } from "../context/auth-context";
@@ -42,62 +41,99 @@ export default function CompetitionListPage() {
       })
     : { competitions: [], totalPages: 1 };
 
-  console.log(totalPages);
-
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4 p-6">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-accent border-t-transparent"></div>
+        <p className="text-accent" aria-live="polite">
+          Loading competitions...
+        </p>
+      </div>
+    );
   }
 
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarTrigger />
-      <div className="mx-auto max-w-7xl p-6">
-        <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
+      <div className="relative flex-1 p-6">
+        {/* Page Header */}
+        <header className="relative mb-8 rounded-lg border-2 border-accent bg-panel-bg p-4 shadow-lg">
+          <div className="flex items-center">
+            <SidebarTrigger className="mr-3" />
+            <h1
+              className="text-3xl font-bold uppercase tracking-wider text-accent"
+              style={{ textShadow: "2px 2px 0 #000" }}
+            >
+              <Trophy className="mr-2 inline-block h-7 w-7" />
+              Competitions
+            </h1>
+          </div>
+        </header>
+
+        {/* Action Bar with Create Button */}
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Competitions</h1>
-            <p className="text-gray-500">
+            <p className="text-gray-300">
               Manage your leagues, duels, and tournaments
             </p>
           </div>
           <Button
             onClick={() => navigate(`/create-competition/${user?.id}`)}
-            className="mt-4 flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 md:mt-0"
+            className="transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30"
           >
             <Plus size={18} className="mr-2" />
-            Create New Competition
+            Create Competition
           </Button>
         </div>
-        <div className="mb-6 rounded-xl bg-white shadow">
-          <SearchViewToggle
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            viewType={viewType}
-            onViewChange={setViewType}
-          />
 
-          <div className="overflow-x-auto p-2">
+        {/* Search and Filters */}
+        <div className="mb-6 rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
+          <div className="border-b-2 border-accent/30 p-3 sm:p-4">
+            <SearchViewToggle
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              viewType={viewType}
+              onViewChange={setViewType}
+            />
+          </div>
+
+          <div className="overflow-x-auto p-3 sm:p-4">
             <div className="flex space-x-2">
               <Button
-                className={`whitespace-nowrap rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium ${activeFilter === null ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100"}`}
+                className={`whitespace-nowrap rounded border-2 px-3 py-1.5 text-sm font-medium ${
+                  activeFilter === null
+                    ? "border-accent bg-accent/20 text-accent"
+                    : "border-accent/30 bg-bg/30 text-gray-300 hover:bg-accent/10"
+                }`}
                 onClick={() => setActiveFilter(null)}
               >
                 All
               </Button>
               <Button
-                className={`whitespace-nowrap rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.LEAGUE ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100"}`}
+                className={`whitespace-nowrap rounded border-2 px-3 py-1.5 text-sm font-medium ${
+                  activeFilter === CompetitionType.LEAGUE
+                    ? "border-blue-500 bg-blue-700/20 text-blue-400"
+                    : "border-accent/30 bg-bg/30 text-gray-300 hover:bg-accent/10"
+                }`}
                 onClick={() => setActiveFilter(CompetitionType.LEAGUE)}
               >
                 Leagues
               </Button>
               <Button
-                className={`whitespace-nowrap rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.DUEL ? "bg-green-100 text-green-700" : "text-gray-600 hover:bg-gray-100"}`}
+                className={`whitespace-nowrap rounded border-2 px-3 py-1.5 text-sm font-medium ${
+                  activeFilter === CompetitionType.DUEL
+                    ? "border-green-500 bg-green-700/20 text-green-400"
+                    : "border-accent/30 bg-bg/30 text-gray-300 hover:bg-accent/10"
+                }`}
                 onClick={() => setActiveFilter(CompetitionType.DUEL)}
               >
                 Duels
               </Button>
               <Button
-                className={`whitespace-nowrap rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium ${activeFilter === CompetitionType.KNOCKOUT ? "bg-purple-100 text-purple-700" : "text-gray-600 hover:bg-gray-100"}`}
+                className={`whitespace-nowrap rounded border-2 px-3 py-1.5 text-sm font-medium ${
+                  activeFilter === CompetitionType.KNOCKOUT
+                    ? "border-purple-500 bg-purple-700/20 text-purple-400"
+                    : "border-accent/30 bg-bg/30 text-gray-300 hover:bg-accent/10"
+                }`}
                 onClick={() => setActiveFilter(CompetitionType.KNOCKOUT)}
               >
                 Knockouts
@@ -106,24 +142,41 @@ export default function CompetitionListPage() {
           </div>
         </div>
 
-        {viewType === ViewType.GRID ? (
-          <CompetitionGrid competitions={competitions ?? []} />
-        ) : (
-          <CompetitionList competitions={competitions ?? []} />
-        )}
+        {/* Competition Content */}
+        <div className="min-h-[50vh] rounded-lg border-2 border-accent bg-panel-bg p-4 shadow-lg sm:p-6">
+          {competitions && competitions.length > 0 ? (
+            viewType === ViewType.GRID ? (
+              <CompetitionGrid competitions={competitions} />
+            ) : (
+              <CompetitionList competitions={competitions} />
+            )
+          ) : (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-gray-400">
+                No competitions found. Create your first competition to get
+                started.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Pagination Footer */}
         <div className="mt-6 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
-            Showing <span className="font-medium">{competitions.length}</span>{" "}
-            {competitions.length > 1 ? "competitions" : "competition"}
+          <div className="text-sm text-gray-400">
+            Showing{" "}
+            <span className="font-medium text-accent">
+              {competitions.length}
+            </span>{" "}
+            {competitions.length !== 1 ? "competitions" : "competition"}
           </div>
-          <div className="flex space-x-1">
+          {totalPages > 1 && (
             <Pagination>
               <PaginationContent>
                 {currentPage > 1 && (
                   <PaginationItem>
                     <PaginationPrevious
                       onClick={() => setCurrentPage(currentPage - 1)}
-                      className="cursor-pointer border-2 border-gray-200 hover:bg-gray-200"
+                      className="cursor-pointer border-2 border-accent/50 bg-bg/30 hover:bg-accent/10"
                     />
                   </PaginationItem>
                 )}
@@ -131,26 +184,32 @@ export default function CompetitionListPage() {
                   <PaginationItem key={index}>
                     <PaginationLink
                       onClick={() => setCurrentPage(index + 1)}
-                      className="cursor-pointer border-2 border-gray-200 hover:bg-gray-200"
+                      className={`cursor-pointer border-2 ${
+                        currentPage === index + 1
+                          ? "border-accent bg-accent/20 text-accent"
+                          : "border-accent/50 bg-bg/30 text-gray-300 hover:bg-accent/10"
+                      }`}
                     >
                       {index + 1}
                     </PaginationLink>
                   </PaginationItem>
                 ))}
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
+                {totalPages > 5 && currentPage < totalPages - 2 && (
+                  <PaginationItem>
+                    <PaginationEllipsis className="text-accent" />
+                  </PaginationItem>
+                )}
                 {currentPage !== totalPages && (
                   <PaginationItem>
                     <PaginationNext
                       onClick={() => setCurrentPage(currentPage + 1)}
-                      className="cursor-pointer border-2 border-gray-200 hover:bg-gray-200"
+                      className="cursor-pointer border-2 border-accent/50 bg-bg/30 hover:bg-accent/10"
                     />
                   </PaginationItem>
                 )}
               </PaginationContent>
             </Pagination>
-          </div>
+          )}
         </div>
       </div>
     </SidebarProvider>

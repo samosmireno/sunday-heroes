@@ -1,15 +1,20 @@
-import React from "react";
+import { ReactNode } from "react";
 
 interface FormLayoutProps {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function FormLayout({ title, children }: FormLayoutProps) {
   return (
-    <div className="flex h-full flex-col items-center justify-between rounded-3xl bg-white">
-      <div className="h-10 w-full p-10 text-lg font-semibold">{title}</div>
-      {children}
+    <div className="rounded-lg bg-panel-bg p-4 sm:p-5">
+      <h3
+        className="mb-4 border-b border-accent/30 pb-3 text-lg font-bold text-accent sm:mb-5"
+        style={{ textShadow: "1px 1px 0 #000" }}
+      >
+        {title}
+      </h3>
+      <div className="px-1 py-2 sm:px-2">{children}</div>
     </div>
   );
 }

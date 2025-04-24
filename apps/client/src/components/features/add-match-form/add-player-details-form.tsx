@@ -19,21 +19,25 @@ export default function AddPlayerDetailsForm({
   return (
     <FormLayout title="Add player stats">
       <Form {...form}>
-        <div className="flex w-full flex-col space-y-8">
+        <div className="mx-auto flex w-3/5 flex-col space-y-6 sm:space-y-8">
           <TeamInputStats team={Team.HOME} formData={data} form={form} />
           <TeamInputStats team={Team.AWAY} formData={data} form={form} />
         </div>
         <div
-          className={`flex w-full flex-row p-10 ${isEdited ? "justify-end" : "justify-between"}`}
+          className={`mt-6 flex w-full flex-row ${isEdited ? "justify-end" : "justify-between"} px-4 py-4 sm:mt-8 sm:px-6`}
         >
           {!isEdited && (
-            <Button type={"button"} variant={"outline"} onClick={prevStep}>
+            <Button
+              type="button"
+              className="rounded-lg border-2 border-accent/50 bg-transparent px-4 py-2 text-accent hover:bg-accent/10 sm:px-5 sm:py-2.5"
+              onClick={prevStep}
+            >
               Previous
             </Button>
           )}
           <Button
-            className="border-green-300 bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 ease-linear hover:from-green-400 hover:to-green-800"
-            type={"submit"}
+            className="transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg sm:px-5 sm:py-2.5"
+            type="submit"
             disabled={!isStepValid()}
           >
             {isEdited ? "Save Changes" : "Submit"}
