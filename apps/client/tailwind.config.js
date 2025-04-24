@@ -27,6 +27,44 @@ export default {
         "panel-bg": "#0d3320",
         victory: "#4caf50",
         defeat: "#f44336",
+        league: {
+          50: "#FFFAEB",
+          100: "#FFF5D6",
+          200: "#FFEAAD",
+          300: "#FFDF85",
+          400: "#FFD45C",
+          500: "#FFD700", // Your base gold color
+          600: "#E6C200",
+          700: "#BFA000",
+          800: "#997F00",
+          900: "#735F00",
+        },
+        // Forest green variant (based on #1E8449)
+        knockout: {
+          50: "#EBFAF0",
+          100: "#D0F3DB",
+          200: "#A1E7B7",
+          300: "#71D894",
+          400: "#42C870",
+          500: "#2EAB57",
+          600: "#1E8449", // Your base forest green color
+          700: "#186A3B",
+          800: "#12502C",
+          900: "#0C361E",
+        },
+        // Medium blue variant (based on #2980B9)
+        duel: {
+          50: "#EBF5FB",
+          100: "#D6EAF8",
+          200: "#AED6F1",
+          300: "#85C1E9",
+          400: "#5DADE2",
+          500: "#3498DB",
+          600: "#2980B9", // Your base blue color
+          700: "#21618C",
+          800: "#1A4F72",
+          900: "#133955",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

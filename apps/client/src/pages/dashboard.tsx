@@ -3,7 +3,6 @@ import DashboardBanner from "../components/features/dashboard/dashboard-banner";
 import DashboardMatchList from "../components/features/dashboard/dashboard-match-list";
 import DashboardStatCard from "../components/features/dashboard/dashboard-stat-card";
 import DashboardCompetitionList from "../components/features/dashboard/dashboard-competition-list";
-import { SidebarTrigger } from "../components/ui/sidebar";
 import { getTotalPlayersInDashboard } from "../utils/utils";
 import { useDashboard } from "../hooks/use-dashboard";
 import { useNavigate } from "react-router-dom";
@@ -58,17 +57,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden p-4 sm:p-6">
-      <header className="relative mb-6 rounded-lg border-2 border-accent bg-panel-bg p-3 shadow-lg sm:mb-8 sm:p-4">
-        <div className="flex items-center">
-          <SidebarTrigger className="mr-3" />
-          <h1
-            className="text-2xl font-bold uppercase tracking-wider text-accent sm:text-3xl"
-            style={{ textShadow: "2px 2px 0 #000" }}
-          >
-            Sunday Heroes
-          </h1>
-        </div>
-      </header>
       <div className="relative mb-6 sm:mb-8">
         <DashboardBanner
           name={user?.name}
@@ -83,7 +71,7 @@ export default function Dashboard() {
             title="Active Competitions"
             value={dashboardData?.competitions.length || 0}
             icon={Trophy}
-            iconClassName="bg-blue-500/20 text-blue-500"
+            iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
@@ -92,14 +80,14 @@ export default function Dashboard() {
               dashboardData ? getTotalPlayersInDashboard(dashboardData) : 0
             }
             icon={Users}
-            iconClassName="bg-green-500/20 text-green-500"
+            iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
             title="Pending Votes"
             value={pendingVotes || 0}
             icon={CheckSquare}
-            iconClassName="bg-amber-500/20 text-amber-500"
+            iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
@@ -117,13 +105,13 @@ export default function Dashboard() {
         </div>
 
         <div className="relative flex flex-1 flex-col gap-6 lg:flex-row">
-          <div className="flex-1 overflow-hidden rounded-lg border-2 border-accent bg-panel-bg shadow-lg">
+          <div className="flex-1 overflow-hidden rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
             <DashboardCompetitionList
               competitions={dashboardCompetitions || []}
               onViewDetails={handleViewCompetitionDetails}
             />
           </div>
-          <div className="flex-1 overflow-hidden rounded-lg border-2 border-accent bg-panel-bg shadow-lg">
+          <div className="flex-1 overflow-hidden rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
             <DashboardMatchList
               title="Latest Matches"
               matches={dashboardMatches || []}

@@ -1,6 +1,7 @@
 import { Button } from "../../ui/button";
 import { cn } from "../../../lib/utils";
 import { PlusCircle } from "lucide-react";
+import { SidebarTrigger } from "../../ui/sidebar";
 
 interface DashboardBannerProps {
   name?: string;
@@ -14,8 +15,9 @@ export default function DashboardBanner({
   className,
 }: DashboardBannerProps) {
   return (
-    <div className={cn("p-4 sm:p-6", className)}>
-      <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+    <div className={cn("flex items-center p-4 sm:p-6", className)}>
+      <SidebarTrigger className="mr-3" />
+      <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
         <div>
           <h2 className="text-xl font-bold text-gray-200">
             Welcome{name ? `, ${name}` : ""}!

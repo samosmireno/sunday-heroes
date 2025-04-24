@@ -12,16 +12,16 @@ export default function DashboardCompetitionCard({
 }: DashboardCompetitionCardProps) {
   const typeColors = {
     DUEL: {
-      bar: "bg-blue-500",
-      badge: "bg-blue-100 text-blue-700",
+      bar: "bg-duel-600",
+      badge: "bg-duel-800/40 text-duel-300",
     },
     LEAGUE: {
-      bar: "bg-green-500",
-      badge: "bg-green-100 text-green-700",
+      bar: "bg-league-600",
+      badge: "bg-league-800/40 text-league-300",
     },
     KNOCKOUT: {
-      bar: "bg-purple-500",
-      badge: "bg-purple-100 text-purple-700",
+      bar: "bg-knockout-600",
+      badge: "bg-knockout-800/40 text-knockout-300",
     },
   };
 

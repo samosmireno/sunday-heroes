@@ -243,7 +243,7 @@ const CreateCompetitionForm = () => {
                                   {...field}
                                   type="number"
                                   min={0}
-                                  className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                                  className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                                 />
                               </FormControl>
                               <FormMessage className="text-red-400" />
@@ -263,7 +263,7 @@ const CreateCompetitionForm = () => {
                                   {...field}
                                   type="number"
                                   min={0}
-                                  className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                                  className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                                 />
                               </FormControl>
                               <FormMessage className="text-red-400" />
@@ -284,7 +284,7 @@ const CreateCompetitionForm = () => {
                                     {...field}
                                     type="number"
                                     min={0}
-                                    className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                                    className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                                   />
                                 </FormControl>
                                 <FormMessage className="text-red-400" />

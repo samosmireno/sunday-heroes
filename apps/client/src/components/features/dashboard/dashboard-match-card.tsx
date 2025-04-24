@@ -7,9 +7,9 @@ interface MatchCardProps {
 }
 
 const matchTypeStyles: Record<CompetitionType, { bg: string; text: string }> = {
-  LEAGUE: { bg: "bg-green-700/30", text: "text-green-300" },
-  KNOCKOUT: { bg: "bg-purple-700/30", text: "text-purple-300" },
-  DUEL: { bg: "bg-blue-700/30", text: "text-blue-300" },
+  LEAGUE: { bg: "bg-league-800/40", text: "text-league-300" },
+  KNOCKOUT: { bg: "bg-knockout-800/40", text: "text-knockout-300" },
+  DUEL: { bg: "bg-duel-800/40", text: "text-duel-300" },
 };
 
 export default function DashboardMatchCard({ match, onClick }: MatchCardProps) {

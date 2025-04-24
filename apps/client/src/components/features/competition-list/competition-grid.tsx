@@ -16,15 +16,15 @@ export default function CompetitionGrid({
       {competitions.map((competition) => (
         <div
           key={competition.id}
-          className="overflow-hidden rounded-lg border-2 border-accent/70 bg-panel-bg shadow-md transition-all hover:shadow-lg"
+          className="overflow-hidden rounded-lg border-2 border-t-0 border-accent/70 bg-panel-bg shadow-md transition-all hover:shadow-lg"
         >
           <div
             className={`h-1.5 sm:h-2 ${
               competition.type === "LEAGUE"
-                ? "bg-blue-500"
+                ? "bg-league-500"
                 : competition.type === "DUEL"
-                  ? "bg-green-500"
-                  : "bg-purple-500"
+                  ? "bg-duel-500"
+                  : "bg-knockout-500"
             }`}
           ></div>
           <div className="p-3 sm:p-4">
@@ -39,10 +39,10 @@ export default function CompetitionGrid({
                 <span
                   className={`ml-1.5 rounded px-1.5 py-0.5 text-xs font-bold ${
                     competition.type === "LEAGUE"
-                      ? "bg-blue-700/30 text-blue-300"
+                      ? "bg-league-800/40 text-league-300"
                       : competition.type === "DUEL"
-                        ? "bg-green-700/30 text-green-300"
-                        : "bg-purple-700/30 text-purple-300"
+                        ? "bg-duel-800/40 text-duel-300"
+                        : "bg-knockout-800/40 text-knockout-300"
                   }`}
                 >
                   {competition.type}
