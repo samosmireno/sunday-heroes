@@ -14,18 +14,14 @@ import { UseFormReturn } from "react-hook-form";
 import { Team } from "../../../types/types";
 import SortableItem from "./sortable-item";
 import { DuelMatchPlayersForm } from "@repo/logger";
+import swapMatchPlayers from "./utils";
+import swapItems from "../../../utils/utils";
 
 interface PlayerListProps {
   players: string[];
   onSelect: (arg1: string) => void;
   form: UseFormReturn;
   team: Team;
-}
-
-function swapItems(array: string[], index1: number, index2: number): string[] {
-  const newArray = [...array];
-  [newArray[index1], newArray[index2]] = [newArray[index2], newArray[index1]];
-  return newArray;
 }
 
 export default function PlayerList({
@@ -52,32 +48,17 @@ export default function PlayerList({
 
     if (active.id !== over.id) {
       if (matchPlayers) {
-        const newMatchPlayers = structuredClone(matchPlayers);
-        const oldMatchPlayerIndex = newMatchPlayers?.players?.findIndex(
-          (matchPlayer) => matchPlayer?.nickname === active.id,
+        const activeId = active.id as string;
+        const overId = over.id as string;
+
+        const newMatchPlayers = swapMatchPlayers(
+          matchPlayers,
+          activeId,
+          overId,
         );
-        const newMatchPlayerIndex = newMatchPlayers?.players?.findIndex(
-          (matchPlayer) => matchPlayer?.nickname === over.id,
-        );
 
-        console.log(active.id, over.id);
-
-        if (oldMatchPlayerIndex !== -1 && newMatchPlayerIndex !== -1) {
-          const oldPosition =
-            newMatchPlayers.players[oldMatchPlayerIndex].position;
-          const newPosition =
-            newMatchPlayers.players[newMatchPlayerIndex].position;
-
-          const oldPlayer = newMatchPlayers.players[oldMatchPlayerIndex];
-          newMatchPlayers.players[oldMatchPlayerIndex] =
-            newMatchPlayers.players[newMatchPlayerIndex];
-          newMatchPlayers.players[newMatchPlayerIndex] = oldPlayer;
-
-          newMatchPlayers.players[oldMatchPlayerIndex].position = oldPosition;
-          newMatchPlayers.players[newMatchPlayerIndex].position = newPosition;
-
+        if (newMatchPlayers) {
           form.setValue(`matchPlayers.players`, newMatchPlayers.players);
-
           setMatchPlayers(newMatchPlayers);
         }
       }

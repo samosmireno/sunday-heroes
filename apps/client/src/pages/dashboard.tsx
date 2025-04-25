@@ -56,8 +56,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden p-4 sm:p-6">
-      <div className="relative mb-6 sm:mb-8">
+    <div className="relative flex flex-1 flex-col p-4 sm:p-6">
+      <div className="mb-6 sm:mb-8">
         <DashboardBanner
           name={user?.name}
           onCreateClick={() => user && handleCreateClick(user.id)}
@@ -104,14 +104,14 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="relative flex flex-1 flex-col gap-6 lg:flex-row">
-          <div className="flex-1 overflow-hidden rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
+        <div className="grid grid-cols-1 gap-6 pb-6 lg:grid-cols-2">
+          <div className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
             <DashboardCompetitionList
               competitions={dashboardCompetitions || []}
               onViewDetails={handleViewCompetitionDetails}
             />
           </div>
-          <div className="flex-1 overflow-hidden rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
+          <div className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
             <DashboardMatchList
               title="Latest Matches"
               matches={dashboardMatches || []}

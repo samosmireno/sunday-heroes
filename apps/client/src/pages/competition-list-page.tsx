@@ -9,17 +9,29 @@ import { ViewType } from "../types/types";
 import { CompetitionType } from "@repo/logger";
 import { SearchViewToggle } from "../components/features/match-list/search-view-toggle";
 import useDebounce from "../hooks/use-debounce";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../components/ui/pagination";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
+import CompactPagination from "../components/features/pagination/compact-pagination";
+import FilterTabs from "../components/features/competition-list/filter-tabs";
+
+const filterOptions = [
+  { value: null, label: "All" },
+  {
+    value: CompetitionType.LEAGUE,
+    label: "Leagues",
+    color: "border-league-500 bg-league-700/20 text-league-400",
+  },
+  {
+    value: CompetitionType.DUEL,
+    label: "Duels",
+    color: "border-duel-500 bg-duel-700/20 text-duel-400",
+  },
+  {
+    value: CompetitionType.KNOCKOUT,
+    label: "Knockouts",
+    color: "border-knockout-500 bg-knockout-700/20 text-knockout-400",
+  },
+];
 
 export default function CompetitionListPage() {
   const [activeFilter, setActiveFilter] = useState<CompetitionType | null>(
@@ -93,48 +105,11 @@ export default function CompetitionListPage() {
         </div>
 
         <div className="overflow-x-auto p-2 sm:p-3">
-          <div className="flex space-x-1.5 sm:space-x-2">
-            <Button
-              className={`whitespace-nowrap rounded border-2 px-2 py-1 text-sm font-medium sm:px-3 sm:py-1.5 sm:text-sm ${
-                activeFilter === null
-                  ? "border-accent bg-accent/20 text-accent"
-                  : "border-accent/30 bg-bg/30 text-gray-300 hover:bg-accent/10"
-              }`}
-              onClick={() => setActiveFilter(null)}
-            >
-              All
-            </Button>
-            <Button
-              className={`whitespace-nowrap rounded border-2 px-2 py-1 text-sm font-medium sm:px-3 sm:py-1.5 sm:text-sm ${
-                activeFilter === CompetitionType.LEAGUE
-                  ? "border-league-500 bg-league-700/20 text-league-400"
-                  : "border-accent/30 bg-bg/30 text-gray-300 hover:bg-accent/10"
-              }`}
-              onClick={() => setActiveFilter(CompetitionType.LEAGUE)}
-            >
-              Leagues
-            </Button>
-            <Button
-              className={`whitespace-nowrap rounded border-2 px-2 py-1 text-sm font-medium sm:px-3 sm:py-1.5 sm:text-sm ${
-                activeFilter === CompetitionType.DUEL
-                  ? "border-duel-500 bg-duel-700/20 text-duel-400"
-                  : "border-accent/30 bg-bg/30 text-gray-300 hover:bg-accent/10"
-              }`}
-              onClick={() => setActiveFilter(CompetitionType.DUEL)}
-            >
-              Duels
-            </Button>
-            <Button
-              className={`whitespace-nowrap rounded border-2 px-2 py-1 text-sm font-medium sm:px-3 sm:py-1.5 sm:text-sm ${
-                activeFilter === CompetitionType.KNOCKOUT
-                  ? "border-knockout-500 bg-knockout-700/20 text-knockout-400"
-                  : "border-accent/30 bg-bg/30 text-gray-300 hover:bg-accent/10"
-              }`}
-              onClick={() => setActiveFilter(CompetitionType.KNOCKOUT)}
-            >
-              Knockouts
-            </Button>
-          </div>
+          <FilterTabs
+            options={filterOptions}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
         </div>
       </div>
 
@@ -161,66 +136,12 @@ export default function CompetitionListPage() {
           <span className="font-medium text-accent">{competitions.length}</span>{" "}
           {competitions.length !== 1 ? "competitions" : "competition"}
         </div>
-        {totalPages > 1 && (
-          <Pagination className="self-center sm:self-auto">
-            <PaginationContent className="gap-1 sm:gap-2">
-              {currentPage > 1 && (
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    className="cursor-pointer border-2 border-accent/50 bg-bg/30 hover:bg-accent/10"
-                  />
-                </PaginationItem>
-              )}
-              {Array.from({ length: Math.min(totalPages, 3) }).map(
-                (_, index) => {
-                  const pageNumber =
-                    currentPage > 2 ? currentPage - 1 + index : index + 1;
-                  if (pageNumber <= totalPages) {
-                    return (
-                      <PaginationItem key={pageNumber}>
-                        <PaginationLink
-                          onClick={() => setCurrentPage(pageNumber)}
-                          className={`h-8 w-8 cursor-pointer border-2 sm:h-9 sm:w-9 ${
-                            currentPage === pageNumber
-                              ? "border-accent bg-accent/20 text-accent"
-                              : "border-accent/50 bg-bg/30 text-gray-300 hover:bg-accent/10"
-                          }`}
-                        >
-                          {pageNumber}
-                        </PaginationLink>
-                      </PaginationItem>
-                    );
-                  }
-                  return null;
-                },
-              )}
-              {totalPages > 3 && currentPage < totalPages - 1 && (
-                <PaginationItem>
-                  <PaginationEllipsis className="text-accent" />
-                </PaginationItem>
-              )}
-              {currentPage !== totalPages && totalPages > 3 && (
-                <PaginationItem>
-                  <PaginationLink
-                    onClick={() => setCurrentPage(totalPages)}
-                    className="h-8 w-8 cursor-pointer border-2 border-accent/50 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:h-9 sm:w-9"
-                  >
-                    {totalPages}
-                  </PaginationLink>
-                </PaginationItem>
-              )}
-              {currentPage !== totalPages && (
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    className="cursor-pointer border-2 border-accent/50 bg-bg/30 hover:bg-accent/10"
-                  />
-                </PaginationItem>
-              )}
-            </PaginationContent>
-          </Pagination>
-        )}
+        <CompactPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          className="self-center sm:self-auto"
+        />
       </div>
     </div>
   );

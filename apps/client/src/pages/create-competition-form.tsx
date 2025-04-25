@@ -24,13 +24,15 @@ import {
 } from "../components/ui/select";
 import { capitalizeFirstLetter } from "../utils/utils";
 import { Checkbox } from "../components/ui/checkbox";
-import { HelpCircle, Info, Save, Trophy } from "lucide-react";
+import { Info, Save, Trophy } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { transformCompetitionFormToRequest } from "../utils/transform";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../config/axiosConfig";
 import { SidebarTrigger } from "../components/ui/sidebar";
+import { GuideBox } from "../components/ui/guide-box";
+import { InfoBox } from "../components/ui/info-box";
 
 const CreateCompetitionForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -298,28 +300,12 @@ const CreateCompetitionForm = () => {
                 </div>
               </div>
               <div className="space-y-36 border-t border-accent/30 pt-4">
-                <div className="w-11/12 rounded-lg border border-accent/30 bg-bg/20 p-3 sm:p-4">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <Info
-                        className="h-5 w-5 text-accent"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <h3 className="text-sm font-medium text-accent">
-                        Important note
-                      </h3>
-                      <div className="mt-2 text-sm text-gray-300">
-                        <p>
-                          Once a competition is created, the type and certain
-                          settings cannot be changed. Please review your
-                          settings carefully.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <InfoBox title="Important note" icon={Info} className="w-11/12">
+                  <p>
+                    Once a competition is created, the type and certain settings
+                    cannot be changed. Please review your settings carefully.
+                  </p>
+                </InfoBox>
 
                 <div className="flex flex-col-reverse justify-end gap-3 sm:flex-row sm:space-x-4">
                   <Button
@@ -342,29 +328,14 @@ const CreateCompetitionForm = () => {
           </Form>
         </div>
 
-        <div className="rounded-lg border-2 border-accent/50 bg-panel-bg p-3 shadow-lg sm:p-4">
-          <div className="flex flex-col sm:flex-row sm:items-start">
-            <div className="mb-2 flex-shrink-0 sm:mb-0 sm:mr-3">
-              <HelpCircle
-                className="h-5 w-5 text-accent/70"
-                aria-hidden="true"
-              />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-accent">
-                Quick Start Guide
-              </h3>
-              <div className="mt-2 text-sm text-gray-300">
-                <p>After creating your competition, you'll need to:</p>
-                <ul className="mt-1 list-disc space-y-1 pl-5">
-                  <li>Add teams to your competition</li>
-                  <li>Add players to teams</li>
-                  <li>Schedule matches</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+        <GuideBox title="Quick Start Guide">
+          <p>After creating your competition, you'll need to:</p>
+          <ul className="mt-1 list-disc space-y-1 pl-5">
+            <li>Add teams to your competition</li>
+            <li>Add players to teams</li>
+            <li>Schedule matches</li>
+          </ul>
+        </GuideBox>
       </div>
     </div>
   );

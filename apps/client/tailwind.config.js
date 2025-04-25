@@ -33,13 +33,13 @@ export default {
           200: "#FFEAAD",
           300: "#FFDF85",
           400: "#FFD45C",
-          500: "#FFD700", // Your base gold color
+          500: "#FFD700",
           600: "#E6C200",
           700: "#BFA000",
           800: "#997F00",
           900: "#735F00",
         },
-        // Forest green variant (based on #1E8449)
+
         knockout: {
           50: "#EBFAF0",
           100: "#D0F3DB",
@@ -47,12 +47,11 @@ export default {
           300: "#71D894",
           400: "#42C870",
           500: "#2EAB57",
-          600: "#1E8449", // Your base forest green color
+          600: "#1E8449",
           700: "#186A3B",
           800: "#12502C",
           900: "#0C361E",
         },
-        // Medium blue variant (based on #2980B9)
         duel: {
           50: "#EBF5FB",
           100: "#D6EAF8",
@@ -60,7 +59,7 @@ export default {
           300: "#85C1E9",
           400: "#5DADE2",
           500: "#3498DB",
-          600: "#2980B9", // Your base blue color
+          600: "#2980B9",
           700: "#21618C",
           800: "#1A4F72",
           900: "#133955",

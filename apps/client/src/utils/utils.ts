@@ -133,3 +133,13 @@ export const calculatePendingVotes = (
 
   return numPlayersToVote - numVotes;
 };
+
+export default function swapItems(
+  array: string[],
+  index1: number,
+  index2: number,
+): string[] {
+  const newArray = [...array];
+  [newArray[index1], newArray[index2]] = [newArray[index2], newArray[index1]];
+  return newArray;
+}
