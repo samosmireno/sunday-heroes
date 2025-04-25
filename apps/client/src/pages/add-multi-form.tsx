@@ -21,6 +21,7 @@ import { AddDuelFormSchema } from "../components/features/add-match-form/schema"
 import { transformDuelFormToRequest } from "../utils/transform";
 import { Trophy } from "lucide-react";
 import { config } from "../config/config";
+import { SidebarTrigger } from "../components/ui/sidebar";
 
 export default function AddMultiForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,6 +125,7 @@ export default function AddMultiForm() {
 
       <header className="relative mb-4 rounded-lg border-2 border-accent bg-panel-bg p-3 shadow-lg sm:mb-6 sm:p-4 md:mb-8">
         <div className="flex items-center">
+          <SidebarTrigger className="mr-3" />
           <h1
             className="text-xl font-bold uppercase tracking-wider text-accent sm:text-2xl md:text-3xl"
             style={{ textShadow: "2px 2px 0 #000" }}

@@ -22,7 +22,7 @@ export default function DashboardMatchCard({ match, onClick }: MatchCardProps) {
 
   return (
     <div
-      className="cursor-pointer rounded border-2 border-accent/50 bg-bg/30 p-3 transition-all hover:bg-bg/50"
+      className="cursor-default rounded border-2 border-accent/50 bg-bg/30 p-3 transition-all hover:bg-bg/50"
       onClick={onClick}
       tabIndex={0}
       role="button"

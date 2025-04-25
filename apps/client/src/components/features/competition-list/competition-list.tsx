@@ -31,7 +31,7 @@ export default function CompetitionList({
               </th>
               <th
                 scope="col"
-                className="whitespace-nowrap px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+                className="hidden whitespace-nowrap px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:table-cell sm:px-4 sm:py-3"
               >
                 Teams
               </th>
@@ -43,7 +43,7 @@ export default function CompetitionList({
               </th>
               <th
                 scope="col"
-                className="whitespace-nowrap px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+                className="hidden whitespace-nowrap px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3 lg:table-cell"
               >
                 Voting
               </th>
@@ -70,16 +70,16 @@ export default function CompetitionList({
                   <span
                     className={`text-2xs inline-block rounded px-1.5 py-0.5 font-bold sm:px-2 sm:py-1 sm:text-xs ${
                       competition.type === "LEAGUE"
-                        ? "bg-blue-700/30 text-blue-300"
+                        ? "bg-league-800/40 text-league-300"
                         : competition.type === "DUEL"
-                          ? "bg-green-700/30 text-green-300"
-                          : "bg-purple-700/30 text-purple-300"
+                          ? "bg-duel-800/40 text-duel-300"
+                          : "bg-knockout-800/40 text-knockout-300"
                     }`}
                   >
                     {competition.type}
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 text-center sm:px-4 sm:py-4">
+                <td className="hidden whitespace-nowrap px-3 py-3 text-center sm:table-cell sm:px-4 sm:py-4">
                   <div className="text-sm font-bold text-accent">
                     {competition.teams}
                   </div>
@@ -92,7 +92,7 @@ export default function CompetitionList({
                     {competition.matches}
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 text-center sm:px-4 sm:py-4">
+                <td className="hidden whitespace-nowrap px-3 py-3 text-center sm:px-4 sm:py-4 lg:table-cell">
                   {competition.votingEnabled ? (
                     <div className="flex flex-col items-center gap-1">
                       <span className="text-2xs inline-flex items-center rounded bg-amber-900/30 px-1.5 py-0.5 font-bold text-amber-400 sm:text-xs">
@@ -130,7 +130,7 @@ export default function CompetitionList({
                       <Calendar size={14} className="sm:h-4 sm:w-4" />
                     </button>
                     <button
-                      className="rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:p-1.5"
+                      className="hidden rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:inline-block sm:p-1.5"
                       title="View teams"
                     >
                       <Users size={14} className="sm:h-4 sm:w-4" />
