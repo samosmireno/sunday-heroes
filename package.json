@@ -23,6 +23,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "bunchee": "^6.5.0"
+    "bunchee": "^6.5.0",
+    "node-fetch": "^3.3.2"
   }
 }
