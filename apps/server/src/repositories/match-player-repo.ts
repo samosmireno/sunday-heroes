@@ -7,6 +7,16 @@ export type MatchPlayerWithDetails = Prisma.MatchPlayerGetPayload<{
   };
 }>;
 
+export type MatchPlayerWithUserDetails = Prisma.MatchPlayerGetPayload<{
+  include: {
+    dashboard_player: {
+      include: {
+        user: true;
+      };
+    };
+  };
+}>;
+
 export class MatchPlayerRepo {
   static async getAllMatchPlayers(): Promise<MatchPlayerWithDetails[]> {
     return prisma.matchPlayer.findMany({
@@ -29,11 +39,13 @@ export class MatchPlayerRepo {
 
   static async getMatchPlayersFromMatch(
     match_id: string
-  ): Promise<MatchPlayerWithDetails[]> {
+  ): Promise<MatchPlayerWithUserDetails[]> {
     return prisma.matchPlayer.findMany({
       where: { match_id },
       include: {
-        dashboard_player: true,
+        dashboard_player: {
+          include: { user: true },
+        },
       },
     });
   }
@@ -59,5 +71,18 @@ export class MatchPlayerRepo {
 
   static async deleteMatchPlayersFromMatch(match_id: string) {
     return prisma.matchPlayer.deleteMany({ where: { match_id } });
+  }
+
+  static async isPlayerInMatch(
+    playerId: string,
+    matchId: string
+  ): Promise<boolean> {
+    const player = await prisma.matchPlayer.findFirst({
+      where: {
+        match_id: matchId,
+        dashboard_player_id: playerId,
+      },
+    });
+    return player !== null;
   }
 }

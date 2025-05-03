@@ -14,6 +14,8 @@ import {
 import { TeamRepo } from "../repositories/team-repo";
 import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
 import { DashboardRepo } from "../repositories/dashboard-repo";
+import { CompetitionRepo } from "../repositories/competition-repo";
+import { EmailService } from "../services/email-service";
 
 export const getAllMatches = async (
   req: Request,
@@ -134,6 +136,45 @@ export const createMatch = async (
         await MatchPlayerRepo.createMatchPlayer(matchPlayerToAdd);
       })
     );
+
+    const competition = await CompetitionRepo.getCompetitionById(
+      match.competition_id
+    );
+
+    if (competition && competition.voting_enabled) {
+      const votingEndDate = new Date();
+      votingEndDate.setDate(votingEndDate.getDate() + 7);
+
+      await MatchRepo.updateMatchVotingStatus(
+        match.id,
+        VotingStatus.OPEN,
+        votingEndDate
+      );
+
+      const matchDetails = {
+        competitionName: competition.name,
+        competitionVotingDays: competition.voting_period_days ?? 7,
+        date: match.date,
+        homeTeam: "Home",
+        awayTeam: "Away",
+        homeScore: match.home_team_score,
+        awayScore: match.away_team_score,
+      };
+
+      const players = await MatchPlayerRepo.getMatchPlayersFromMatch(match.id);
+
+      for (const player of players) {
+        if (player.dashboard_player?.user?.email) {
+          await EmailService.sendVotingInvitation(
+            player.dashboard_player.user.email,
+            player.dashboard_player.nickname,
+            match.id,
+            player.dashboard_player_id,
+            matchDetails
+          );
+        }
+      }
+    }
 
     res.status(201).json(match);
   } catch (error) {

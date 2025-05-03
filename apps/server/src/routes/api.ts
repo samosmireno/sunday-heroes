@@ -19,7 +19,12 @@ import {
   getCompetitionStats,
   getDetailedCompetitions,
 } from "../handlers/competition";
-import { getAllVotesFromDashboard } from "../handlers/vote";
+import {
+  getAllVotesFromDashboard,
+  getVotingStatus,
+  submitVotes,
+  submitVotesSchema,
+} from "../handlers/vote";
 import { createCompetitionRequestSchema } from "../schemas/create-competition-request-schema";
 
 const router = Router();
@@ -96,5 +101,13 @@ router.get("/votes", (req: Request, res: Response, next: NextFunction) => {
   }
   console.log("No dash ID");
 });
+
+router.get("/votes/status/:matchId", getVotingStatus);
+router.post(
+  "/votes",
+  authenticateToken,
+  validateRequestBody(submitVotesSchema),
+  submitVotes
+);
 
 export default router;

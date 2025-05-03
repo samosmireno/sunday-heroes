@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { PlayerVote, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 
 export type DashboardVoteService = Prisma.PlayerVoteGetPayload<{
@@ -114,5 +114,82 @@ export class VoteRepo {
     });
 
     return votes;
+  }
+
+  static async createVotes(
+    matchId: string,
+    voterId: string,
+    votes: { playerId: string; points: number }[]
+  ) {
+    return await prisma.$transaction(
+      votes.map((vote) =>
+        prisma.playerVote.create({
+          data: {
+            match_id: matchId,
+            voter_id: voterId,
+            match_player_id: vote.playerId,
+            points: vote.points,
+            created_at: new Date(),
+          },
+        })
+      )
+    );
+  }
+
+  static async getVotesByVoterAndMatch(
+    voterId: string,
+    matchId: string
+  ): Promise<PlayerVote[]> {
+    return await prisma.playerVote.findMany({
+      where: {
+        voter_id: voterId,
+        match_id: matchId,
+      },
+    });
+  }
+
+  static async hasPlayerVoted(
+    playerId: string,
+    matchId: string
+  ): Promise<boolean> {
+    const count = await prisma.playerVote.count({
+      where: {
+        voter_id: playerId,
+        match_id: matchId,
+      },
+    });
+
+    return count > 0;
+  }
+
+  static async getPendingVoters(matchId: string): Promise<string[]> {
+    const match = await prisma.match.findUnique({
+      where: { id: matchId },
+      include: {
+        matchPlayers: {
+          select: {
+            dashboard_player_id: true,
+          },
+        },
+      },
+    });
+
+    if (!match) return [];
+
+    const allPlayerIds = match.matchPlayers.map((mp) => mp.dashboard_player_id);
+
+    const votedPlayerIds = await prisma.playerVote.findMany({
+      where: {
+        match_id: matchId,
+      },
+      select: {
+        voter_id: true,
+      },
+      distinct: ["voter_id"],
+    });
+
+    const votedIds = votedPlayerIds.map((v) => v.voter_id);
+
+    return allPlayerIds.filter((id) => !votedIds.includes(id));
   }
 }

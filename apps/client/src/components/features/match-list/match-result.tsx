@@ -1,7 +1,7 @@
 import { MdDelete, MdEdit } from "react-icons/md";
 import axiosInstance from "../../../config/axiosConfig";
 import { Link } from "react-router-dom";
-import Modal from "../../core/modal";
+import Modal from "../../ui/modal";
 import { useState } from "react";
 import ConfirmDeleteModal from "../modals/confirm-delete-modal";
 import { config } from "../../../config/config";

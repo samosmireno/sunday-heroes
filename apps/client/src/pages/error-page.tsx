@@ -1,25 +1,11 @@
 import { Home, Frown } from "lucide-react";
 import { Link } from "react-router-dom";
+import Background from "../components/ui/background";
 
 export default function ErrorPage() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-secondary">
-      <div
-        className="pointer-events-none fixed inset-0 z-50 bg-repeat"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px)",
-        }}
-      ></div>
-      <div
-        className="pointer-events-none fixed inset-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2) 75%, transparent 75%, transparent)",
-          backgroundSize: "10px 10px",
-        }}
-      ></div>
-
+      <Background />
       <div className="z-10 flex max-w-lg flex-col items-center rounded-lg border-2 border-accent bg-panel-bg p-6 shadow-lg sm:p-8">
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent/20">
           <Frown className="h-12 w-12 text-accent" />

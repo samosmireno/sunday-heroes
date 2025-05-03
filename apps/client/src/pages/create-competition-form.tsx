@@ -30,9 +30,9 @@ import { useNavigate } from "react-router-dom";
 import { transformCompetitionFormToRequest } from "../utils/transform";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../config/axiosConfig";
-import { SidebarTrigger } from "../components/ui/sidebar";
 import { GuideBox } from "../components/ui/guide-box";
 import { InfoBox } from "../components/ui/info-box";
+import Header from "../components/ui/header";
 
 const CreateCompetitionForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,17 +92,7 @@ const CreateCompetitionForm = () => {
         </div>
       )}
 
-      <header className="relative mb-4 rounded-lg border-2 border-accent bg-panel-bg p-3 shadow-lg sm:mb-6 sm:p-4 md:mb-8">
-        <div className="flex items-center">
-          <SidebarTrigger className="mr-2 sm:mr-3" />
-          <h1
-            className="truncate text-xl font-bold uppercase tracking-wider text-accent sm:text-2xl md:text-3xl"
-            style={{ textShadow: "2px 2px 0 #000" }}
-          >
-            Create Competition
-          </h1>
-        </div>
-      </header>
+      <Header title="Create Competition" hasSidebar={true} />
 
       <div className="relative grid grid-cols-1 gap-4 sm:gap-6">
         <div className="rounded-lg border-2 border-accent bg-panel-bg p-4 shadow-lg sm:p-6">
@@ -299,7 +289,7 @@ const CreateCompetitionForm = () => {
                   )}
                 </div>
               </div>
-              <div className="space-y-36 border-t border-accent/30 pt-4">
+              <div className="space-y-6 border-t border-accent/30 pt-4">
                 <InfoBox title="Important note" icon={Info} className="w-11/12">
                   <p>
                     Once a competition is created, the type and certain settings

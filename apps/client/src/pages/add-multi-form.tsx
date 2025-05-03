@@ -19,9 +19,9 @@ import StepNavigation from "../components/features/add-match-form/form-step-navi
 import { MatchResponse, AddDuelFormValues } from "@repo/logger";
 import { AddDuelFormSchema } from "../components/features/add-match-form/schema";
 import { transformDuelFormToRequest } from "../utils/transform";
-import { Trophy } from "lucide-react";
 import { config } from "../config/config";
-import { SidebarTrigger } from "../components/ui/sidebar";
+import Background from "../components/ui/background";
+import Header from "../components/ui/header";
 
 export default function AddMultiForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,43 +98,9 @@ export default function AddMultiForm() {
 
   return (
     <div className="relative flex-1 p-3 sm:p-4 md:p-6">
-      <div
-        className="pointer-events-none fixed inset-0 z-50 bg-repeat"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px)",
-        }}
-      ></div>
+      <Background />
 
-      <div
-        className="animate-scanline pointer-events-none fixed inset-0 z-40"
-        style={{
-          background:
-            "linear-gradient(to bottom, transparent, rgba(0,0,0,0.03), transparent)",
-        }}
-      ></div>
-
-      <div
-        className="pointer-events-none fixed inset-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2) 75%, transparent 75%, transparent)",
-          backgroundSize: "10px 10px",
-        }}
-      ></div>
-
-      <header className="relative mb-4 rounded-lg border-2 border-accent bg-panel-bg p-3 shadow-lg sm:mb-6 sm:p-4 md:mb-8">
-        <div className="flex items-center">
-          <SidebarTrigger className="mr-3" />
-          <h1
-            className="text-xl font-bold uppercase tracking-wider text-accent sm:text-2xl md:text-3xl"
-            style={{ textShadow: "2px 2px 0 #000" }}
-          >
-            <Trophy className="mr-2 inline-block h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
-            {matchId ? "Edit Match" : "Add Match"}
-          </h1>
-        </div>
-      </header>
+      <Header title={matchId ? "Edit Match" : "Add Match"} hasSidebar={true} />
 
       {isSubmitting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

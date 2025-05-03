@@ -1,0 +1,103 @@
+import nodemailer from "nodemailer";
+import { config } from "../config/config";
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: parseInt(process.env.SMTP_PORT || "587", 10),
+  secure: process.env.SMTP_SECURE === "true",
+  auth: {
+    user: config.smtp.user,
+    pass: config.smtp.pass,
+  },
+});
+
+export class EmailService {
+  static async sendVotingInvitation(
+    email: string,
+    nickname: string,
+    matchId: string,
+    playerId: string,
+    matchDetails: {
+      competitionName: string;
+      competitionVotingDays: number;
+      date: Date;
+      homeTeam: string;
+      awayTeam: string;
+      homeScore: number;
+      awayScore: number;
+    }
+  ): Promise<boolean> {
+    const votingUrl = `${config.client}/vote/${matchId}?voterId=${playerId}`;
+
+    const mailOptions = {
+      from: `Sunday Heroes <${config.smtp.user}>`,
+      to: email,
+      subject: `Vote for the best players in ${matchDetails.competitionName} match`,
+      html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background-color: #1e293b; color: white; padding: 20px; text-align: center;">
+                <h1 style="margin: 0;">Time to vote!</h1>
+              </div>
+              
+              <div style="padding: 20px; background-color: #f8fafc;">
+                <p>Hi ${nickname},</p>
+                
+                <p>The match you participated in is now complete:</p>
+                
+                <div style="background-color: #e2e8f0; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                  <h3 style="margin-top: 0; color: #334155;">${matchDetails.competitionName}</h3>
+                  <p style="margin: 5px 0; font-size: 16px;">${matchDetails.homeTeam} ${matchDetails.homeScore} - ${matchDetails.awayScore} ${matchDetails.awayTeam}</p>
+                  <p style="margin: 5px 0; color: #64748b; font-size: 14px;">
+                    ${new Date(matchDetails.date).toLocaleDateString(
+                      undefined,
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </p>
+                </div>
+                
+                <p>Please vote for the 3 best players in this match:</p>
+                
+                <div style="text-align: center; margin: 25px 0;">
+                  <a href="${votingUrl}" 
+                     style="background-color: #2563eb; color: white; padding: 12px 25px; 
+                            text-decoration: none; border-radius: 5px; font-weight: bold;">
+                    Cast Your Votes
+                  </a>
+                </div>
+                
+                <p style="color: #64748b; font-size: 14px;">
+                  The voting link will expire in ${matchDetails.competitionVotingDays} days.
+                </p>
+              </div>
+              
+              <div style="background-color: #1e293b; color: #94a3b8; padding: 15px; text-align: center; font-size: 12px;">
+                <p>This is an automated message. Please do not reply to this email.</p>
+                <p>© ${new Date().getFullYear()} Sunday Heroes</p>
+              </div>
+            </div>
+          `,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      return true;
+    } catch (error) {
+      console.error("Failed to send voting email:", error);
+      return false;
+    }
+  }
+
+  static async verifyConnection(): Promise<boolean> {
+    try {
+      await transporter.verify();
+      return true;
+    } catch (error) {
+      console.error("SMTP connection verification failed:", error);
+      return false;
+    }
+  }
+}

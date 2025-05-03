@@ -1,35 +1,18 @@
 import { Trophy } from "lucide-react";
 import { useAuth } from "../context/auth-context";
+import Background from "../components/ui/background";
+import Loading from "../components/ui/loading";
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-accent border-t-transparent"></div>
-        <p className="text-accent">Loading...</p>
-      </div>
-    );
+    return <Loading text="Loading page..." />;
   }
 
   return (
     <div className="relative flex min-h-screen flex-col bg-secondary">
-      <div
-        className="pointer-events-none fixed inset-0 z-50 bg-repeat"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px)",
-        }}
-      ></div>
-      <div
-        className="pointer-events-none fixed inset-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2) 75%, transparent 75%, transparent)",
-          backgroundSize: "10px 10px",
-        }}
-      ></div>
+      <Background />
       <div className="relative flex flex-1 items-center justify-center p-6">
         <div className="w-full max-w-md space-y-8">
           <div className="rounded-lg border-2 border-accent bg-panel-bg p-6 shadow-lg">

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Plus, Trophy } from "lucide-react";
-import { SidebarTrigger } from "../components/ui/sidebar";
+import { Plus } from "lucide-react";
 import CompetitionGrid from "../components/features/competition-list/competition-grid";
 import CompetitionList from "../components/features/competition-list/competition-list";
 import { useAuth } from "../context/auth-context";
@@ -13,6 +12,8 @@ import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import CompactPagination from "../components/features/pagination/compact-pagination";
 import FilterTabs from "../components/features/competition-list/filter-tabs";
+import Header from "../components/ui/header";
+import Loading from "../components/ui/loading";
 
 const filterOptions = [
   { value: null, label: "All" },
@@ -54,30 +55,12 @@ export default function CompetitionListPage() {
     : { competitions: [], totalPages: 1 };
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 p-4 sm:p-6">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-accent border-t-transparent sm:h-12 sm:w-12"></div>
-        <p className="text-accent" aria-live="polite">
-          Loading competitions...
-        </p>
-      </div>
-    );
+    return <Loading text="Loading competitions..." />;
   }
 
   return (
     <div className="relative flex-1 p-4 sm:p-5">
-      <header className="relative mb-6 rounded-lg border-2 border-accent bg-panel-bg p-3 shadow-lg sm:mb-7 sm:p-4">
-        <div className="flex items-center">
-          <SidebarTrigger className="mr-2 sm:mr-3" />
-          <h1
-            className="text-xl font-bold uppercase tracking-wider text-accent sm:text-2xl"
-            style={{ textShadow: "2px 2px 0 #000" }}
-          >
-            <Trophy className="mr-1.5 inline-block h-5 w-5 sm:mr-2 sm:h-6 sm:w-6" />
-            Competitions
-          </h1>
-        </div>
-      </header>
+      <Header title="Competitions" hasSidebar={true} />
 
       <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>

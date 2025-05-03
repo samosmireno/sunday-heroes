@@ -55,4 +55,11 @@ export const config = {
       ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
       : [process.env.ALLOWED_ORIGIN || "*"],
   },
+  smtp: {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_SECURE,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
+  },
 };

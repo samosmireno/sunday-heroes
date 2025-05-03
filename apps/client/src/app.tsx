@@ -9,6 +9,7 @@ import AuthCallback from "./pages/auth-callback.tsx";
 import Dashboard from "./pages/dashboard.tsx";
 import CreateCompetitionForm from "./pages/create-competition-form.tsx";
 import CompetitionListPage from "./pages/competition-list-page.tsx";
+import VotePage from "./pages/vote-page.tsx";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/vote/:matchId" element={<VotePage />} />
           <Route
             path="/dashboard"
             element={

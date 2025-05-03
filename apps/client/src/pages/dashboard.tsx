@@ -8,6 +8,7 @@ import { useDashboard } from "../hooks/use-dashboard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { useEffect } from "react";
+import Loading from "../components/ui/loading";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -45,14 +46,7 @@ export default function Dashboard() {
   }, [user, refreshData]);
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 p-6">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-accent border-t-transparent"></div>
-        <p className="text-accent" aria-live="polite">
-          Loading dashboard...
-        </p>
-      </div>
-    );
+    return <Loading text="Loading dashboard..." />;
   }
 
   return (

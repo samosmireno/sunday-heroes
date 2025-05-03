@@ -1,4 +1,4 @@
-import { Match, Prisma } from "@prisma/client";
+import { Match, Prisma, VotingStatus } from "@prisma/client";
 import prisma from "./prisma-client";
 
 export type MatchWithDetails = Prisma.MatchGetPayload<{
@@ -134,6 +134,20 @@ export class MatchRepo {
 
   static async updateMatch(id: string, data: Partial<Match>): Promise<Match> {
     return prisma.match.update({ where: { id }, data });
+  }
+
+  static async updateMatchVotingStatus(
+    matchId: string,
+    status: VotingStatus,
+    votingEndDate: Date
+  ) {
+    return await prisma.match.update({
+      where: { id: matchId },
+      data: {
+        voting_status: status,
+        ...(status === "CLOSED" ? { voting_ends_at: new Date() } : {}),
+      },
+    });
   }
 
   static async deleteMatch(id: string): Promise<Match> {

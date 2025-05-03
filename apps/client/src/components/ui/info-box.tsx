@@ -28,7 +28,7 @@ export const InfoBox = ({
   return (
     <div
       className={cn(
-        "rounded-lg border p-3 sm:p-4",
+        "rounded-lg border-2 p-3 sm:p-4",
         variantStyles[variant],
         className,
       )}
