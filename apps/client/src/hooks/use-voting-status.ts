@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
 
 interface VotePlayer {
@@ -37,6 +37,9 @@ export const useVotingStatus = (matchId: string, voterId: string) => {
     votingStatus: votingStatusQuery.data,
     isLoading: votingStatusQuery.isLoading,
     refetch: votingStatusQuery.refetch,
-    error: votingStatusQuery.error,
+    error:
+      votingStatusQuery.error instanceof AxiosError
+        ? votingStatusQuery.error.response?.data
+        : votingStatusQuery.error,
   };
 };

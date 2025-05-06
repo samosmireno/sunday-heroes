@@ -14,12 +14,15 @@ import {
   VotingStatus,
   createCompetitionRequest,
   DetailedCompetitionResponse,
+  CompetitionVotes,
+  PendingVote,
 } from "@repo/logger";
 import { Competition, Match, MatchPlayer } from "@prisma/client";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
 import {
   CompetitionWithDetails,
   CompetitionWithMatches,
+  CompetitionWithPendingVotes,
 } from "../repositories/competition-repo";
 import { DashboardVoteService } from "../repositories/vote-repo";
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
@@ -368,4 +371,37 @@ export function transformDashboardVotesToResponse(
   }));
 
   return votes;
+}
+
+export function transformCompetitionServiceToPendingVotes(
+  data: CompetitionWithPendingVotes
+): CompetitionVotes {
+  const pendingVotes: PendingVote[] = data.matches.flatMap((match) => {
+    const players = match.matchPlayers.flatMap((player) => ({
+      playerId: player.dashboard_player_id,
+      name: player.dashboard_player.nickname,
+      voted: player.dashboard_player.votes_given
+        .map((match) => match.match_id)
+        .includes(match.id),
+    }));
+
+    const teams = match.match_teams.flatMap((mt) => mt.team.name);
+
+    return players.map((p) => ({
+      matchId: match.id,
+      matchDate: match.date.toDateString(),
+      playerName: p.name,
+      playerId: p.playerId,
+      voted: p.voted,
+      teams: teams,
+      homeScore: match.home_team_score,
+      awayScore: match.away_team_score,
+    }));
+  });
+
+  return {
+    competitionId: data.id,
+    competitionName: data.name,
+    pendingVotes: pendingVotes,
+  };
 }

@@ -38,6 +38,7 @@ export default function VotePage() {
   if (!matchId || !voterId) return;
 
   const { votingStatus, isLoading, error } = useVotingStatus(matchId, voterId);
+  console.log(error);
 
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayers((prev) => {
@@ -87,11 +88,11 @@ export default function VotePage() {
 
   if (error) {
     return (
-      <div className="flex-1 p-6">
+      <div className="h-screen flex-1 bg-bg p-6">
         <Header title="Voting Error" hasSidebar={false} />
-        <div className="rounded-lg border-2 border-red-500 bg-panel-bg p-6 shadow-lg">
+        <div className="srounded-lg relative border-2 border-red-500 bg-panel-bg p-6 shadow-lg">
           <h2 className="mb-4 text-xl font-bold text-red-500">Error</h2>
-          <p className="text-gray-200">{error.message}</p>
+          <p className="text-gray-200">{error}</p>
         </div>
       </div>
     );
@@ -99,10 +100,10 @@ export default function VotePage() {
 
   if (!votingStatus) {
     return (
-      <div className="flex-1 p-6">
+      <div className="h-screen flex-1 bg-bg p-6">
         <Header title="Match not found" hasSidebar={false} />
 
-        <div className="rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
+        <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
             The requested match could not be found or you don't have permission
             to vote.
@@ -114,10 +115,10 @@ export default function VotePage() {
 
   if (success) {
     return (
-      <div className="flex-1 p-6">
+      <div className="h-screen flex-1 bg-bg p-6">
         <Header title="Vote Successful" hasSidebar={false} />
 
-        <div className="rounded-lg border-2 border-green-500 bg-panel-bg p-6 shadow-lg">
+        <div className="relative rounded-lg border-2 border-green-500 bg-panel-bg p-6 shadow-lg">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <CheckCircle2 className="h-16 w-16 text-green-500" />
             <h2 className="text-2xl font-bold text-green-500">
@@ -135,10 +136,11 @@ export default function VotePage() {
 
   if (votingStatus.hasVoted) {
     return (
-      <div className="flex-1 p-6">
+      <div className="h-screen flex-1 bg-bg p-6">
+        <Background />
         <Header title="Already Voted" hasSidebar={false} />
 
-        <div className="rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
+        <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
             You have already submitted your votes for this match. Thank you for
             participating!
@@ -150,10 +152,11 @@ export default function VotePage() {
 
   if (!votingStatus.votingOpen) {
     return (
-      <div className="flex-1 p-6">
+      <div className="h-screen flex-1 bg-bg p-6">
+        <Background />
         <Header title="Voting Closed" hasSidebar={false} />
 
-        <div className="rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
+        <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
             Voting is no longer available for this match. The voting period has
             ended.

@@ -10,6 +10,7 @@ import Dashboard from "./pages/dashboard.tsx";
 import CreateCompetitionForm from "./pages/create-competition-form.tsx";
 import CompetitionListPage from "./pages/competition-list-page.tsx";
 import VotePage from "./pages/vote-page.tsx";
+import AdminPendingVotes from "./pages/pending-votes-page.tsx";
 
 export default function App() {
   return (
@@ -20,6 +21,10 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/vote/:matchId" element={<VotePage />} />
+          <Route
+            path="/pending/:competitionId"
+            element={<AdminPendingVotes />}
+          />
           <Route
             path="/dashboard"
             element={

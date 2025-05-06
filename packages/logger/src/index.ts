@@ -126,3 +126,20 @@ export type UserResponse = {
   name: string;
   role: Role;
 };
+
+export type PendingVote = {
+  matchId: string;
+  matchDate: string;
+  playerName: string;
+  playerId: string;
+  voted: boolean;
+  teams: string[];
+  homeScore: number;
+  awayScore: number;
+};
+
+export type CompetitionVotes = {
+  competitionId: string;
+  competitionName: string;
+  pendingVotes: PendingVote[];
+};

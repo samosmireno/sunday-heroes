@@ -21,6 +21,7 @@ import {
 } from "../handlers/competition";
 import {
   getAllVotesFromDashboard,
+  getPendingVotesForCompetition,
   getVotingStatus,
   submitVotes,
   submitVotesSchema,
@@ -108,6 +109,11 @@ router.post(
   authenticateToken,
   validateRequestBody(submitVotesSchema),
   submitVotes
+);
+
+router.get(
+  "/admin/pending-votes/:competitionId",
+  getPendingVotesForCompetition
 );
 
 export default router;

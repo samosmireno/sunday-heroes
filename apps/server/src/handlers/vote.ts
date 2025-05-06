@@ -1,11 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { VoteRepo } from "../repositories/vote-repo";
-import { transformDashboardVotesToResponse } from "../utils/utils";
+import {
+  transformCompetitionServiceToPendingVotes,
+  transformDashboardVotesToResponse,
+} from "../utils/utils";
 import { UserRepo } from "../repositories/user-repo";
 import { z } from "zod";
 import { MatchPlayerRepo } from "../repositories/match-player-repo";
 import { MatchRepo } from "../repositories/match-repo";
 import { VotingStatus } from "@prisma/client";
+import {
+  CompetitionRepo,
+  CompetitionWithDetails,
+  CompetitionWithPendingVotes,
+} from "../repositories/competition-repo";
 
 export const submitVotesSchema = z.object({
   matchId: z.string(),
@@ -116,6 +124,15 @@ export const getVotingStatus = async (
       return res.status(404).send("Match not found");
     }
 
+    const playerInMatch = await MatchPlayerRepo.isPlayerInMatch(
+      voterId,
+      matchId
+    );
+
+    if (!playerInMatch) {
+      return res.status(404).send("The player has not played in this match");
+    }
+
     const hasVoted = await VoteRepo.hasPlayerVoted(voterId, matchId);
 
     res.json({
@@ -130,6 +147,29 @@ export const getVotingStatus = async (
         canVoteFor: player.dashboard_player_id !== voterId,
       })),
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPendingVotesForCompetition = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const competitionId = req.params.competitionId;
+
+    const competition: CompetitionWithPendingVotes | null =
+      await CompetitionRepo.getCompetitionWithPendingVotes(competitionId);
+    if (!competition) {
+      return res.status(404).send("Competition not found");
+    }
+
+    const competitionVotes =
+      transformCompetitionServiceToPendingVotes(competition);
+
+    res.json(competitionVotes);
   } catch (error) {
     next(error);
   }

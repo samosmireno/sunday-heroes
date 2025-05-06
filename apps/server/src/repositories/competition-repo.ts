@@ -34,6 +34,47 @@ export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
   };
 }>;
 
+export type CompetitionWithPendingVotes = Prisma.CompetitionGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    matches: {
+      select: {
+        id: true;
+        date: true;
+        home_team_score: true;
+        away_team_score: true;
+        penalty_home_score: true;
+        penalty_away_score: true;
+        match_teams: {
+          select: {
+            team: {
+              select: {
+                name: true;
+              };
+            };
+          };
+        };
+        matchPlayers: {
+          select: {
+            dashboard_player_id: true;
+            dashboard_player: {
+              select: {
+                nickname: true;
+                votes_given: {
+                  select: {
+                    match_id: true;
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}>;
+
 export class CompetitionRepo {
   static async getAllCompetitionsFromDashboard(
     dashboard_id: string
@@ -188,5 +229,57 @@ export class CompetitionRepo {
     data: Omit<Competition, "id">
   ): Promise<Competition> {
     return prisma.competition.create({ data });
+  }
+
+  static async getCompetitionWithPendingVotes(
+    competition_id: string
+  ): Promise<CompetitionWithPendingVotes | null> {
+    const competition = await prisma.competition.findUnique({
+      where: {
+        id: competition_id,
+      },
+      select: {
+        id: true,
+        name: true,
+        matches: {
+          select: {
+            id: true,
+            date: true,
+            home_team_score: true,
+            away_team_score: true,
+            penalty_home_score: true,
+            penalty_away_score: true,
+            match_teams: {
+              select: {
+                team: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+            matchPlayers: {
+              select: {
+                dashboard_player_id: true,
+                dashboard_player: {
+                  select: {
+                    nickname: true,
+                    votes_given: {
+                      select: {
+                        match_id: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!competition) return null;
+
+    return competition;
   }
 }
