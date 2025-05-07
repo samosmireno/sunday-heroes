@@ -1,5 +1,6 @@
 import { MatchPlayer, Prisma, Team } from "@prisma/client";
 import prisma from "./prisma-client";
+import { PrismaTransaction } from "../types";
 
 export type MatchPlayerWithDetails = Prisma.MatchPlayerGetPayload<{
   include: {
@@ -51,10 +52,22 @@ export class MatchPlayerRepo {
   }
 
   static async createMatchPlayer(
-    matchPlayer: Omit<MatchPlayer, "id">
+    matchPlayer: Omit<MatchPlayer, "id">,
+    tx?: PrismaTransaction
   ): Promise<MatchPlayer> {
-    return prisma.matchPlayer.create({
+    const prismaClient = tx || prisma;
+    return prismaClient.matchPlayer.create({
       data: matchPlayer,
+    });
+  }
+
+  static async createMatchPlayers(
+    matchPlayers: Omit<MatchPlayer, "id">[],
+    tx?: PrismaTransaction
+  ): Promise<{ count: number }> {
+    const prismaClient = tx || prisma;
+    return prismaClient.matchPlayer.createMany({
+      data: matchPlayers,
     });
   }
 

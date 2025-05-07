@@ -8,6 +8,7 @@ export type DashboardVoteService = Prisma.PlayerVoteGetPayload<{
         id: true;
         home_team_score: true;
         away_team_score: true;
+        voting_status: true;
         competition: {
           select: {
             id: true;
@@ -75,6 +76,7 @@ export class VoteRepo {
             id: true,
             home_team_score: true,
             away_team_score: true,
+            voting_status: true,
             competition: {
               select: {
                 id: true,

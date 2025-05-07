@@ -5,6 +5,7 @@ import apiRoutes from "./routes/api";
 import authRoutes from "./routes/auth";
 import { config } from "./config/config";
 import errorHandler from "./middleware/error-handler";
+import { setupScheduledTasks } from "./services/match-expired-service";
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use(
 app.use("/api", apiRoutes);
 app.use("/auth", authRoutes);
 app.use(errorHandler);
+
+setupScheduledTasks();
 
 if (config.env === "production") {
   app.listen(Number(config.port), "0.0.0.0", () => {

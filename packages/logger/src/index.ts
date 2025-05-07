@@ -1,4 +1,4 @@
-import { CompetitionType, MatchType, Role } from "./enums";
+import { CompetitionType, MatchType, Role, VotingStatus } from "./enums";
 
 export * from "./schemas";
 export * from "./enums";
@@ -74,6 +74,7 @@ export type DashboardMatchResponse = {
   penalty_away_score?: number;
   teams: string[];
   match_players: number;
+  voting_status: VotingStatus;
 };
 
 export type DashboardCompetitionResponse = {
@@ -101,6 +102,7 @@ export type DashboardVoteResponse = {
     id: string;
     home_team_score: number;
     away_team_score: number;
+    voting_status: VotingStatus;
   };
   competition: {
     id: string;

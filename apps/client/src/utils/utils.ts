@@ -5,6 +5,7 @@ import {
   DashboardResponse,
   DashboardMatchResponse,
   DashboardVoteResponse,
+  VotingStatus,
 } from "@repo/logger";
 import { Team } from "../types/types";
 
@@ -126,10 +127,16 @@ export const calculatePendingVotes = (
   matches: DashboardMatchResponse[],
   votes: DashboardVoteResponse[],
 ): number => {
-  const numPlayersToVote = matches.reduce((total, match) => {
+  const matchesToVote = matches.filter(
+    (match) => match.voting_status === VotingStatus.OPEN,
+  );
+  const numPlayersToVote = matchesToVote.reduce((total, match) => {
     return total + match.match_players;
   }, 0);
-  const numVotes = votes.length;
+
+  const numVotes =
+    votes.filter((vote) => vote.match.voting_status === VotingStatus.OPEN)
+      .length / 3; // TODO: 3 represents number of players per vote
 
   return numPlayersToVote - numVotes;
 };

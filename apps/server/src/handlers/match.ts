@@ -16,6 +16,7 @@ import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
 import { DashboardRepo } from "../repositories/dashboard-repo";
 import { CompetitionRepo } from "../repositories/competition-repo";
 import { EmailService } from "../services/email-service";
+import { MatchTeamRepo } from "../repositories/match-team-repo";
 
 export const getAllMatches = async (
   req: Request,
@@ -116,6 +117,20 @@ export const createMatch = async (
       dashboardId
     );
 
+    await MatchTeamRepo.createMatchTeam({
+      match_id: match.id,
+      team_id: hometeamID,
+      is_home: true,
+      created_at: new Date(),
+    });
+
+    await MatchTeamRepo.createMatchTeam({
+      match_id: match.id,
+      team_id: awayteamID,
+      is_home: true,
+      created_at: new Date(),
+    });
+
     await Promise.all(
       data.players.map(async (player: DuelPlayerRequest) => {
         const user = await DashboardPlayerRepo.getDashboardPlayerByNickname(
@@ -155,8 +170,8 @@ export const createMatch = async (
         competitionName: competition.name,
         competitionVotingDays: competition.voting_period_days ?? 7,
         date: match.date,
-        homeTeam: "Home",
-        awayTeam: "Away",
+        homeTeam: data.teams[0],
+        awayTeam: data.teams[1],
         homeScore: match.home_team_score,
         awayScore: match.away_team_score,
       };

@@ -1,4 +1,9 @@
-import { Competition, CompetitionType, Prisma } from "@prisma/client";
+import {
+  Competition,
+  CompetitionType,
+  Prisma,
+  VotingStatus,
+} from "@prisma/client";
 import prisma from "./prisma-client";
 
 export type CompetitionWithMatches = Prisma.CompetitionGetPayload<{
@@ -242,6 +247,9 @@ export class CompetitionRepo {
         id: true,
         name: true,
         matches: {
+          where: {
+            voting_status: VotingStatus.OPEN,
+          },
           select: {
             id: true,
             date: true,

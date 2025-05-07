@@ -153,4 +153,54 @@ export class MatchRepo {
   static async deleteMatch(id: string): Promise<Match> {
     return prisma.match.delete({ where: { id } });
   }
+
+  static async closeExpiredMatchVoting(): Promise<void> {
+    const now = new Date();
+
+    const result = await prisma.match.updateMany({
+      where: {
+        voting_status: "OPEN",
+        voting_ends_at: {
+          not: null,
+          lt: now,
+        },
+      },
+      data: {
+        voting_status: "CLOSED",
+      },
+    });
+  }
+
+  static async closeExpiredMatchVotingTest() {
+    const expiredMatches = await prisma.match.findMany({
+      where: {
+        voting_status: "OPEN",
+        voting_ends_at: {
+          not: null,
+          lt: new Date(),
+        },
+      },
+      select: {
+        id: true,
+        date: true,
+        voting_ends_at: true,
+        competition: {
+          select: {
+            name: true,
+          },
+        },
+        match_teams: {
+          select: {
+            team: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    console.log(expiredMatches);
+  }
 }

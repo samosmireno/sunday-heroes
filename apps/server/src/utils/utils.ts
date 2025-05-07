@@ -233,6 +233,8 @@ export function transformDashboardMatchesToResponse(
     penalty_away_score: match.penalty_away_score ?? undefined,
     teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
     match_players: match.matchPlayers.length,
+    voting_status:
+      match.voting_status as DashboardMatchResponse["voting_status"],
   }));
 
   return matchesResponse;
@@ -350,6 +352,8 @@ export function transformDashboardVotesToResponse(
       id: vote.match.id,
       home_team_score: vote.match.home_team_score,
       away_team_score: vote.match.away_team_score,
+      voting_status: vote.match
+        .voting_status as DashboardVoteResponse["match"]["voting_status"],
     },
     competition: {
       id: vote.match.competition.id,
