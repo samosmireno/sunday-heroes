@@ -11,7 +11,6 @@ interface MatchProps {
   date: string;
   homeScore: number;
   awayScore: number;
-  round: number;
   penaltyHomeScore?: number;
   penaltyAwayScore?: number;
   isSelectedMatch: boolean;
@@ -23,7 +22,6 @@ export default function MatchResult({
   date,
   homeScore,
   awayScore,
-  round,
   penaltyHomeScore,
   penaltyAwayScore,
   refetchMatches,
@@ -63,9 +61,6 @@ export default function MatchResult({
     <div>
       <div className="relative mb-3 rounded-lg border-2 border-accent bg-secondary p-3 text-center shadow-inner sm:mb-4 sm:p-4 md:mb-6 md:p-6">
         <div className="flex w-full flex-col">
-          <div className="mb-2 text-xs text-accent sm:mb-4 sm:text-sm">
-            Round {round}
-          </div>
           <div className="mb-3 flex items-center justify-center gap-4 text-2xl font-bold sm:mb-4 sm:text-3xl md:mb-6 md:text-4xl">
             <div className="flex flex-col gap-2 text-center sm:gap-3 md:gap-4">
               <div className="mx-2 text-xs sm:mx-4 sm:text-sm md:text-base">

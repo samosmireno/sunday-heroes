@@ -52,7 +52,7 @@ export default function AddMultiForm() {
       return;
     }
 
-    const reqData = transformDuelFormToRequest(data, competitionId, 1);
+    const reqData = transformDuelFormToRequest(data, competitionId);
 
     try {
       let response;

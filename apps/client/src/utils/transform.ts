@@ -12,7 +12,7 @@ const isPlayerHome = (nickname: string, homePlayers: string[]): boolean => {
 export const transformDuelFormToRequest = (
   data: AddDuelFormValues,
   competition_id: string,
-  round: number,
+  round?: number,
 ): createMatchRequest => {
   const duelPlayers = data.matchPlayers.players.map((player) => ({
     nickname: player.nickname,
@@ -29,7 +29,7 @@ export const transformDuelFormToRequest = (
     matchType: data.match.matchType,
     players: duelPlayers,
     competitionId: competition_id,
-    round: round,
+    round: round ? round : 1,
     teams: ["Home", "Away"],
   };
 

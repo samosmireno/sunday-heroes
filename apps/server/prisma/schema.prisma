@@ -200,8 +200,8 @@ model MatchTeam {
   is_home    Boolean
   created_at DateTime @default(now())
 
-  match      Match     @relation(fields: [match_id], references: [id])
-  team       Team      @relation(fields: [team_id], references: [id])
+  match      Match     @relation(fields: [match_id], references: [id],onDelete: Cascade)
+  team       Team      @relation(fields: [team_id], references: [id],onDelete: Cascade)
 
   @@unique([match_id, team_id])
   @@index([match_id])

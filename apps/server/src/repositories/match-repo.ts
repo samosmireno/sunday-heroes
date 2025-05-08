@@ -1,5 +1,6 @@
 import { Match, Prisma, VotingStatus } from "@prisma/client";
 import prisma from "./prisma-client";
+import { PrismaTransaction } from "../types";
 
 export type MatchWithDetails = Prisma.MatchGetPayload<{
   include: {
@@ -128,20 +129,31 @@ export class MatchRepo {
     });
   }
 
-  static async createMatch(data: Omit<Match, "id">): Promise<Match> {
-    return prisma.match.create({ data });
+  static async createMatch(
+    data: Omit<Match, "id">,
+    tx?: PrismaTransaction
+  ): Promise<Match> {
+    const prismaClient = tx || prisma;
+    return prismaClient.match.create({ data });
   }
 
-  static async updateMatch(id: string, data: Partial<Match>): Promise<Match> {
-    return prisma.match.update({ where: { id }, data });
+  static async updateMatch(
+    id: string,
+    data: Partial<Match>,
+    tx?: PrismaTransaction
+  ): Promise<Match> {
+    const prismaClient = tx || prisma;
+    return prismaClient.match.update({ where: { id }, data });
   }
 
   static async updateMatchVotingStatus(
     matchId: string,
     status: VotingStatus,
-    votingEndDate: Date
+    votingEndDate: Date,
+    tx?: PrismaTransaction
   ) {
-    return await prisma.match.update({
+    const prismaClient = tx || prisma;
+    return await prismaClient.match.update({
       where: { id: matchId },
       data: {
         voting_status: status,

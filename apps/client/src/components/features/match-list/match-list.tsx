@@ -33,7 +33,7 @@ export default function MatchList({
     .map((match, index) => ({ match, index }))
     .sort(
       (a, b) =>
-        new Date(a.match.date).getTime() - new Date(b.match.date).getTime(),
+        new Date(b.match.date).getTime() - new Date(a.match.date).getTime(),
     )
     .map(({ index }) => index);
 
@@ -87,7 +87,7 @@ export default function MatchList({
               .slice()
               .sort(
                 (a, b) =>
-                  new Date(a.date).getTime() - new Date(b.date).getTime(),
+                  new Date(b.date).getTime() - new Date(a.date).getTime(),
               )
               .map((match) => {
                 if (!match) return null;
@@ -99,7 +99,6 @@ export default function MatchList({
                       date={match.date.split("T")[0]}
                       homeScore={match.home_team_score}
                       awayScore={match.away_team_score}
-                      round={match.round}
                       isSelectedMatch={
                         matches[selectedMatch] &&
                         matches[selectedMatch].id === match.id

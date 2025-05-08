@@ -82,8 +82,12 @@ export class MatchPlayerRepo {
     return prisma.matchPlayer.delete({ where: { id } });
   }
 
-  static async deleteMatchPlayersFromMatch(match_id: string) {
-    return prisma.matchPlayer.deleteMany({ where: { match_id } });
+  static async deleteMatchPlayersFromMatch(
+    match_id: string,
+    tx?: PrismaTransaction
+  ) {
+    const prismaClient = tx || prisma;
+    return prismaClient.matchPlayer.deleteMany({ where: { match_id } });
   }
 
   static async isPlayerInMatch(

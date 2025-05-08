@@ -5,6 +5,7 @@ import {
   VotingStatus,
 } from "@prisma/client";
 import prisma from "./prisma-client";
+import { PrismaTransaction } from "../types";
 
 export type CompetitionWithMatches = Prisma.CompetitionGetPayload<{
   include: {
@@ -188,9 +189,11 @@ export class CompetitionRepo {
   }
 
   static async getCompetitionById(
-    competition_id: string
+    competition_id: string,
+    tx?: PrismaTransaction
   ): Promise<CompetitionWithDetails | null> {
-    return prisma.competition.findUnique({
+    const prismaClient = tx || prisma;
+    return prismaClient.competition.findUnique({
       where: {
         id: competition_id,
       },

@@ -1,5 +1,17 @@
-import { DashboardPlayer } from "@prisma/client";
+import { DashboardPlayer, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
+import { PrismaTransaction } from "../types";
+
+export type DashboardPlayerWithUserDetails = Prisma.DashboardPlayerGetPayload<{
+  include: {
+    user: {
+      select: {
+        id: true;
+        email: true;
+      };
+    };
+  };
+}>;
 
 export class DashboardPlayerRepo {
   static async getAllDashboardPlayers(): Promise<DashboardPlayer[]> {
@@ -14,10 +26,51 @@ export class DashboardPlayerRepo {
 
   static async getDashboardPlayerByNickname(
     nickname: string,
-    dashboard_id: string
-  ): Promise<DashboardPlayer | null> {
-    return prisma.dashboardPlayer.findUnique({
-      where: { dashboard_id_nickname: { dashboard_id, nickname } },
+    dashboardId: string,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithUserDetails | null> {
+    const prismaClient = tx || prisma;
+
+    return prismaClient.dashboardPlayer.findUnique({
+      where: {
+        dashboard_id_nickname: {
+          dashboard_id: dashboardId,
+          nickname: nickname,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+      },
+    });
+  }
+
+  static async getDashboardPlayersByNicknames(
+    nicknames: string[],
+    dashboardId: string,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithUserDetails[]> {
+    const prismaClient = tx || prisma;
+
+    return prismaClient.dashboardPlayer.findMany({
+      where: {
+        dashboard_id: dashboardId,
+        nickname: {
+          in: nicknames,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+      },
     });
   }
 
@@ -68,10 +121,12 @@ export class DashboardPlayerRepo {
 
   static async addMissingUsers(
     playerNames: string[],
-    dashboard_id: string
+    dashboard_id: string,
+    tx?: PrismaTransaction
   ): Promise<void> {
+    const prismaClient = tx || prisma;
     for (const playerName of playerNames) {
-      const existingPlayer = await prisma.dashboardPlayer.findFirst({
+      const existingPlayer = await prismaClient.dashboardPlayer.findFirst({
         where: {
           dashboard_id,
           nickname: { equals: playerName, mode: "insensitive" },
@@ -79,7 +134,7 @@ export class DashboardPlayerRepo {
       });
 
       if (!existingPlayer) {
-        await prisma.dashboardPlayer.create({
+        await prismaClient.dashboardPlayer.create({
           data: { nickname: playerName, dashboard_id },
         });
       }
@@ -90,8 +145,11 @@ export class DashboardPlayerRepo {
     return prisma.dashboardPlayer.delete({ where: { id } });
   }
 
-  static async deleteDashboardPlayersWithNoMatches(): Promise<void> {
-    await prisma.dashboardPlayer.deleteMany({
+  static async deleteDashboardPlayersWithNoMatches(
+    tx?: PrismaTransaction
+  ): Promise<void> {
+    const prismaClient = tx || prisma;
+    await prismaClient.dashboardPlayer.deleteMany({
       where: {
         match_players: {
           none: {},
