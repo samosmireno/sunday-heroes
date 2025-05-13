@@ -17,7 +17,7 @@ import {
   CompetitionVotes,
   PendingVote,
 } from "@repo/logger";
-import { Competition, Match, MatchPlayer } from "@prisma/client";
+import { Competition, Match, MatchPlayer, PlayerVote } from "@prisma/client";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
 import {
   CompetitionWithDetails,
@@ -26,6 +26,7 @@ import {
 } from "../repositories/competition-repo";
 import { DashboardVoteService } from "../repositories/vote-repo";
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
+import { config } from "../config/config";
 
 export function createStepSchema<T extends Record<string, z.ZodType>>(
   steps: T
@@ -46,6 +47,24 @@ function sortPlayersHomeAwayByPosition(
   return [...homePlayers, ...awayPlayers];
 }
 
+function calculatePlayerScore(
+  received_votes: PlayerVote[],
+  match_votes: PlayerVote[]
+) {
+  if (received_votes.length > 0 && match_votes.length > 0) {
+    const votePointsSum = received_votes.reduce(
+      (sum, vote) => sum + vote.points,
+      0
+    );
+
+    return (
+      (votePointsSum / match_votes.length) * config.votes.maxVotesPerPlayer
+    );
+  }
+
+  return 0;
+}
+
 export function transformMatchServiceToResponse(
   data: MatchWithDetails
 ): MatchResponse {
@@ -56,6 +75,7 @@ export function transformMatchServiceToResponse(
     goals: player.goals,
     assists: player.assists,
     position: player.position,
+    rating: calculatePlayerScore(player.received_votes, data.player_votes),
   }));
 
   const sortedPlayers = sortPlayersHomeAwayByPosition(mappedPlayers);
@@ -154,7 +174,10 @@ export function transformDashboardServiceToResponse(
           assists: player.assists,
           position: player.position,
           penalty_scored: player.penalty_scored ?? undefined,
-          votes: player.dashboard_player.votes_given.map((vote) => vote.points),
+          rating: calculatePlayerScore(
+            player.received_votes,
+            match.player_votes
+          ),
         }));
 
         return {
@@ -294,16 +317,18 @@ export function transformCompetitionToResponse(
     penalty_home_score: match.penalty_home_score ?? undefined,
     penalty_away_score: match.penalty_away_score ?? undefined,
     teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
-    players: match.matchPlayers.map((player) => ({
-      id: player.id,
-      nickname: player.dashboard_player.nickname,
-      isHome: player.is_home,
-      goals: player.goals,
-      assists: player.assists,
-      position: player.position,
-      penalty_scored: player.penalty_scored ?? undefined,
-      votes: player.received_votes.map((vote) => vote.points),
-    })),
+    players: match.matchPlayers.map((player) => {
+      return {
+        id: player.id,
+        nickname: player.dashboard_player.nickname,
+        isHome: player.is_home,
+        goals: player.goals,
+        assists: player.assists,
+        position: player.position,
+        penalty_scored: player.penalty_scored ?? undefined,
+        rating: calculatePlayerScore(player.received_votes, match.player_votes),
+      };
+    }),
   }));
 
   const playerStats: PlayerTotals[] = data.matches

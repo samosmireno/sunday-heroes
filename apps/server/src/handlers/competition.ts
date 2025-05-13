@@ -90,7 +90,9 @@ export const getCompetitionStats = async (
     }
     const competition = await CompetitionRepo.getCompetitionById(competitionId);
     if (competition) {
-      res.json(transformCompetitionToResponse(competition));
+      const compResponse = transformCompetitionToResponse(competition);
+      //console.log(compResponse.matches[0].players[0]);
+      res.json(compResponse);
     } else {
       res.status(404).send("Competition not found");
     }

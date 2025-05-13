@@ -24,6 +24,7 @@ export type DashboardWithDetails = Prisma.DashboardGetPayload<{
                 team: true;
               };
             };
+            player_votes: true;
           };
         };
       };
@@ -65,6 +66,7 @@ export class DashboardRepo {
                     team: true,
                   },
                 },
+                player_votes: true,
               },
             },
           },

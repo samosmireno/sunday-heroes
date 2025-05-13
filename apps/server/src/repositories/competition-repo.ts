@@ -35,6 +35,7 @@ export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
             team: true;
           };
         };
+        player_votes: true;
       };
     };
   };
@@ -137,6 +138,7 @@ export class CompetitionRepo {
                 team: true,
               },
             },
+            player_votes: true,
           },
         },
       },
@@ -217,6 +219,7 @@ export class CompetitionRepo {
                 team: true,
               },
             },
+            player_votes: true,
           },
         },
       },

@@ -62,4 +62,9 @@ export const config = {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
   },
+  votes: {
+    maxVotesPerPlayer: 3,
+    pointsDistribution: [3, 2, 1],
+    defaultVotingPeriodDays: 7,
+  },
 };

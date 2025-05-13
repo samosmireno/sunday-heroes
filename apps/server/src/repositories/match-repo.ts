@@ -7,6 +7,7 @@ export type MatchWithDetails = Prisma.MatchGetPayload<{
     matchPlayers: {
       include: {
         dashboard_player: true;
+        received_votes: true;
       };
     };
     match_teams: {
@@ -14,6 +15,7 @@ export type MatchWithDetails = Prisma.MatchGetPayload<{
         team: true;
       };
     };
+    player_votes: true;
   };
 }>;
 
@@ -48,6 +50,7 @@ export class MatchRepo {
         matchPlayers: {
           include: {
             dashboard_player: true,
+            received_votes: true,
           },
         },
         match_teams: {
@@ -55,6 +58,7 @@ export class MatchRepo {
             team: true,
           },
         },
+        player_votes: true,
       },
     });
   }
@@ -68,6 +72,7 @@ export class MatchRepo {
         matchPlayers: {
           include: {
             dashboard_player: true,
+            received_votes: true,
           },
         },
         match_teams: {
@@ -75,6 +80,7 @@ export class MatchRepo {
             team: true,
           },
         },
+        player_votes: true,
       },
     });
   }
@@ -118,6 +124,7 @@ export class MatchRepo {
         matchPlayers: {
           include: {
             dashboard_player: true,
+            received_votes: true,
           },
         },
         match_teams: {
@@ -125,6 +132,7 @@ export class MatchRepo {
             team: true,
           },
         },
+        player_votes: true,
       },
     });
   }

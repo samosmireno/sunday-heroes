@@ -20,6 +20,8 @@ function CompetitionPage() {
     setCurrentMatch(getCurrentMatch);
   }
 
+  console.log(competition);
+
   if (isLoading) {
     return <Loading text="Loading competition..." />;
   }

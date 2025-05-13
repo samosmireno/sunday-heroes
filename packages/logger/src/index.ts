@@ -10,8 +10,8 @@ export type PlayerResponse = {
   goals: number;
   assists: number;
   position: number;
+  rating: number;
   penalty_scored?: boolean;
-  votes?: number[];
 };
 
 export type PlayerTotals = {
