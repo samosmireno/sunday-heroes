@@ -7,7 +7,7 @@ interface PlayerCardProps {
 export default function PlayerCard({ matchPlayer }: PlayerCardProps) {
   return (
     <div
-      className={`bg-secondary/90 absolute z-50 m-2 w-auto whitespace-nowrap rounded-lg border-2 border-gray-300 p-2 text-gray-300 shadow-lg ${
+      className={`absolute z-50 m-2 w-auto whitespace-nowrap rounded-lg border-2 border-gray-300 bg-secondary/90 p-2 text-gray-300 shadow-lg ${
         matchPlayer.isHome ? "translate-x-1/4" : "-translate-x-1/4"
       }`}
     >
@@ -17,14 +17,7 @@ export default function PlayerCard({ matchPlayer }: PlayerCardProps) {
       <div>
         <div>Goals: {matchPlayer.goals}</div>
         <div>Assists: {matchPlayer.assists}</div>
-        <div>
-          {matchPlayer.votes
-            ? (
-                matchPlayer.votes.reduce((a, b) => a + b, 0) /
-                matchPlayer.votes.length
-              ).toFixed(2)
-            : "No votes"}
-        </div>
+        <div>Rating: {matchPlayer.rating}</div>
       </div>
     </div>
   );

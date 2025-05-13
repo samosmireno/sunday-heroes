@@ -7,7 +7,7 @@ interface PlayerInfoProps {
   matchPlayer: PlayerResponse;
   position: [number, number] | undefined;
   isOnPitch: boolean;
-  starPlayer: string | null;
+  starPlayer?: string;
   isEdited?: boolean;
 }
 

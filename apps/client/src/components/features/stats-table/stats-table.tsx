@@ -56,12 +56,12 @@ export default function StatsTable({ playerStats }: StatsTableProps) {
               >
                 Assists{getSortArrow("totalAssists")}
               </th>
-              {/* <th
-                className="p-2 text-left text-sm font-medium duration-300 hover:cursor-pointer hover:text-green-600 md:text-base"
-                onClick={() => sortPlayers("totalRating")}
+              <th
+                className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
+                onClick={() => sortPlayers("rating")}
               >
                 Rating{getSortArrow("totalRating")}
-              </th> */}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -83,13 +83,9 @@ export default function StatsTable({ playerStats }: StatsTableProps) {
                   <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
                     {player.assists}
                   </td>
-                  {/* <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
-                    {(player.votes
-                      ? player.votes.reduce((total, vote) => total + vote, 0) /
-                        player.matches
-                      : 0
-                    ).toFixed(2)}
-                  </td> */}
+                  <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
+                    {player.rating}
+                  </td>
                 </tr>
               ))}
           </tbody>

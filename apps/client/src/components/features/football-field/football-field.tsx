@@ -16,7 +16,7 @@ import {
 import { useEffect, useState } from "react";
 
 interface FootballFieldProps {
-  match: MatchResponse | null;
+  match: MatchResponse;
   isEdited?: boolean;
 }
 
@@ -43,7 +43,7 @@ export default function FootballField({
     }
   }, [match]);
 
-  const starPlayerId = match ? findStarPlayer(match) : null;
+  const starPlayerId = findStarPlayer(match);
 
   return (
     <div className="flex w-full rotate-90 flex-col items-center py-16 md:rotate-0 md:py-8">

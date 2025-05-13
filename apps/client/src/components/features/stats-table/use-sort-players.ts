@@ -23,13 +23,6 @@ export const useSortPlayers = (
       let aValue = a[key];
       let bValue = b[key];
 
-      // if (key === "totalRating") {
-      //   aValue =
-      //     (a.votes?.reduce((total, vote) => total + vote, 0) ?? 0) / a.matches;
-      //   bValue =
-      //     (b.votes?.reduce((total, vote) => total + vote, 0) ?? 0) / b.matches;
-      // }
-
       if (aValue !== undefined && bValue !== undefined) {
         if (aValue > bValue) return 1 * orderMultiplier;
         if (aValue < bValue) return -1 * orderMultiplier;

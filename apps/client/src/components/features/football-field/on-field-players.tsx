@@ -6,7 +6,7 @@ interface OnFieldPlayersProps {
   match: MatchResponse | null;
   homeTeam: boolean;
   playerFormation: { [key: number]: [number, number] };
-  starPlayerId: string | null;
+  starPlayerId?: string;
   isEdited?: boolean;
 }
 

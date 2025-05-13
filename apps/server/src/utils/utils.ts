@@ -57,13 +57,55 @@ function calculatePlayerScore(
       0
     );
 
-    return (
-      (votePointsSum / match_votes.length) * config.votes.maxVotesPerPlayer
-    );
+    const score =
+      (votePointsSum / match_votes.length) * config.votes.maxVotesPerPlayer;
+
+    return Math.round(score * 100) / 100;
   }
 
   return 0;
 }
+
+const calculatePlayerStats = (matches: MatchResponse[]): PlayerTotals[] => {
+  const playerMap = new Map<string, PlayerTotals>();
+
+  matches.forEach((match) => {
+    match.players.forEach((player) => {
+      const existingPlayer = playerMap.get(player.nickname) || {
+        id: player.id,
+        nickname: player.nickname,
+        matches: 0,
+        goals: 0,
+        assists: 0,
+        penalty_scored: 0,
+        rating: 0,
+      };
+
+      const updatedPlayer = {
+        ...existingPlayer,
+        matches: existingPlayer.matches + 1,
+        goals: existingPlayer.goals + player.goals,
+        assists: existingPlayer.assists + player.assists,
+        penalty_scored:
+          (existingPlayer.penalty_scored || 0) +
+          (player.penalty_scored ? 1 : 0),
+        rating: (existingPlayer.rating || 0) + (player.rating || 0),
+      };
+
+      playerMap.set(player.nickname, updatedPlayer);
+    });
+  });
+
+  const playerStats = Array.from(playerMap.values()).map((player) => ({
+    ...player,
+    rating:
+      player.matches > 0
+        ? Math.round((player.rating! / player.matches) * 100) / 100
+        : undefined,
+  }));
+
+  return playerStats;
+};
 
 export function transformMatchServiceToResponse(
   data: MatchWithDetails
@@ -194,32 +236,7 @@ export function transformDashboardServiceToResponse(
         };
       });
 
-      const playerStats: PlayerTotals[] = comp.matches
-        .flatMap((match) => match.matchPlayers)
-        .reduce((acc, matchPlayer) => {
-          const existingPlayer = acc.find(
-            (player) => player.id === matchPlayer.dashboard_player_id
-          );
-          if (existingPlayer) {
-            existingPlayer.matches += 1;
-            existingPlayer.goals += matchPlayer.goals;
-            existingPlayer.assists += matchPlayer.assists;
-            existingPlayer.penalty_scored =
-              (existingPlayer.penalty_scored ?? 0) +
-              (matchPlayer.penalty_scored ? 1 : 0);
-          } else {
-            acc.push({
-              id: matchPlayer.dashboard_player_id,
-              nickname: matchPlayer.dashboard_player.nickname,
-              matches: 1,
-              goals: matchPlayer.goals,
-              assists: matchPlayer.assists,
-              penalty_scored: matchPlayer.penalty_scored ? 1 : 0,
-              votes: matchPlayer.received_votes.map((vote) => vote.points),
-            });
-          }
-          return acc;
-        }, [] as PlayerTotals[]);
+      const playerStats: PlayerTotals[] = calculatePlayerStats(mappedMatches);
 
       return {
         id: comp.id,
@@ -331,32 +348,7 @@ export function transformCompetitionToResponse(
     }),
   }));
 
-  const playerStats: PlayerTotals[] = data.matches
-    .flatMap((match) => match.matchPlayers)
-    .reduce((acc, matchPlayer) => {
-      const existingPlayer = acc.find(
-        (player) => player.id === matchPlayer.dashboard_player_id
-      );
-      if (existingPlayer) {
-        existingPlayer.matches += 1;
-        existingPlayer.goals += matchPlayer.goals;
-        existingPlayer.assists += matchPlayer.assists;
-        existingPlayer.penalty_scored =
-          (existingPlayer.penalty_scored ?? 0) +
-          (matchPlayer.penalty_scored ? 1 : 0);
-      } else {
-        acc.push({
-          id: matchPlayer.dashboard_player_id,
-          nickname: matchPlayer.dashboard_player.nickname,
-          matches: 1,
-          goals: matchPlayer.goals,
-          assists: matchPlayer.assists,
-          penalty_scored: matchPlayer.penalty_scored ? 1 : 0,
-          votes: matchPlayer.received_votes.map((vote) => vote.points),
-        });
-      }
-      return acc;
-    }, [] as PlayerTotals[]);
+  const playerStats: PlayerTotals[] = calculatePlayerStats(matches);
 
   return {
     id: data.id,

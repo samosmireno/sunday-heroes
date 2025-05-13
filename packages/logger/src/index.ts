@@ -21,7 +21,7 @@ export type PlayerTotals = {
   goals: number;
   assists: number;
   penalty_scored?: number;
-  votes?: number[];
+  rating?: number;
 };
 
 export type MatchResponse = {

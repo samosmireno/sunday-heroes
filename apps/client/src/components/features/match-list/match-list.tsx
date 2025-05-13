@@ -81,9 +81,9 @@ export default function MatchList({
         >
           <ArrowLeft size={18} className="sm:size-20" />
         </Button>
-        <CarouselContent className="px-2">
-          {matches && matches.length > 0 ? (
-            matches
+        {matches && matches.length > 0 ? (
+          <CarouselContent className="px-2">
+            {matches
               .slice()
               .sort(
                 (a, b) =>
@@ -109,13 +109,14 @@ export default function MatchList({
                     />
                   </CarouselItem>
                 );
-              })
-          ) : (
-            <div className="w-full rounded-lg bg-primary/20 py-8 text-center text-sm sm:text-base">
-              Add your first match
-            </div>
-          )}
-        </CarouselContent>
+              })}
+          </CarouselContent>
+        ) : (
+          <div className="w-full rounded-lg bg-primary/20 py-8 text-center text-sm sm:text-base">
+            Add your first match
+          </div>
+        )}
+
         <Button
           className="hidden rounded-full bg-transparent p-1 text-accent shadow-none hover:bg-primary disabled:bg-transparent sm:flex sm:p-2"
           onClick={() => {

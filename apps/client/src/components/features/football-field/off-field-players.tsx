@@ -5,7 +5,7 @@ import { getNumPlayersOnField } from "./formations";
 interface OffFieldPlayersProps {
   match: MatchResponse | null;
   homeTeam: boolean;
-  starPlayerId: string | null;
+  starPlayerId?: string;
   isEdited?: boolean;
 }
 
