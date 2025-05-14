@@ -1,20 +1,21 @@
 import { DashboardMatchResponse } from "@repo/logger";
 import DashboardMatchCard from "./dashboard-match-card";
 import { Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface MatchListProps {
   matches: DashboardMatchResponse[];
   title: string;
-  onViewCalendar?: () => void;
-  onMatchClick?: (matchId: string) => void;
+  maxDisplay?: number;
 }
 
 export default function MatchList({
   matches,
   title,
-  onViewCalendar,
-  onMatchClick,
+  maxDisplay = 5,
 }: MatchListProps) {
+  const navigate = useNavigate();
+  const displayedMatches = matches.slice(0, maxDisplay);
   return (
     <div className="flex h-full flex-col">
       <div className="border-b-2 border-accent/70 bg-panel-bg px-4 py-3">
@@ -26,27 +27,22 @@ export default function MatchList({
             <Calendar className="mr-2 h-5 w-5" />
             {title}
           </h2>
-          {onViewCalendar && (
-            <button
-              className="text-sm font-bold text-accent hover:text-accent/80"
-              onClick={onViewCalendar}
-              aria-label="View all matches"
-            >
-              View All
-            </button>
-          )}
+
+          <button
+            className="text-sm font-bold text-accent hover:text-accent/80"
+            onClick={() => navigate("/matches")}
+            aria-label="View all matches"
+          >
+            View All
+          </button>
         </div>
       </div>
       <div className="flex-1 overflow-hidden bg-bg/40">
         <div className="h-full overflow-y-auto p-4">
           {matches && matches.length > 0 ? (
             <div className="grid grid-cols-1 gap-3">
-              {matches.map((match) => (
-                <DashboardMatchCard
-                  key={match.id}
-                  match={match}
-                  onClick={() => onMatchClick && onMatchClick(match.id)}
-                />
+              {displayedMatches.map((match) => (
+                <DashboardMatchCard key={match.id} match={match} />
               ))}
             </div>
           ) : (

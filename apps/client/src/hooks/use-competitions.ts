@@ -21,8 +21,6 @@ interface CompetitionResult {
   totalPages: number;
 }
 
-const POSTS_PER_PAGE = 9;
-
 const fetchCompetitions = async (
   context: QueryFunctionContext<[string, CompetitionQueryParams]>,
 ): Promise<CompetitionResult> => {
@@ -33,7 +31,7 @@ const fetchCompetitions = async (
       userId: id,
       detailed: "true",
       page: page.toString(),
-      limit: POSTS_PER_PAGE.toString(),
+      limit: config.pagination.competition_per_page.toString(),
     });
 
     if (type) {
@@ -48,7 +46,9 @@ const fetchCompetitions = async (
       `${config.server}/api/competitions?${params.toString()}`,
     );
     const totalCount = parseInt(res.headers["x-total-count"] || "0", 10);
-    const totalPages = Math.ceil(totalCount / POSTS_PER_PAGE);
+    const totalPages = Math.ceil(
+      totalCount / config.pagination.competition_per_page,
+    );
 
     return {
       data: res.data,

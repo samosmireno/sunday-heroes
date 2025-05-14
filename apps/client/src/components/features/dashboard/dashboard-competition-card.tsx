@@ -1,14 +1,13 @@
 import { DashboardCompetitionResponse } from "@repo/logger";
 import { Button } from "../../ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardCompetitionCardProps {
   competition: DashboardCompetitionResponse;
-  onViewDetails?: (competitionId: string) => void;
 }
 
 export default function DashboardCompetitionCard({
   competition,
-  onViewDetails,
 }: DashboardCompetitionCardProps) {
   const typeColors = {
     DUEL: {
@@ -25,11 +24,7 @@ export default function DashboardCompetitionCard({
     },
   };
 
-  const handleViewDetails = () => {
-    if (onViewDetails) {
-      onViewDetails(competition.id);
-    }
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="relative overflow-hidden rounded border-2 border-accent/70 bg-panel-bg shadow-md transition-all hover:shadow-lg">
@@ -55,7 +50,7 @@ export default function DashboardCompetitionCard({
 
       <div className="border-t border-accent/30 p-2">
         <Button
-          onClick={handleViewDetails}
+          onClick={() => navigate(`/competition/${competition.id}`)}
           className="w-full rounded bg-accent/20 px-4 py-2 text-sm font-bold text-accent transition-colors hover:bg-accent/30"
         >
           View Details

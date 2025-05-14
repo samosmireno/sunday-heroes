@@ -19,4 +19,7 @@ export const config = {
     authEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
     clientId: import.meta.env.VITE_CLIENT_ID,
   },
+  pagination: {
+    competition_per_page: 12,
+  },
 };

@@ -23,22 +23,6 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
-  const handleViewCompetitionDetails = (competitionId: string) => {
-    navigate(`/competition/${competitionId}`);
-  };
-
-  const handleViewCalendar = () => {
-    navigate("/matches");
-  };
-
-  const handleMatchClick = (matchId: string) => {
-    navigate(`/match/${matchId}`);
-  };
-
-  const handleCreateClick = (userId: string) => {
-    navigate(`/create-competition/${userId}`);
-  };
-
   useEffect(() => {
     if (user) {
       refreshData();
@@ -54,7 +38,9 @@ export default function Dashboard() {
       <div className="mb-6 sm:mb-8">
         <DashboardBanner
           name={user?.name}
-          onCreateClick={() => user && handleCreateClick(user.id)}
+          onCreateClick={() =>
+            user && navigate(`/create-competition/${user.id}`)
+          }
           className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-md"
         />
       </div>
@@ -102,15 +88,12 @@ export default function Dashboard() {
           <div className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
             <DashboardCompetitionList
               competitions={dashboardCompetitions || []}
-              onViewDetails={handleViewCompetitionDetails}
             />
           </div>
           <div className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
             <DashboardMatchList
               title="Latest Matches"
               matches={dashboardMatches || []}
-              onViewCalendar={handleViewCalendar}
-              onMatchClick={handleMatchClick}
             />
           </div>
         </div>

@@ -3,7 +3,6 @@ import { CalendarDays } from "lucide-react";
 
 interface MatchCardProps {
   match: DashboardMatchResponse;
-  onClick?: () => void;
 }
 
 const matchTypeStyles: Record<CompetitionType, { bg: string; text: string }> = {
@@ -12,7 +11,7 @@ const matchTypeStyles: Record<CompetitionType, { bg: string; text: string }> = {
   DUEL: { bg: "bg-duel-800/40", text: "text-duel-300" },
 };
 
-export default function DashboardMatchCard({ match, onClick }: MatchCardProps) {
+export default function DashboardMatchCard({ match }: MatchCardProps) {
   const { bg, text } = matchTypeStyles[match.competition_type];
   const formattedDate = new Date(match.date).toLocaleDateString(undefined, {
     year: "numeric",
@@ -23,15 +22,8 @@ export default function DashboardMatchCard({ match, onClick }: MatchCardProps) {
   return (
     <div
       className="cursor-default rounded border-2 border-accent/50 bg-bg/30 p-3 transition-all hover:bg-bg/50"
-      onClick={onClick}
       tabIndex={0}
       role="button"
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick && onClick();
-        }
-      }}
     >
       <div className="relative mb-1 flex items-center justify-between">
         <span
