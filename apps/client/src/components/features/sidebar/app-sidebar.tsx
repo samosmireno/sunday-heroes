@@ -48,7 +48,7 @@ const sidebarItems = [
   },
   {
     title: "Matches",
-    url: "#/matches",
+    url: "/matches",
     icon: Calendar,
   },
   {

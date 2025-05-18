@@ -1,7 +1,7 @@
 import { MatchResponse } from "@repo/logger";
 
 export default function findStarPlayer(
-  match: MatchResponse,
+  match?: MatchResponse,
 ): string | undefined {
   if (!match || match.players.length === 0) return undefined;
 

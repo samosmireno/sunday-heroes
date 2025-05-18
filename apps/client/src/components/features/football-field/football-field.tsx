@@ -16,7 +16,7 @@ import {
 import { useEffect, useState } from "react";
 
 interface FootballFieldProps {
-  match: MatchResponse;
+  match?: MatchResponse;
   isEdited?: boolean;
 }
 

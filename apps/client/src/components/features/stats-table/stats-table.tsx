@@ -4,9 +4,13 @@ import { UserTotals } from "../../../types/types";
 
 interface StatsTableProps {
   playerStats: PlayerTotals[];
+  votingEnabled?: boolean;
 }
 
-export default function StatsTable({ playerStats }: StatsTableProps) {
+export default function StatsTable({
+  playerStats,
+  votingEnabled,
+}: StatsTableProps) {
   const { sortedPlayers, sortOrder, sortColumn, sortPlayers } = useSortPlayers(
     playerStats,
     "goals",
@@ -56,12 +60,14 @@ export default function StatsTable({ playerStats }: StatsTableProps) {
               >
                 Assists{getSortArrow("totalAssists")}
               </th>
-              <th
-                className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
-                onClick={() => sortPlayers("rating")}
-              >
-                Rating{getSortArrow("totalRating")}
-              </th>
+              {votingEnabled && (
+                <th
+                  className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
+                  onClick={() => sortPlayers("rating")}
+                >
+                  Rating{getSortArrow("totalRating")}
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -83,9 +89,11 @@ export default function StatsTable({ playerStats }: StatsTableProps) {
                   <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
                     {player.assists}
                   </td>
-                  <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
-                    {player.rating}
-                  </td>
+                  {votingEnabled && (
+                    <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
+                      {player.rating}
+                    </td>
+                  )}
                 </tr>
               ))}
           </tbody>

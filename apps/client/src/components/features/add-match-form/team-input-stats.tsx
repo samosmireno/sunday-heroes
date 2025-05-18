@@ -68,7 +68,7 @@ export default function TeamInputStats({
                           {...field}
                           type="number"
                           min={0}
-                          className="no-spinner w-20 rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-center text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                          className="w-20 rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-center text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                         />
                       </FormControl>
                       <FormMessage className="text-red-400" />
@@ -94,7 +94,7 @@ export default function TeamInputStats({
                           {...field}
                           type="number"
                           min={0}
-                          className="no-spinner w-20 rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-center text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                          className="w-20 rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-center text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                         />
                       </FormControl>
                       <FormMessage className="text-red-400" />
@@ -104,31 +104,6 @@ export default function TeamInputStats({
               </div>
             )}
           />
-          {/* <FormField
-            key={`${team}-rating-${index}`}
-            name={`matchPlayers.players.${index + offset}.rating`}
-            render={({ field }) => (
-              <div className="mt-4">
-                <FormItem>
-                  <div className="flex items-center justify-between">
-                    <FormLabel className="text-sm font-medium text-gray-300">Rating</FormLabel>
-                    <div>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="number"
-                          min={0}
-                          step={0.01}
-                          className="no-spinner w-20 rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-center text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-red-400" />
-                    </div>
-                  </div>
-                </FormItem>
-              </div>
-            )}
-          /> */}
         </div>
       ))}
     </div>

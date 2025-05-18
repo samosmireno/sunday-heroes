@@ -34,6 +34,7 @@ export default function AddPlayersForm({ isEdited }: AddPlayersFormProps) {
               selectedPlayers={selectedPlayers}
               setSelectedPlayers={setSelectedPlayers}
               initialPlayers={formPlayers?.homePlayers ?? []}
+              isEdited={isEdited}
             />
             <FormMessage />
           </FormItem>
@@ -44,6 +45,7 @@ export default function AddPlayersForm({ isEdited }: AddPlayersFormProps) {
               selectedPlayers={selectedPlayers}
               setSelectedPlayers={setSelectedPlayers}
               initialPlayers={formPlayers?.awayPlayers ?? []}
+              isEdited={isEdited}
             />
             <FormMessage />
           </FormItem>

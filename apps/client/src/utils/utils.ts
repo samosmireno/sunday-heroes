@@ -150,3 +150,12 @@ export default function swapItems(
   [newArray[index1], newArray[index2]] = [newArray[index2], newArray[index1]];
   return newArray;
 }
+
+export const formatDate = (date: string): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  };
+  return new Date(date).toLocaleString("en-US", options);
+};

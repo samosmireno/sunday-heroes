@@ -8,6 +8,7 @@ import { useCompetition } from "../hooks/use-competition";
 import ErrorPage from "./error-page";
 import Header from "../components/ui/header";
 import Loading from "../components/ui/loading";
+import { CompetitionProvider } from "../context/competition-context";
 
 function CompetitionPage() {
   const [currentMatch, setCurrentMatch] = useState<number>(0);
@@ -20,8 +21,6 @@ function CompetitionPage() {
     setCurrentMatch(getCurrentMatch);
   }
 
-  console.log(competition);
-
   if (isLoading) {
     return <Loading text="Loading competition..." />;
   }
@@ -31,7 +30,7 @@ function CompetitionPage() {
   }
 
   return (
-    <>
+    <CompetitionProvider value={{ competition, isLoading, refetch }}>
       <div className="flex-1 p-6">
         <Header title={competition.name} hasSidebar={true} />
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
@@ -46,11 +45,14 @@ function CompetitionPage() {
             <FootballField match={competition.matches[currentMatch]} />
           </div>
           <div className="relative overflow-hidden rounded-lg border-2 border-accent bg-panel-bg p-5 shadow-lg">
-            <StatsTable playerStats={competition.player_stats} />
+            <StatsTable
+              playerStats={competition.player_stats}
+              votingEnabled={competition.votingEnabled}
+            />
           </div>
         </div>
       </div>
-    </>
+    </CompetitionProvider>
   );
 }
 

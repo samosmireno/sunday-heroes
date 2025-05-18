@@ -25,8 +25,7 @@ import Header from "../components/ui/header";
 
 export default function AddMultiForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [footballFieldMatch, setFootballFieldMatch] =
-    useState<MatchResponse | null>(null);
+  const [footballFieldMatch, setFootballFieldMatch] = useState<MatchResponse>();
 
   const navigate = useNavigate();
   const { matchId, competitionId } = useParams<{

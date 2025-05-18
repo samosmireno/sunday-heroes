@@ -1,5 +1,5 @@
 import { MatchPlayerRepo } from "../repositories/match-player-repo";
-import { MatchRepo } from "../repositories/match-repo";
+import { MatchRepo, MatchWithDetails } from "../repositories/match-repo";
 import { NextFunction, Request, Response } from "express";
 import { UserRepo } from "../repositories/user-repo";
 import { validationResult } from "express-validator";
@@ -9,6 +9,7 @@ import {
   transformAddMatchRequestToMatchPlayer,
   transformAddMatchRequestToService,
   transformDashboardMatchesToResponse,
+  transformMatchesToMatchesResponse,
   transformMatchServiceToResponse,
 } from "../utils/utils";
 import { TeamRepo } from "../repositories/team-repo";
@@ -95,6 +96,45 @@ export const getAllMatchesFromCompetition = async (
   }
 };
 
+export const getMatchesWithStats = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.query.userId?.toString();
+    if (!userId) {
+      return res.status(400).send("userId query parameter is required");
+    }
+
+    const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
+    if (!dashboardId) {
+      return res.status(400).send("No dashboard for the given userId");
+    }
+
+    const page = parseInt(req.query.page?.toString() || "1", 10);
+    const limit = parseInt(req.query.limit?.toString() || "8", 10);
+
+    const offset = (page - 1) * limit;
+
+    const matches = await MatchRepo.getMatchesWithStats(
+      dashboardId,
+      limit,
+      offset
+    );
+
+    const totalPages = Math.ceil(matches.length / limit);
+
+    res.setHeader("X-Total-Count", matches.length.toString());
+    res.setHeader("X-Total-Pages", totalPages.toString());
+
+    const response = transformMatchesToMatchesResponse(matches);
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createMatch = async (
   req: Request,
   res: Response,
@@ -103,22 +143,17 @@ export const createMatch = async (
   try {
     const data: createMatchRequest = req.body;
 
-    // Get all required IDs in parallel
     const [hometeamID, awayteamID, dashboardId] = await Promise.all([
       TeamRepo.getTeamIDFromName(data.teams[0]),
       TeamRepo.getTeamIDFromName(data.teams[1]),
       DashboardRepo.getDashboardIdFromCompetitionId(data.competitionId),
     ]);
 
-    // Prepare match data
     const matchToAdd = transformAddMatchRequestToService(data);
 
-    // Using a transaction for data consistency
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Create match
       const match = await MatchRepo.createMatch(matchToAdd, tx);
 
-      // 2. Add missing dashboard players
       const playerNicknames = data.players.map((player) => player.nickname);
       await DashboardPlayerRepo.addMissingUsers(
         playerNicknames,
@@ -126,7 +161,6 @@ export const createMatch = async (
         tx
       );
 
-      // 3. Create match teams
       const matchTeamsData = [
         {
           match_id: match.id,
@@ -144,7 +178,6 @@ export const createMatch = async (
 
       await MatchTeamRepo.createMatchTeams(matchTeamsData, tx);
 
-      // 4. Get all dashboard players in a single query
       const dashboardPlayers =
         await DashboardPlayerRepo.getDashboardPlayersByNicknames(
           playerNicknames,
@@ -152,12 +185,10 @@ export const createMatch = async (
           tx
         );
 
-      // Create a map for quick lookup
       const playerMap = new Map(
         dashboardPlayers.map((player) => [player.nickname, player])
       );
 
-      // 5. Create match players
       const matchPlayersData = data.players.map((player) => {
         const dashboardPlayer = playerMap.get(player.nickname);
 
@@ -175,14 +206,12 @@ export const createMatch = async (
 
       await MatchPlayerRepo.createMatchPlayers(matchPlayersData, tx);
 
-      // 6. Handle voting if enabled
       const competition = await CompetitionRepo.getCompetitionById(
         match.competition_id,
         tx
       );
 
       if (competition?.voting_enabled) {
-        // Set voting end date
         const votingDays = competition.voting_period_days ?? 7;
         const votingEndDate = new Date();
         votingEndDate.setDate(votingEndDate.getDate() + votingDays);
@@ -194,7 +223,6 @@ export const createMatch = async (
           tx
         );
 
-        // Prepare match details for emails
         const matchDetails = {
           competitionName: competition.name,
           competitionVotingDays: votingDays,
@@ -211,18 +239,14 @@ export const createMatch = async (
       return { match, matchDetails: null, dashboardPlayers: null };
     });
 
-    // Send emails outside of transaction (can be time-consuming)
     if (result.matchDetails && result.dashboardPlayers) {
-      // Send emails in background to not block the response
       setImmediate(async () => {
         try {
-          // First filter out players without valid email data
           const playersWithEmails = result.dashboardPlayers.filter(
             (player): player is typeof player & { user: { email: string } } =>
               Boolean(player.user?.email)
           );
 
-          // Now map the filtered players to email promises
           const emailPromises = playersWithEmails.map((player) =>
             EmailService.sendVotingInvitation(
               player.user.email,
@@ -250,7 +274,6 @@ export const updateMatch = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array() });
@@ -259,26 +282,21 @@ export const updateMatch = async (
     const matchId = req.params.id;
     const data: createMatchRequest = req.body;
 
-    // Get all required IDs in parallel
     const [hometeamID, awayteamID, dashboardId] = await Promise.all([
       TeamRepo.getTeamIDFromName(data.teams[0]),
       TeamRepo.getTeamIDFromName(data.teams[1]),
       DashboardRepo.getDashboardIdFromCompetitionId(data.competitionId),
     ]);
 
-    // Prepare match data to update
     const matchToUpdate: Partial<Match> = {
       date: new Date(data.date),
       home_team_score: data.homeTeamScore,
       away_team_score: data.awayTeamScore,
     };
 
-    // Use a transaction for all database operations
     const updatedMatch = await prisma.$transaction(async (tx) => {
-      // 1. Update the match
       const match = await MatchRepo.updateMatch(matchId, matchToUpdate, tx);
 
-      // 2. Add any new players to the dashboard
       const playerNicknames = data.players.map((player) => player.nickname);
       await DashboardPlayerRepo.addMissingUsers(
         playerNicknames,
@@ -286,7 +304,6 @@ export const updateMatch = async (
         tx
       );
 
-      // 3. Get all dashboard players in a single query
       const dashboardPlayers =
         await DashboardPlayerRepo.getDashboardPlayersByNicknames(
           playerNicknames,
@@ -294,15 +311,12 @@ export const updateMatch = async (
           tx
         );
 
-      // Create a map for quick lookup
       const playerMap = new Map(
         dashboardPlayers.map((player) => [player.nickname, player])
       );
 
-      // 4. Delete existing match players
       await MatchPlayerRepo.deleteMatchPlayersFromMatch(matchId, tx);
 
-      // 5. Create new match players in bulk
       const matchPlayersData = data.players.map((player) => {
         const dashboardPlayer = playerMap.get(player.nickname);
 
@@ -318,10 +332,8 @@ export const updateMatch = async (
         );
       });
 
-      // Bulk insert new match players
       await MatchPlayerRepo.createMatchPlayers(matchPlayersData, tx);
 
-      // 6. Clean up any orphaned dashboard players
       await DashboardPlayerRepo.deleteDashboardPlayersWithNoMatches(tx);
 
       return match;

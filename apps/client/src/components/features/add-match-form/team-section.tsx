@@ -8,12 +8,14 @@ import { UseFormReturn } from "react-hook-form";
 import { capitalizeFirstLetter } from "../../../utils/utils";
 import PlayerList from "./player-list";
 import { useAuth } from "../../../context/auth-context";
+import { DuelMatchPlayersForm } from "@repo/logger";
 
 interface TeamSectionProps {
   team: Team;
   form: UseFormReturn;
   selectedPlayers: string[];
   setSelectedPlayers: (arg0: string[]) => void;
+  isEdited: boolean;
   initialPlayers?: string[];
 }
 
@@ -22,6 +24,7 @@ export default function TeamSection({
   form,
   selectedPlayers,
   setSelectedPlayers,
+  isEdited,
   initialPlayers,
 }: TeamSectionProps) {
   const [searchValue, setSearchValue] = useState<string>("");
@@ -42,7 +45,32 @@ export default function TeamSection({
       ...players[team],
       player,
     ]);
+    if (isEdited) {
+      const homePlayers = form.getValues("players.homePlayers");
+      const awayPlayers = form.getValues("players.awayPlayers");
+      const indexToStore =
+        team === Team.HOME
+          ? homePlayers.length - 1
+          : homePlayers.length + awayPlayers.length - 1;
+      const matchPlayers: DuelMatchPlayersForm["players"] = form.getValues(
+        "matchPlayers.players",
+      );
+      const newMatchPlayer = {
+        nickname: player,
+        goals: undefined,
+        assists: undefined,
+        position:
+          team === Team.HOME ? homePlayers.length - 1 : awayPlayers.length - 1,
+      };
+      const newMatchPlayers = [
+        ...matchPlayers.slice(0, indexToStore),
+        newMatchPlayer,
+        ...matchPlayers.slice(indexToStore),
+      ];
+      form.setValue("matchPlayers.players", newMatchPlayers);
+    }
     setSelectedPlayers([...selectedPlayers, player]);
+    console.log(selectedPlayers);
   }
 
   function removePlayerFromForm(player: string) {
@@ -50,6 +78,14 @@ export default function TeamSection({
     form.setValue(`players.${team.toLocaleLowerCase()}Players`, [
       ...players[team].filter((p) => p !== player),
     ]);
+    if (isEdited) {
+      const matchPlayers: DuelMatchPlayersForm["players"] =
+        form.getValues("matchPlayers.players") || [];
+      form.setValue(
+        "matchPlayers.players",
+        matchPlayers.filter((p) => p.nickname !== player),
+      );
+    }
     setSelectedPlayers(selectedPlayers.filter((p) => p !== player));
   }
 

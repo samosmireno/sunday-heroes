@@ -11,7 +11,7 @@ export default function Header({ title, hasSidebar }: HeaderProps) {
       <div className="flex items-center">
         {hasSidebar && <SidebarTrigger className="mr-3" />}
         <h1
-          className="text-3xl font-bold uppercase tracking-wider text-accent"
+          className="text-xl font-bold uppercase tracking-wider text-accent md:text-2xl lg:text-3xl"
           style={{ textShadow: "2px 2px 0 #000" }}
         >
           {title}

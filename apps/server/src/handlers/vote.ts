@@ -113,8 +113,9 @@ export const getVotingStatus = async (
   try {
     const matchId = req.params.matchId;
     const voterId = req.query.voterId?.toString();
-    console.log(matchId);
-    console.log(voterId);
+    if (!matchId) {
+      return res.status(400).send("matchId parameter is required");
+    }
     if (!voterId) {
       return res.status(400).send("voterId query parameter is required");
     }

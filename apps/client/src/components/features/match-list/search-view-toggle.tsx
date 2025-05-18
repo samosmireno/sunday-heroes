@@ -5,7 +5,7 @@ interface SearchViewToggleProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
   viewType: ViewType;
-  onViewChange: (viewType: ViewType) => void;
+  onViewChange?: (viewType: ViewType) => void;
 }
 
 export function SearchViewToggle({
@@ -41,39 +41,44 @@ export function SearchViewToggle({
           </button>
         )}
       </div>
-      <div className="flex h-8 rounded-lg border-2 border-accent/50 bg-bg/20 p-1 sm:h-10">
-        <button
-          type="button"
-          onClick={() => onViewChange(ViewType.GRID)}
-          className={`flex items-center justify-center rounded px-2 transition-colors sm:px-3 ${
-            viewType === ViewType.GRID
-              ? "bg-accent/30 text-accent"
-              : "text-gray-400 hover:bg-bg/40 hover:text-gray-300"
-          }`}
-          aria-label="Grid view"
-          aria-pressed={viewType === ViewType.GRID}
-        >
-          <LayoutGrid
-            size={16}
-            className="h-4 w-4 sm:mr-2 sm:h-[18px] sm:w-[18px]"
-          />
-          <span className="hidden text-sm sm:inline">Grid</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => onViewChange(ViewType.LIST)}
-          className={`flex items-center justify-center rounded px-2 transition-colors sm:px-3 ${
-            viewType === ViewType.LIST
-              ? "bg-accent/30 text-accent"
-              : "text-gray-400 hover:bg-bg/40 hover:text-gray-300"
-          }`}
-          aria-label="List view"
-          aria-pressed={viewType === ViewType.LIST}
-        >
-          <List size={16} className="h-4 w-4 sm:mr-2 sm:h-[18px] sm:w-[18px]" />
-          <span className="hidden text-sm sm:inline">List</span>
-        </button>
-      </div>
+      {onViewChange && (
+        <div className="flex h-8 rounded-lg border-2 border-accent/50 bg-bg/20 p-1 sm:h-10">
+          <button
+            type="button"
+            onClick={() => onViewChange(ViewType.GRID)}
+            className={`flex items-center justify-center rounded px-2 transition-colors sm:px-3 ${
+              viewType === ViewType.GRID
+                ? "bg-accent/30 text-accent"
+                : "text-gray-400 hover:bg-bg/40 hover:text-gray-300"
+            }`}
+            aria-label="Grid view"
+            aria-pressed={viewType === ViewType.GRID}
+          >
+            <LayoutGrid
+              size={16}
+              className="h-4 w-4 sm:mr-2 sm:h-[18px] sm:w-[18px]"
+            />
+            <span className="hidden text-sm sm:inline">Grid</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onViewChange(ViewType.LIST)}
+            className={`flex items-center justify-center rounded px-2 transition-colors sm:px-3 ${
+              viewType === ViewType.LIST
+                ? "bg-accent/30 text-accent"
+                : "text-gray-400 hover:bg-bg/40 hover:text-gray-300"
+            }`}
+            aria-label="List view"
+            aria-pressed={viewType === ViewType.LIST}
+          >
+            <List
+              size={16}
+              className="h-4 w-4 sm:mr-2 sm:h-[18px] sm:w-[18px]"
+            />
+            <span className="hidden text-sm sm:inline">List</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

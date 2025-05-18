@@ -7,6 +7,7 @@ import {
   getAllMatchesFromCompetition,
   getAllMatchesFromDashboard,
   getMatchById,
+  getMatchesWithStats,
   updateMatch,
 } from "../handlers/match";
 import { getAllDashboardPlayers, getUserById } from "../handlers/player";
@@ -76,8 +77,11 @@ router.get("/matches", (req: Request, res: Response, next: NextFunction) => {
   } else if (req.query.competitionId) {
     return getAllMatchesFromCompetition(req, res, next);
   }
+
   return getAllMatches(req, res, next);
 });
+
+router.get("/matches-with-stats", getMatchesWithStats);
 router.get("/matches/:id", getMatchById);
 router.post(
   "/matches",

@@ -88,4 +88,15 @@ export class DashboardRepo {
     }
     return competition.dashboard_id;
   }
+
+  static async getDashboardIdFromUserId(userId: string): Promise<string> {
+    const dashboard = await prisma.dashboard.findFirst({
+      where: { admin_id: userId },
+      select: { id: true },
+    });
+    if (!dashboard) {
+      throw new Error(`Dashboard with user id ${userId} not found`);
+    }
+    return dashboard.id;
+  }
 }

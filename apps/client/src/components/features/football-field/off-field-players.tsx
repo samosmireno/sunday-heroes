@@ -3,7 +3,7 @@ import { MatchResponse } from "@repo/logger";
 import { getNumPlayersOnField } from "./formations";
 
 interface OffFieldPlayersProps {
-  match: MatchResponse | null;
+  match?: MatchResponse;
   homeTeam: boolean;
   starPlayerId?: string;
   isEdited?: boolean;

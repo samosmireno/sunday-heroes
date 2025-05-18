@@ -11,6 +11,7 @@ import CreateCompetitionForm from "./pages/create-competition-form.tsx";
 import CompetitionListPage from "./pages/competition-list-page.tsx";
 import VotePage from "./pages/vote-page.tsx";
 import AdminPendingVotes from "./pages/pending-votes-page.tsx";
+import MatchesPage from "./pages/matches-page.tsx";
 
 export default function App() {
   return (
@@ -70,6 +71,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <CompetitionListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/matches"
+            element={
+              <ProtectedRoute>
+                <MatchesPage />
               </ProtectedRoute>
             }
           />

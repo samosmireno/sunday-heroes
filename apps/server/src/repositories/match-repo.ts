@@ -1,4 +1,4 @@
-import { Match, Prisma, VotingStatus } from "@prisma/client";
+import { Match, MatchType, Prisma, VotingStatus } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 
@@ -15,6 +15,7 @@ export type MatchWithDetails = Prisma.MatchGetPayload<{
         team: true;
       };
     };
+    competition: true;
     player_votes: true;
   };
 }>;
@@ -59,6 +60,7 @@ export class MatchRepo {
           },
         },
         player_votes: true,
+        competition: true,
       },
     });
   }
@@ -81,7 +83,43 @@ export class MatchRepo {
           },
         },
         player_votes: true,
+        competition: true,
       },
+    });
+  }
+
+  static async getMatchesWithStats(
+    dashboard_id: string,
+    limit?: number,
+    offset?: number
+  ): Promise<MatchWithDetails[]> {
+    return prisma.match.findMany({
+      where: {
+        competition: {
+          dashboard_id: dashboard_id,
+        },
+      },
+      include: {
+        matchPlayers: {
+          include: {
+            dashboard_player: true,
+            received_votes: true,
+            team: true,
+          },
+        },
+        match_teams: {
+          include: {
+            team: true,
+          },
+        },
+        player_votes: true,
+        competition: true,
+      },
+      orderBy: {
+        date: "desc",
+      },
+      take: limit,
+      skip: offset,
     });
   }
 
@@ -133,6 +171,7 @@ export class MatchRepo {
           },
         },
         player_votes: true,
+        competition: true,
       },
     });
   }

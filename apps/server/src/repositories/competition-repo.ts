@@ -248,6 +248,7 @@ export class CompetitionRepo {
     const competition = await prisma.competition.findUnique({
       where: {
         id: competition_id,
+        voting_enabled: true,
       },
       select: {
         id: true,

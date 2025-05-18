@@ -50,6 +50,7 @@ export type CompetitionResponse = {
   id: string;
   name: string;
   type: CompetitionType;
+  votingEnabled: boolean;
   matches: MatchResponse[];
   player_stats: PlayerTotals[];
 };
@@ -144,4 +145,22 @@ export type CompetitionVotes = {
   competitionId: string;
   competitionName: string;
   pendingVotes: PendingVote[];
+};
+
+export type MatchPageResponse = {
+  id: string;
+  date: string;
+  competitionId: string;
+  competitionName: string;
+  competitionType: CompetitionType;
+  teams: string[];
+  scores: number[];
+  penaltyScores?: number[];
+  matchType: MatchType;
+  votingEnabled: boolean;
+  votingStatus: VotingStatus;
+  votingEndsAt?: string;
+  playerCount: number;
+  pendingVotes: number;
+  playerStats: PlayerResponse[];
 };

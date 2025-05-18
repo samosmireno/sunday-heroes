@@ -90,6 +90,7 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
           />
           <FormField
             name="match.matchType"
+            control={form.control}
             render={({ field }) => (
               <FormItem className="flex w-full flex-col">
                 <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
@@ -135,7 +136,7 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
                         {...field}
                         type="number"
                         min={0}
-                        className="no-spinner w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                        className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                       />
                     </FormControl>
                     <FormMessage className="text-red-400" />
@@ -154,7 +155,7 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
                         {...field}
                         type="number"
                         min={0}
-                        className="no-spinner w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                        className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                       />
                     </FormControl>
                     <FormMessage className="text-red-400" />
@@ -199,7 +200,7 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
                             {...field}
                             type="number"
                             min={0}
-                            className="no-spinner w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                            className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                           />
                         </FormControl>
                         <FormMessage className="text-red-400" />
@@ -218,7 +219,7 @@ export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
                             {...field}
                             type="number"
                             min={0}
-                            className="no-spinner w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                            className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                           />
                         </FormControl>
                         <FormMessage className="text-red-400" />

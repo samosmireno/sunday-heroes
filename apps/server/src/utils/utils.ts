@@ -16,6 +16,7 @@ import {
   DetailedCompetitionResponse,
   CompetitionVotes,
   PendingVote,
+  MatchPageResponse,
 } from "@repo/logger";
 import { Competition, Match, MatchPlayer, PlayerVote } from "@prisma/client";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
@@ -242,6 +243,7 @@ export function transformDashboardServiceToResponse(
         id: comp.id,
         name: comp.name,
         type: comp.type as CompetitionResponse["type"],
+        votingEnabled: comp.voting_enabled,
         matches: mappedMatches,
         player_stats: playerStats,
       };
@@ -354,6 +356,7 @@ export function transformCompetitionToResponse(
     id: data.id,
     name: data.name,
     type: data.type as CompetitionResponse["type"],
+    votingEnabled: data.voting_enabled,
     matches: matches,
     player_stats: playerStats,
   };
@@ -425,4 +428,74 @@ export function transformCompetitionServiceToPendingVotes(
     competitionName: data.name,
     pendingVotes: pendingVotes,
   };
+}
+
+export function transformMatchesToMatchesResponse(
+  matches: MatchWithDetails[]
+): MatchPageResponse[] {
+  return matches.map((match) => {
+    const homeTeamPlayers: PlayerResponse[] = match.matchPlayers
+      .filter((player) => player.is_home)
+      .map((player) => ({
+        id: player.id,
+        nickname: player.dashboard_player.nickname,
+        position: player.position,
+        goals: player.goals,
+        assists: player.assists,
+        isHome: player.is_home,
+        rating: calculatePlayerScore(player.received_votes, match.player_votes),
+      }));
+
+    const awayTeamPlayers: PlayerResponse[] = match.matchPlayers
+      .filter((player) => !player.is_home)
+      .map((player) => ({
+        id: player.id,
+        nickname: player.dashboard_player.nickname,
+        position: player.position,
+        goals: player.goals,
+        assists: player.assists,
+        isHome: player.is_home,
+        rating: calculatePlayerScore(player.received_votes, match.player_votes),
+      }));
+
+    const teamNames = match.match_teams.map((teamMatch) => teamMatch.team.name);
+
+    return {
+      id: match.id,
+      date: match.date.toDateString(),
+      teams: teamNames,
+      scores: [match.home_team_score, match.away_team_score],
+      penaltyScores:
+        match.penalty_home_score && match.penalty_away_score
+          ? [match.penalty_home_score, match.penalty_away_score]
+          : undefined,
+      matchType: match.match_type as MatchPageResponse["matchType"],
+      votingEnabled: match.competition.voting_enabled,
+      votingStatus: match.voting_status as MatchPageResponse["votingStatus"],
+      votingEndsAt: match.voting_ends_at?.toDateString(),
+      playerCount: match.matchPlayers.length,
+      pendingVotes: calculatePendingVotes(match),
+      playerStats: [...homeTeamPlayers, ...awayTeamPlayers],
+      competitionId: match.competition.id,
+      competitionName: match.competition.name,
+      competitionType: match.competition.type as CompetitionResponse["type"],
+    };
+  });
+}
+
+function calculatePendingVotes(match: MatchWithDetails): number {
+  if (
+    match.voting_status !== VotingStatus.OPEN ||
+    match.competition.voting_enabled === false
+  )
+    return 0;
+
+  const playerIds = match.matchPlayers.map(
+    (player) => player.dashboard_player_id
+  );
+  const votedPlayerIds = new Set(
+    match.player_votes.map((vote) => vote.voter_id)
+  );
+
+  return playerIds.filter((id) => !votedPlayerIds.has(id)).length;
 }
