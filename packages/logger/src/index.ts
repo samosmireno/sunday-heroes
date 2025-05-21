@@ -131,14 +131,19 @@ export type UserResponse = {
 };
 
 export type PendingVote = {
-  matchId: string;
-  matchDate: string;
   playerName: string;
   playerId: string;
   voted: boolean;
+};
+export type MatchVotes = {
+  matchId: string;
+  matchDate: string;
+  competitionId: string;
+  competitionName: string;
   teams: string[];
   homeScore: number;
   awayScore: number;
+  players: PendingVote[];
 };
 
 export type CompetitionVotes = {
@@ -163,4 +168,11 @@ export type MatchPageResponse = {
   playerCount: number;
   pendingVotes: number;
   playerStats: PlayerResponse[];
+};
+
+export type CompetitionVotingData = {
+  id: string;
+  name: string;
+  pendingVotesCount: number;
+  closedVotesCount: number;
 };

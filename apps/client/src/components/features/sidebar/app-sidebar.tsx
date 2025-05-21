@@ -51,11 +51,11 @@ const sidebarItems = [
     url: "/matches",
     icon: Calendar,
   },
-  {
-    title: "Voting",
-    url: "#/voting",
-    icon: CheckSquare,
-  },
+  // {
+  //   title: "Voting",
+  //   url: "/voting",
+  //   icon: CheckSquare,
+  // },
   {
     title: "Stats",
     url: "#/stats",

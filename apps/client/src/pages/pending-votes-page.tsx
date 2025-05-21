@@ -6,13 +6,14 @@ import Background from "../components/ui/background";
 import { usePendingVotes } from "../hooks/use-pending-votes";
 
 export default function AdminPendingVotes() {
-  const { competitionId } = useParams();
+  const { matchId } = useParams();
+  console.log("Match ID:", matchId);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  if (!competitionId) return;
+  if (!matchId) return null;
 
-  const { votingData, isLoading, error } = usePendingVotes(competitionId);
+  const { votingData, isLoading, error } = usePendingVotes(matchId);
 
   const handleVoteClick = (matchId: string, playerId: string) => {
     navigate(`/vote/${matchId}?voterId=${playerId}`);
@@ -57,7 +58,7 @@ export default function AdminPendingVotes() {
       <Background />
       <Header
         title={`Pending Votes for ${votingData.competitionName}`}
-        hasSidebar={false}
+        hasSidebar={true}
       />
 
       <div className="relative rounded-lg border-2 border-accent bg-panel-bg p-6 shadow-lg">
@@ -65,7 +66,7 @@ export default function AdminPendingVotes() {
           Pending Player Votes
         </h2>
 
-        {votingData.pendingVotes.length === 0 ? (
+        {votingData.players.length === 0 ? (
           <div className="rounded-lg bg-bg/30 p-8 text-center text-gray-400">
             All players have submitted their votes!
           </div>
@@ -85,9 +86,9 @@ export default function AdminPendingVotes() {
                 </tr>
               </thead>
               <tbody>
-                {votingData.pendingVotes.map((vote) => (
+                {votingData.players.map((vote) => (
                   <tr
-                    key={`${vote.matchId}-${vote.playerId}`}
+                    key={`${votingData.matchId}-${vote.playerId}`}
                     className="border-b border-accent/10"
                   >
                     <td className="p-1 text-sm font-medium text-accent sm:p-3 sm:text-base">
@@ -96,22 +97,22 @@ export default function AdminPendingVotes() {
                     <td className="p-1 text-sm text-gray-300 sm:p-3 sm:text-base">
                       <div className="flex flex-col sm:items-center md:flex-row">
                         <span className="mb-1 sm:mb-0">
-                          {vote.teams[0]} vs {vote.teams[1]}
+                          {votingData.teams[0]} vs {votingData.teams[1]}
                         </span>
                         <span className="text-accent sm:ml-2">
-                          ({vote.homeScore} - {vote.awayScore})
+                          ({votingData.homeScore} - {votingData.awayScore})
                         </span>
                       </div>
                     </td>
                     <td className="hidden p-1 text-sm text-gray-300 sm:block sm:p-3 sm:text-base">
-                      {new Date(vote.matchDate).toLocaleDateString()}
+                      {new Date(votingData.matchDate).toLocaleDateString()}
                     </td>
 
                     <td className="p-3 px-5 text-sm sm:text-base">
                       {!vote.voted && (
                         <Button
                           onClick={() =>
-                            handleVoteClick(vote.matchId, vote.playerId)
+                            handleVoteClick(votingData.matchId, vote.playerId)
                           }
                           className="bg-accent/20 p-1 text-accent hover:bg-accent/30 sm:p-3"
                         >

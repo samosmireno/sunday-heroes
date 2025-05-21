@@ -107,6 +107,10 @@ export const getMatchesWithStats = async (
       return res.status(400).send("userId query parameter is required");
     }
 
+    const competitionId = req.query.competitionId?.toString();
+
+    console.log("competitionId", competitionId);
+
     const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
     if (!dashboardId) {
       return res.status(400).send("No dashboard for the given userId");
@@ -119,6 +123,7 @@ export const getMatchesWithStats = async (
 
     const matches = await MatchRepo.getMatchesWithStats(
       dashboardId,
+      competitionId,
       limit,
       offset
     );

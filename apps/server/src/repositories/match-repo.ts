@@ -6,7 +6,11 @@ export type MatchWithDetails = Prisma.MatchGetPayload<{
   include: {
     matchPlayers: {
       include: {
-        dashboard_player: true;
+        dashboard_player: {
+          include: {
+            votes_given: true;
+          };
+        };
         received_votes: true;
       };
     };
@@ -50,7 +54,11 @@ export class MatchRepo {
       include: {
         matchPlayers: {
           include: {
-            dashboard_player: true,
+            dashboard_player: {
+              include: {
+                votes_given: true,
+              },
+            },
             received_votes: true,
           },
         },
@@ -73,7 +81,11 @@ export class MatchRepo {
       include: {
         matchPlayers: {
           include: {
-            dashboard_player: true,
+            dashboard_player: {
+              include: {
+                votes_given: true,
+              },
+            },
             received_votes: true,
           },
         },
@@ -90,19 +102,25 @@ export class MatchRepo {
 
   static async getMatchesWithStats(
     dashboard_id: string,
+    competition_id?: string,
     limit?: number,
     offset?: number
   ): Promise<MatchWithDetails[]> {
     return prisma.match.findMany({
       where: {
         competition: {
+          id: competition_id,
           dashboard_id: dashboard_id,
         },
       },
       include: {
         matchPlayers: {
           include: {
-            dashboard_player: true,
+            dashboard_player: {
+              include: {
+                votes_given: true,
+              },
+            },
             received_votes: true,
             team: true,
           },
@@ -120,6 +138,34 @@ export class MatchRepo {
       },
       take: limit,
       skip: offset,
+    });
+  }
+
+  static async getMatchWithStats(
+    match_id: string
+  ): Promise<MatchWithDetails | null> {
+    return prisma.match.findUnique({
+      where: { id: match_id },
+      include: {
+        matchPlayers: {
+          include: {
+            dashboard_player: {
+              include: {
+                votes_given: true,
+              },
+            },
+            received_votes: true,
+            team: true,
+          },
+        },
+        match_teams: {
+          include: {
+            team: true,
+          },
+        },
+        player_votes: true,
+        competition: true,
+      },
     });
   }
 
@@ -161,7 +207,11 @@ export class MatchRepo {
       include: {
         matchPlayers: {
           include: {
-            dashboard_player: true,
+            dashboard_player: {
+              include: {
+                votes_given: true,
+              },
+            },
             received_votes: true,
           },
         },

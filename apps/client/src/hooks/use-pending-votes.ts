@@ -1,21 +1,19 @@
 import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
-import { CompetitionVotes } from "@repo/logger";
+import { MatchVotes } from "@repo/logger";
 import { useQuery } from "@tanstack/react-query";
 
-const fetchPendingVotes = async (
-  competitionId: string,
-): Promise<CompetitionVotes> => {
+const fetchPendingVotes = async (matchId: string): Promise<MatchVotes> => {
   const { data } = await axios.get(
-    `${config.server}/api/admin/pending-votes/${competitionId}`,
+    `${config.server}/api/admin/pending-votes/${matchId}`,
   );
   return data;
 };
 
-export const usePendingVotes = (competitionId: string) => {
+export const usePendingVotes = (matchId: string) => {
   const pendingVotesQuery = useQuery({
     queryKey: ["pending_votes"],
-    queryFn: () => fetchPendingVotes(competitionId),
+    queryFn: () => fetchPendingVotes(matchId),
   });
 
   return {

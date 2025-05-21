@@ -5,6 +5,7 @@ import { MatchPageResponse } from "@repo/logger";
 
 interface MatchQueryParams {
   userId: string;
+  competitionId?: string;
   page: number;
 }
 
@@ -18,12 +19,17 @@ const fetchMatches = async (
   context: QueryFunctionContext<[string, MatchQueryParams]>,
 ): Promise<MatchesResult> => {
   try {
-    const [, { userId, page }] = context.queryKey;
+    const [, { userId, competitionId, page }] = context.queryKey;
     const params = new URLSearchParams({
       userId,
       page: page.toString(),
       limit: config.pagination.matches_per_page.toString(),
     });
+
+    if (competitionId) {
+      params.append("competitionId", competitionId);
+    }
+
     const res = await axios.get(
       `${config.server}/api/matches-with-stats?${params.toString()}`,
     );
@@ -42,14 +48,18 @@ const fetchMatches = async (
   }
 };
 
-export const useMatches = ({ userId, page }: MatchQueryParams) => {
+export const useMatches = ({
+  userId,
+  competitionId,
+  page,
+}: MatchQueryParams) => {
   const { data, isLoading, refetch, isError, error } = useQuery<
     MatchesResult,
     AxiosError,
     MatchesResult,
     [string, MatchQueryParams]
   >({
-    queryKey: ["matches", { userId, page }],
+    queryKey: ["matches", { userId, competitionId, page }],
     queryFn: fetchMatches,
     placeholderData: (prevData) => prevData,
   });

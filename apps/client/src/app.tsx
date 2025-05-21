@@ -12,6 +12,7 @@ import CompetitionListPage from "./pages/competition-list-page.tsx";
 import VotePage from "./pages/vote-page.tsx";
 import AdminPendingVotes from "./pages/pending-votes-page.tsx";
 import MatchesPage from "./pages/matches-page.tsx";
+import VotesPage from "./pages/votes-page.tsx";
 
 export default function App() {
   return (
@@ -23,8 +24,12 @@ export default function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/vote/:matchId" element={<VotePage />} />
           <Route
-            path="/pending/:competitionId"
-            element={<AdminPendingVotes />}
+            path="/pending/:matchId"
+            element={
+              <ProtectedRoute>
+                <AdminPendingVotes />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/dashboard"
@@ -79,6 +84,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <MatchesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/matches/:competitionId"
+            element={
+              <ProtectedRoute>
+                <MatchesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/voting"
+            element={
+              <ProtectedRoute>
+                <VotesPage />
               </ProtectedRoute>
             }
           />

@@ -17,6 +17,7 @@ import {
   CompetitionVotes,
   PendingVote,
   MatchPageResponse,
+  MatchVotes,
 } from "@repo/logger";
 import { Competition, Match, MatchPlayer, PlayerVote } from "@prisma/client";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
@@ -28,6 +29,7 @@ import {
 import { DashboardVoteService } from "../repositories/vote-repo";
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
 import { config } from "../config/config";
+import e from "express";
 
 export function createStepSchema<T extends Record<string, z.ZodType>>(
   steps: T
@@ -427,6 +429,35 @@ export function transformCompetitionServiceToPendingVotes(
     competitionId: data.id,
     competitionName: data.name,
     pendingVotes: pendingVotes,
+  };
+}
+
+export function transformMatchServiceToPendingVotes(
+  data: MatchWithDetails
+): MatchVotes {
+  const players = data.matchPlayers.flatMap((player) => ({
+    playerId: player.dashboard_player_id,
+    name: player.dashboard_player.nickname,
+    voted: player.dashboard_player.votes_given
+      .map((match) => match.match_id)
+      .includes(data.id),
+  }));
+
+  const teams = data.match_teams.flatMap((mt) => mt.team.name);
+
+  return {
+    matchId: data.id,
+    matchDate: data.date.toDateString(),
+    competitionId: data.competition.id,
+    competitionName: data.competition.name,
+    players: players.map((p) => ({
+      playerName: p.name,
+      playerId: p.playerId,
+      voted: p.voted,
+    })),
+    teams: teams,
+    homeScore: data.home_team_score,
+    awayScore: data.away_team_score,
   };
 }
 

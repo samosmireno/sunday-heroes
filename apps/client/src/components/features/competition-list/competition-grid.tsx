@@ -90,7 +90,10 @@ export default function CompetitionGrid({
               >
                 <Trophy size={14} className="mr-1 inline" /> View
               </button>
-              <button className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs">
+              <button
+                onClick={() => navigate(`/matches/${competition.id}`)}
+                className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
+              >
                 <Calendar size={14} className="mr-1 inline" /> Matches
               </button>
               <button className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs">

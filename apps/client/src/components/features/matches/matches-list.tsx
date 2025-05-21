@@ -137,7 +137,7 @@ export default function MatchesList({ matches }: MatchesListProps) {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/pending/${match.competitionId}`);
+                            navigate(`/pending/${match.id}`);
                           }}
                           className="rounded-full bg-amber-500/20 p-1 text-amber-400 hover:bg-amber-500/30 md:p-1.5"
                           aria-label="Vote on this match"
@@ -146,6 +146,17 @@ export default function MatchesList({ matches }: MatchesListProps) {
                           <CheckSquare size={16} />
                         </button>
                       )}
+                      {/* <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/edit-match/${match.id}`);
+                        }}
+                        className="rounded-full bg-amber-500/20 p-1 text-amber-400 hover:bg-amber-500/30 md:p-1.5"
+                        aria-label="Edit this match"
+                        title="Edit this match"
+                      >
+                        <i className="fa-solid fa-pen-to-square" />
+                      </button> */}
 
                       <button
                         onClick={(e) => {

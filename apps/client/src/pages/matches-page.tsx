@@ -6,13 +6,16 @@ import Loading from "../components/ui/loading";
 import MatchesList from "../components/features/matches/matches-list";
 import { useAuth } from "../context/auth-context";
 import { useMatches } from "../hooks/use-matches";
+import { useParams } from "react-router-dom";
 
 export default function MatchesPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { user } = useAuth();
+  const { competitionId } = useParams();
 
   const { matches, isLoading, totalCount, totalPages } = useMatches({
     userId: user?.id || "",
+    competitionId: competitionId || "",
     page: currentPage,
   });
 

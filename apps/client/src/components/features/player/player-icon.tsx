@@ -16,7 +16,7 @@ export default function PlayerIcon({
       {!isEdited && <p className="text-gray-800">{playerPosition}</p>}
       {starPlayer && playerId === starPlayer && (
         <div className="md:scale-70 absolute -translate-y-1/2 md:translate-x-[80%] lg:translate-x-[60%]">
-          <i className="fa-solid fa-star text-yellow-400" role="img"></i>
+          <i className="fa-solid fa-star text-yellow-600" role="img"></i>
         </div>
       )}
     </div>

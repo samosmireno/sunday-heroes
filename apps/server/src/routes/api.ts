@@ -23,6 +23,7 @@ import {
 import {
   getAllVotesFromDashboard,
   getPendingVotesForCompetition,
+  getPendingVotesForMatch,
   getVotingStatus,
   submitVotes,
   submitVotesSchema,
@@ -115,9 +116,6 @@ router.post(
   submitVotes
 );
 
-router.get(
-  "/admin/pending-votes/:competitionId",
-  getPendingVotesForCompetition
-);
+router.get("/admin/pending-votes/:matchId", getPendingVotesForMatch);
 
 export default router;

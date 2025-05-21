@@ -3,6 +3,7 @@ import { VoteRepo } from "../repositories/vote-repo";
 import {
   transformCompetitionServiceToPendingVotes,
   transformDashboardVotesToResponse,
+  transformMatchServiceToPendingVotes,
 } from "../utils/utils";
 import { UserRepo } from "../repositories/user-repo";
 import { z } from "zod";
@@ -171,6 +172,25 @@ export const getPendingVotesForCompetition = async (
       transformCompetitionServiceToPendingVotes(competition);
 
     res.json(competitionVotes);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPendingVotesForMatch = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const matchId = req.params.matchId;
+    const match = await MatchRepo.getMatchWithStats(matchId);
+    if (!match) {
+      return res.status(404).send("Match not found");
+    }
+
+    const matchVotes = transformMatchServiceToPendingVotes(match);
+    res.json(matchVotes);
   } catch (error) {
     next(error);
   }
