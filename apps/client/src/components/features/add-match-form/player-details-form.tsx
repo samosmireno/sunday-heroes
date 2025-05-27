@@ -6,13 +6,13 @@ import TeamInputStats from "./team-input-stats";
 import { Team } from "../../../types/types";
 import FormLayout from "./form-layout";
 
-interface AddPlayerDetailsFormProps {
+interface PlayerDetailsFormProps {
   isEdited: boolean;
 }
 
-export default function AddPlayerDetailsForm({
+export default function PlayerDetailsForm({
   isEdited,
-}: AddPlayerDetailsFormProps) {
+}: PlayerDetailsFormProps) {
   const { form, prevStep, isStepValid } = useMultiStepFormContext();
   const data: AddDuelFormValues = form.getValues();
 

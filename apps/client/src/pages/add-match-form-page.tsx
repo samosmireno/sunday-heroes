@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../config/axiosConfig";
 import { useMatchData } from "../hooks/use-match-data";
@@ -12,18 +12,24 @@ import {
 } from "../components/features/multi-step-form/multi-step-form";
 import { MultiStepFormHeader } from "../components/features/multi-step-form/multi-step-form-header";
 import { MultiStepFormStep } from "../components/features/multi-step-form/multi-step-form-step";
-import AddMatchForm from "../components/features/add-match-form/add-match-form";
-import AddPlayerDetailsForm from "../components/features/add-match-form/add-player-details-form";
-import AddPlayersForm from "../components/features/add-match-form/add-players-form";
 import StepNavigation from "../components/features/add-match-form/form-step-navigation";
-import { MatchResponse, AddDuelFormValues } from "@repo/logger";
-import { AddDuelFormSchema } from "../components/features/add-match-form/schema";
+import { CompetitionType, MatchResponse } from "@repo/logger";
+import {
+  createMatchFormSchema,
+  MatchFormData,
+} from "../components/features/add-match-form/add-match-schemas";
 import { transformDuelFormToRequest } from "../utils/transform";
 import { config } from "../config/config";
 import Background from "../components/ui/background";
 import Header from "../components/ui/header";
+import Loading from "../components/ui/loading";
+import MatchDetailsForm from "../components/features/add-match-form/match-details-form";
+import PlayerDetailsForm from "../components/features/add-match-form/player-details-form";
+import { useCompetition } from "../hooks/use-competition";
+import PlayersListForm from "../components/features/add-match-form/player-list-form";
+import LeagueMatchDetailsForm from "../components/features/add-match-form/league-match-details-form";
 
-export default function AddMultiForm() {
+export default function AddMatchForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [footballFieldMatch, setFootballFieldMatch] = useState<MatchResponse>();
 
@@ -33,16 +39,23 @@ export default function AddMultiForm() {
     competitionId: string;
   }>();
   const { formData } = useMatchData(matchId);
+  const { competition, isLoading: isLoadingCompetition } = useCompetition(
+    competitionId ?? "",
+  );
 
-  const form = useForm<AddDuelFormValues>({
-    resolver: zodResolver(AddDuelFormSchema),
+  const formSchema = useMemo(() => {
+    return competition ? createMatchFormSchema(competition.type) : null;
+  }, [competition]);
+
+  const form = useForm<MatchFormData>({
+    resolver: formSchema ? zodResolver(formSchema) : undefined,
     reValidateMode: "onBlur",
     mode: "onBlur",
   });
 
   const formValues = useWatch({ control: form.control });
 
-  const handleSubmit = async (data: AddDuelFormValues) => {
+  const handleSubmit = async (data: MatchFormData) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
@@ -51,27 +64,17 @@ export default function AddMultiForm() {
       return;
     }
 
-    const reqData = transformDuelFormToRequest(data, competitionId);
-
     try {
-      let response;
-      if (matchId) {
-        response = await axiosInstance.put(
-          `${config.server}/api/matches/${matchId}`,
-          reqData,
-          {
-            withCredentials: true,
-          },
-        );
-      } else {
-        response = await axiosInstance.post(
-          `${config.server}/api/matches`,
-          reqData,
-          {
-            withCredentials: true,
-          },
-        );
-      }
+      const reqData = transformDuelFormToRequest(data, competitionId);
+      const endpoint = matchId
+        ? `${config.server}/api/matches/${matchId}`
+        : `${config.server}/api/matches`;
+
+      const method = matchId ? "put" : "post";
+
+      const response = await axiosInstance[method](endpoint, reqData, {
+        withCredentials: true,
+      });
 
       console.log("Match saved successfully:", response.data);
       navigate(`/competition/${competitionId}`);
@@ -95,28 +98,44 @@ export default function AddMultiForm() {
       setFootballFieldMatch(createFootballFieldMatch(form.getValues()));
   }, [form, formValues]);
 
+  console.log("formschema", formSchema);
+
+  if (isLoadingCompetition) {
+    return (
+      <div className="relative flex-1 p-3 sm:p-4 md:p-6">
+        <Background />
+        <Header title="Match Form" hasSidebar={true} />
+        <Loading text="Loading competition data..." />
+      </div>
+    );
+  }
+
+  if (!competition || !formSchema) {
+    return (
+      <div className="relative flex-1 p-3 sm:p-4 md:p-6">
+        <Background />
+        <Header title="Match Form" hasSidebar={true} />
+        <div className="p-6 text-center">
+          <p>Competition not found or invalid data.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex-1 p-3 sm:p-4 md:p-6">
       <Background />
-
       <Header title={matchId ? "Edit Match" : "Add Match"} hasSidebar={true} />
 
       {isSubmitting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="flex flex-col justify-center rounded-lg border-2 border-accent bg-panel-bg p-4 text-center sm:p-6">
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-accent border-t-transparent sm:h-12 sm:w-12"></div>
-            <p className="text-base font-bold text-accent sm:text-lg">
-              {matchId ? "Updating match..." : "Creating match..."}
-            </p>
-          </div>
-        </div>
+        <Loading text={matchId ? "Updating match..." : "Creating match..."} />
       )}
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <div className="relative rounded-lg border-2 border-accent bg-panel-bg p-4 shadow-lg sm:p-6">
             <MultiStepForm
-              schema={AddDuelFormSchema}
+              schema={formSchema}
               form={form}
               onSubmit={handleSubmit}
             >
@@ -132,13 +151,17 @@ export default function AddMultiForm() {
               </MultiStepFormHeader>
 
               <MultiStepFormStep name="match">
-                <AddMatchForm isEdited={matchId ? true : false} />
+                {competition.type !== CompetitionType.DUEL ? (
+                  <LeagueMatchDetailsForm isEdited={!!matchId} />
+                ) : (
+                  <MatchDetailsForm isEdited={!!matchId} />
+                )}
               </MultiStepFormStep>
               <MultiStepFormStep name="players">
-                <AddPlayersForm isEdited={matchId ? true : false} />
+                <PlayersListForm isEdited={!!matchId} />
               </MultiStepFormStep>
               <MultiStepFormStep name="matchPlayers">
-                <AddPlayerDetailsForm isEdited={matchId ? true : false} />
+                <PlayerDetailsForm isEdited={!!matchId} />
               </MultiStepFormStep>
             </MultiStepForm>
           </div>

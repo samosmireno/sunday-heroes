@@ -5,6 +5,7 @@ import Modal from "../../ui/modal";
 import { useState } from "react";
 import ConfirmDeleteModal from "../modals/confirm-delete-modal";
 import { config } from "../../../config/config";
+import { useCompetitionContext } from "../../../context/competition-context";
 
 interface MatchProps {
   matchId: string;
@@ -28,6 +29,7 @@ export default function MatchResult({
 }: MatchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { competition } = useCompetitionContext();
 
   const handleDeleteClick = () => {
     setIsModalOpen(true);
@@ -90,7 +92,7 @@ export default function MatchResult({
                 .replace(/(\d+)(?=\s)/, (d) => `${d}th`)}
             </div>
             <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">
-              <Link to={`/edit-match/${matchId}`}>
+              <Link to={`/edit-match/${competition?.id}/${matchId}`}>
                 <MdEdit className="text-lg text-accent sm:text-xl" />
               </Link>
               <MdDelete

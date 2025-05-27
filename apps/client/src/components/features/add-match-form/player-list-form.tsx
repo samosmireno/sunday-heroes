@@ -7,11 +7,11 @@ import TeamSection from "./team-section";
 import FormLayout from "./form-layout";
 import { DuelPlayersForm } from "@repo/logger";
 
-interface AddPlayersFormProps {
+interface PlayersListFormProps {
   isEdited: boolean;
 }
 
-export default function AddPlayersForm({ isEdited }: AddPlayersFormProps) {
+export default function PlayersListForm({ isEdited }: PlayersListFormProps) {
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
   const { form, nextStep, prevStep, isStepValid } = useMultiStepFormContext();
 

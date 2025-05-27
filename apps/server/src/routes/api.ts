@@ -29,6 +29,7 @@ import {
   submitVotesSchema,
 } from "../handlers/vote";
 import { createCompetitionRequestSchema } from "../schemas/create-competition-request-schema";
+import { getTeamListFromCompetitionId } from "../handlers/team";
 
 const router = Router();
 
@@ -117,5 +118,7 @@ router.post(
 );
 
 router.get("/admin/pending-votes/:matchId", getPendingVotesForMatch);
+
+router.get("/team-list/:competitionId", getTeamListFromCompetitionId);
 
 export default router;

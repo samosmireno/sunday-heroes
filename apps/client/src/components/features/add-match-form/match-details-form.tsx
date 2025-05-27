@@ -25,11 +25,11 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { MatchType, convertMatchType } from "../../../types/types";
-interface AddMatchFormProps {
+interface MatchDetailsFormProps {
   isEdited: boolean;
 }
 
-export default function AddMatchForm({ isEdited }: AddMatchFormProps) {
+export default function MatchDetailsForm({ isEdited }: MatchDetailsFormProps) {
   const { form, nextStep, isStepValid } = useMultiStepFormContext();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const hasPenalties = form.watch("match.hasPenalties");

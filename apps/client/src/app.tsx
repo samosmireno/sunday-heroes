@@ -3,7 +3,6 @@ import CompetitionPage from "./pages/competition-page.tsx";
 import LoginPage from "./pages/login";
 import ErrorPage from "./pages/error-page";
 import ProtectedRoute from "./pages/protected-route";
-import AddMultiForm from "./pages/add-multi-form";
 import { AuthProvider } from "./context/auth-context.tsx";
 import AuthCallback from "./pages/auth-callback.tsx";
 import Dashboard from "./pages/dashboard.tsx";
@@ -13,6 +12,7 @@ import VotePage from "./pages/vote-page.tsx";
 import AdminPendingVotes from "./pages/pending-votes-page.tsx";
 import MatchesPage from "./pages/matches-page.tsx";
 import VotesPage from "./pages/votes-page.tsx";
+import AddMatchForm from "./pages/add-match-form-page.tsx";
 
 export default function App() {
   return (
@@ -59,15 +59,15 @@ export default function App() {
             path="/add-match/:competitionId"
             element={
               <ProtectedRoute>
-                <AddMultiForm />
+                <AddMatchForm />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/edit-match/:matchId"
+            path="/edit-match/:competitionId/:matchId"
             element={
               <ProtectedRoute>
-                <AddMultiForm />
+                <AddMatchForm />
               </ProtectedRoute>
             }
           />

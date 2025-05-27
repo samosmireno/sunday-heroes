@@ -75,7 +75,7 @@ model Dashboard {
   admin_id   String   @unique
   created_at DateTime @default(now())
 
-  admin        User          @relation(fields: [admin_id], references: [id])
+  admin        User          @relation(fields: [admin_id], references: [id], onDelete: Cascade)
   competitions Competition[]
   dashboard_players DashboardPlayer[]
 

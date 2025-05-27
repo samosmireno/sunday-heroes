@@ -109,9 +109,9 @@ export default function TeamSection({
 
   return (
     <div className="flex flex-col px-12">
-      <label className="mb-2 font-semibold text-gray-400">
+      <div className="mb-2 font-semibold text-gray-400">
         {team} Team Players
-      </label>
+      </div>
       <div className="flex justify-between">
         <AutoComplete
           selectedValue={selectedValue}

@@ -7,6 +7,8 @@ import { config } from "../config/config";
 import { AuthResponse } from "../types";
 import { UserResponse } from "@repo/logger";
 import { AuthenticatedRequest } from "../middleware/auth-middleware";
+import { Role } from "@prisma/client";
+import { DashboardRepo } from "../repositories/dashboard-repo";
 
 const createUserAuthResponse = async (
   userId: string
@@ -200,10 +202,24 @@ export const handleGoogleCallback = async (
       Buffer.from(id_token.split(".")[1], "base64").toString()
     );
 
-    const user = await UserRepo.getUserByEmail(googleUser.email);
+    let user = await UserRepo.getUserByEmail(googleUser.email);
 
     if (!user) {
-      return res.status(500).send("User not found");
+      user = await UserRepo.createUser({
+        email: googleUser.email,
+        given_name: googleUser.given_name,
+        family_name: googleUser.family_name,
+        role: Role.ADMIN,
+        is_registered: true,
+        created_at: new Date(),
+        last_login: new Date(),
+      });
+
+      const dashboard = await DashboardRepo.createDashboard({
+        admin_id: user.id,
+        name: `${googleUser.given_name}'s Dashboard`,
+        created_at: new Date(),
+      });
     }
 
     const accessToken = jwt.sign(
