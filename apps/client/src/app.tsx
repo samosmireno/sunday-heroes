@@ -13,6 +13,7 @@ import AdminPendingVotes from "./pages/pending-votes-page.tsx";
 import MatchesPage from "./pages/matches-page.tsx";
 import VotesPage from "./pages/votes-page.tsx";
 import AddMatchForm from "./pages/add-match-form-page.tsx";
+import PlayersPage from "./pages/players-page.tsx";
 
 export default function App() {
   return (
@@ -100,6 +101,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <VotesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/players"
+            element={
+              <ProtectedRoute>
+                <PlayersPage />
               </ProtectedRoute>
             }
           />

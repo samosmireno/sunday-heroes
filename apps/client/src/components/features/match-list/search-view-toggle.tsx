@@ -2,6 +2,7 @@ import { LayoutGrid, List, Search, X } from "lucide-react";
 import { ViewType } from "../../../types/types";
 
 interface SearchViewToggleProps {
+  placeholder?: string;
   searchQuery: string;
   onSearchChange: (value: string) => void;
   viewType: ViewType;
@@ -9,6 +10,7 @@ interface SearchViewToggleProps {
 }
 
 export function SearchViewToggle({
+  placeholder = "Search...",
   searchQuery,
   onSearchChange,
   viewType,
@@ -25,7 +27,7 @@ export function SearchViewToggle({
         </div>
         <input
           type="text"
-          placeholder="Search competitions..."
+          placeholder={placeholder}
           className="w-full rounded-lg border-2 border-accent/50 bg-bg/30 py-1.5 pl-8 pr-8 text-sm text-gray-200 placeholder-gray-500 focus:border-accent focus:outline-none sm:py-2 sm:pl-10 sm:pr-9 sm:text-base"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}

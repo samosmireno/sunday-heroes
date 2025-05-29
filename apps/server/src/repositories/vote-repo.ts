@@ -49,6 +49,7 @@ export class VoteRepo {
     const competitions = await prisma.competition.findMany({
       where: {
         dashboard_id,
+        voting_enabled: true,
       },
     });
 

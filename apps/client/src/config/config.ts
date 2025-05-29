@@ -22,5 +22,6 @@ export const config = {
   pagination: {
     competition_per_page: 12,
     matches_per_page: 10,
+    players_per_page: 10,
   },
 };

@@ -13,9 +13,109 @@ export type DashboardPlayerWithUserDetails = Prisma.DashboardPlayerGetPayload<{
   };
 }>;
 
+export type DashboardPlayerWithDetails = Prisma.DashboardPlayerGetPayload<{
+  include: {
+    user: {
+      select: {
+        id: true;
+        email: true;
+        is_registered: true;
+      };
+    };
+    match_players: {
+      select: {
+        match: {
+          select: {
+            id: true;
+            competition: {
+              select: {
+                id: true;
+                name: true;
+              };
+            };
+            player_votes: true;
+          };
+        };
+        received_votes: true;
+        goals: true;
+        assists: true;
+      };
+    };
+  };
+}>;
+
 export class DashboardPlayerRepo {
   static async getAllDashboardPlayers(): Promise<DashboardPlayer[]> {
     return prisma.dashboardPlayer.findMany();
+  }
+
+  static async getDashboardPlayersByDashboardId(
+    dashboard_id: string,
+    page: number = 0,
+    limit: number = 10,
+    search?: string,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithDetails[]> {
+    const prismaClient = tx || prisma;
+    return prismaClient.dashboardPlayer.findMany({
+      where: {
+        dashboard_id,
+        nickname: {
+          startsWith: search,
+          mode: "insensitive",
+        },
+      },
+      orderBy: {
+        nickname: "asc",
+      },
+      skip: page * limit,
+      take: limit,
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            is_registered: true,
+          },
+        },
+        match_players: {
+          select: {
+            match: {
+              select: {
+                id: true,
+                competition: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+                player_votes: true,
+              },
+            },
+            received_votes: true,
+            goals: true,
+            assists: true,
+          },
+        },
+      },
+    });
+  }
+
+  static async getNumDashboardPlayersFromQuery(
+    dashboard_id: string,
+    search?: string
+  ): Promise<number> {
+    const players = await prisma.dashboardPlayer.findMany({
+      where: {
+        dashboard_id,
+        nickname: {
+          startsWith: search,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    return players.length;
   }
 
   static async getDashboardPlayerById(

@@ -1,10 +1,10 @@
 import {
   BarChart,
   Calendar,
-  CheckSquare,
   ChevronUp,
   Home,
   Trophy,
+  User,
   User2,
   Users,
   Zap,
@@ -42,14 +42,19 @@ const sidebarItems = [
     icon: Trophy,
   },
   {
+    title: "Matches",
+    url: "/matches",
+    icon: Calendar,
+  },
+  {
     title: "Teams",
     url: "#/teams",
     icon: Users,
   },
   {
-    title: "Matches",
-    url: "/matches",
-    icon: Calendar,
+    title: "Players",
+    url: "/players",
+    icon: User,
   },
   // {
   //   title: "Voting",

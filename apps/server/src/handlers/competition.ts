@@ -40,7 +40,6 @@ export const getDetailedCompetitions = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.query);
     const userId = req.query.userId?.toString();
     if (!userId) {
       return res.status(400).send("userId query parameter is required");

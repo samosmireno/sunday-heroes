@@ -50,6 +50,8 @@ model User {
   refresh_tokens         RefreshToken[]
   dashboard             Dashboard?
   dashboard_players     DashboardPlayer[]
+  sent_invitations CompetitionInvitation[] @relation("InvitedByUser")
+  used_invitations CompetitionInvitation[] @relation("UsedByUser")
 
   @@index([email])
   @@index([role])
@@ -119,6 +121,7 @@ model Competition {
   moderators    CompetitionModerator[]
   team_competitions TeamCompetition[]
   matches       Match[]
+  invitations      CompetitionInvitation[]
 
   @@index([dashboard_id])
 }
@@ -248,4 +251,26 @@ model PlayerVote {
   @@index([match_id])
   @@index([voter_id])
   @@index([match_player_id])
+}
+
+model CompetitionInvitation {
+  id               String    @id @default(uuid())
+  competition_id   String
+  invited_by_id    String
+  invite_token     String    @unique
+  email            String?
+  nickname         String?
+  expires_at       DateTime
+  used_at          DateTime?
+  used_by_user_id  String?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+
+  competition      Competition @relation(fields: [competition_id], references: [id], onDelete: Cascade)
+  invited_by       User        @relation("InvitedByUser", fields: [invited_by_id], references: [id])
+  used_by_user     User?       @relation("UsedByUser", fields: [used_by_user_id], references: [id])
+
+  @@index([invite_token])
+  @@index([competition_id])
+  @@index([expires_at])
 }

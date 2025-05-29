@@ -176,3 +176,31 @@ export type CompetitionVotingData = {
   pendingVotesCount: number;
   closedVotesCount: number;
 };
+
+export type PlayerListResponse = {
+  id: string;
+  nickname: string;
+  competitionsCount: number;
+  totalMatches: number;
+  totalGoals: number;
+  totalAssists: number;
+  averageRating: number | null;
+  isRegistered: boolean;
+  email?: string;
+  competitions: CompetitionPlayerList[];
+};
+
+export type CompetitionPlayerList = {
+  id: string;
+  name: string;
+  matches: number;
+  goals: number;
+  assists: number;
+  averageRating: number | null;
+};
+
+export type PlayerListRequest = {
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+};

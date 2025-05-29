@@ -10,7 +10,11 @@ import {
   getMatchesWithStats,
   updateMatch,
 } from "../handlers/match";
-import { getAllDashboardPlayers, getUserById } from "../handlers/player";
+import {
+  getAllDashboardPlayers,
+  getAllDashboardPlayersWithDetails,
+  getUserById,
+} from "../handlers/player";
 import { z } from "zod";
 import { createMatchRequestSchema } from "../schemas/create-match-request-schema";
 import { getDashboardDetails } from "../handlers/dashboard";
@@ -99,15 +103,12 @@ router.put(
 );
 router.delete("/matches/:id", authenticateToken, deleteMatch);
 
+router.get("/players", getAllDashboardPlayersWithDetails);
+
 router.get("/users", getAllDashboardPlayers);
 router.get("/users/:id", getUserById);
 
-router.get("/votes", (req: Request, res: Response, next: NextFunction) => {
-  if (req.query.userId) {
-    return getAllVotesFromDashboard(req, res, next);
-  }
-  console.log("No dash ID");
-});
+router.get("/votes", getAllVotesFromDashboard);
 
 router.get("/votes/status/:matchId", getVotingStatus);
 router.post(

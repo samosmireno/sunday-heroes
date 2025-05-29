@@ -159,32 +159,6 @@ export class CompetitionRepo {
           mode: "insensitive",
         },
       },
-      orderBy: {
-        created_at: "desc",
-      },
-      include: {
-        dashboard: {
-          select: {
-            id: true,
-          },
-        },
-        team_competitions: true,
-        matches: {
-          include: {
-            matchPlayers: {
-              include: {
-                dashboard_player: true,
-                received_votes: true,
-              },
-            },
-            match_teams: {
-              include: {
-                team: true,
-              },
-            },
-          },
-        },
-      },
     });
 
     return competitions.length;
