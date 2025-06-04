@@ -3,15 +3,24 @@ import axios from "axios";
 import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
 
-const fetchCompetition = async (id: string): Promise<CompetitionResponse> => {
-  const { data } = await axios.get(`${config.server}/api/competition/${id}`);
+const fetchCompetition = async (
+  compId: string,
+  userId: string,
+): Promise<CompetitionResponse> => {
+  const params = new URLSearchParams({
+    compId,
+    userId,
+  });
+  const { data } = await axios.get(
+    `${config.server}/api/competition?${params.toString()}`,
+  );
   return data;
 };
 
-export const useCompetition = (id: string) => {
+export const useCompetition = (compId: string, userId: string) => {
   const competitionQuery = useQuery({
     queryKey: ["competition"],
-    queryFn: () => fetchCompetition(id),
+    queryFn: () => fetchCompetition(compId, userId),
   });
 
   return {

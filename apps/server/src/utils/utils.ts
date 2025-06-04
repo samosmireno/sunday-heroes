@@ -11,7 +11,6 @@ import {
   MatchResponse,
   PlayerResponse,
   PlayerTotals,
-  VotingStatus,
   createCompetitionRequest,
   DetailedCompetitionResponse,
   CompetitionVotes,
@@ -30,7 +29,7 @@ import {
 import { DashboardVoteService } from "../repositories/vote-repo";
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
 import { config } from "../config/config";
-import e from "express";
+import { VotingStatus } from "@prisma/client";
 import { DashboardPlayerWithDetails } from "../repositories/dashboard-player-repo";
 
 export function createStepSchema<T extends Record<string, z.ZodType>>(
@@ -144,7 +143,8 @@ export function transformMatchServiceToResponse(
 }
 
 export function transformAddMatchRequestToService(
-  data: createMatchRequest
+  data: createMatchRequest,
+  competitionVoting?: VotingStatus
 ): Omit<Match, "id"> {
   const matchForService: Omit<Match, "id"> = {
     competition_id: data.competitionId,
@@ -157,7 +157,7 @@ export function transformAddMatchRequestToService(
     created_at: new Date(Date.now()),
     round: data.round,
     bracket_position: data.bracketPosition ?? null,
-    voting_status: VotingStatus.OPEN,
+    voting_status: competitionVoting ? competitionVoting : VotingStatus.CLOSED,
     voting_ends_at: new Date(Date.now() + 5 * 24 * 60 * 60),
     is_completed: false,
   };
@@ -208,7 +208,8 @@ export function transformAddCompetitionRequestToService(
 }
 
 export function transformDashboardServiceToResponse(
-  data: DashboardWithDetails
+  data: DashboardWithDetails,
+  userId: string
 ): DashboardResponse {
   const mappedCompetitions: CompetitionResponse[] = data.competitions.map(
     (comp) => {
@@ -247,6 +248,7 @@ export function transformDashboardServiceToResponse(
         id: comp.id,
         name: comp.name,
         type: comp.type as CompetitionResponse["type"],
+        isAdmin: data.admin_id === userId,
         votingEnabled: comp.voting_enabled,
         matches: mappedMatches,
         player_stats: playerStats,
@@ -309,10 +311,12 @@ const getNumUniquePlayers = (
 };
 
 export function transformDashboardCompetitionsToDetailedResponse(
+  userId: string,
   data: CompetitionWithDetails[]
 ): DetailedCompetitionResponse[] {
   const competitions: DetailedCompetitionResponse[] = data.map((comp) => ({
     id: comp.id,
+    isAdmin: comp.dashboard.admin_id === userId,
     name: comp.name,
     type: comp.type as DetailedCompetitionResponse["type"],
     teams: comp.team_competitions.length,
@@ -328,7 +332,8 @@ export function transformDashboardCompetitionsToDetailedResponse(
 }
 
 export function transformCompetitionToResponse(
-  data: CompetitionWithDetails
+  data: CompetitionWithDetails,
+  userId: string
 ): CompetitionResponse {
   const matches: MatchResponse[] = data.matches.map((match) => ({
     id: match.id,
@@ -360,6 +365,7 @@ export function transformCompetitionToResponse(
     id: data.id,
     name: data.name,
     type: data.type as CompetitionResponse["type"],
+    isAdmin: data.dashboard.admin_id === userId,
     votingEnabled: data.voting_enabled,
     matches: matches,
     player_stats: playerStats,
@@ -464,6 +470,7 @@ export function transformMatchServiceToPendingVotes(
 }
 
 export function transformMatchesToMatchesResponse(
+  userId: string,
   matches: MatchWithDetails[]
 ): MatchPageResponse[] {
   return matches.map((match) => {
@@ -512,6 +519,7 @@ export function transformMatchesToMatchesResponse(
       competitionId: match.competition.id,
       competitionName: match.competition.name,
       competitionType: match.competition.type as CompetitionResponse["type"],
+      isAdmin: match.competition.dashboard.admin_id === userId,
     };
   });
 }

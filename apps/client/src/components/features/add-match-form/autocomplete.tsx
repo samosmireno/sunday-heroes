@@ -79,6 +79,18 @@ export function AutoComplete<T extends string>({
         reset();
       }
     }
+    if (e.key === "Tab" && open && items.length > 0) {
+      e.preventDefault();
+      const firstItem = items[0];
+      if (firstItem) {
+        onSelectItem(firstItem.value);
+      }
+    }
+
+    if (e.key === "Escape") {
+      setOpen(false);
+      reset();
+    }
   };
 
   return (

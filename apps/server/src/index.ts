@@ -15,10 +15,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin:
-      config.env === "production"
-        ? "https://sunday-heroes.vercel.app"
-        : "http://localhost:5173",
+    origin: config.client,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

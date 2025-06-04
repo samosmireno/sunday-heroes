@@ -7,11 +7,14 @@ import Loading from "../components/ui/loading";
 import { CompetitionProvider } from "../context/competition-context";
 import DuelCompetitionPage from "./duel-competition-page";
 import { CompetitionType } from "@repo/logger";
+import { useAuth } from "../context/auth-context";
 
 function CompetitionPage() {
+  const { user } = useAuth();
   const { competitionId } = useParams<{ competitionId: string }>();
   const { competition, isLoading, refetch } = useCompetition(
     competitionId ?? "",
+    user?.id || "",
   );
 
   const renderCompetitionPage = () => {

@@ -16,6 +16,7 @@ interface MatchProps {
   penaltyAwayScore?: number;
   isSelectedMatch: boolean;
   refetchMatches: () => void;
+  isAdmin: boolean;
 }
 
 export default function MatchResult({
@@ -26,6 +27,7 @@ export default function MatchResult({
   penaltyHomeScore,
   penaltyAwayScore,
   refetchMatches,
+  isAdmin,
 }: MatchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -91,15 +93,17 @@ export default function MatchResult({
                 })
                 .replace(/(\d+)(?=\s)/, (d) => `${d}th`)}
             </div>
-            <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">
-              <Link to={`/edit-match/${competition?.id}/${matchId}`}>
-                <MdEdit className="text-lg text-accent sm:text-xl" />
-              </Link>
-              <MdDelete
-                className="text-lg text-accent hover:cursor-pointer sm:text-xl"
-                onClick={handleDeleteClick}
-              />
-            </div>
+            {isAdmin && (
+              <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">
+                <Link to={`/edit-match/${competition?.id}/${matchId}`}>
+                  <MdEdit className="text-lg text-accent sm:text-xl" />
+                </Link>
+                <MdDelete
+                  className="text-lg text-accent hover:cursor-pointer sm:text-xl"
+                  onClick={handleDeleteClick}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

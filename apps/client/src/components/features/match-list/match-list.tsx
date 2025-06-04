@@ -13,6 +13,7 @@ import { MatchResponse } from "@repo/logger";
 
 interface MatchListProps {
   competitionId: string;
+  isAdmin: boolean;
   matches: MatchResponse[];
   selectedMatch: number;
   onMatchClick: (arg0: number) => void;
@@ -21,6 +22,7 @@ interface MatchListProps {
 
 export default function MatchList({
   competitionId,
+  isAdmin,
   matches,
   selectedMatch,
   onMatchClick,
@@ -62,14 +64,16 @@ export default function MatchList({
         >
           Match Results
         </h2>
-        <Link to={`/add-match/${competitionId}`}>
-          <Button className="transform rounded bg-accent px-4 py-2 font-bold uppercase text-bg shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent">
-            Add Match
-          </Button>
-        </Link>
+        {isAdmin && (
+          <Link to={`/add-match/${competitionId}`}>
+            <Button className="transform rounded bg-accent px-4 py-2 font-bold uppercase text-bg shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent">
+              Add Match
+            </Button>
+          </Link>
+        )}
       </div>
       <Carousel
-        className="flex w-full max-w-xs flex-row items-center self-center py-2 sm:max-w-sm sm:py-4 md:max-w-xl"
+        className="flex w-full max-w-xs flex-row items-center justify-center self-center py-2 sm:max-w-sm sm:py-4 md:max-w-xl"
         setApi={setApi}
       >
         <Button
@@ -106,6 +110,7 @@ export default function MatchList({
                           : false
                       }
                       refetchMatches={refetchMatches}
+                      isAdmin={isAdmin}
                     />
                   </CarouselItem>
                 );

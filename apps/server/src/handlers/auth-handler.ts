@@ -6,9 +6,10 @@ import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
 import { config } from "../config/config";
 import { AuthResponse } from "../types";
 import { UserResponse } from "@repo/logger";
-import { AuthenticatedRequest } from "../middleware/auth-middleware";
+import { AuthenticatedRequest } from "../types";
 import { Role } from "@prisma/client";
 import { DashboardRepo } from "../repositories/dashboard-repo";
+import { InvitationService } from "../services/invitation-service";
 
 const createUserAuthResponse = async (
   userId: string
@@ -188,6 +189,7 @@ export const handleGoogleCallback = async (
 ): Promise<any> => {
   try {
     const code = req.query.code as string;
+    const inviteToken = req.query.state as string;
 
     const response = await axios.post(config.google.accessTokenUrl, {
       code,
@@ -215,7 +217,7 @@ export const handleGoogleCallback = async (
         last_login: new Date(),
       });
 
-      const dashboard = await DashboardRepo.createDashboard({
+      await DashboardRepo.createDashboard({
         admin_id: user.id,
         name: `${googleUser.given_name}'s Dashboard`,
         created_at: new Date(),
@@ -262,6 +264,68 @@ export const handleGoogleCallback = async (
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
     });
+
+    if (inviteToken) {
+      try {
+        // Validate invitation first
+        const invitation =
+          await InvitationService.validateInvitation(inviteToken);
+
+        if (!invitation) {
+          // Invalid invitation - redirect to error page
+          return res.redirect(
+            `${config.google.redirectClientUrl}?error=invalid_invitation`
+          );
+        }
+
+        // Accept the invitation
+        await InvitationService.acceptInvitation(inviteToken, user.id);
+
+        // Create user info with success indicator
+        const userInfo: UserResponse = {
+          id: user.id,
+          email: user.email,
+          name: user.given_name,
+          role: user.role as UserResponse["role"],
+        };
+
+        // Redirect to dashboard with invitation success
+        return res.redirect(
+          `${config.google.redirectClientUrl}?user=${Buffer.from(JSON.stringify(userInfo)).toString("base64")}&invitation=accepted&dashboard=${invitation.dashboardPlayer.dashboard.id}`
+        );
+      } catch (error) {
+        console.error("Failed to accept invitation:", error);
+
+        // Check if it's a user already exists error
+        if (
+          error instanceof Error &&
+          error.message.includes("already has a player")
+        ) {
+          return res.redirect(
+            `${config.google.redirectClientUrl}?error=already_connected&user=${Buffer.from(
+              JSON.stringify({
+                id: user.id,
+                email: user.email,
+                name: user.given_name,
+                role: user.role as UserResponse["role"],
+              })
+            ).toString("base64")}`
+          );
+        }
+
+        // Other invitation errors
+        return res.redirect(
+          `${config.google.redirectClientUrl}?error=invitation_failed&user=${Buffer.from(
+            JSON.stringify({
+              id: user.id,
+              email: user.email,
+              name: user.given_name,
+              role: user.role as UserResponse["role"],
+            })
+          ).toString("base64")}`
+        );
+      }
+    }
 
     const userInfo: UserResponse = {
       id: user.id,

@@ -19,7 +19,15 @@ export type MatchWithDetails = Prisma.MatchGetPayload<{
         team: true;
       };
     };
-    competition: true;
+    competition: {
+      include: {
+        dashboard: {
+          select: {
+            admin_id: true;
+          };
+        };
+      };
+    };
     player_votes: true;
   };
 }>;
@@ -68,7 +76,15 @@ export class MatchRepo {
           },
         },
         player_votes: true,
-        competition: true,
+        competition: {
+          include: {
+            dashboard: {
+              select: {
+                admin_id: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -95,23 +111,45 @@ export class MatchRepo {
           },
         },
         player_votes: true,
-        competition: true,
+        competition: {
+          include: {
+            dashboard: {
+              select: {
+                admin_id: true,
+              },
+            },
+          },
+        },
       },
     });
   }
 
   static async getMatchesWithStats(
     dashboard_id: string,
+    user_id?: string,
     competition_id?: string,
     limit?: number,
     offset?: number
   ): Promise<MatchWithDetails[]> {
     return prisma.match.findMany({
       where: {
-        competition: {
-          id: competition_id,
-          dashboard_id: dashboard_id,
-        },
+        competition_id: competition_id || undefined,
+        OR: [
+          {
+            competition: {
+              dashboard_id: dashboard_id,
+            },
+          },
+          {
+            matchPlayers: {
+              some: {
+                dashboard_player: {
+                  user_id: user_id,
+                },
+              },
+            },
+          },
+        ],
       },
       include: {
         matchPlayers: {
@@ -131,7 +169,15 @@ export class MatchRepo {
           },
         },
         player_votes: true,
-        competition: true,
+        competition: {
+          include: {
+            dashboard: {
+              select: {
+                admin_id: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         date: "desc",
@@ -164,7 +210,15 @@ export class MatchRepo {
           },
         },
         player_votes: true,
-        competition: true,
+        competition: {
+          include: {
+            dashboard: {
+              select: {
+                admin_id: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -221,7 +275,15 @@ export class MatchRepo {
           },
         },
         player_votes: true,
-        competition: true,
+        competition: {
+          include: {
+            dashboard: {
+              select: {
+                admin_id: true,
+              },
+            },
+          },
+        },
       },
     });
   }

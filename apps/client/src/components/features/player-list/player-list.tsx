@@ -1,16 +1,14 @@
 import { useState } from "react";
-import { UserPlus } from "lucide-react";
-import { Button } from "../../ui/button";
 import PlayerDetails from "./player-details";
 import { PlayerListResponse } from "@repo/logger";
 import React from "react";
+import InvitePlayerDialog from "../invite-player/invite-player-dialog";
 
 interface PlayersListProps {
   players: PlayerListResponse[];
-  onInvite: (id: string, email?: string) => void;
 }
 
-export default function PlayersList({ players, onInvite }: PlayersListProps) {
+export default function PlayersList({ players }: PlayersListProps) {
   const [expandedPlayerId, setExpandedPlayerId] = useState<string | null>(null);
 
   const toggleExpand = (playerId: string) => {
@@ -160,18 +158,10 @@ export default function PlayersList({ players, onInvite }: PlayersListProps) {
                   <td className="whitespace-nowrap px-1 py-2 text-center sm:px-2 sm:py-3 lg:px-3">
                     <div className="flex items-center justify-center">
                       {!player.isRegistered && (
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onInvite(player.id, player.email);
-                          }}
-                          title="Invite"
-                          className="bg-accent/20 text-accent hover:bg-accent/30"
-                          size="sm"
-                        >
-                          <UserPlus size={12} className="sm:mr-1 sm:size-14" />
-                          <span className="hidden sm:inline">Invite</span>
-                        </Button>
+                        <InvitePlayerDialog
+                          dashboardPlayerId={player.id}
+                          playerNickname={player.nickname}
+                        />
                       )}
                     </div>
                   </td>

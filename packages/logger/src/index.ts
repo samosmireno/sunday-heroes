@@ -50,6 +50,7 @@ export type CompetitionResponse = {
   id: string;
   name: string;
   type: CompetitionType;
+  isAdmin: boolean;
   votingEnabled: boolean;
   matches: MatchResponse[];
   player_stats: PlayerTotals[];
@@ -87,6 +88,7 @@ export type DashboardCompetitionResponse = {
 
 export type DetailedCompetitionResponse = {
   id: string;
+  isAdmin: boolean;
   name: string;
   type: CompetitionType;
   teams: number;
@@ -158,6 +160,7 @@ export type MatchPageResponse = {
   competitionId: string;
   competitionName: string;
   competitionType: CompetitionType;
+  isAdmin: boolean;
   teams: string[];
   scores: number[];
   penaltyScores?: number[];

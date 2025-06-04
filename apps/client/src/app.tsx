@@ -14,6 +14,7 @@ import MatchesPage from "./pages/matches-page.tsx";
 import VotesPage from "./pages/votes-page.tsx";
 import AddMatchForm from "./pages/add-match-form-page.tsx";
 import PlayersPage from "./pages/players-page.tsx";
+import InvitationPage from "./pages/invitation-page.tsx";
 
 export default function App() {
   return (
@@ -112,6 +113,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/invite/:token" element={<InvitationPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </AuthProvider>

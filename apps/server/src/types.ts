@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Request } from "express";
 
 export type AuthResponse = {
   message?: string;
@@ -9,6 +10,10 @@ export type AuthResponse = {
     role?: string;
   };
 };
+
+export interface AuthenticatedRequest extends Request {
+  userId: string;
+}
 
 export type PrismaTransaction = Omit<
   PrismaClient,

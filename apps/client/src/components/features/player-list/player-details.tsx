@@ -112,9 +112,9 @@ export default function PlayerDetails({ player }: PlayerDetailsProps) {
                         {competition.averageRating ? (
                           <span
                             className={`text-2xs inline-flex items-center justify-center rounded px-1.5 py-0.5 font-medium sm:px-2 sm:py-1 sm:text-xs ${
-                              competition.averageRating >= 8
+                              competition.averageRating >= 2
                                 ? "bg-green-900/30 text-green-400"
-                                : competition.averageRating >= 6
+                                : competition.averageRating >= 1
                                   ? "bg-amber-900/30 text-amber-400"
                                   : "bg-red-900/30 text-red-400"
                             }`}

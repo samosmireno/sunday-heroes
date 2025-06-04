@@ -19,6 +19,7 @@ export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
     dashboard: {
       select: {
         id: true;
+        admin_id: true;
       };
     };
     team_competitions: true;
@@ -94,11 +95,17 @@ export class CompetitionRepo {
         matches: true,
         team_competitions: true,
       },
+      orderBy: {
+        matches: {
+          _count: "desc",
+        },
+      },
     });
   }
 
   static async getAllDetailedCompetitionsFromDashboard(
     dashboard_id: string,
+    user_id: string,
     page: number,
     limit: number,
     type?: CompetitionType,
@@ -106,7 +113,24 @@ export class CompetitionRepo {
   ): Promise<CompetitionWithDetails[]> {
     return prisma.competition.findMany({
       where: {
-        dashboard_id,
+        OR: [
+          {
+            dashboard_id,
+          },
+          {
+            matches: {
+              some: {
+                matchPlayers: {
+                  some: {
+                    dashboard_player: {
+                      user_id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
         type: type,
         name: {
           startsWith: search,
@@ -122,6 +146,7 @@ export class CompetitionRepo {
         dashboard: {
           select: {
             id: true,
+            admin_id: true,
           },
         },
         team_competitions: true,
@@ -147,12 +172,30 @@ export class CompetitionRepo {
 
   static async getNumCompetitionsFromQuery(
     dashboard_id: string,
+    user_id?: string,
     type?: CompetitionType,
     search?: string
   ): Promise<number> {
     const competitions = await prisma.competition.findMany({
       where: {
-        dashboard_id,
+        OR: [
+          {
+            dashboard_id,
+          },
+          {
+            matches: {
+              some: {
+                matchPlayers: {
+                  some: {
+                    dashboard_player: {
+                      user_id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
         type: type,
         name: {
           startsWith: search,
@@ -177,6 +220,7 @@ export class CompetitionRepo {
         dashboard: {
           select: {
             id: true,
+            admin_id: true,
           },
         },
         team_competitions: true,
@@ -208,6 +252,20 @@ export class CompetitionRepo {
     });
 
     return competition?.type;
+  }
+
+  static async getCompetitionVotingStatus(
+    competition_id: string
+  ): Promise<VotingStatus | undefined> {
+    const competition = await prisma.competition.findUnique({
+      where: { id: competition_id },
+      select: {
+        voting_enabled: true,
+      },
+    });
+    return competition?.voting_enabled
+      ? VotingStatus.OPEN
+      : VotingStatus.CLOSED;
   }
 
   static async createCompetition(

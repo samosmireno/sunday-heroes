@@ -91,6 +91,69 @@ export class EmailService {
     }
   }
 
+  static async sendDashboardInvitation(
+    email: string,
+    inviteToken: string,
+    details: {
+      dashboardName: string;
+      playerNickname: string;
+      inviterName: string;
+    }
+  ): Promise<boolean> {
+    const inviteUrl = `${config.client}/invite/${inviteToken}`;
+
+    const mailOptions = {
+      from: `Sunday Heroes <${config.smtp.user}>`,
+      to: email,
+      subject: `You're invited to join ${details.dashboardName}!`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background-color: #1e293b; color: white; padding: 20px; text-align: center;">
+            <h1 style="margin: 0;">🏆 Dashboard Invitation</h1>
+          </div>
+          
+          <div style="padding: 20px; background-color: #f8fafc;">
+            <p>Hi there,</p>
+            
+            <p><strong>${details.inviterName}</strong> has invited you to join their dashboard:</p>
+            
+            <div style="background-color: #e2e8f0; padding: 15px; border-radius: 5px; margin: 15px 0;">
+              <h3 style="margin-top: 0; color: #334155;">${details.dashboardName}</h3>
+              <p style="margin: 5px 0; color: #64748b;">You'll be connected to player: <strong>${details.playerNickname}</strong></p>
+            </div>
+            
+            <p>Click the button below to accept the invitation and connect to your player profile:</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+              <a href="${inviteUrl}" 
+                 style="background-color: #2563eb; color: white; padding: 12px 25px; 
+                        text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                Accept Invitation
+              </a>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px;">
+              This invitation will expire in 7 days. If you don't have an account, you'll be prompted to sign in with Google.
+            </p>
+          </div>
+          
+          <div style="background-color: #1e293b; color: #94a3b8; padding: 15px; text-align: center; font-size: 12px;">
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>© ${new Date().getFullYear()} Sunday Heroes</p>
+          </div>
+        </div>
+      `,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      return true;
+    } catch (error) {
+      console.error("Failed to send invitation email:", error);
+      return false;
+    }
+  }
+
   static async verifyConnection(): Promise<boolean> {
     try {
       await transporter.verify();

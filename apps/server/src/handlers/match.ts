@@ -109,8 +109,6 @@ export const getMatchesWithStats = async (
 
     const competitionId = req.query.competitionId?.toString();
 
-    console.log("competitionId", competitionId);
-
     const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
     if (!dashboardId) {
       return res.status(400).send("No dashboard for the given userId");
@@ -123,6 +121,7 @@ export const getMatchesWithStats = async (
 
     const matches = await MatchRepo.getMatchesWithStats(
       dashboardId,
+      userId,
       competitionId,
       limit,
       offset
@@ -133,7 +132,7 @@ export const getMatchesWithStats = async (
     res.setHeader("X-Total-Count", matches.length.toString());
     res.setHeader("X-Total-Pages", totalPages.toString());
 
-    const response = transformMatchesToMatchesResponse(matches);
+    const response = transformMatchesToMatchesResponse(userId, matches);
     res.json(response);
   } catch (error) {
     next(error);
@@ -148,13 +147,18 @@ export const createMatch = async (
   try {
     const data: createMatchRequest = req.body;
 
-    const [hometeamID, awayteamID, dashboardId] = await Promise.all([
-      TeamRepo.getTeamIDFromName(data.teams[0]),
-      TeamRepo.getTeamIDFromName(data.teams[1]),
-      DashboardRepo.getDashboardIdFromCompetitionId(data.competitionId),
-    ]);
+    const [hometeamID, awayteamID, dashboardId, competitionVoting] =
+      await Promise.all([
+        TeamRepo.getTeamIDFromName(data.teams[0]),
+        TeamRepo.getTeamIDFromName(data.teams[1]),
+        DashboardRepo.getDashboardIdFromCompetitionId(data.competitionId),
+        CompetitionRepo.getCompetitionVotingStatus(data.competitionId),
+      ]);
 
-    const matchToAdd = transformAddMatchRequestToService(data);
+    const matchToAdd = transformAddMatchRequestToService(
+      data,
+      competitionVoting
+    );
 
     const result = await prisma.$transaction(async (tx) => {
       const match = await MatchRepo.createMatch(matchToAdd, tx);

@@ -40,6 +40,9 @@ export default function TeamSection({
   });
 
   function addPlayerToForm(player: string) {
+    if (!player || selectedPlayers.includes(player)) {
+      return;
+    }
     addPlayer(team, player);
     form.setValue(`players.${team.toLocaleLowerCase()}Players`, [
       ...players[team],

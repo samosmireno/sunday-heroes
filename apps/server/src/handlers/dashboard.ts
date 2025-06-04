@@ -21,7 +21,7 @@ export const getDashboardDetails = async (
   const dashboard = await DashboardRepo.getDashboardDetails(dashboardId);
   if (dashboard) {
     const dashboardResponse: DashboardResponse =
-      transformDashboardServiceToResponse(dashboard);
+      transformDashboardServiceToResponse(dashboard, userId);
     res.json(dashboardResponse);
   } else {
     res.status(404).send("Dashboard not found");

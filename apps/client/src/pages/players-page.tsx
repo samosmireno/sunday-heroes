@@ -24,11 +24,6 @@ export default function PlayersPage() {
       })
     : { players: [], totalPages: 1, isLoading: false };
 
-  const handleInvitePlayer = (playerId: string, email?: string) => {
-    // TODO: Implement invite functionality
-    console.log("Inviting player:", playerId, email);
-  };
-
   if (isLoading) {
     return <Loading text="Loading players..." />;
   }
@@ -51,7 +46,7 @@ export default function PlayersPage() {
 
       <div className="relative min-h-[50vh] rounded-lg border-2 border-accent bg-panel-bg p-3 shadow-lg sm:p-4">
         {players && players.length > 0 ? (
-          <PlayersList players={players} onInvite={handleInvitePlayer} />
+          <PlayersList players={players} />
         ) : (
           <div className="flex h-64 items-center justify-center">
             <p className="text-center text-sm text-gray-400 sm:text-base">

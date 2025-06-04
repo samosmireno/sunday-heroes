@@ -50,8 +50,8 @@ model User {
   refresh_tokens         RefreshToken[]
   dashboard             Dashboard?
   dashboard_players     DashboardPlayer[]
-  sent_invitations CompetitionInvitation[] @relation("InvitedByUser")
-  used_invitations CompetitionInvitation[] @relation("UsedByUser")
+  sent_invitations DashboardInvitation[] @relation("InvitedByUser")
+  used_invitations DashboardInvitation[] @relation("UsedByUser")
 
   @@index([email])
   @@index([role])
@@ -91,11 +91,12 @@ model DashboardPlayer {
   nickname     String
   created_at   DateTime @default(now())
   
-  dashboard             Dashboard                 @relation(fields: [dashboard_id], references: [id])
+  dashboard             Dashboard                 @relation(fields: [dashboard_id], references: [id],onDelete: Cascade)
   user                  User?                     @relation(fields: [user_id], references: [id])
   match_players        MatchPlayer[]
   moderated_competitions CompetitionModerator[]
   votes_given           PlayerVote[]              @relation("VoterToVote")
+  invitations         DashboardInvitation[]
 
   @@unique([dashboard_id, nickname])
   @@index([dashboard_id])
@@ -117,11 +118,10 @@ model Competition {
   reminder_days              Int?
   created_at                 DateTime        @default(now())
 
-  dashboard     Dashboard              @relation(fields: [dashboard_id], references: [id])
+  dashboard     Dashboard              @relation(fields: [dashboard_id], references: [id], onDelete: Cascade)
   moderators    CompetitionModerator[]
   team_competitions TeamCompetition[]
   matches       Match[]
-  invitations      CompetitionInvitation[]
 
   @@index([dashboard_id])
 }
@@ -132,8 +132,8 @@ model CompetitionModerator {
   dashboard_player_id String
   created_at     DateTime @default(now())
 
-  competition    Competition @relation(fields: [competition_id], references: [id])
-  dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id])
+  competition    Competition @relation(fields: [competition_id], references: [id], onDelete: Cascade)
+  dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
 
   @@unique([competition_id, dashboard_player_id])
   @@index([competition_id])
@@ -164,8 +164,8 @@ model TeamCompetition {
   goals_against  Int      @default(0)
   created_at     DateTime @default(now())
 
-  team           Team        @relation(fields: [team_id], references: [id])
-  competition    Competition @relation(fields: [competition_id], references: [id])
+  team           Team        @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  competition    Competition @relation(fields: [competition_id], references: [id], onDelete: Cascade)
 
   @@unique([team_id, competition_id])
   @@index([team_id])
@@ -188,7 +188,7 @@ model Match {
   is_completed      Boolean      @default(false)
   created_at        DateTime     @default(now())
 
-  competition    Competition  @relation(fields: [competition_id], references: [id])
+  competition    Competition  @relation(fields: [competition_id], references: [id], onDelete: Cascade)
   match_teams    MatchTeam[]
   matchPlayers MatchPlayer[]
   player_votes   PlayerVote[]
@@ -253,24 +253,23 @@ model PlayerVote {
   @@index([match_player_id])
 }
 
-model CompetitionInvitation {
-  id               String    @id @default(uuid())
-  competition_id   String
-  invited_by_id    String
-  invite_token     String    @unique
-  email            String?
-  nickname         String?
-  expires_at       DateTime
-  used_at          DateTime?
-  used_by_user_id  String?
-  created_at       DateTime  @default(now())
-  updated_at       DateTime  @updatedAt
+model DashboardInvitation {
+  id                  String    @id @default(uuid())
+  invited_by_id       String
+  dashboard_player_id String
+  invite_token        String    @unique
+  email               String?
+  expires_at          DateTime
+  used_at             DateTime?
+  used_by_user_id     String?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
 
-  competition      Competition @relation(fields: [competition_id], references: [id], onDelete: Cascade)
-  invited_by       User        @relation("InvitedByUser", fields: [invited_by_id], references: [id])
-  used_by_user     User?       @relation("UsedByUser", fields: [used_by_user_id], references: [id])
+  invited_by          User             @relation("InvitedByUser", fields: [invited_by_id], references: [id])
+  dashboard_player    DashboardPlayer  @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
+  used_by_user        User?            @relation("UsedByUser", fields: [used_by_user_id], references: [id])
 
   @@index([invite_token])
-  @@index([competition_id])
+  @@index([dashboard_player_id])
   @@index([expires_at])
 }

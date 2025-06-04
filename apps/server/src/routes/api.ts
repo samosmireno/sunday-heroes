@@ -34,6 +34,11 @@ import {
 } from "../handlers/vote";
 import { createCompetitionRequestSchema } from "../schemas/create-competition-request-schema";
 import { getTeamListFromCompetitionId } from "../handlers/team";
+import {
+  acceptInvitation,
+  createInvitation,
+  validateInvitation,
+} from "../handlers/inivitation";
 
 const router = Router();
 
@@ -69,7 +74,7 @@ router.get(
   }
 );
 
-router.get("/competition/:id", getCompetitionStats);
+router.get("/competition/", getCompetitionStats);
 router.post(
   "/competition",
   authenticateToken,
@@ -121,5 +126,9 @@ router.post(
 router.get("/admin/pending-votes/:matchId", getPendingVotesForMatch);
 
 router.get("/team-list/:competitionId", getTeamListFromCompetitionId);
+
+router.post("/invitations", authenticateToken, createInvitation);
+router.get("/invitations/:token/validate", validateInvitation);
+router.post("/invitations/:token/accept", authenticateToken, acceptInvitation);
 
 export default router;

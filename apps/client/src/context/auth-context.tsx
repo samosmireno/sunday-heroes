@@ -25,7 +25,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    console.error("useAuth called outside of AuthProvider");
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
@@ -37,17 +36,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const login = () => {
-    console.log("Login initiated - Redirecting to Google Auth");
     const googleAuthUrl = `${config.google.authEndpoint}?client_id=${config.google.clientId}&redirect_uri=${config.redirect_uri}&response_type=code&scope=email profile`;
     window.location.href = googleAuthUrl;
   };
 
   const logout = () => {
-    console.log("Logout initiated");
     axiosInstance
       .get(`${config.server}/auth/logout`, { withCredentials: true })
       .then(() => {
-        console.log("Logout successful");
         navigate("/login");
       })
       .catch((error) => {
@@ -76,7 +72,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    console.log("AuthProvider mounted, initializing auth state");
     const initializeAuth = async () => {
       try {
         const storedUser = localStorage.getItem("user");

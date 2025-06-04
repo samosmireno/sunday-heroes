@@ -1,5 +1,5 @@
 import { DetailedCompetitionResponse } from "@repo/logger";
-import { Calendar, CheckSquare, Trophy, Users } from "lucide-react";
+import { Calendar, CheckSquare, Shield, Trophy, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CompetitionListProps {
@@ -59,11 +59,19 @@ export default function CompetitionList({
             {competitions.map((competition) => (
               <tr key={competition.id} className="hover:bg-bg/30">
                 <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4">
-                  <div
-                    className="max-w-[100px] truncate text-sm font-bold text-gray-200 sm:max-w-[180px] md:max-w-[250px]"
-                    title={competition.name}
-                  >
-                    {competition.name}
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="max-w-[100px] truncate text-sm font-bold text-gray-200 sm:max-w-[180px] md:max-w-[250px]"
+                      title={competition.name}
+                    >
+                      {competition.name}
+                    </div>
+                    {competition.isAdmin && (
+                      <Shield
+                        size={14}
+                        className="flex-shrink-0 text-amber-500"
+                      />
+                    )}
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4">

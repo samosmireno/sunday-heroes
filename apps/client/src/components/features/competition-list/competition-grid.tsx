@@ -1,5 +1,5 @@
 import { DetailedCompetitionResponse } from "@repo/logger";
-import { Calendar, CheckSquare, Trophy, Users } from "lucide-react";
+import { Calendar, CheckSquare, Shield, Trophy, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CompetitionGridProps {
@@ -29,12 +29,17 @@ export default function CompetitionGrid({
           ></div>
           <div className="p-3 sm:p-4">
             <div className="mb-2 flex items-start justify-between sm:mb-3">
-              <h3
-                className="truncate text-sm font-bold text-gray-200 sm:text-base"
-                title={competition.name}
-              >
-                {competition.name}
-              </h3>
+              <div className="flex items-center gap-1.5">
+                <h3
+                  className="truncate text-sm font-bold text-gray-200 sm:text-base"
+                  title={competition.name}
+                >
+                  {competition.name}
+                </h3>
+                {competition.isAdmin && (
+                  <Shield size={16} className="flex-shrink-0 text-amber-500" />
+                )}
+              </div>
               <div className="flex items-center">
                 <span
                   className={`ml-1.5 rounded px-1.5 py-0.5 text-xs font-bold ${

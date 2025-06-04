@@ -58,6 +58,7 @@ export const getDetailedCompetitions = async (
     const competitions =
       await CompetitionRepo.getAllDetailedCompetitionsFromDashboard(
         dashboardId,
+        userId,
         page,
         limit,
         type,
@@ -66,12 +67,15 @@ export const getDetailedCompetitions = async (
 
     const totalCount = await CompetitionRepo.getNumCompetitionsFromQuery(
       dashboardId,
+      userId,
       type,
       search
     );
     res.setHeader("X-Total-Count", totalCount.toString());
 
-    res.json(transformDashboardCompetitionsToDetailedResponse(competitions));
+    res.json(
+      transformDashboardCompetitionsToDetailedResponse(userId, competitions)
+    );
   } catch (error) {
     next(error);
   }
@@ -83,13 +87,20 @@ export const getCompetitionStats = async (
   next: NextFunction
 ) => {
   try {
-    const competitionId = req.params.id.toString();
-    if (!competitionId) {
-      return res.status(400).send("dashboardId query parameter is required");
+    const competitionId = req.query.compId?.toString();
+    const userId = req.query.userId?.toString();
+    console.log("Competition ID:", competitionId);
+    console.log("User ID:", userId);
+    if (!userId) {
+      return res.status(400).send("userId query parameter is required");
     }
+    if (!competitionId) {
+      return res.status(400).send("compId query parameter is required");
+    }
+
     const competition = await CompetitionRepo.getCompetitionById(competitionId);
     if (competition) {
-      const compResponse = transformCompetitionToResponse(competition);
+      const compResponse = transformCompetitionToResponse(competition, userId);
       //console.log(compResponse.matches[0].players[0]);
       res.json(compResponse);
     } else {

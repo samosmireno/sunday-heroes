@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckSquare, ChevronDown, ChevronUp } from "lucide-react";
+import { CheckSquare, ChevronDown, ChevronUp, Shield } from "lucide-react";
 import { MatchDetails } from "./match-details";
 import { MatchPageResponse } from "@repo/logger";
 import { formatDate } from "../../../utils/utils";
@@ -126,7 +126,20 @@ export default function MatchesList({ matches }: MatchesListProps) {
                     {match.matchType}
                   </td>
                   <td className="hidden whitespace-nowrap px-2 py-3 text-sm text-gray-300 sm:table-cell md:px-4 md:py-4">
-                    {match.competitionName}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="max-w-[100px] truncate text-sm font-bold text-gray-200 sm:max-w-[180px] md:max-w-[250px]"
+                        title={match.competitionName}
+                      >
+                        {match.competitionName}
+                      </div>
+                      {match.isAdmin && (
+                        <Shield
+                          size={14}
+                          className="flex-shrink-0 text-amber-500"
+                        />
+                      )}
+                    </div>
                   </td>
                   <td className="hidden whitespace-nowrap px-2 py-3 text-sm text-gray-300 md:px-4 md:py-4 xl:table-cell">
                     {getVotingStatusBadge(match)}

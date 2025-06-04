@@ -28,10 +28,12 @@ import PlayerDetailsForm from "../components/features/add-match-form/player-deta
 import { useCompetition } from "../hooks/use-competition";
 import PlayersListForm from "../components/features/add-match-form/player-list-form";
 import LeagueMatchDetailsForm from "../components/features/add-match-form/league-match-details-form";
+import { useAuth } from "../context/auth-context";
 
 export default function AddMatchForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [footballFieldMatch, setFootballFieldMatch] = useState<MatchResponse>();
+  const { user } = useAuth();
 
   const navigate = useNavigate();
   const { matchId, competitionId } = useParams<{
@@ -41,6 +43,7 @@ export default function AddMatchForm() {
   const { formData } = useMatchData(matchId);
   const { competition, isLoading: isLoadingCompetition } = useCompetition(
     competitionId ?? "",
+    user?.id ?? "",
   );
 
   const formSchema = useMemo(() => {
