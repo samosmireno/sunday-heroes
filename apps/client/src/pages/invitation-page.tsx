@@ -14,6 +14,7 @@ import axiosInstance from "../config/axiosConfig";
 import { useAuth } from "../context/auth-context";
 import { toast } from "sonner";
 import { config } from "../config/config";
+import Background from "../components/ui/background";
 
 interface InvitationDetails {
   id: string;
@@ -63,7 +64,6 @@ export default function InvitationPage() {
 
   const handleAcceptInvitation = async () => {
     if (!user) {
-      // Redirect to Google OAuth with invite token
       const googleAuthUrl = `${config.google.authEndpoint}?client_id=${config.google.clientId}&redirect_uri=${config.redirect_uri}&response_type=code&scope=email profile&state=${token}`;
       window.location.href = googleAuthUrl;
       return;
@@ -90,8 +90,9 @@ export default function InvitationPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md border-2 border-accent/70 bg-panel-bg">
+    <div className="flex min-h-screen items-center justify-center bg-secondary p-4">
+      <Background />
+      <Card className="relative w-full max-w-md border-2 border-accent/70 bg-panel-bg">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/20">
             <Trophy className="h-8 w-8 text-accent" />

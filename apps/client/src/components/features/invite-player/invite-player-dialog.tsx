@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import { UserPlus, Copy, Check, Mail } from "lucide-react";
+import { UserPlus, Copy, Check, Loader2 } from "lucide-react";
 import axiosInstance from "../../../config/axiosConfig";
 import { toast } from "sonner";
 
@@ -23,7 +23,6 @@ export default function InvitePlayerDialog({
   playerNickname,
 }: InvitePlayerDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [inviteUrl, setInviteUrl] = useState("");
   const [copied, setCopied] = useState(false);
@@ -33,16 +32,10 @@ export default function InvitePlayerDialog({
     try {
       const response = await axiosInstance.post("/api/invitations", {
         dashboardPlayerId,
-        email: email.trim() || undefined,
       });
 
       setInviteUrl(response.data.inviteUrl);
-
-      if (email.trim()) {
-        toast.success("Invitation sent via email!");
-      } else {
-        toast.success("Invitation link created!");
-      }
+      toast.success("Invitation link created!");
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to create invitation");
     } finally {
@@ -62,10 +55,16 @@ export default function InvitePlayerDialog({
   };
 
   const resetForm = () => {
-    setEmail("");
     setInviteUrl("");
     setCopied(false);
   };
+
+  useEffect(() => {
+    if (isOpen && !inviteUrl) {
+      resetForm();
+      handleCreateInvitation();
+    }
+  }, [isOpen, inviteUrl]);
 
   return (
     <Dialog
@@ -95,43 +94,11 @@ export default function InvitePlayerDialog({
 
         <div className="p-4 sm:p-6">
           {!inviteUrl ? (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="rounded-lg border-2 border-accent/30 bg-bg/20 p-3 sm:p-4">
-                <p className="text-sm text-gray-300">
-                  Invite a user to connect to the player "{playerNickname}".
-                  They'll be able to view their stats and participate in
-                  competitions.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="email"
-                  className="flex items-center gap-2 text-sm font-medium text-gray-300"
-                >
-                  <Mail className="h-4 w-4 text-accent/70" />
-                  Email (optional)
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter email to send invitation"
-                  className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-2 text-gray-200 placeholder:text-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4"
-                />
-                <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                  If provided, invitation will be sent via email
-                </p>
-              </div>
-
-              <Button
-                onClick={handleCreateInvitation}
-                disabled={isLoading}
-                className="w-full transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30 disabled:translate-y-0 disabled:opacity-50 sm:py-3"
-              >
-                {isLoading ? "Creating..." : "Create Invitation"}
-              </Button>
+            <div className="flex flex-col items-center justify-center space-y-4 py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-accent" />
+              <p className="text-sm text-gray-300">
+                Creating invitation link...
+              </p>
             </div>
           ) : (
             <div className="space-y-4 sm:space-y-6">

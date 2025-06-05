@@ -62,6 +62,12 @@ export const config = {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
   },
+  tokens: {
+    accessTokenExpiry: "15m",
+    refreshTokenExpiry: "7d",
+    accessTokenExpiryMs: 15 * 60 * 1000,
+    refreshTokenExpiryMs: 7 * 24 * 60 * 60 * 1000,
+  },
   votes: {
     maxVotesPerPlayer: 3,
     pointsDistribution: [3, 2, 1],

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { DashboardResponse } from "@repo/logger";
 import { DashboardRepo } from "../repositories/dashboard-repo";
-import { transformDashboardServiceToResponse } from "../utils/utils";
+import { transformDashboardServiceToResponse } from "../utils/dashboard-transforms";
 import { UserRepo } from "../repositories/user-repo";
 
 export const getDashboardDetails = async (

@@ -16,15 +16,13 @@ const refreshAuthLogic = async (failedRequest: AxiosError) => {
     }
 
     isRefreshing = true;
-
-    console.log("Attempting to refresh auth token...");
+    //const currentPath = window.location.pathname + window.location.search;
 
     await axiosInstance.get("/auth/refresh");
-    console.log("Auth token refresh successful");
 
     isRefreshing = false;
     //todo
-    window.location.href = "/dashboard";
+    //window.location.reload();
     return Promise.resolve();
   } catch (error) {
     isRefreshing = false;

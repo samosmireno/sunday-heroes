@@ -2,9 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { VoteRepo } from "../repositories/vote-repo";
 import {
   transformCompetitionServiceToPendingVotes,
-  transformDashboardVotesToResponse,
   transformMatchServiceToPendingVotes,
-} from "../utils/utils";
+} from "../utils/votes-transforms";
 import { UserRepo } from "../repositories/user-repo";
 import { z } from "zod";
 import { MatchPlayerRepo } from "../repositories/match-player-repo";
@@ -12,9 +11,9 @@ import { MatchRepo } from "../repositories/match-repo";
 import { VotingStatus } from "@prisma/client";
 import {
   CompetitionRepo,
-  CompetitionWithDetails,
   CompetitionWithPendingVotes,
 } from "../repositories/competition-repo";
+import { transformDashboardVotesToResponse } from "../utils/dashboard-transforms";
 
 export const submitVotesSchema = z.object({
   matchId: z.string(),

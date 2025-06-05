@@ -1,39 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import axios from "axios";
 import { UserRepo } from "../repositories/user-repo";
 import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
-import { config } from "../config/config";
-import { AuthResponse } from "../types";
-import { UserResponse } from "@repo/logger";
-import { AuthenticatedRequest } from "../types";
-import { Role } from "@prisma/client";
-import { DashboardRepo } from "../repositories/dashboard-repo";
+import { AuthService } from "../services/auth-service";
+import { CookieUtils } from "../utils/cookie-utils";
 import { InvitationService } from "../services/invitation-service";
-
-const createUserAuthResponse = async (
-  userId: string
-): Promise<AuthResponse> => {
-  const user = await UserRepo.getUserById(userId);
-  if (!user) {
-    return { message: "User not found" };
-  }
-
-  return {
-    user: {
-      id: user.id,
-      email: user.email,
-      name: user.given_name,
-      role: user.role as UserResponse["role"],
-    },
-  };
-};
+import { config } from "../config/config";
+import { AuthenticatedRequest } from "../types";
 
 export const handleRefreshToken = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<any> => {
+) => {
   try {
     const refreshToken = req.cookies["refresh-token"];
 
@@ -44,98 +22,44 @@ export const handleRefreshToken = async (
       });
     }
 
-    res.clearCookie("refresh-token", { httpOnly: true, secure: true });
+    CookieUtils.clearAuthCookies(res);
 
-    const foundUserId =
-      await RefreshTokenRepo.getUserIdByRefreshToken(refreshToken);
-
-    if (!foundUserId) {
-      try {
-        const decoded: any = jwt.verify(refreshToken, config.jwt.refreshSecret);
-        await RefreshTokenRepo.deleteAllRefreshTokensFromUser(decoded.userId);
-      } catch (err) {
-        return res.status(403).json({
-          loggedIn: false,
-          message: "Attempted refresh token reuse",
-        });
-      }
-
-      return res.status(403).json({
-        loggedIn: false,
-        message: "No user id with the attempted refresh token",
-      });
-    }
-
+    const { userId, decoded } =
+      await AuthService.validateRefreshToken(refreshToken);
     await RefreshTokenRepo.deleteRefreshToken(refreshToken);
 
-    try {
-      const decoded: any = jwt.verify(refreshToken, config.jwt.refreshSecret);
-
-      if (decoded.userId !== foundUserId) {
-        return res.status(403).json({
-          loggedIn: false,
-          message: "No user with the attempted refresh token",
-        });
-      }
-
-      const user = await UserRepo.getUserById(foundUserId);
-      if (!user) {
-        return res.status(404).json({
-          loggedIn: false,
-          message: "User not found",
-        });
-      }
-
-      const accessToken = jwt.sign(
-        {
-          userId: decoded.userId,
-          email: decoded.email,
-        },
-        config.jwt.accessSecret,
-        { expiresIn: "30m" }
-      );
-
-      const newRefreshToken = jwt.sign(
-        { userId: foundUserId },
-        config.jwt.refreshSecret,
-        {
-          expiresIn: "30 days",
-        }
-      );
-
-      await RefreshTokenRepo.deleteExpiredRefreshTokens();
-
-      await RefreshTokenRepo.createRefreshToken({
-        user_id: foundUserId,
-        token: newRefreshToken,
-        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        last_used_at: new Date(Date.now()),
-        created_at: new Date(Date.now()),
-      });
-
-      res.cookie("access-token", accessToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 30 * 60 * 1000,
-        sameSite: "none",
-      });
-
-      res.cookie("refresh-token", newRefreshToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        sameSite: "none",
-      });
-
-      const authResponse = await createUserAuthResponse(user.id);
-      return res.status(200).json(authResponse);
-    } catch (err) {
-      return res.status(403).json({
+    if (!userId) {
+      return res.status(401).json({
         loggedIn: false,
-        message: "Invalid refresh token",
+        message: "Invalid user ID",
       });
     }
+
+    const user = await UserRepo.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({
+        loggedIn: false,
+        message: "User not found",
+      });
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await AuthService.refreshUserTokens(userId, decoded.email);
+
+    CookieUtils.setAuthCookies(res, accessToken, newRefreshToken);
+
+    const authResponse = {
+      user: AuthService.createUserResponse(user),
+    };
+
+    return res.status(200).json(authResponse);
   } catch (error) {
+    if (error instanceof Error) {
+      return res.status(403).json({
+        loggedIn: false,
+        message: error.message,
+      });
+    }
     next(error);
   }
 };
@@ -144,34 +68,12 @@ export const handleLogout = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<any> => {
+) => {
   try {
     const refreshToken = req.cookies["refresh-token"];
+    CookieUtils.clearAuthCookies(res);
 
-    res.clearCookie("refresh-token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
-
-    res.clearCookie("access-token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
-
-    if (!refreshToken) {
-      return res.status(200).json({
-        loggedIn: false,
-        message: "Logged out successfully",
-      });
-    }
-
-    const userId = await RefreshTokenRepo.getUserIdByRefreshToken(refreshToken);
-
-    if (userId) {
-      await RefreshTokenRepo.deleteRefreshToken(refreshToken);
-    }
+    await AuthService.logout(refreshToken);
 
     return res.status(200).json({
       loggedIn: false,
@@ -186,163 +88,32 @@ export const handleGoogleCallback = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<any> => {
+) => {
   try {
     const code = req.query.code as string;
     const inviteToken = req.query.state as string;
 
-    const response = await axios.post(config.google.accessTokenUrl, {
-      code,
-      client_id: config.google.clientId,
-      client_secret: config.google.clientSecret,
-      redirect_uri: config.google.redirectUri,
-      grant_type: "authorization_code",
-    });
+    const googleUser = await AuthService.exchangeGoogleCode(code);
+    const user = await AuthService.findOrCreateUser(googleUser);
 
-    const { id_token } = response.data;
-    const googleUser = JSON.parse(
-      Buffer.from(id_token.split(".")[1], "base64").toString()
+    const { accessToken, refreshToken } = await AuthService.refreshUserTokens(
+      user.id,
+      googleUser.email
     );
 
-    let user = await UserRepo.getUserByEmail(googleUser.email);
-
-    if (!user) {
-      user = await UserRepo.createUser({
-        email: googleUser.email,
-        given_name: googleUser.given_name,
-        family_name: googleUser.family_name,
-        role: Role.ADMIN,
-        is_registered: true,
-        created_at: new Date(),
-        last_login: new Date(),
-      });
-
-      await DashboardRepo.createDashboard({
-        admin_id: user.id,
-        name: `${googleUser.given_name}'s Dashboard`,
-        created_at: new Date(),
-      });
-    }
-
-    const accessToken = jwt.sign(
-      {
-        userId: user.id,
-        email: googleUser.email,
-      },
-      config.jwt.accessSecret,
-      { expiresIn: "30m" }
-    );
-
-    const refreshToken = jwt.sign(
-      { userId: user.id },
-      config.jwt.refreshSecret,
-      {
-        expiresIn: "30 days",
-      }
-    );
-
-    await RefreshTokenRepo.deleteExpiredRefreshTokens();
-
-    await RefreshTokenRepo.createRefreshToken({
-      user_id: user.id,
-      token: refreshToken,
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      last_used_at: new Date(Date.now()),
-      created_at: new Date(Date.now()),
-    });
-
-    res.cookie("access-token", accessToken, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 30 * 60 * 1000,
-      sameSite: "none",
-    });
-
-    res.cookie("refresh-token", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "none",
-    });
+    CookieUtils.setAuthCookies(res, accessToken, refreshToken);
 
     if (inviteToken) {
-      try {
-        // Validate invitation first
-        const invitation =
-          await InvitationService.validateInvitation(inviteToken);
-
-        if (!invitation) {
-          // Invalid invitation - redirect to error page
-          return res.redirect(
-            `${config.google.redirectClientUrl}?error=invalid_invitation`
-          );
-        }
-
-        // Accept the invitation
-        await InvitationService.acceptInvitation(inviteToken, user.id);
-
-        // Create user info with success indicator
-        const userInfo: UserResponse = {
-          id: user.id,
-          email: user.email,
-          name: user.given_name,
-          role: user.role as UserResponse["role"],
-        };
-
-        // Redirect to dashboard with invitation success
-        return res.redirect(
-          `${config.google.redirectClientUrl}?user=${Buffer.from(JSON.stringify(userInfo)).toString("base64")}&invitation=accepted&dashboard=${invitation.dashboardPlayer.dashboard.id}`
-        );
-      } catch (error) {
-        console.error("Failed to accept invitation:", error);
-
-        // Check if it's a user already exists error
-        if (
-          error instanceof Error &&
-          error.message.includes("already has a player")
-        ) {
-          return res.redirect(
-            `${config.google.redirectClientUrl}?error=already_connected&user=${Buffer.from(
-              JSON.stringify({
-                id: user.id,
-                email: user.email,
-                name: user.given_name,
-                role: user.role as UserResponse["role"],
-              })
-            ).toString("base64")}`
-          );
-        }
-
-        // Other invitation errors
-        return res.redirect(
-          `${config.google.redirectClientUrl}?error=invitation_failed&user=${Buffer.from(
-            JSON.stringify({
-              id: user.id,
-              email: user.email,
-              name: user.given_name,
-              role: user.role as UserResponse["role"],
-            })
-          ).toString("base64")}`
-        );
-      }
+      return await InvitationService.handleInvitation(inviteToken, user, res);
     }
 
-    const userInfo: UserResponse = {
-      id: user.id,
-      email: user.email,
-      name: user.given_name,
-      role: user.role as UserResponse["role"],
-    };
-
+    const userInfo = AuthService.createUserResponse(user);
     res.redirect(
-      `${config.google.redirectClientUrl}?user=${Buffer.from(JSON.stringify(userInfo)).toString("base64")}`
+      `${config.google.redirectClientUrl}?user=${AuthService.encodeUserInfo(userInfo)}`
     );
   } catch (error) {
     if (error instanceof Error) {
-      console.error(
-        "Google callback error:",
-        (error as any).response?.data || error.message
-      );
+      console.error("Google callback error:", error.message);
     }
     next(error);
   }
@@ -353,24 +124,16 @@ export const getCurrentUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const authenticatedReq = req as AuthenticatedRequest;
   try {
-    const userId = authenticatedReq.userId;
+    const { userId } = req as AuthenticatedRequest;
+    const user = await UserRepo.getUserById(userId);
 
-    const userFromService = await UserRepo.getUserById(userId);
-
-    if (!userFromService) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const user: UserResponse = {
-      id: userFromService.id,
-      email: userFromService.email,
-      name: userFromService.given_name,
-      role: userFromService.role as UserResponse["role"],
-    };
-
-    res.status(200).json(user);
+    const userResponse = AuthService.createUserResponse(user);
+    res.status(200).json(userResponse);
   } catch (error) {
     console.error("Error fetching user:", error);
     next(error);

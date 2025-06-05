@@ -13,6 +13,16 @@ export type DashboardPlayerWithUserDetails = Prisma.DashboardPlayerGetPayload<{
   };
 }>;
 
+export type DashboardPlayerWithAdmin = Prisma.DashboardPlayerGetPayload<{
+  include: {
+    dashboard: {
+      include: {
+        admin: true;
+      };
+    };
+  };
+}>;
+
 export type DashboardPlayerWithDetails = Prisma.DashboardPlayerGetPayload<{
   include: {
     user: {
@@ -121,7 +131,24 @@ export class DashboardPlayerRepo {
   static async getDashboardPlayerById(
     id: string
   ): Promise<DashboardPlayer | null> {
-    return prisma.dashboardPlayer.findUnique({ where: { id } });
+    return prisma.dashboardPlayer.findUnique({
+      where: { id },
+    });
+  }
+
+  static async getDashboardPlayerByIdWithAdmin(
+    id: string
+  ): Promise<DashboardPlayerWithAdmin | null> {
+    return prisma.dashboardPlayer.findUnique({
+      where: { id },
+      include: {
+        dashboard: {
+          include: {
+            admin: true,
+          },
+        },
+      },
+    });
   }
 
   static async getDashboardPlayerByNickname(
@@ -239,6 +266,22 @@ export class DashboardPlayerRepo {
         });
       }
     }
+  }
+
+  static async getPlayerInDashboard(dashboardId: string, userId: string) {
+    return prisma.dashboardPlayer.findFirst({
+      where: {
+        dashboard_id: dashboardId,
+        user_id: userId,
+      },
+    });
+  }
+
+  static async updatePlayerUser(playerId: string, userId: string) {
+    return prisma.dashboardPlayer.update({
+      where: { id: playerId },
+      data: { user_id: userId },
+    });
   }
 
   static async deleteUser(id: string): Promise<DashboardPlayer> {

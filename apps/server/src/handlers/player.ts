@@ -1,7 +1,7 @@
 import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
 import { UserRepo } from "../repositories/user-repo";
 import { NextFunction, Request, Response } from "express";
-import { transformDashboardPlayersToResponse } from "../utils/utils";
+import { transformDashboardPlayersToResponse } from "../utils/players-transforms";
 
 export const getAllDashboardPlayers = async (
   req: Request,

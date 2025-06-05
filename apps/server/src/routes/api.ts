@@ -26,7 +26,6 @@ import {
 } from "../handlers/competition";
 import {
   getAllVotesFromDashboard,
-  getPendingVotesForCompetition,
   getPendingVotesForMatch,
   getVotingStatus,
   submitVotes,
@@ -38,7 +37,7 @@ import {
   acceptInvitation,
   createInvitation,
   validateInvitation,
-} from "../handlers/inivitation";
+} from "../handlers/invitation";
 
 const router = Router();
 

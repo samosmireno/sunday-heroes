@@ -2,13 +2,15 @@ import e, { Request, Response, NextFunction } from "express";
 import { CompetitionRepo } from "../repositories/competition-repo";
 import {
   transformCompetitionToResponse,
-  transformDashboardCompetitionsToResponse,
   transformAddCompetitionRequestToService,
-  transformDashboardCompetitionsToDetailedResponse,
-} from "../utils/utils";
+} from "../utils/competition-transforms";
 import { CompetitionType, createCompetitionRequest } from "@repo/logger";
 import { Competition } from "@prisma/client";
 import { UserRepo } from "../repositories/user-repo";
+import {
+  transformDashboardCompetitionsToDetailedResponse,
+  transformDashboardCompetitionsToResponse,
+} from "../utils/dashboard-transforms";
 
 export const getAllCompetitionsFromDashboard = async (
   req: Request,
@@ -89,8 +91,6 @@ export const getCompetitionStats = async (
   try {
     const competitionId = req.query.compId?.toString();
     const userId = req.query.userId?.toString();
-    console.log("Competition ID:", competitionId);
-    console.log("User ID:", userId);
     if (!userId) {
       return res.status(400).send("userId query parameter is required");
     }
@@ -101,7 +101,6 @@ export const getCompetitionStats = async (
     const competition = await CompetitionRepo.getCompetitionById(competitionId);
     if (competition) {
       const compResponse = transformCompetitionToResponse(competition, userId);
-      //console.log(compResponse.matches[0].players[0]);
       res.json(compResponse);
     } else {
       res.status(404).send("Competition not found");

@@ -7,7 +7,7 @@ export type CreateCompetitionFormValues = z.infer<
 
 export const CreateCompetitionFormSchema = z
   .object({
-    name: z.string(),
+    name: z.string().max(30),
     type: z.nativeEnum(CompetitionType),
     track_seasons: z.boolean().default(false),
     voting_enabled: z.boolean().default(false),
