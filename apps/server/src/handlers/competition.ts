@@ -1,4 +1,4 @@
-import e, { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { CompetitionRepo } from "../repositories/competition-repo";
 import {
   transformCompetitionToResponse,
@@ -130,6 +130,49 @@ export const createCompetition = async (
     const match = await CompetitionRepo.createCompetition(competitionToAdd);
 
     res.status(201).json(match);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetCompetition = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const competitionId = req.params.id;
+
+  if (!competitionId) {
+    return res.status(400).send("Competition ID is required");
+  }
+
+  try {
+    const competition = await CompetitionRepo.getCompetitionById(competitionId);
+    if (!competition) {
+      return res.status(404).send("Competition not found");
+    }
+    const resetCompetition =
+      await CompetitionRepo.resetCompetition(competitionId);
+    res.status(200).json(resetCompetition);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteCompetition = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const competitionId = req.params.id;
+
+  if (!competitionId) {
+    return res.status(400).send("Competition ID is required");
+  }
+
+  try {
+    await CompetitionRepo.deleteCompetition(competitionId);
+    res.status(204).send();
   } catch (error) {
     next(error);
   }

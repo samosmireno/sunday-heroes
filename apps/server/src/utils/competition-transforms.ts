@@ -46,6 +46,10 @@ export function transformCompetitionToResponse(
     votingEnabled: competition.voting_enabled,
     matches: matches,
     player_stats: playerStats,
+    moderators: competition.moderators.map((moderator) => ({
+      id: moderator.id,
+      nickname: moderator.dashboard_player.nickname,
+    })),
   };
 }
 

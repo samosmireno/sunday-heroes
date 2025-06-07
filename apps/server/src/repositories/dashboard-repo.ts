@@ -7,6 +7,15 @@ export type DashboardWithDetails = Prisma.DashboardGetPayload<{
     dashboard_players: true;
     competitions: {
       include: {
+        moderators: {
+          include: {
+            dashboard_player: {
+              select: {
+                nickname: true;
+              };
+            };
+          };
+        };
         matches: {
           include: {
             matchPlayers: {
@@ -49,6 +58,15 @@ export class DashboardRepo {
         dashboard_players: true,
         competitions: {
           include: {
+            moderators: {
+              include: {
+                dashboard_player: {
+                  select: {
+                    nickname: true,
+                  },
+                },
+              },
+            },
             matches: {
               include: {
                 matchPlayers: {

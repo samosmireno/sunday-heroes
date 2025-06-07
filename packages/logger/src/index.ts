@@ -54,6 +54,10 @@ export type CompetitionResponse = {
   votingEnabled: boolean;
   matches: MatchResponse[];
   player_stats: PlayerTotals[];
+  moderators: {
+    id: string;
+    nickname: string;
+  }[];
 };
 
 export type DashboardResponse = {

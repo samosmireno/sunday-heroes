@@ -40,7 +40,7 @@ export default function CompetitionListPage() {
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [viewType, setViewType] = useState<ViewType>(ViewType.GRID);
+  const [viewType, setViewType] = useState<ViewType>(ViewType.LIST);
   const debouncedQuery = useDebounce(searchQuery, 500);
 
   const { user } = useAuth();

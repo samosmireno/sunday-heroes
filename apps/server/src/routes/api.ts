@@ -20,9 +20,11 @@ import { createMatchRequestSchema } from "../schemas/create-match-request-schema
 import { getDashboardDetails } from "../handlers/dashboard";
 import {
   createCompetition,
+  deleteCompetition,
   getAllCompetitionsFromDashboard,
   getCompetitionStats,
   getDetailedCompetitions,
+  resetCompetition,
 } from "../handlers/competition";
 import {
   getAllVotesFromDashboard,
@@ -38,6 +40,10 @@ import {
   createInvitation,
   validateInvitation,
 } from "../handlers/invitation";
+import {
+  addModeratorToCompetition,
+  removeModeratorFromCompetition,
+} from "../handlers/competition-moderator";
 
 const router = Router();
 
@@ -79,6 +85,18 @@ router.post(
   authenticateToken,
   validateRequestBody(createCompetitionRequestSchema),
   createCompetition
+);
+router.post(
+  "/competition/:id/moderators",
+  authenticateToken,
+  addModeratorToCompetition
+);
+router.put("/competition/:id/reset", authenticateToken, resetCompetition);
+router.delete("/competition/:id", authenticateToken, deleteCompetition);
+router.delete(
+  "/competition/moderators/:moderatorId",
+  authenticateToken,
+  removeModeratorFromCompetition
 );
 
 router.get("/matches", (req: Request, res: Response, next: NextFunction) => {

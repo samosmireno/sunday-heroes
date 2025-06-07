@@ -84,7 +84,6 @@ export function AppSidebar() {
       <SidebarContent className="flex flex-1 flex-col gap-3 overflow-y-auto">
         <SidebarGroup>
           <SidebarGroupLabel className="mb-4 flex items-center justify-center gap-2 rounded-none border-b-2 border-dashed border-accent/70 pb-3 text-center font-oswald text-xl font-bold tracking-wider text-accent">
-            <Zap size={24} className="animate-pulse text-accent" />
             <span className="bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">
               Sunday Heroes
             </span>

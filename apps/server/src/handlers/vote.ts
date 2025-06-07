@@ -59,7 +59,8 @@ export const getAllVotesFromDashboard = async (
     }
 
     const votes = await VoteRepo.getAllVotesFromDashboard(dashboardId);
-    res.json(transformDashboardVotesToResponse(votes));
+    const dashboardVotes = transformDashboardVotesToResponse(votes);
+    res.json(dashboardVotes);
   } catch (error) {
     next(error);
   }

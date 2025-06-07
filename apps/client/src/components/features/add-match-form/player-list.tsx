@@ -68,7 +68,6 @@ export default function PlayerList({
         const newIndex = items.indexOf(over.id as string);
 
         const newItems = swapItems(items, oldIndex, newIndex);
-        console.log("newItems:", newItems);
         form.setValue(`players.${team.toLocaleLowerCase()}Players`, newItems);
         return newItems;
       });

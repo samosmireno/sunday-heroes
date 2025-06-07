@@ -63,6 +63,10 @@ export function transformDashboardServiceToResponse(
         votingEnabled: comp.voting_enabled,
         matches: mappedMatches,
         player_stats: playerStats,
+        moderators: comp.moderators.map((moderator) => ({
+          id: moderator.id,
+          nickname: moderator.dashboard_player.nickname,
+        })),
       };
     }
   );

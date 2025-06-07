@@ -4,6 +4,7 @@ import { CheckSquare, ChevronDown, ChevronUp, Shield } from "lucide-react";
 import { MatchDetails } from "./match-details";
 import { MatchPageResponse } from "@repo/logger";
 import { formatDate } from "../../../utils/utils";
+import { convertMatchType } from "../../../types/types";
 
 interface MatchesListProps {
   matches: MatchPageResponse[];
@@ -123,7 +124,7 @@ export default function MatchesList({ matches }: MatchesListProps) {
                     </div>
                   </td>
                   <td className="hidden whitespace-nowrap px-2 py-3 text-sm text-gray-300 md:px-4 md:py-4 xl:table-cell">
-                    {match.matchType}
+                    {convertMatchType(match.matchType)}
                   </td>
                   <td className="hidden whitespace-nowrap px-2 py-3 text-sm text-gray-300 sm:table-cell md:px-4 md:py-4">
                     <div className="flex items-center gap-2">

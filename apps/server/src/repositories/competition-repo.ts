@@ -22,6 +22,16 @@ export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
         admin_id: true;
       };
     };
+    moderators: {
+      select: {
+        id: true;
+        dashboard_player: {
+          select: {
+            nickname: true;
+          };
+        };
+      };
+    };
     team_competitions: true;
     matches: {
       include: {
@@ -149,6 +159,16 @@ export class CompetitionRepo {
             admin_id: true,
           },
         },
+        moderators: {
+          select: {
+            id: true,
+            dashboard_player: {
+              select: {
+                nickname: true,
+              },
+            },
+          },
+        },
         team_competitions: true,
         matches: {
           include: {
@@ -221,6 +241,16 @@ export class CompetitionRepo {
           select: {
             id: true,
             admin_id: true,
+          },
+        },
+        moderators: {
+          select: {
+            id: true,
+            dashboard_player: {
+              select: {
+                nickname: true,
+              },
+            },
           },
         },
         team_competitions: true,
@@ -328,5 +358,74 @@ export class CompetitionRepo {
     if (!competition) return null;
 
     return competition;
+  }
+
+  static async resetCompetition(
+    competition_id: string,
+    tx?: PrismaTransaction
+  ): Promise<CompetitionWithDetails> {
+    const prismaClient = tx || prisma;
+    const competition = await prismaClient.competition.update({
+      where: {
+        id: competition_id,
+      },
+      data: {
+        matches: {
+          deleteMany: {},
+        },
+        team_competitions: {
+          deleteMany: {},
+        },
+      },
+      include: {
+        dashboard: {
+          select: {
+            id: true,
+            admin_id: true,
+          },
+        },
+        moderators: {
+          select: {
+            id: true,
+            dashboard_player: {
+              select: {
+                nickname: true,
+              },
+            },
+          },
+        },
+        team_competitions: true,
+        matches: {
+          include: {
+            matchPlayers: {
+              include: {
+                dashboard_player: true,
+                received_votes: true,
+              },
+            },
+            match_teams: {
+              include: {
+                team: true,
+              },
+            },
+            player_votes: true,
+          },
+        },
+      },
+    });
+
+    return competition;
+  }
+
+  static async deleteCompetition(
+    competition_id: string,
+    tx?: PrismaTransaction
+  ): Promise<void> {
+    const prismaClient = tx || prisma;
+    await prismaClient.competition.delete({
+      where: {
+        id: competition_id,
+      },
+    });
   }
 }

@@ -111,7 +111,7 @@ export function AutoComplete<T extends string>({
             >
               <Input
                 placeholder={placeholder}
-                className="w-full border-2 border-accent/30 bg-bg/30 py-1.5 pr-3 text-xs text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                className="w-full border-2 border-accent/30 bg-bg/90 py-1.5 pr-3 text-xs text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
               />
             </CommandPrimitive.Input>
           </PopoverAnchor>
