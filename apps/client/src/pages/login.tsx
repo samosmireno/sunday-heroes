@@ -2,9 +2,33 @@ import { Trophy } from "lucide-react";
 import { useAuth } from "../context/auth-context";
 import Background from "../components/ui/background";
 import Loading from "../components/ui/loading";
+import { useLocation } from "react-router-dom";
+
+const constructFullPath = (location: any) => {
+  if (!location) return "/dashboard";
+
+  let fullPath = location.pathname || "/dashboard";
+
+  if (location.search) {
+    fullPath += location.search;
+  }
+
+  if (location.hash) {
+    fullPath += location.hash;
+  }
+
+  return fullPath;
+};
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();
+  const location = useLocation();
+
+  const from = constructFullPath(location.state?.from);
+
+  const handleLogin = () => {
+    login(from);
+  };
 
   if (isLoading) {
     return <Loading text="Loading page..." />;
@@ -33,7 +57,7 @@ export default function LoginPage() {
 
             <div className="mt-8 flex justify-center">
               <button
-                onClick={login}
+                onClick={handleLogin}
                 className="w-full transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-3 font-bold text-accent shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg"
               >
                 <div className="flex items-center justify-center space-x-2">

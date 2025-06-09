@@ -5,7 +5,7 @@ import {
   handleGoogleCallback,
   getCurrentUser,
 } from "../handlers/auth-handler";
-import { authenticateToken } from "../middleware/auth-middleware";
+import { authenticateToken } from "../middleware/authentication-middleware";
 
 const router = Router();
 

@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { createMatchRequest } from "@repo/logger";
 import { MatchService } from "../services/match-service";
+import { AuthenticatedRequest } from "../types";
+import { CompetitionRepo } from "../repositories/competition-repo";
 
 export const getAllMatches = async (
   req: Request,
@@ -106,6 +108,16 @@ export const createMatch = async (
   next: NextFunction
 ) => {
   try {
+    const authenticatedReq = req as AuthenticatedRequest;
+    const userId = authenticatedReq.userId;
+
+    const isAdminOrModerator = await CompetitionRepo.isUserAdminOrModerator(
+      req.body.competitionId,
+      userId
+    );
+    if (!isAdminOrModerator) {
+      return res.status(403).send("You are not authorized to create a match");
+    }
     const data: createMatchRequest = req.body;
     const match = await MatchService.createMatch(data);
     res.status(201).json(match);
@@ -118,8 +130,17 @@ export const updateMatch = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+) => {
   try {
+    const authenticatedReq = req as AuthenticatedRequest;
+    const userId = authenticatedReq.userId;
+    const isAdminOrModerator = await CompetitionRepo.isUserAdminOrModerator(
+      req.body.competitionId,
+      userId
+    );
+    if (!isAdminOrModerator) {
+      return res.status(403).send("You are not authorized to create a match");
+    }
     const matchId = req.params.id;
     const data: createMatchRequest = req.body;
 
@@ -136,7 +157,21 @@ export const deleteMatch = async (
   next: NextFunction
 ) => {
   try {
+    const authenticatedReq = req as AuthenticatedRequest;
+    const userId = authenticatedReq.userId;
     const matchId = req.params.id;
+    if (!matchId) {
+      return res.status(400).send("Match ID is required");
+    }
+
+    const isAdminOrModerator = await MatchService.isUserAdminOrModerator(
+      matchId,
+      userId
+    );
+    if (!isAdminOrModerator) {
+      return res.status(403).send("You are not authorized to delete a match");
+    }
+
     const deletedMatch = await MatchService.deleteMatch(matchId);
 
     if (!deletedMatch) {

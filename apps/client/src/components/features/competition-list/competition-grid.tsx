@@ -1,5 +1,12 @@
-import { DetailedCompetitionResponse } from "@repo/logger";
-import { Calendar, CheckSquare, Shield, Trophy, Users } from "lucide-react";
+import { DetailedCompetitionResponse, Role } from "@repo/logger";
+import {
+  Calendar,
+  CheckSquare,
+  Shield,
+  Trophy,
+  Users,
+  Settings,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CompetitionGridProps {
@@ -36,13 +43,25 @@ export default function CompetitionGrid({
                 >
                   {competition.name}
                 </h3>
-                {competition.isAdmin && (
+                {competition.userRole === Role.ADMIN && (
                   <Shield size={16} className="flex-shrink-0 text-amber-500" />
                 )}
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
+                {competition.userRole === Role.ADMIN && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/competition/${competition.id}/admin`);
+                    }}
+                    className="rounded-md bg-amber-900/30 p-1.5 text-amber-400 transition-all hover:scale-105 hover:bg-amber-900/50"
+                    title="Admin Panel"
+                  >
+                    <Settings size={14} />
+                  </button>
+                )}
                 <span
-                  className={`ml-1.5 rounded px-1.5 py-0.5 text-xs font-bold ${
+                  className={`rounded px-1.5 py-0.5 text-xs font-bold ${
                     competition.type === "LEAGUE"
                       ? "bg-league-800/40 text-league-300"
                       : competition.type === "DUEL"
@@ -88,7 +107,9 @@ export default function CompetitionGrid({
               </div>
             )}
 
-            <div className="flex gap-1 sm:gap-2">
+            <div
+              className={`flex gap-1 sm:gap-2 ${competition.userRole === Role.ADMIN ? "flex-wrap" : ""}`}
+            >
               <button
                 onClick={() => navigate(`/competition/${competition.id}`)}
                 className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
@@ -101,9 +122,24 @@ export default function CompetitionGrid({
               >
                 <Calendar size={14} className="mr-1 inline" /> Matches
               </button>
-              <button className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs">
+              <button
+                onClick={() => navigate(`/competition/${competition.id}/teams`)}
+                className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
+              >
                 <Users size={14} className="mr-1 inline" /> Teams
               </button>
+
+              {/* Admin-specific actions - shown as a secondary row for admins */}
+              {competition.userRole === Role.ADMIN && (
+                <button
+                  onClick={() =>
+                    navigate(`/competition/${competition.id}/admin`)
+                  }
+                  className="text-3xs mt-1 w-full rounded-lg border-2 border-amber-500/40 bg-amber-900/20 px-2 py-1.5 font-bold text-amber-400 transition-all hover:bg-amber-900/30 sm:px-3 sm:py-2 sm:text-xs"
+                >
+                  <Settings size={14} className="mr-1 inline" /> Admin Panel
+                </button>
+              )}
             </div>
           </div>
         </div>

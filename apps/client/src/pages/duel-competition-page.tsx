@@ -26,7 +26,7 @@ function DuelCompetitionPage({
       <div className="relative mb-6 flex flex-col rounded-lg border-2 border-accent bg-panel-bg p-6 text-center shadow-inner">
         <MatchList
           competitionId={competition.id}
-          isAdmin={competition.isAdmin}
+          userRole={competition.userRole}
           matches={competition.matches}
           selectedMatch={currentMatch}
           onMatchClick={handleMatchClick}

@@ -13,6 +13,7 @@ export type AuthResponse = {
 
 export interface AuthenticatedRequest extends Request {
   userId: string;
+  dashboardId?: string;
 }
 
 export type PrismaTransaction = Omit<

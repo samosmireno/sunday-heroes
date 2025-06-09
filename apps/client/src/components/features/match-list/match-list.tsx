@@ -9,11 +9,11 @@ import {
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "../../ui/button";
-import { MatchResponse } from "@repo/logger";
+import { MatchResponse, Role } from "@repo/logger";
 
 interface MatchListProps {
   competitionId: string;
-  isAdmin: boolean;
+  userRole: Role;
   matches: MatchResponse[];
   selectedMatch: number;
   onMatchClick: (arg0: number) => void;
@@ -22,7 +22,7 @@ interface MatchListProps {
 
 export default function MatchList({
   competitionId,
-  isAdmin,
+  userRole,
   matches,
   selectedMatch,
   onMatchClick,
@@ -64,7 +64,7 @@ export default function MatchList({
         >
           Match Results
         </h2>
-        {isAdmin && (
+        {userRole !== Role.PLAYER && (
           <Link to={`/add-match/${competitionId}`}>
             <Button className="transform rounded bg-accent px-4 py-2 font-bold uppercase text-bg shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent">
               Add Match
@@ -110,7 +110,7 @@ export default function MatchList({
                           : false
                       }
                       refetchMatches={refetchMatches}
-                      isAdmin={isAdmin}
+                      userRole={userRole}
                     />
                   </CarouselItem>
                 );

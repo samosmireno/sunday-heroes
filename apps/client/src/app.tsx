@@ -25,7 +25,14 @@ export default function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/vote/:matchId" element={<VotePage />} />
+          <Route
+            path="/vote/:matchId"
+            element={
+              <ProtectedRoute>
+                <VotePage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/pending/:matchId"
             element={

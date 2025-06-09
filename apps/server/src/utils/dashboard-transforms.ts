@@ -17,6 +17,7 @@ import { DashboardVoteService } from "../repositories/vote-repo";
 import { MatchWithTeams } from "../repositories/match-repo";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
 import { calculatePlayerScore, calculatePlayerStats } from "./utils";
+import { getUserRole } from "./competition-transforms";
 
 export function transformDashboardServiceToResponse(
   dashboard: DashboardWithDetails,
@@ -55,11 +56,28 @@ export function transformDashboardServiceToResponse(
 
       const playerStats: PlayerTotals[] = calculatePlayerStats(mappedMatches);
 
+      const competitionWithDetails = {
+        ...comp,
+        dashboard: {
+          id: dashboard.id,
+          admin_id: dashboard.admin.id,
+        },
+        team_competitions: [],
+        moderators: comp.moderators.map((moderator) => ({
+          id: moderator.id,
+          dashboard_player: {
+            id: moderator.dashboard_player_id,
+            user_id: null,
+            nickname: moderator.dashboard_player.nickname,
+          },
+        })),
+      };
+
       return {
         id: comp.id,
         name: comp.name,
         type: comp.type as CompetitionResponse["type"],
-        isAdmin: dashboard.admin_id === userId,
+        userRole: getUserRole(competitionWithDetails, userId),
         votingEnabled: comp.voting_enabled,
         matches: mappedMatches,
         player_stats: playerStats,
@@ -131,7 +149,7 @@ export function transformDashboardCompetitionsToDetailedResponse(
 ): DetailedCompetitionResponse[] {
   const competitions: DetailedCompetitionResponse[] = comps.map((comp) => ({
     id: comp.id,
-    isAdmin: comp.dashboard.admin_id === userId,
+    userRole: getUserRole(comp, userId),
     name: comp.name,
     type: comp.type as DetailedCompetitionResponse["type"],
     teams: comp.team_competitions.length,

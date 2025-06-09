@@ -1,4 +1,4 @@
-import { DetailedCompetitionResponse } from "@repo/logger";
+import { DetailedCompetitionResponse, Role } from "@repo/logger";
 import {
   Calendar,
   CheckSquare,
@@ -74,7 +74,7 @@ export default function CompetitionList({
                     >
                       {competition.name}
                     </div>
-                    {competition.isAdmin && (
+                    {competition.userRole === Role.ADMIN && (
                       <Shield
                         size={14}
                         className="flex-shrink-0 text-amber-500"
@@ -152,12 +152,13 @@ export default function CompetitionList({
                     >
                       <Users size={14} className="sm:h-4 sm:w-4" />
                     </Button>
-                    {competition.isAdmin && (
+                    {competition.userRole === Role.ADMIN && (
                       <Button
                         onClick={() =>
                           navigate(`/competition/${competition.id}/admin`)
                         }
                         className="rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:p-1.5"
+                        title="Settings"
                       >
                         <Settings size={14} className="sm:h-4 sm:w-4" />
                       </Button>

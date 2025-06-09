@@ -11,6 +11,7 @@ import {
   transformDashboardCompetitionsToDetailedResponse,
   transformDashboardCompetitionsToResponse,
 } from "../utils/dashboard-transforms";
+import { AuthenticatedRequest } from "../types";
 
 export const getAllCompetitionsFromDashboard = async (
   req: Request,
@@ -140,13 +141,20 @@ export const resetCompetition = async (
   res: Response,
   next: NextFunction
 ) => {
-  const competitionId = req.params.id;
-
-  if (!competitionId) {
-    return res.status(400).send("Competition ID is required");
-  }
-
   try {
+    const authenticatedReq = req as AuthenticatedRequest;
+    const adminId = authenticatedReq.userId;
+    const competitionId = req.params.id;
+
+    if (!competitionId) {
+      return res.status(400).send("Competition ID is required");
+    }
+
+    const isAdmin = await CompetitionRepo.isUserAdmin(competitionId, adminId);
+    if (!isAdmin) {
+      return res.status(403).send("User is not an admin of this competition");
+    }
+
     const competition = await CompetitionRepo.getCompetitionById(competitionId);
     if (!competition) {
       return res.status(404).send("Competition not found");
@@ -164,13 +172,20 @@ export const deleteCompetition = async (
   res: Response,
   next: NextFunction
 ) => {
-  const competitionId = req.params.id;
-
-  if (!competitionId) {
-    return res.status(400).send("Competition ID is required");
-  }
-
   try {
+    const authenticatedReq = req as AuthenticatedRequest;
+    const adminId = authenticatedReq.userId;
+    const competitionId = req.params.id;
+
+    if (!competitionId) {
+      return res.status(400).send("Competition ID is required");
+    }
+
+    const isAdmin = await CompetitionRepo.isUserAdmin(competitionId, adminId);
+    if (!isAdmin) {
+      return res.status(403).send("User is not an admin of this competition");
+    }
+
     await CompetitionRepo.deleteCompetition(competitionId);
     res.status(204).send();
   } catch (error) {

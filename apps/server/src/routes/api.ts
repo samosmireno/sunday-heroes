@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { authenticateToken } from "../middleware/auth-middleware";
+import { authenticateToken } from "../middleware/authentication-middleware";
 import {
   createMatch,
   deleteMatch,

@@ -31,6 +31,16 @@ export class CompetitionModeratorRepo {
     return moderators.map((mod) => mod.dashboard_player_id);
   }
 
+  static async getCompetitionIdByModeratorId(
+    moderatorId: string
+  ): Promise<string | null> {
+    const competition = await prisma.competitionModerator.findFirst({
+      where: { id: moderatorId },
+      select: { competition_id: true },
+    });
+    return competition ? competition.competition_id : null;
+  }
+
   static async isUserModerator(
     competition_id: string,
     userId: string

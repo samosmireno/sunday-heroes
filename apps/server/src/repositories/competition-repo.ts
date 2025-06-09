@@ -27,7 +27,9 @@ export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
         id: true;
         dashboard_player: {
           select: {
+            id: true;
             nickname: true;
+            user_id: true;
           };
         };
       };
@@ -165,6 +167,8 @@ export class CompetitionRepo {
             dashboard_player: {
               select: {
                 nickname: true,
+                id: true,
+                user_id: true,
               },
             },
           },
@@ -249,6 +253,8 @@ export class CompetitionRepo {
             dashboard_player: {
               select: {
                 nickname: true,
+                id: true,
+                user_id: true,
               },
             },
           },
@@ -390,6 +396,8 @@ export class CompetitionRepo {
             dashboard_player: {
               select: {
                 nickname: true,
+                id: true,
+                user_id: true,
               },
             },
           },
@@ -427,5 +435,57 @@ export class CompetitionRepo {
         id: competition_id,
       },
     });
+  }
+
+  static async isUserAdmin(
+    competition_id: string,
+    user_id: string
+  ): Promise<boolean> {
+    const competition = await prisma.competition.findUnique({
+      where: {
+        id: competition_id,
+      },
+      select: {
+        dashboard: {
+          select: {
+            admin_id: true,
+          },
+        },
+      },
+    });
+
+    return competition?.dashboard.admin_id === user_id;
+  }
+
+  static async isUserAdminOrModerator(
+    competition_id: string,
+    user_id: string
+  ): Promise<boolean> {
+    const competition = await prisma.competition.findUnique({
+      where: {
+        id: competition_id,
+      },
+      include: {
+        dashboard: {
+          select: {
+            admin_id: true,
+          },
+        },
+        moderators: {
+          where: {
+            dashboard_player: {
+              user_id,
+            },
+          },
+        },
+      },
+    });
+
+    if (!competition) return false;
+
+    return (
+      competition.dashboard.admin_id === user_id ||
+      competition.moderators.length > 0
+    );
   }
 }

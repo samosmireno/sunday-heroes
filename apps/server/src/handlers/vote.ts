@@ -14,6 +14,8 @@ import {
   CompetitionWithPendingVotes,
 } from "../repositories/competition-repo";
 import { transformDashboardVotesToResponse } from "../utils/dashboard-transforms";
+import { AuthenticatedRequest } from "../types";
+import { MatchService } from "../services/match-service";
 
 export const submitVotesSchema = z.object({
   matchId: z.string(),
@@ -72,6 +74,8 @@ export const submitVotes = async (
   next: NextFunction
 ) => {
   try {
+    const authenticatedReq = req as AuthenticatedRequest;
+    const userId = authenticatedReq.userId;
     const data: submitVotesReques = req.body;
 
     const isMatchParticipant = await MatchPlayerRepo.isPlayerInMatch(
@@ -79,8 +83,13 @@ export const submitVotes = async (
       data.matchId
     );
 
-    if (!isMatchParticipant) {
-      return res.status(403).send("Only match participants can vote");
+    const isUserAdminOrModerator = await MatchService.isUserAdminOrModerator(
+      userId,
+      data.matchId
+    );
+
+    if (!isMatchParticipant && !isUserAdminOrModerator) {
+      return res.status(403).send("You are not allowed to vote for this match");
     }
 
     const match = await MatchRepo.getMatchById(data.matchId);
@@ -100,7 +109,7 @@ export const submitVotes = async (
 
     await checkAndCloseVoting(data.matchId);
 
-    res.status(201).send("VOtes submitted successfully");
+    res.status(201).send("Votes submitted successfully");
   } catch (error) {
     next(error);
   }

@@ -17,6 +17,8 @@ function CompetitionPage() {
     user?.id || "",
   );
 
+  console.log("Competition data:", competition);
+
   const renderCompetitionPage = () => {
     if (!competition) {
       return <p>No competition data available.</p>;

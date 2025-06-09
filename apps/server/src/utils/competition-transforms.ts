@@ -3,10 +3,30 @@ import {
   createCompetitionRequest,
   MatchResponse,
   PlayerTotals,
+  Role,
 } from "@repo/logger";
 import { CompetitionWithDetails } from "../repositories/competition-repo";
 import { Competition } from "@prisma/client";
 import { calculatePlayerScore, calculatePlayerStats } from "./utils";
+
+export function getUserRole(
+  competition: CompetitionWithDetails,
+  userId: string
+): Role {
+  if (competition.dashboard.admin_id === userId) {
+    return Role.ADMIN;
+  }
+
+  const moderator = competition.moderators.find(
+    (mod) => mod.dashboard_player.user_id === userId
+  );
+
+  if (moderator) {
+    return Role.MODERATOR;
+  }
+
+  return Role.PLAYER;
+}
 
 export function transformCompetitionToResponse(
   competition: CompetitionWithDetails,
@@ -42,7 +62,7 @@ export function transformCompetitionToResponse(
     id: competition.id,
     name: competition.name,
     type: competition.type as CompetitionResponse["type"],
-    isAdmin: competition.dashboard.admin_id === userId,
+    userRole: getUserRole(competition, userId),
     votingEnabled: competition.voting_enabled,
     matches: matches,
     player_stats: playerStats,

@@ -12,7 +12,7 @@ import { UserResponse } from "@repo/logger";
 
 interface AuthContextType {
   isLoading: boolean;
-  login: () => void;
+  login: (arg1?: string) => void;
   logout: () => void;
   user: UserResponse | undefined;
   isAuthenticated: boolean;
@@ -35,7 +35,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserResponse>();
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
-  const login = () => {
+  const login = (redirectPath?: string) => {
+    if (redirectPath && redirectPath !== "/dashboard") {
+      sessionStorage.setItem("redirectAfterLogin", redirectPath);
+    }
+
     const googleAuthUrl = `${config.google.authEndpoint}?client_id=${config.google.clientId}&redirect_uri=${config.redirect_uri}&response_type=code&scope=email profile`;
     window.location.href = googleAuthUrl;
   };

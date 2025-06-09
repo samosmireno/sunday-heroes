@@ -6,6 +6,7 @@ import { useState } from "react";
 import ConfirmDeleteModal from "../modals/confirm-delete-modal";
 import { config } from "../../../config/config";
 import { useCompetitionContext } from "../../../context/competition-context";
+import { Role } from "@repo/logger";
 
 interface MatchProps {
   matchId: string;
@@ -16,7 +17,7 @@ interface MatchProps {
   penaltyAwayScore?: number;
   isSelectedMatch: boolean;
   refetchMatches: () => void;
-  isAdmin: boolean;
+  userRole: Role;
 }
 
 export default function MatchResult({
@@ -27,7 +28,7 @@ export default function MatchResult({
   penaltyHomeScore,
   penaltyAwayScore,
   refetchMatches,
-  isAdmin,
+  userRole,
 }: MatchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -93,7 +94,7 @@ export default function MatchResult({
                 })
                 .replace(/(\d+)(?=\s)/, (d) => `${d}th`)}
             </div>
-            {isAdmin && (
+            {userRole !== Role.PLAYER && (
               <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">
                 <Link to={`/edit-match/${competition?.id}/${matchId}`}>
                   <MdEdit className="text-lg text-accent sm:text-xl" />

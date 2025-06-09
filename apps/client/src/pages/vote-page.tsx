@@ -38,7 +38,6 @@ export default function VotePage() {
   if (!matchId || !voterId) return;
 
   const { votingStatus, isLoading, error } = useVotingStatus(matchId, voterId);
-  console.log(error);
 
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayers((prev) => {
@@ -89,7 +88,7 @@ export default function VotePage() {
   if (error) {
     return (
       <div className="h-screen flex-1 bg-bg p-6">
-        <Header title="Voting Error" hasSidebar={false} />
+        <Header title="Voting Error" hasSidebar={true} />
         <div className="srounded-lg relative border-2 border-red-500 bg-panel-bg p-6 shadow-lg">
           <h2 className="mb-4 text-xl font-bold text-red-500">Error</h2>
           <p className="text-gray-200">{error}</p>
@@ -101,7 +100,7 @@ export default function VotePage() {
   if (!votingStatus) {
     return (
       <div className="h-screen flex-1 bg-bg p-6">
-        <Header title="Match not found" hasSidebar={false} />
+        <Header title="Match not found" hasSidebar={true} />
 
         <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
@@ -116,7 +115,7 @@ export default function VotePage() {
   if (success) {
     return (
       <div className="h-screen flex-1 bg-bg p-6">
-        <Header title="Vote Successful" hasSidebar={false} />
+        <Header title="Vote Successful" hasSidebar={true} />
 
         <div className="relative rounded-lg border-2 border-green-500 bg-panel-bg p-6 shadow-lg">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
@@ -138,7 +137,7 @@ export default function VotePage() {
     return (
       <div className="h-screen flex-1 bg-bg p-6">
         <Background />
-        <Header title="Already Voted" hasSidebar={false} />
+        <Header title="Already Voted" hasSidebar={true} />
 
         <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
@@ -154,7 +153,7 @@ export default function VotePage() {
     return (
       <div className="h-screen flex-1 bg-bg p-6">
         <Background />
-        <Header title="Voting Closed" hasSidebar={false} />
+        <Header title="Voting Closed" hasSidebar={true} />
 
         <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
@@ -169,7 +168,7 @@ export default function VotePage() {
   return (
     <div className="flex h-screen flex-1 flex-col bg-bg p-6">
       <Background />
-      <Header title="Player Voting" hasSidebar={false} />
+      <Header title="Player Voting" hasSidebar={true} />
       <div className="relative grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="flex flex-col space-y-6 lg:col-span-1">
           <GuideBox title="How Voting Works">

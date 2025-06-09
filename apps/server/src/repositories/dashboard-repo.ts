@@ -117,4 +117,14 @@ export class DashboardRepo {
     }
     return dashboard.id;
   }
+
+  static async getDashboardFromUserId(
+    admin_id: string
+  ): Promise<Dashboard | null> {
+    return prisma.dashboard.findUnique({
+      where: {
+        admin_id,
+      },
+    });
+  }
 }

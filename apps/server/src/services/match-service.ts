@@ -139,6 +139,40 @@ export class MatchService {
     });
   }
 
+  static async isUserAdminOrModerator(
+    matchId: string,
+    userId: string
+  ): Promise<boolean> {
+    const match = await prisma.match.findUnique({
+      where: { id: matchId },
+      include: {
+        competition: {
+          include: {
+            dashboard: {
+              select: {
+                dashboard_players: true,
+                admin_id: true,
+              },
+            },
+            moderators: true,
+          },
+        },
+      },
+    });
+
+    if (!match) return false;
+
+    const isAdmin = match.competition.dashboard.admin_id === userId;
+    const dashboardPlayer = match.competition.dashboard.dashboard_players.find(
+      (player) => player.user_id === userId
+    );
+    const isModerator = match.competition.moderators.some(
+      (moderator) => moderator.dashboard_player_id === dashboardPlayer?.id
+    );
+
+    return isAdmin || isModerator;
+  }
+
   static async deleteMatch(matchId: string) {
     return await MatchRepo.deleteMatch(matchId);
   }

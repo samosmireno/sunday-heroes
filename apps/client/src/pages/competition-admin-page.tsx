@@ -10,6 +10,7 @@ import { UserPlus, AlertTriangle } from "lucide-react";
 import ModeratorsList from "../components/features/competition-admin/moderators-list";
 import CompetitionSettings from "../components/features/competition-admin/competition-settings";
 import AddModeratorModal from "../components/features/competition-admin/add-moderator-modal";
+import { Role } from "@repo/logger";
 
 const tabs = [
   { id: "moderators", label: "Moderators" },
@@ -38,7 +39,7 @@ export default function CompetitionAdminPage() {
     return <ErrorPage />;
   }
 
-  if (!competition.isAdmin) {
+  if (competition.userRole !== Role.ADMIN) {
     return (
       <div className="relative mx-auto flex h-screen max-w-md flex-col items-center justify-center p-4">
         <div className="rounded-lg border-2 border-red-500 bg-panel-bg p-6 text-center">
@@ -82,9 +83,6 @@ export default function CompetitionAdminPage() {
       {activeTab === "moderators" && (
         <div className="relative space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-200">
-              Competition Moderators
-            </h3>
             <Button
               onClick={() => setIsAddModeratorModalOpen(true)}
               className="bg-accent/40 text-accent hover:bg-accent/30"

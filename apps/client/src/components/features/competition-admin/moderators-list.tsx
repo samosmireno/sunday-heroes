@@ -38,7 +38,7 @@ export default function ModeratorsList({
   };
 
   return (
-    <Card className="border-2 border-accent/50 bg-panel-bg">
+    <Card className="w-1/2 border-2 border-accent/50 bg-panel-bg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-accent">
           Moderators ({moderators.length})
@@ -73,12 +73,12 @@ export default function ModeratorsList({
                 <ConfirmationDialog
                   title="Remove Moderator"
                   description={
-                    <div className="space-y-2">
+                    <div className="space-y-2 text-white">
                       <p>
                         Are you sure you want to remove{" "}
                         <strong>{moderator.nickname}</strong> as a moderator?
                       </p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm">
                         They will lose all moderator privileges for this
                         competition.
                       </p>

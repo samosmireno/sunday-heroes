@@ -20,7 +20,15 @@ const AuthCallback = () => {
     if (userParam) {
       const userData = processAuthSuccess(userParam);
       if (userData) {
-        navigate("/dashboard", { replace: true });
+        const redirectPath = sessionStorage.getItem("redirectAfterLogin");
+        if (redirectPath) {
+          navigate(redirectPath, { replace: true });
+          setTimeout(() => {
+            sessionStorage.removeItem("redirectAfterLogin");
+          }, 100);
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
       } else {
         navigate("/login", { replace: true });
       }

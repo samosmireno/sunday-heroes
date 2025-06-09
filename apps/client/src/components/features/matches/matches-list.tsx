@@ -5,6 +5,7 @@ import { MatchDetails } from "./match-details";
 import { MatchPageResponse } from "@repo/logger";
 import { formatDate } from "../../../utils/utils";
 import { convertMatchType } from "../../../types/types";
+import React from "react";
 
 interface MatchesListProps {
   matches: MatchPageResponse[];
@@ -98,7 +99,7 @@ export default function MatchesList({ matches }: MatchesListProps) {
           </thead>
           <tbody className="divide-y divide-accent/10">
             {matches.map((match) => (
-              <>
+              <React.Fragment key={match.id}>
                 <tr
                   key={match.id}
                   className={`transition-colors hover:bg-accent/5 ${
@@ -208,7 +209,7 @@ export default function MatchesList({ matches }: MatchesListProps) {
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>
