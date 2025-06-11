@@ -1,58 +1,161 @@
 import { User, Role, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
+import { PrismaTransaction } from "../types";
+
+// Define reusable include patterns (DRY principle)
+const USER_WITH_DASHBOARD_INCLUDE = {
+  dashboard: true,
+} satisfies Prisma.UserInclude;
+
+// Type definitions using the includes
+export type UserWithDashboard = Prisma.UserGetPayload<{
+  include: typeof USER_WITH_DASHBOARD_INCLUDE;
+}>;
 
 export class UserRepo {
-  static async getAllUsers(): Promise<User[]> {
-    return prisma.user.findMany();
+  // BASIC CRUD OPERATIONS
+  static async findById(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<User | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.user.findUnique({ where: { id } });
+    } catch (error) {
+      console.error("Error in UserRepo.findById:", error);
+      throw new Error("Failed to fetch user");
+    }
   }
 
-  static async getUserById(
-    id: string
-  ): Promise<Prisma.UserGetPayload<{ include: { dashboard: true } }> | null> {
-    return prisma.user.findUnique({
-      where: { id },
-      include: { dashboard: true },
-    });
+  static async findByIdWithDashboard(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<UserWithDashboard | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.user.findUnique({
+        where: { id },
+        include: USER_WITH_DASHBOARD_INCLUDE,
+      });
+    } catch (error) {
+      console.error("Error in UserRepo.findByIdWithDashboard:", error);
+      throw new Error("Failed to fetch user with dashboard");
+    }
   }
 
-  static async getUserRoleById(id: string): Promise<Role | null> {
-    const user = await prisma.user.findUnique({ where: { id } });
-    return user ? user.role : null;
+  static async findByEmail(
+    email: string,
+    tx?: PrismaTransaction
+  ): Promise<User | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.user.findUnique({ where: { email } });
+    } catch (error) {
+      console.error("Error in UserRepo.findByEmail:", error);
+      throw new Error("Failed to fetch user by email");
+    }
   }
 
-  static async getUserByEmail(email: string): Promise<User | null> {
-    return prisma.user.findUnique({ where: { email } });
+  // SIMPLE FILTERED QUERIES (Repository responsibility)
+  static async findAll(tx?: PrismaTransaction): Promise<User[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.user.findMany({
+        orderBy: { created_at: "desc" },
+      });
+    } catch (error) {
+      console.error("Error in UserRepo.findAll:", error);
+      throw new Error("Failed to fetch users");
+    }
   }
 
-  static async getDashboardIdFromUserId(
-    userId: string
+  static async findByRole(role: Role, tx?: PrismaTransaction): Promise<User[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.user.findMany({
+        where: { role },
+        orderBy: { created_at: "desc" },
+      });
+    } catch (error) {
+      console.error("Error in UserRepo.findByRole:", error);
+      throw new Error("Failed to fetch users by role");
+    }
+  }
+
+  // Simple attribute getters
+  static async getUserRole(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<Role | null> {
+    try {
+      const prismaClient = tx || prisma;
+      const user = await prismaClient.user.findUnique({
+        where: { id },
+        select: { role: true },
+      });
+      return user?.role || null;
+    } catch (error) {
+      console.error("Error in UserRepo.getUserRole:", error);
+      throw new Error("Failed to get user role");
+    }
+  }
+
+  static async getDashboardId(
+    id: string,
+    tx?: PrismaTransaction
   ): Promise<string | null> {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: { dashboard: true },
-    });
-    return user && user.dashboard && user.dashboard.id
-      ? user.dashboard.id
-      : null;
+    try {
+      const prismaClient = tx || prisma;
+      const user = await prismaClient.user.findUnique({
+        where: { id },
+        select: {
+          dashboard: {
+            select: { id: true },
+          },
+        },
+      });
+      return user?.dashboard?.id || null;
+    } catch (error) {
+      console.error("Error in UserRepo.getDashboardId:", error);
+      throw new Error("Failed to get user dashboard ID");
+    }
   }
 
-  static async getAdmins(): Promise<User[]> {
-    return prisma.user.findMany({ where: { role: "ADMIN" } });
+  // CREATE/UPDATE/DELETE OPERATIONS
+  static async create(
+    data: Omit<User, "id">,
+    tx?: PrismaTransaction
+  ): Promise<User> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.user.create({ data });
+    } catch (error) {
+      console.error("Error in UserRepo.create:", error);
+      throw new Error("Failed to create user");
+    }
   }
 
-  static async getModerators(): Promise<User[]> {
-    return prisma.user.findMany({ where: { role: "MODERATOR" } });
+  static async update(
+    id: string,
+    data: Partial<User>,
+    tx?: PrismaTransaction
+  ): Promise<User> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.user.update({ where: { id }, data });
+    } catch (error) {
+      console.error("Error in UserRepo.update:", error);
+      throw new Error("Failed to update user");
+    }
   }
 
-  static async createUser(data: Omit<User, "id">): Promise<User> {
-    return prisma.user.create({ data });
-  }
-
-  static async updateUser(id: string, data: Partial<User>): Promise<User> {
-    return prisma.user.update({ where: { id }, data });
-  }
-
-  static async deleteUser(id: string): Promise<User> {
-    return prisma.user.delete({ where: { id } });
+  static async delete(id: string, tx?: PrismaTransaction): Promise<User> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.user.delete({ where: { id } });
+    } catch (error) {
+      console.error("Error in UserRepo.delete:", error);
+      throw new Error("Failed to delete user");
+    }
   }
 }

@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import { UserRepo } from "../repositories/user-repo";
-import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
 import { DashboardRepo } from "../repositories/dashboard-repo";
 import { config } from "../config/config";
 import { Role, User } from "@prisma/client";
 import { UserResponse } from "@repo/logger";
+import { RefreshTokenService } from "./refresh-token-service";
 
 export class AuthService {
   static readonly ACCESS_TOKEN_EXPIRY = "30m";
@@ -14,20 +14,7 @@ export class AuthService {
   static readonly ACCESS_TOKEN_EXPIRY_MS = 30 * 60 * 1000;
 
   static async validateRefreshToken(refreshToken: string) {
-    const foundUserId =
-      await RefreshTokenRepo.getUserIdByRefreshToken(refreshToken);
-
-    if (!foundUserId) {
-      await this.handleInvalidRefreshToken(refreshToken);
-    }
-
-    const decoded = jwt.verify(refreshToken, config.jwt.refreshSecret) as any;
-
-    if (decoded.userId !== foundUserId) {
-      throw new Error("Token user mismatch");
-    }
-
-    return { userId: foundUserId, decoded };
+    return await RefreshTokenService.validateRefreshToken(refreshToken);
   }
 
   static async refreshUserTokens(userId: string, email: string) {
@@ -35,20 +22,12 @@ export class AuthService {
       expiresIn: this.ACCESS_TOKEN_EXPIRY,
     });
 
-    const newRefreshToken = jwt.sign({ userId }, config.jwt.refreshSecret, {
-      expiresIn: this.REFRESH_TOKEN_EXPIRY,
-    });
+    // Use service instead of direct repo access
+    await RefreshTokenService.cleanupExpiredTokens();
+    const refreshTokenData =
+      await RefreshTokenService.createRefreshToken(userId);
 
-    await RefreshTokenRepo.deleteExpiredRefreshTokens();
-    await RefreshTokenRepo.createRefreshToken({
-      user_id: userId,
-      token: newRefreshToken,
-      expires_at: new Date(Date.now() + this.REFRESH_TOKEN_EXPIRY_MS),
-      last_used_at: new Date(),
-      created_at: new Date(),
-    });
-
-    return { accessToken, refreshToken: newRefreshToken };
+    return { accessToken, refreshToken: refreshTokenData.token };
   }
 
   static async exchangeGoogleCode(code: string) {
@@ -65,10 +44,10 @@ export class AuthService {
   }
 
   static async findOrCreateUser(googleUser: any): Promise<User> {
-    let user = await UserRepo.getUserByEmail(googleUser.email);
+    let user = await UserRepo.findByEmail(googleUser.email);
 
     if (!user) {
-      user = await UserRepo.createUser({
+      user = await UserRepo.create({
         email: googleUser.email,
         given_name: googleUser.given_name,
         family_name: googleUser.family_name,
@@ -78,7 +57,7 @@ export class AuthService {
         last_login: new Date(),
       });
 
-      await DashboardRepo.createDashboard({
+      await DashboardRepo.create({
         admin_id: user.id,
         name: `${googleUser.given_name}'s Dashboard`,
         created_at: new Date(),
@@ -103,10 +82,9 @@ export class AuthService {
 
   static async logout(refreshToken?: string) {
     if (refreshToken) {
-      const userId =
-        await RefreshTokenRepo.getUserIdByRefreshToken(refreshToken);
+      const userId = await RefreshTokenService.getUserIdFromToken(refreshToken);
       if (userId) {
-        await RefreshTokenRepo.deleteRefreshToken(refreshToken);
+        await RefreshTokenService.deleteToken(refreshToken);
       }
     }
   }
@@ -114,7 +92,7 @@ export class AuthService {
   private static async handleInvalidRefreshToken(refreshToken: string) {
     try {
       const decoded = jwt.verify(refreshToken, config.jwt.refreshSecret) as any;
-      await RefreshTokenRepo.deleteAllRefreshTokensFromUser(decoded.userId);
+      await RefreshTokenService.deleteAllUserTokens(decoded.userId);
     } catch (err) {
       throw new Error("Invalid refresh token");
     }

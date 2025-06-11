@@ -11,9 +11,9 @@ import {
 import {
   CompetitionWithDetails,
   CompetitionWithMatches,
-} from "../repositories/competition-repo";
+} from "../repositories/competition/competition-repo";
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
-import { DashboardVoteService } from "../repositories/vote-repo";
+import { VoteWithDetails } from "../repositories/vote-repo";
 import { MatchWithTeams } from "../repositories/match-repo";
 import { DashboardWithDetails } from "../repositories/dashboard-repo";
 import { calculatePlayerScore, calculatePlayerStats } from "./utils";
@@ -165,7 +165,7 @@ export function transformDashboardCompetitionsToDetailedResponse(
 }
 
 export function transformDashboardVotesToResponse(
-  dashVotes: DashboardVoteService[]
+  dashVotes: VoteWithDetails[]
 ): DashboardVoteResponse[] {
   const votes: DashboardVoteResponse[] = dashVotes.map((vote) => ({
     id: vote.id,

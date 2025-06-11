@@ -2,302 +2,336 @@ import { DashboardPlayer, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 
+const DASHBOARD_PLAYER_BASIC_INCLUDE = {
+  user: {
+    select: {
+      id: true,
+      email: true,
+    },
+  },
+} satisfies Prisma.DashboardPlayerInclude;
+
+const DASHBOARD_PLAYER_DETAILED_INCLUDE = {
+  user: {
+    select: {
+      id: true,
+      email: true,
+      is_registered: true,
+    },
+  },
+  match_players: {
+    select: {
+      match: {
+        select: {
+          id: true,
+          competition: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          player_votes: true,
+        },
+      },
+      received_votes: true,
+      goals: true,
+      assists: true,
+    },
+  },
+} satisfies Prisma.DashboardPlayerInclude;
+
+const DASHBOARD_PLAYER_WITH_ADMIN_INCLUDE = {
+  dashboard: {
+    include: {
+      admin: true,
+    },
+  },
+} satisfies Prisma.DashboardPlayerInclude;
+
 export type DashboardPlayerWithUserDetails = Prisma.DashboardPlayerGetPayload<{
-  include: {
-    user: {
-      select: {
-        id: true;
-        email: true;
-      };
-    };
-  };
+  include: typeof DASHBOARD_PLAYER_BASIC_INCLUDE;
 }>;
 
 export type DashboardPlayerWithAdmin = Prisma.DashboardPlayerGetPayload<{
-  include: {
-    dashboard: {
-      include: {
-        admin: true;
-      };
-    };
-  };
+  include: typeof DASHBOARD_PLAYER_WITH_ADMIN_INCLUDE;
 }>;
 
 export type DashboardPlayerWithDetails = Prisma.DashboardPlayerGetPayload<{
-  include: {
-    user: {
-      select: {
-        id: true;
-        email: true;
-        is_registered: true;
-      };
-    };
-    match_players: {
-      select: {
-        match: {
-          select: {
-            id: true;
-            competition: {
-              select: {
-                id: true;
-                name: true;
-              };
-            };
-            player_votes: true;
-          };
-        };
-        received_votes: true;
-        goals: true;
-        assists: true;
-      };
-    };
-  };
+  include: typeof DASHBOARD_PLAYER_DETAILED_INCLUDE;
 }>;
 
 export class DashboardPlayerRepo {
-  static async getAllDashboardPlayers(): Promise<DashboardPlayer[]> {
-    return prisma.dashboardPlayer.findMany();
+  static async findById(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayer | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findUnique({ where: { id } });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.findById:", error);
+      throw new Error("Failed to fetch dashboard player");
+    }
   }
 
-  static async getDashboardPlayersByDashboardId(
-    dashboard_id: string,
-    page: number = 0,
-    limit: number = 10,
-    search?: string,
+  static async findByIdWithUserDetails(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithUserDetails | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findUnique({
+        where: { id },
+        include: DASHBOARD_PLAYER_BASIC_INCLUDE,
+      });
+    } catch (error) {
+      console.error(
+        "Error in DashboardPlayerRepo.findByIdWithUserDetails:",
+        error
+      );
+      throw new Error("Failed to fetch dashboard player with user details");
+    }
+  }
+
+  static async findByIdWithAdmin(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithAdmin | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findUnique({
+        where: { id },
+        include: DASHBOARD_PLAYER_WITH_ADMIN_INCLUDE,
+      });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.findByIdWithAdmin:", error);
+      throw new Error("Failed to fetch dashboard player with admin details");
+    }
+  }
+
+  static async findAll(tx?: PrismaTransaction): Promise<DashboardPlayer[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findMany({
+        orderBy: { nickname: "asc" },
+      });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.findAll:", error);
+      throw new Error("Failed to fetch dashboard players");
+    }
+  }
+
+  static async findByDashboardId(
+    dashboardId: string,
+    options?: { limit?: number; offset?: number },
     tx?: PrismaTransaction
   ): Promise<DashboardPlayerWithDetails[]> {
-    const prismaClient = tx || prisma;
-    return prismaClient.dashboardPlayer.findMany({
-      where: {
-        dashboard_id,
-        nickname: {
-          startsWith: search,
-          mode: "insensitive",
-        },
-      },
-      orderBy: {
-        nickname: "asc",
-      },
-      skip: page * limit,
-      take: limit,
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            is_registered: true,
-          },
-        },
-        match_players: {
-          select: {
-            match: {
-              select: {
-                id: true,
-                competition: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-                player_votes: true,
-              },
-            },
-            received_votes: true,
-            goals: true,
-            assists: true,
-          },
-        },
-      },
-    });
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findMany({
+        where: { dashboard_id: dashboardId },
+        include: DASHBOARD_PLAYER_DETAILED_INCLUDE,
+        orderBy: { nickname: "asc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.findByDashboardId:", error);
+      throw new Error("Failed to fetch dashboard players by dashboard");
+    }
   }
 
-  static async getNumDashboardPlayersFromQuery(
-    dashboard_id: string,
-    search?: string
-  ): Promise<number> {
-    const players = await prisma.dashboardPlayer.findMany({
-      where: {
-        dashboard_id,
-        nickname: {
-          startsWith: search,
-          mode: "insensitive",
-        },
-      },
-    });
-
-    return players.length;
-  }
-
-  static async getDashboardPlayerById(
-    id: string
-  ): Promise<DashboardPlayer | null> {
-    return prisma.dashboardPlayer.findUnique({
-      where: { id },
-    });
-  }
-
-  static async getDashboardPlayerByIdWithAdmin(
-    id: string
-  ): Promise<DashboardPlayerWithAdmin | null> {
-    return prisma.dashboardPlayer.findUnique({
-      where: { id },
-      include: {
-        dashboard: {
-          include: {
-            admin: true,
-          },
-        },
-      },
-    });
-  }
-
-  static async getDashboardPlayerByNickname(
+  static async findByNickname(
     nickname: string,
     dashboardId: string,
     tx?: PrismaTransaction
   ): Promise<DashboardPlayerWithUserDetails | null> {
-    const prismaClient = tx || prisma;
-
-    return prismaClient.dashboardPlayer.findUnique({
-      where: {
-        dashboard_id_nickname: {
-          dashboard_id: dashboardId,
-          nickname: nickname,
-        },
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findUnique({
+        where: {
+          dashboard_id_nickname: {
+            dashboard_id: dashboardId,
+            nickname: nickname,
           },
         },
-      },
-    });
+        include: DASHBOARD_PLAYER_BASIC_INCLUDE,
+      });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.findByNickname:", error);
+      throw new Error("Failed to fetch dashboard player by nickname");
+    }
   }
 
-  static async getDashboardPlayersByNicknames(
+  static async findByNicknames(
     nicknames: string[],
     dashboardId: string,
     tx?: PrismaTransaction
   ): Promise<DashboardPlayerWithUserDetails[]> {
-    const prismaClient = tx || prisma;
-
-    return prismaClient.dashboardPlayer.findMany({
-      where: {
-        dashboard_id: dashboardId,
-        nickname: {
-          in: nicknames,
-        },
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
-    });
-  }
-
-  static async getDashboardPlayerIdByNickname(
-    nickname: string,
-    dashboard_id: string
-  ): Promise<string | null> {
-    const dashboardPlayer = await prisma.dashboardPlayer.findUnique({
-      where: { dashboard_id_nickname: { dashboard_id, nickname } },
-    });
-    return dashboardPlayer ? dashboardPlayer.id : null;
-  }
-
-  static async getDashboardPlayersByQuery(
-    query: string,
-    dashboard_id: string
-  ): Promise<DashboardPlayer[]> {
-    return prisma.dashboardPlayer.findMany({
-      where: {
-        dashboard_id,
-        nickname: {
-          startsWith: query,
-          mode: "insensitive",
-        },
-      },
-    });
-  }
-
-  static async getModerators(dashboard_id: string): Promise<DashboardPlayer[]> {
-    return prisma.dashboardPlayer.findMany({
-      where: { dashboard_id },
-      include: { user: { where: { role: "MODERATOR" } } },
-    });
-  }
-
-  static async createUser(
-    data: Omit<DashboardPlayer, "id">
-  ): Promise<DashboardPlayer> {
-    return prisma.dashboardPlayer.create({ data });
-  }
-
-  static async updateUser(
-    id: string,
-    data: Partial<DashboardPlayer>
-  ): Promise<DashboardPlayer> {
-    return prisma.dashboardPlayer.update({ where: { id }, data });
-  }
-
-  static async addMissingUsers(
-    playerNames: string[],
-    dashboard_id: string,
-    tx?: PrismaTransaction
-  ): Promise<void> {
-    const prismaClient = tx || prisma;
-    for (const playerName of playerNames) {
-      const existingPlayer = await prismaClient.dashboardPlayer.findFirst({
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findMany({
         where: {
-          dashboard_id,
-          nickname: { equals: playerName, mode: "insensitive" },
+          dashboard_id: dashboardId,
+          nickname: { in: nicknames },
         },
+        include: DASHBOARD_PLAYER_BASIC_INCLUDE,
       });
-
-      if (!existingPlayer) {
-        await prismaClient.dashboardPlayer.create({
-          data: { nickname: playerName, dashboard_id },
-        });
-      }
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.findByNicknames:", error);
+      throw new Error("Failed to fetch dashboard players by nicknames");
     }
   }
 
-  static async getPlayerInDashboard(dashboardId: string, userId: string) {
-    return prisma.dashboardPlayer.findFirst({
-      where: {
-        dashboard_id: dashboardId,
-        user_id: userId,
-      },
-    });
-  }
-
-  static async updatePlayerUser(playerId: string, userId: string) {
-    return prisma.dashboardPlayer.update({
-      where: { id: playerId },
-      data: { user_id: userId },
-    });
-  }
-
-  static async deleteUser(id: string): Promise<DashboardPlayer> {
-    return prisma.dashboardPlayer.delete({ where: { id } });
-  }
-
-  static async deleteDashboardPlayersWithNoMatches(
+  static async findByUserId(
+    userId: string,
+    dashboardId: string,
     tx?: PrismaTransaction
-  ): Promise<void> {
-    const prismaClient = tx || prisma;
-    await prismaClient.dashboardPlayer.deleteMany({
-      where: {
-        match_players: {
-          none: {},
+  ): Promise<DashboardPlayer | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findFirst({
+        where: {
+          dashboard_id: dashboardId,
+          user_id: userId,
         },
-      },
-    });
+      });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.findByUserId:", error);
+      throw new Error("Failed to fetch dashboard player by user");
+    }
+  }
+
+  static async findByNameSearch(
+    searchTerm: string,
+    dashboardId: string,
+    options?: { limit?: number; offset?: number },
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+      const DashboardPlayers = await prismaClient.dashboardPlayer.findMany({
+        where: {
+          dashboard_id: dashboardId,
+          nickname: {
+            startsWith: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        include: DASHBOARD_PLAYER_DETAILED_INCLUDE,
+        orderBy: { nickname: "asc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+      return DashboardPlayers;
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.findByNameSearch:", error);
+      throw new Error("Failed to search dashboard players by name");
+    }
+  }
+
+  static async countByDashboardId(
+    dashboardId: string,
+    tx?: PrismaTransaction
+  ): Promise<number> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.count({
+        where: { dashboard_id: dashboardId },
+      });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.countByDashboardId:", error);
+      throw new Error("Failed to count dashboard players");
+    }
+  }
+
+  static async countByNameSearch(
+    searchTerm: string,
+    dashboardId: string,
+    tx?: PrismaTransaction
+  ): Promise<number> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.count({
+        where: {
+          dashboard_id: dashboardId,
+          nickname: {
+            startsWith: searchTerm,
+            mode: "insensitive",
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.countByNameSearch:", error);
+      throw new Error("Failed to count dashboard players by search");
+    }
+  }
+
+  static async create(
+    data: Omit<DashboardPlayer, "id">,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayer> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.create({ data });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.create:", error);
+      throw new Error("Failed to create dashboard player");
+    }
+  }
+
+  static async createMany(
+    data: Omit<DashboardPlayer, "id">[],
+    tx?: PrismaTransaction
+  ): Promise<{ count: number }> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.createMany({ data });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.createMany:", error);
+      throw new Error("Failed to create dashboard players");
+    }
+  }
+
+  static async update(
+    id: string,
+    data: Partial<DashboardPlayer>,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayer> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.update({ where: { id }, data });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.update:", error);
+      throw new Error("Failed to update dashboard player");
+    }
+  }
+
+  static async delete(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayer> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.delete({ where: { id } });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.delete:", error);
+      throw new Error("Failed to delete dashboard player");
+    }
+  }
+
+  static async deleteMany(
+    ids: string[],
+    tx?: PrismaTransaction
+  ): Promise<{ count: number }> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.deleteMany({
+        where: { id: { in: ids } },
+      });
+    } catch (error) {
+      console.error("Error in DashboardPlayerRepo.deleteMany:", error);
+      throw new Error("Failed to delete dashboard players");
+    }
   }
 }

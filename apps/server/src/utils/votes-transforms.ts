@@ -1,5 +1,5 @@
 import { CompetitionVotes, MatchVotes, PendingVote } from "@repo/logger";
-import { CompetitionWithPendingVotes } from "../repositories/competition-repo";
+import { CompetitionWithPendingVotes } from "../repositories/competition/competition-voting-repo";
 import { MatchWithDetails } from "../repositories/match-repo";
 
 export function transformCompetitionServiceToPendingVotes(

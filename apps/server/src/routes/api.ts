@@ -13,7 +13,6 @@ import {
 import {
   getAllDashboardPlayers,
   getAllDashboardPlayersWithDetails,
-  getUserById,
 } from "../handlers/player";
 import { z } from "zod";
 import { createMatchRequestSchema } from "../schemas/create-match-request-schema";
@@ -127,8 +126,7 @@ router.delete("/matches/:id", authenticateToken, deleteMatch);
 
 router.get("/players", getAllDashboardPlayersWithDetails);
 
-router.get("/users", getAllDashboardPlayers);
-router.get("/users/:id", getUserById);
+router.get("/dashboard-players", getAllDashboardPlayers);
 
 router.get("/votes", getAllVotesFromDashboard);
 

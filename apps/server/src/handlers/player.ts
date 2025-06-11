@@ -1,7 +1,7 @@
-import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
-import { UserRepo } from "../repositories/user-repo";
-import { NextFunction, Request, Response } from "express";
-import { transformDashboardPlayersToResponse } from "../utils/players-transforms";
+import { Request, Response, NextFunction } from "express";
+import { DashboardPlayerService } from "../services/dashboard-player-service";
+import { sendError, sendSuccess } from "../utils/response-utils";
+import { extractUserId } from "../utils/request-utils";
 
 export const getAllDashboardPlayers = async (
   req: Request,
@@ -11,29 +11,24 @@ export const getAllDashboardPlayers = async (
   try {
     const userId = req.query.userId?.toString();
     if (!userId) {
-      return res.status(400).send("userId query parameter is required");
+      return sendError(res, "userId query parameter is required", 400);
     }
 
-    const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
+    const query = req.query.query?.toString();
 
-    if (!dashboardId) {
-      return res.status(400).send("No dashboard for the given userId");
-    }
-
-    const query = req.query.query as string;
-    let players;
-
-    if (query && dashboardId) {
-      players = await DashboardPlayerRepo.getDashboardPlayersByQuery(
-        query,
-        dashboardId
+    if (query) {
+      const players = await DashboardPlayerService.getDashboardPlayersByQuery(
+        userId,
+        query
       );
+      sendSuccess(res, players);
     } else {
-      players = await UserRepo.getAllUsers();
+      return sendError(res, "query parameter is required", 400);
     }
-
-    res.json(players);
   } catch (error) {
+    if (error instanceof Error && error.message.includes("No dashboard")) {
+      return sendError(res, error.message, 400);
+    }
     next(error);
   }
 };
@@ -46,53 +41,121 @@ export const getAllDashboardPlayersWithDetails = async (
   try {
     const userId = req.query.userId?.toString();
     if (!userId) {
-      return res.status(400).send("userId query parameter is required");
+      return sendError(res, "userId query parameter is required", 400);
     }
 
     const page = parseInt(req.query.page?.toString() || "0", 10);
-    const limit = parseInt(req.query.limit?.toString() || "0", 10);
+    const limit = parseInt(req.query.limit?.toString() || "10", 10);
     const search = req.query.search?.toString();
 
-    const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
-    if (!dashboardId) {
-      return res.status(400).send("No dashboard for the given userId");
-    }
-    const dashPlayers =
-      await DashboardPlayerRepo.getDashboardPlayersByDashboardId(
-        dashboardId,
-        page,
-        limit,
-        search
-      );
+    const result = await DashboardPlayerService.getDashboardPlayers(userId, {
+      page,
+      limit,
+      search,
+    });
+    res.setHeader("X-Total-Count", result.totalCount.toString());
+    res.setHeader("X-Total-Pages", result.totalPages.toString());
+    res.setHeader("X-Current-Page", page.toString());
 
-    const totalCount =
-      await DashboardPlayerRepo.getNumDashboardPlayersFromQuery(
-        dashboardId,
-        search
-      );
-
-    res.setHeader("X-Total-Count", totalCount.toString());
-
-    const players = transformDashboardPlayersToResponse(dashPlayers);
-    res.json(players);
+    sendSuccess(res, result.players);
   } catch (error) {
+    if (error instanceof Error && error.message.includes("No dashboard")) {
+      return sendError(res, error.message, 400);
+    }
     next(error);
   }
 };
 
-export const getUserById = async (
+export const createDashboardPlayer = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const player = await UserRepo.getUserById(req.params.id);
-    if (player) {
-      res.json(player);
-    } else {
-      res.status(404).send("Player not found");
+    const userId = extractUserId(req);
+    const { nickname } = req.body;
+
+    if (!nickname) {
+      return sendError(res, "Nickname is required", 400);
     }
+
+    const player = await DashboardPlayerService.createDashboardPlayer(userId, {
+      nickname,
+    });
+    sendSuccess(res, player, 201);
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("already exists")) {
+        return sendError(res, error.message, 409);
+      }
+      if (error.message.includes("Only dashboard admin")) {
+        return sendError(res, error.message, 403);
+      }
+    }
+    next(error);
+  }
+};
+
+export const updateDashboardPlayer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = extractUserId(req);
+    const playerId = req.params.id;
+    const { nickname, user_id } = req.body;
+
+    if (!playerId) {
+      return sendError(res, "Player ID is required", 400);
+    }
+
+    const player = await DashboardPlayerService.updateDashboardPlayer(
+      playerId,
+      userId,
+      { nickname, user_id }
+    );
+    sendSuccess(res, player);
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+      if (error.message.includes("Only dashboard admin")) {
+        return sendError(res, error.message, 403);
+      }
+      if (error.message.includes("already exists")) {
+        return sendError(res, error.message, 409);
+      }
+    }
+    next(error);
+  }
+};
+
+export const deleteDashboardPlayer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = extractUserId(req);
+    const playerId = req.params.id;
+
+    if (!playerId) {
+      return sendError(res, "Player ID is required", 400);
+    }
+
+    await DashboardPlayerService.deleteDashboardPlayer(playerId, userId);
+    sendSuccess(res, { message: "Player deleted successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+      if (error.message.includes("Only dashboard admin")) {
+        return sendError(res, error.message, 403);
+      }
+    }
     next(error);
   }
 };

@@ -244,8 +244,8 @@ model PlayerVote {
   created_at      DateTime @default(now())
 
   match          Match       @relation(fields: [match_id], references: [id], onDelete: Cascade)
-  voter          DashboardPlayer @relation("VoterToVote", fields: [voter_id], references: [id])
-  player_match   MatchPlayer @relation(fields: [match_player_id], references: [id])
+  voter          DashboardPlayer @relation("VoterToVote", fields: [voter_id], references: [id],onDelete: Cascade)
+  player_match   MatchPlayer @relation(fields: [match_player_id], references: [id], onDelete: Cascade)
 
   @@unique([match_id, voter_id, match_player_id])
   @@index([match_id])

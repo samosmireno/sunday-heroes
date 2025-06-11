@@ -53,10 +53,13 @@ export default function AddModeratorModal({
     setError("");
 
     try {
-      const response = await axiosInstance.get(`${config.server}/api/users`, {
-        params: { userId: user?.id, query: searchQuery },
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get(
+        `${config.server}/api/dashboard-players`,
+        {
+          params: { userId: user?.id, query: searchQuery },
+          withCredentials: true,
+        },
+      );
       setSearchResults(response.data);
 
       if (response.data.length === 0) {

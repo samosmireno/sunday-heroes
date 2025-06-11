@@ -5,7 +5,7 @@ import apiRoutes from "./routes/api";
 import authRoutes from "./routes/auth";
 import { config } from "./config/config";
 import errorHandler from "./middleware/error-handler";
-import { setupScheduledTasks } from "./services/match-expired-service";
+import { setupScheduledTasks } from "./services/match/match-expired-service";
 
 const app = express();
 

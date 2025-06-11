@@ -5,7 +5,7 @@ import {
   PlayerTotals,
   Role,
 } from "@repo/logger";
-import { CompetitionWithDetails } from "../repositories/competition-repo";
+import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { Competition } from "@prisma/client";
 import { calculatePlayerScore, calculatePlayerStats } from "./utils";
 

@@ -39,9 +39,11 @@ export class MatchPlayerRepo {
   }
 
   static async getMatchPlayersFromMatch(
-    match_id: string
+    match_id: string,
+    tx?: PrismaTransaction
   ): Promise<MatchPlayerWithUserDetails[]> {
-    return prisma.matchPlayer.findMany({
+    const prismaClient = tx || prisma;
+    return prismaClient.matchPlayer.findMany({
       where: { match_id },
       include: {
         dashboard_player: {
@@ -78,8 +80,34 @@ export class MatchPlayerRepo {
     return prisma.matchPlayer.update({ where: { id }, data });
   }
 
+  static async updateMatchPlayersStats(
+    updates: Array<{ id: string; updates: Partial<any> }>,
+    tx?: PrismaTransaction
+  ): Promise<void> {
+    try {
+      const prismaClient = tx || prisma;
+
+      await Promise.all(
+        updates.map(({ id, updates: data }) =>
+          prismaClient.matchPlayer.update({
+            where: { id },
+            data,
+          })
+        )
+      );
+    } catch (error) {
+      console.error("Error in MatchPlayerRepo.updateMatchPlayersStats:", error);
+      throw new Error("Failed to update match player stats");
+    }
+  }
+
   static async deleteMatchPlayer(id: string): Promise<MatchPlayer> {
     return prisma.matchPlayer.delete({ where: { id } });
+  }
+
+  static async deleteMatchPlayersByIds(ids: string[], tx?: PrismaTransaction) {
+    const prismaClient = tx || prisma;
+    return prismaClient.matchPlayer.deleteMany({ where: { id: { in: ids } } });
   }
 
   static async deleteMatchPlayersFromMatch(

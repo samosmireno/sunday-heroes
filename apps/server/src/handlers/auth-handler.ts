@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRepo } from "../repositories/user-repo";
-import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
 import { AuthService } from "../services/auth-service";
 import { CookieUtils } from "../utils/cookie-utils";
 import { InvitationService } from "../services/invitation-service";
 import { config } from "../config/config";
 import { AuthenticatedRequest } from "../types";
+import { UserService } from "../services/user-service";
+import { RefreshTokenService } from "../services/refresh-token-service";
+import { UserResponse } from "@repo/logger";
 
 export const handleRefreshToken = async (
   req: Request,
@@ -26,7 +27,7 @@ export const handleRefreshToken = async (
 
     const { userId, decoded } =
       await AuthService.validateRefreshToken(refreshToken);
-    await RefreshTokenRepo.deleteRefreshToken(refreshToken);
+    await RefreshTokenService.deleteToken(refreshToken);
 
     if (!userId) {
       return res.status(401).json({
@@ -35,7 +36,7 @@ export const handleRefreshToken = async (
       });
     }
 
-    const user = await UserRepo.getUserById(userId);
+    const user = await UserService.getUserById(userId);
     if (!user) {
       return res.status(404).json({
         loggedIn: false,
@@ -49,7 +50,10 @@ export const handleRefreshToken = async (
     CookieUtils.setAuthCookies(res, accessToken, newRefreshToken);
 
     const authResponse = {
-      user: AuthService.createUserResponse(user),
+      id: user.id,
+      email: user.email,
+      name: user.given_name,
+      role: user.role as UserResponse["role"],
     };
 
     return res.status(200).json(authResponse);
@@ -126,13 +130,18 @@ export const getCurrentUser = async (
 ) => {
   try {
     const { userId } = req as AuthenticatedRequest;
-    const user = await UserRepo.getUserById(userId);
+    const user = await UserService.getUserById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const userResponse = AuthService.createUserResponse(user);
+    const userResponse = {
+      id: user.id,
+      email: user.email,
+      name: user.given_name,
+      role: user.role as UserResponse["role"],
+    };
     res.status(200).json(userResponse);
   } catch (error) {
     console.error("Error fetching user:", error);

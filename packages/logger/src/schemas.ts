@@ -135,3 +135,4 @@ export type DuelMatchPlayersForm = z.infer<
 >["matchPlayers"];
 
 export type createMatchRequest = z.infer<typeof createMatchRequestSchema>;
+export type matchPlayersMatchRequest = createMatchRequest["players"];

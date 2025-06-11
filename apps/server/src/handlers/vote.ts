@@ -1,21 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { VoteRepo } from "../repositories/vote-repo";
-import {
-  transformCompetitionServiceToPendingVotes,
-  transformMatchServiceToPendingVotes,
-} from "../utils/votes-transforms";
-import { UserRepo } from "../repositories/user-repo";
+import { VoteService } from "../services/vote-service";
 import { z } from "zod";
-import { MatchPlayerRepo } from "../repositories/match-player-repo";
-import { MatchRepo } from "../repositories/match-repo";
-import { VotingStatus } from "@prisma/client";
-import {
-  CompetitionRepo,
-  CompetitionWithPendingVotes,
-} from "../repositories/competition-repo";
-import { transformDashboardVotesToResponse } from "../utils/dashboard-transforms";
 import { AuthenticatedRequest } from "../types";
-import { MatchService } from "../services/match-service";
+import { CompetitionService } from "../services/competition-service";
+import { sendError, sendSuccess } from "../utils/response-utils";
+import { extractUserId } from "../utils/request-utils";
 
 export const submitVotesSchema = z.object({
   matchId: z.string(),
@@ -30,19 +19,7 @@ export const submitVotesSchema = z.object({
     .length(3),
 });
 
-type submitVotesReques = z.infer<typeof submitVotesSchema>;
-
-async function checkAndCloseVoting(matchId: string): Promise<void> {
-  const pendingVoters = await VoteRepo.getPendingVoters(matchId);
-
-  if (pendingVoters.length === 0) {
-    await MatchRepo.updateMatchVotingStatus(
-      matchId,
-      VotingStatus.CLOSED,
-      new Date()
-    );
-  }
-}
+type SubmitVotesRequest = z.infer<typeof submitVotesSchema>;
 
 export const getAllVotesFromDashboard = async (
   req: Request,
@@ -52,18 +29,15 @@ export const getAllVotesFromDashboard = async (
   try {
     const userId = req.query.userId?.toString();
     if (!userId) {
-      return res.status(400).send("userId query parameter is required");
+      return sendError(res, "userId query parameter is required", 400);
     }
 
-    const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
-    if (!dashboardId) {
-      return res.status(400).send("No dashboard for the given userId");
-    }
-
-    const votes = await VoteRepo.getAllVotesFromDashboard(dashboardId);
-    const dashboardVotes = transformDashboardVotesToResponse(votes);
-    res.json(dashboardVotes);
+    const votes = await VoteService.getDashboardVotes(userId);
+    sendSuccess(res, votes);
   } catch (error) {
+    if (error instanceof Error && error.message.includes("No dashboard")) {
+      return sendError(res, error.message, 400);
+    }
     next(error);
   }
 };
@@ -74,43 +48,46 @@ export const submitVotes = async (
   next: NextFunction
 ) => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const userId = authenticatedReq.userId;
-    const data: submitVotesReques = req.body;
+    const requestingUserId = extractUserId(req);
+    const data: SubmitVotesRequest = req.body;
 
-    const isMatchParticipant = await MatchPlayerRepo.isPlayerInMatch(
+    const validationResult = submitVotesSchema.safeParse(data);
+    if (!validationResult.success) {
+      return sendError(res, "Invalid vote data", 400);
+    }
+
+    const result = await VoteService.submitVotes(
+      data.matchId,
       data.voterId,
-      data.matchId
+      data.votes,
+      requestingUserId
     );
 
-    const isUserAdminOrModerator = await MatchService.isUserAdminOrModerator(
-      userId,
-      data.matchId
-    );
-
-    if (!isMatchParticipant && !isUserAdminOrModerator) {
-      return res.status(403).send("You are not allowed to vote for this match");
-    }
-
-    const match = await MatchRepo.getMatchById(data.matchId);
-    if (!match || match.voting_status === "CLOSED") {
-      return res.status(400).send("Voting is closed for this match");
-    }
-
-    const existingVotes = await VoteRepo.getVotesByVoterAndMatch(
-      data.voterId,
-      data.matchId
-    );
-    if (existingVotes.length > 0) {
-      return res.status(400).send("You have already voted for this match");
-    }
-
-    await VoteRepo.createVotes(data.matchId, data.voterId, data.votes);
-
-    await checkAndCloseVoting(data.matchId);
-
-    res.status(201).send("Votes submitted successfully");
+    sendSuccess(res, result, 201);
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+      if (
+        error.message.includes("closed") ||
+        error.message.includes("expired")
+      ) {
+        return sendError(res, error.message, 400);
+      }
+      if (error.message.includes("already voted")) {
+        return sendError(res, error.message, 409);
+      }
+      if (error.message.includes("Not authorized")) {
+        return sendError(res, error.message, 403);
+      }
+      if (
+        error.message.includes("Must vote") ||
+        error.message.includes("Exactly")
+      ) {
+        return sendError(res, error.message, 400);
+      }
+    }
     next(error);
   }
 };
@@ -123,41 +100,42 @@ export const getVotingStatus = async (
   try {
     const matchId = req.params.matchId;
     const voterId = req.query.voterId?.toString();
+
     if (!matchId) {
-      return res.status(400).send("matchId parameter is required");
+      return sendError(res, "matchId parameter is required", 400);
     }
     if (!voterId) {
-      return res.status(400).send("voterId query parameter is required");
+      return sendError(res, "voterId query parameter is required", 400);
     }
 
-    const match = await MatchRepo.getMatchWithPlayersById(matchId);
-    if (!match) {
-      return res.status(404).send("Match not found");
+    const status = await VoteService.getVotingStatus(matchId, voterId);
+    sendSuccess(res, status);
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+      if (error.message.includes("not played")) {
+        return sendError(res, error.message, 404);
+      }
+    }
+    next(error);
+  }
+};
+
+export const getPendingVotesForMatch = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const matchId = req.params.matchId;
+    if (!matchId) {
+      return sendError(res, "matchId parameter is required", 400);
     }
 
-    const playerInMatch = await MatchPlayerRepo.isPlayerInMatch(
-      voterId,
-      matchId
-    );
-
-    if (!playerInMatch) {
-      return res.status(404).send("The player has not played in this match");
-    }
-
-    const hasVoted = await VoteRepo.hasPlayerVoted(voterId, matchId);
-
-    res.json({
-      matchId,
-      votingOpen: match.voting_status === "OPEN",
-      votingEndsAt: match.voting_ends_at,
-      hasVoted,
-      players: match.matchPlayers.map((player) => ({
-        id: player.id,
-        nickname: player.dashboard_player.nickname,
-        isHome: player.is_home,
-        canVoteFor: player.dashboard_player_id !== voterId,
-      })),
-    });
+    const votes = await VoteService.getMatchVotes(matchId);
+    sendSuccess(res, votes);
   } catch (error) {
     next(error);
   }
@@ -170,36 +148,17 @@ export const getPendingVotesForCompetition = async (
 ) => {
   try {
     const competitionId = req.params.competitionId;
+    if (!competitionId) {
+      return sendError(res, "competitionId parameter is required", 400);
+    }
 
-    const competition: CompetitionWithPendingVotes | null =
-      await CompetitionRepo.getCompetitionWithPendingVotes(competitionId);
+    const competition =
+      await CompetitionService.getCompetitionWithPendingVotes(competitionId);
     if (!competition) {
-      return res.status(404).send("Competition not found");
+      return sendError(res, "Competition not found", 404);
     }
 
-    const competitionVotes =
-      transformCompetitionServiceToPendingVotes(competition);
-
-    res.json(competitionVotes);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getPendingVotesForMatch = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const matchId = req.params.matchId;
-    const match = await MatchRepo.getMatchWithStats(matchId);
-    if (!match) {
-      return res.status(404).send("Match not found");
-    }
-
-    const matchVotes = transformMatchServiceToPendingVotes(match);
-    res.json(matchVotes);
+    sendSuccess(res, competition);
   } catch (error) {
     next(error);
   }

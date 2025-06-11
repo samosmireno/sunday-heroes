@@ -1,17 +1,16 @@
 import { Request, Response, NextFunction } from "express";
-import { CompetitionRepo } from "../repositories/competition-repo";
-import {
-  transformCompetitionToResponse,
-  transformAddCompetitionRequestToService,
-} from "../utils/competition-transforms";
+import { CompetitionService } from "../services/competition-service";
 import { CompetitionType, createCompetitionRequest } from "@repo/logger";
-import { Competition } from "@prisma/client";
-import { UserRepo } from "../repositories/user-repo";
-import {
-  transformDashboardCompetitionsToDetailedResponse,
-  transformDashboardCompetitionsToResponse,
-} from "../utils/dashboard-transforms";
-import { AuthenticatedRequest } from "../types";
+import { sendError, sendSuccess } from "../utils/response-utils";
+import { extractUserId } from "../utils/request-utils";
+
+const getRequiredQuery = (req: Request, param: string): string => {
+  const value = req.query[param]?.toString();
+  if (!value) {
+    throw new Error(`${param} query parameter is required`);
+  }
+  return value;
+};
 
 export const getAllCompetitionsFromDashboard = async (
   req: Request,
@@ -19,20 +18,14 @@ export const getAllCompetitionsFromDashboard = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.query.userId?.toString();
-    if (!userId) {
-      return res.status(400).send("userId query parameter is required");
-    }
-
-    const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
-    if (!dashboardId) {
-      return res.status(400).send("No dashboard for the given userId");
-    }
-
+    const userId = getRequiredQuery(req, "userId");
     const competitions =
-      await CompetitionRepo.getAllCompetitionsFromDashboard(dashboardId);
-    res.json(transformDashboardCompetitionsToResponse(competitions));
+      await CompetitionService.getDashboardCompetitions(userId);
+    sendSuccess(res, competitions);
   } catch (error) {
+    if (error instanceof Error && error.message.includes("No dashboard")) {
+      return sendError(res, error.message, 400);
+    }
     next(error);
   }
 };
@@ -43,43 +36,34 @@ export const getDetailedCompetitions = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.query.userId?.toString();
-    if (!userId) {
-      return res.status(400).send("userId query parameter is required");
-    }
-
+    const userId = getRequiredQuery(req, "userId");
     const page = parseInt(req.query.page?.toString() || "0", 10);
-    const limit = parseInt(req.query.limit?.toString() || "0", 10);
+    const limit = parseInt(req.query.limit?.toString() || "10", 10);
     const type = req.query.type as CompetitionType;
     const search = req.query.search?.toString();
 
-    const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
-    if (!dashboardId) {
-      return res.status(400).send("No dashboard for the given userId");
+    // Validate pagination
+    if (page < 0 || limit < 1 || limit > 100) {
+      return sendError(res, "Invalid pagination parameters", 400);
     }
 
-    const competitions =
-      await CompetitionRepo.getAllDetailedCompetitionsFromDashboard(
-        dashboardId,
-        userId,
-        page,
-        limit,
-        type,
-        search
-      );
-
-    const totalCount = await CompetitionRepo.getNumCompetitionsFromQuery(
-      dashboardId,
-      userId,
+    const result = await CompetitionService.getDetailedCompetitions(userId, {
+      page,
+      limit,
       type,
-      search
-    );
-    res.setHeader("X-Total-Count", totalCount.toString());
+      search,
+    });
 
-    res.json(
-      transformDashboardCompetitionsToDetailedResponse(userId, competitions)
-    );
+    // Set pagination headers
+    res.setHeader("X-Total-Count", result.totalCount.toString());
+    res.setHeader("X-Total-Pages", result.totalPages.toString());
+    res.setHeader("X-Current-Page", page.toString());
+
+    sendSuccess(res, result.competitions);
   } catch (error) {
+    if (error instanceof Error && error.message.includes("No dashboard")) {
+      return sendError(res, error.message, 400);
+    }
     next(error);
   }
 };
@@ -90,23 +74,18 @@ export const getCompetitionStats = async (
   next: NextFunction
 ) => {
   try {
-    const competitionId = req.query.compId?.toString();
-    const userId = req.query.userId?.toString();
-    if (!userId) {
-      return res.status(400).send("userId query parameter is required");
-    }
-    if (!competitionId) {
-      return res.status(400).send("compId query parameter is required");
-    }
+    const competitionId = getRequiredQuery(req, "compId");
+    const userId = getRequiredQuery(req, "userId");
 
-    const competition = await CompetitionRepo.getCompetitionById(competitionId);
-    if (competition) {
-      const compResponse = transformCompetitionToResponse(competition, userId);
-      res.json(compResponse);
-    } else {
-      res.status(404).send("Competition not found");
-    }
+    const competition = await CompetitionService.getCompetitionStats(
+      competitionId,
+      userId
+    );
+    sendSuccess(res, competition);
   } catch (error) {
+    if (error instanceof Error && error.message.includes("not found")) {
+      return sendError(res, error.message, 404);
+    }
     next(error);
   }
 };
@@ -116,22 +95,19 @@ export const createCompetition = async (
   res: Response,
   next: NextFunction
 ) => {
-  const data: createCompetitionRequest = req.body;
-
-  const dashboardId = await UserRepo.getDashboardIdFromUserId(data.userId);
-
-  if (!dashboardId) {
-    return res.status(400).send("No dashboard for the given userId");
-  }
-
-  const competitionToAdd: Omit<Competition, "id"> =
-    transformAddCompetitionRequestToService(data, dashboardId);
-
   try {
-    const match = await CompetitionRepo.createCompetition(competitionToAdd);
+    const data: createCompetitionRequest = req.body;
 
-    res.status(201).json(match);
+    if (!data.userId) {
+      return sendError(res, "User ID is required", 400);
+    }
+
+    const competition = await CompetitionService.createCompetition(data);
+    sendSuccess(res, competition, 201);
   } catch (error) {
+    if (error instanceof Error && error.message.includes("No dashboard")) {
+      return sendError(res, error.message, 400);
+    }
     next(error);
   }
 };
@@ -142,27 +118,27 @@ export const resetCompetition = async (
   next: NextFunction
 ) => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const adminId = authenticatedReq.userId;
+    const userId = extractUserId(req);
     const competitionId = req.params.id;
 
     if (!competitionId) {
-      return res.status(400).send("Competition ID is required");
+      return sendError(res, "Competition ID is required", 400);
     }
 
-    const isAdmin = await CompetitionRepo.isUserAdmin(competitionId, adminId);
-    if (!isAdmin) {
-      return res.status(403).send("User is not an admin of this competition");
-    }
-
-    const competition = await CompetitionRepo.getCompetitionById(competitionId);
-    if (!competition) {
-      return res.status(404).send("Competition not found");
-    }
-    const resetCompetition =
-      await CompetitionRepo.resetCompetition(competitionId);
-    res.status(200).json(resetCompetition);
+    const resetCompetition = await CompetitionService.resetCompetition(
+      competitionId,
+      userId
+    );
+    sendSuccess(res, resetCompetition);
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not authorized")) {
+        return sendError(res, error.message, 403);
+      }
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+    }
     next(error);
   }
 };
@@ -173,22 +149,24 @@ export const deleteCompetition = async (
   next: NextFunction
 ) => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const adminId = authenticatedReq.userId;
+    const userId = extractUserId(req);
     const competitionId = req.params.id;
 
     if (!competitionId) {
-      return res.status(400).send("Competition ID is required");
+      return sendError(res, "Competition ID is required", 400);
     }
 
-    const isAdmin = await CompetitionRepo.isUserAdmin(competitionId, adminId);
-    if (!isAdmin) {
-      return res.status(403).send("User is not an admin of this competition");
-    }
-
-    await CompetitionRepo.deleteCompetition(competitionId);
-    res.status(204).send();
+    await CompetitionService.deleteCompetition(competitionId, userId);
+    sendSuccess(res, { message: "Competition deleted successfully" }, 204);
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not authorized")) {
+        return sendError(res, error.message, 403);
+      }
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+    }
     next(error);
   }
 };

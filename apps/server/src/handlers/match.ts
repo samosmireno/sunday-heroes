@@ -1,17 +1,35 @@
 import { NextFunction, Request, Response } from "express";
 import { createMatchRequest } from "@repo/logger";
-import { MatchService } from "../services/match-service";
-import { AuthenticatedRequest } from "../types";
-import { CompetitionRepo } from "../repositories/competition-repo";
+import { MatchService } from "../services/match/match-service";
+import { MatchAuthService } from "../services/match/match-auth-service";
+import { sendError, sendSuccess } from "../utils/response-utils";
+import { extractUserId } from "../utils/request-utils";
+
+const getRequiredQuery = (req: Request, param: string): string => {
+  const value = req.query[param]?.toString();
+  if (!value) {
+    throw new Error(`${param} query parameter is required`);
+  }
+  return value;
+};
+
+const getOptionalNumberParam = (
+  req: Request,
+  param: string,
+  defaultValue: number
+): number => {
+  const value = req.query[param]?.toString();
+  return value ? parseInt(value, 10) : defaultValue;
+};
 
 export const getAllMatches = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const matches = await MatchService.getAllMatches();
-    res.json(matches);
+    sendSuccess(res, matches);
   } catch (error) {
     next(error);
   }
@@ -21,13 +39,19 @@ export const getMatchById = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const match = await MatchService.getMatchById(req.params.id);
-    if (!match) {
-      return res.status(404).send("Match not found");
+    const matchId = req.params.id;
+    if (!matchId) {
+      return sendError(res, "Match ID is required", 400);
     }
-    res.json(match);
+
+    const match = await MatchService.getMatchById(matchId);
+    if (!match) {
+      return sendError(res, "Match not found", 404);
+    }
+
+    sendSuccess(res, match);
   } catch (error) {
     next(error);
   }
@@ -37,17 +61,19 @@ export const getAllMatchesFromDashboard = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const userId = req.query.userId?.toString();
-    if (!userId) {
-      return res.status(400).send("userId query parameter is required");
-    }
+    const userId = getRequiredQuery(req, "userId");
     const matches = await MatchService.getDashboardMatches(userId);
-    res.json(matches);
+    sendSuccess(res, matches);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No dashboard")) {
-      return res.status(400).send(error.message);
+    if (error instanceof Error) {
+      if (error.message.includes("No dashboard")) {
+        return sendError(res, error.message, 400);
+      }
+      if (error.message.includes("required")) {
+        return sendError(res, error.message, 400);
+      }
     }
     next(error);
   }
@@ -57,15 +83,15 @@ export const getAllMatchesFromCompetition = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const competitionId = req.query.competitionId?.toString();
-    if (!competitionId) {
-      return res.status(400).send("competitionId query parameter is required");
-    }
+    const competitionId = getRequiredQuery(req, "competitionId");
     const matches = await MatchService.getCompetitionMatches(competitionId);
-    res.json(matches);
+    sendSuccess(res, matches);
   } catch (error) {
+    if (error instanceof Error && error.message.includes("required")) {
+      return sendError(res, error.message, 400);
+    }
     next(error);
   }
 };
@@ -74,29 +100,32 @@ export const getMatchesWithStats = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const userId = req.query.userId?.toString();
-    if (!userId) {
-      return res.status(400).send("userId query parameter is required");
-    }
-    const page = parseInt(req.query.page?.toString() || "1", 10);
-    const limit = parseInt(req.query.limit?.toString() || "8", 10);
+    const userId = getRequiredQuery(req, "userId");
+    const page = getOptionalNumberParam(req, "page", 1);
+    const limit = getOptionalNumberParam(req, "limit", 8);
     const competitionId = req.query.competitionId?.toString();
 
-    const result = await MatchService.getMatchesWithStats(
-      userId,
+    const result = await MatchService.getMatchesForUser(userId, {
       competitionId,
-      page,
-      limit
-    );
+      limit,
+      offset: (page - 1) * limit,
+    });
 
     res.setHeader("X-Total-Count", result.totalCount.toString());
     res.setHeader("X-Total-Pages", result.totalPages.toString());
-    res.json(result.matches);
+    res.setHeader("X-Current-Page", page.toString());
+
+    sendSuccess(res, result.matches);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No dashboard")) {
-      return res.status(400).send(error.message);
+    if (error instanceof Error) {
+      if (error.message.includes("No dashboard")) {
+        return sendError(res, error.message, 400);
+      }
+      if (error.message.includes("required")) {
+        return sendError(res, error.message, 400);
+      }
     }
     next(error);
   }
@@ -106,21 +135,26 @@ export const createMatch = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const userId = authenticatedReq.userId;
+    const userId = extractUserId(req);
+    const data: createMatchRequest = req.body;
 
-    const isAdminOrModerator = await CompetitionRepo.isUserAdminOrModerator(
-      req.body.competitionId,
+    if (!data.competitionId) {
+      return sendError(res, "Competition ID is required", 400);
+    }
+
+    const isAuthorized = await MatchAuthService.canUserCreateMatch(
+      data.competitionId,
       userId
     );
-    if (!isAdminOrModerator) {
-      return res.status(403).send("You are not authorized to create a match");
+
+    if (!isAuthorized) {
+      return sendError(res, "You are not authorized to create a match", 403);
     }
-    const data: createMatchRequest = req.body;
+
     const match = await MatchService.createMatch(data);
-    res.status(201).json(match);
+    sendSuccess(res, match, 201);
   } catch (error) {
     next(error);
   }
@@ -130,22 +164,31 @@ export const updateMatch = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const userId = authenticatedReq.userId;
-    const isAdminOrModerator = await CompetitionRepo.isUserAdminOrModerator(
-      req.body.competitionId,
-      userId
-    );
-    if (!isAdminOrModerator) {
-      return res.status(403).send("You are not authorized to create a match");
-    }
+    const userId = extractUserId(req);
     const matchId = req.params.id;
     const data: createMatchRequest = req.body;
 
+    if (!matchId) {
+      return sendError(res, "Match ID is required", 400);
+    }
+
+    if (!data.competitionId) {
+      return sendError(res, "Competition ID is required", 400);
+    }
+
+    const isAuthorized = await MatchAuthService.canUserModifyMatch(
+      matchId,
+      userId
+    );
+
+    if (!isAuthorized) {
+      return sendError(res, "You are not authorized to update this match", 403);
+    }
+
     const updatedMatch = await MatchService.updateMatch(matchId, data);
-    res.status(200).json(updatedMatch);
+    sendSuccess(res, updatedMatch);
   } catch (error) {
     next(error);
   }
@@ -155,29 +198,31 @@ export const deleteMatch = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const userId = authenticatedReq.userId;
+    const userId = extractUserId(req);
     const matchId = req.params.id;
+
     if (!matchId) {
-      return res.status(400).send("Match ID is required");
+      return sendError(res, "Match ID is required", 400);
     }
 
-    const isAdminOrModerator = await MatchService.isUserAdminOrModerator(
+    const isAuthorized = await MatchAuthService.canUserModifyMatch(
       matchId,
       userId
     );
-    if (!isAdminOrModerator) {
-      return res.status(403).send("You are not authorized to delete a match");
+
+    if (!isAuthorized) {
+      return sendError(res, "You are not authorized to delete this match", 403);
     }
 
     const deletedMatch = await MatchService.deleteMatch(matchId);
 
     if (!deletedMatch) {
-      return res.status(404).send("Match not found");
+      return sendError(res, "Match not found", 404);
     }
-    res.status(200).send("Match deleted successfully");
+
+    sendSuccess(res, { message: "Match deleted successfully" });
   } catch (error) {
     next(error);
   }

@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { CompetitionModeratorRepo } from "../repositories/competition-moderator-repo";
+import { CompetitionModeratorRepo } from "../repositories/competition/competition-moderator-repo";
 import { AuthenticatedRequest } from "../types";
-import { CompetitionRepo } from "../repositories/competition-repo";
+import { CompetitionRepo } from "../repositories/competition/competition-repo";
+import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 
 export const addModeratorToCompetition = async (
   req: Request,
@@ -18,7 +19,10 @@ export const addModeratorToCompetition = async (
       return res.status(400).send("Competition ID and User ID are required");
     }
 
-    const isAdmin = await CompetitionRepo.isUserAdmin(competitionId, adminId);
+    const isAdmin = await CompetitionAuthRepo.isUserAdmin(
+      competitionId,
+      adminId
+    );
     if (!isAdmin) {
       return res.status(403).send("User is not an admin of this competition");
     }
@@ -61,7 +65,7 @@ export const removeModeratorFromCompetition = async (
   if (!competitionId) {
     return res.status(404).send("Moderator not found for this competition");
   }
-  const isAdmin = await CompetitionRepo.isUserAdmin(competitionId, adminId);
+  const isAdmin = await CompetitionAuthRepo.isUserAdmin(competitionId, adminId);
   if (!isAdmin) {
     return res.status(403).send("User is not an admin of this competition");
   }

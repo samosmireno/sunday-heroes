@@ -1,29 +1,115 @@
 import { Request, Response, NextFunction } from "express";
-import { DashboardResponse } from "@repo/logger";
-import { DashboardRepo } from "../repositories/dashboard-repo";
-import { transformDashboardServiceToResponse } from "../utils/dashboard-transforms";
-import { UserRepo } from "../repositories/user-repo";
+import { DashboardService } from "../services/dashboard-service";
+import { sendError, sendSuccess } from "../utils/response-utils";
+import { extractUserId } from "../utils/request-utils";
 
 export const getDashboardDetails = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.params.id;
-  if (!userId) {
-    return res.status(400).send("userId query parameter is required");
-  }
-  const dashboardId = await UserRepo.getDashboardIdFromUserId(userId);
-  if (!dashboardId) {
-    return res.status(400).send("No dashboard for the given userId");
-  }
+  try {
+    const userId = req.params.id;
+    if (!userId) {
+      return sendError(res, "User ID is required", 400);
+    }
 
-  const dashboard = await DashboardRepo.getDashboardDetails(dashboardId);
-  if (dashboard) {
-    const dashboardResponse: DashboardResponse =
-      transformDashboardServiceToResponse(dashboard, userId);
-    res.json(dashboardResponse);
-  } else {
-    res.status(404).send("Dashboard not found");
+    const dashboardResponse =
+      await DashboardService.getDashboardForUser(userId);
+    sendSuccess(res, dashboardResponse);
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+      if (error.message.includes("No dashboard")) {
+        return sendError(res, error.message, 400);
+      }
+    }
+    next(error);
+  }
+};
+
+export const createDashboard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = extractUserId(req);
+    const { name } = req.body;
+
+    if (!name) {
+      return sendError(res, "Dashboard name is required", 400);
+    }
+
+    const dashboard = await DashboardService.createDashboard(userId, name);
+    sendSuccess(res, dashboard, 201);
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("already has")) {
+      return sendError(res, error.message, 409);
+    }
+    next(error);
+  }
+};
+
+export const updateDashboard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = extractUserId(req);
+    const dashboardId = req.params.id;
+    const { name } = req.body;
+
+    if (!dashboardId) {
+      return sendError(res, "Dashboard ID is required", 400);
+    }
+
+    const dashboard = await DashboardService.updateDashboard(
+      dashboardId,
+      userId,
+      { name }
+    );
+    sendSuccess(res, dashboard);
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+      if (error.message.includes("Only dashboard admin")) {
+        return sendError(res, error.message, 403);
+      }
+    }
+    next(error);
+  }
+};
+
+export const deleteDashboard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = extractUserId(req);
+    const dashboardId = req.params.id;
+
+    if (!dashboardId) {
+      return sendError(res, "Dashboard ID is required", 400);
+    }
+
+    await DashboardService.deleteDashboard(dashboardId, userId);
+    sendSuccess(res, { message: "Dashboard deleted successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes("not found")) {
+        return sendError(res, error.message, 404);
+      }
+      if (error.message.includes("Only dashboard admin")) {
+        return sendError(res, error.message, 403);
+      }
+    }
+    next(error);
   }
 };

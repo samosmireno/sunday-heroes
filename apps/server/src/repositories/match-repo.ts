@@ -1,377 +1,328 @@
-import { Match, MatchType, Prisma, VotingStatus } from "@prisma/client";
+import { Match, Prisma, VotingStatus } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 
+// Define reusable include patterns (DRY principle)
+const MATCH_DETAILED_INCLUDE = {
+  matchPlayers: {
+    include: {
+      dashboard_player: {
+        include: {
+          votes_given: true,
+        },
+      },
+      received_votes: true,
+      team: true,
+    },
+  },
+  match_teams: {
+    include: {
+      team: true,
+    },
+  },
+  player_votes: true,
+  competition: {
+    include: {
+      moderators: {
+        select: {
+          dashboard_player: {
+            select: {
+              user_id: true,
+            },
+          },
+        },
+      },
+      dashboard: {
+        select: {
+          admin_id: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.MatchInclude;
+
+const MATCH_BASIC_INCLUDE = {
+  match_teams: {
+    include: {
+      team: true,
+    },
+  },
+  competition: true,
+  matchPlayers: {
+    select: {
+      id: true,
+    },
+  },
+} satisfies Prisma.MatchInclude;
+
+// Type definitions using the includes
 export type MatchWithDetails = Prisma.MatchGetPayload<{
-  include: {
-    matchPlayers: {
-      include: {
-        dashboard_player: {
-          include: {
-            votes_given: true;
-          };
-        };
-        received_votes: true;
-      };
-    };
-    match_teams: {
-      include: {
-        team: true;
-      };
-    };
-    competition: {
-      include: {
-        dashboard: {
-          select: {
-            admin_id: true;
-          };
-        };
-      };
-    };
-    player_votes: true;
-  };
+  include: typeof MATCH_DETAILED_INCLUDE;
 }>;
 
 export type MatchWithTeams = Prisma.MatchGetPayload<{
-  include: {
-    match_teams: {
-      include: {
-        team: true;
-      };
-    };
-    competition: true;
-    matchPlayers: {
-      select: {
-        id: true;
-      };
-    };
-  };
+  include: typeof MATCH_BASIC_INCLUDE;
 }>;
 
 export class MatchRepo {
-  static async getAllMatches(): Promise<Match[]> {
-    return prisma.match.findMany();
+  // BASIC CRUD OPERATIONS
+  static async findById(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<Match | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findUnique({ where: { id } });
+    } catch (error) {
+      console.error("Error in MatchRepo.findById:", error);
+      throw new Error("Failed to fetch match");
+    }
   }
 
-  static async getMatchById(id: string): Promise<Match | null> {
-    return prisma.match.findUnique({ where: { id } });
-  }
-
-  static async getAllMatchesWithDetails(): Promise<MatchWithDetails[]> {
-    return prisma.match.findMany({
-      include: {
-        matchPlayers: {
-          include: {
-            dashboard_player: {
-              include: {
-                votes_given: true,
-              },
-            },
-            received_votes: true,
-          },
-        },
-        match_teams: {
-          include: {
-            team: true,
-          },
-        },
-        player_votes: true,
-        competition: {
-          include: {
-            dashboard: {
-              select: {
-                admin_id: true,
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
-  static async getMatchWithPlayersById(
-    id: string
+  static async findByIdWithDetails(
+    id: string,
+    tx?: PrismaTransaction
   ): Promise<MatchWithDetails | null> {
-    return prisma.match.findUnique({
-      where: { id },
-      include: {
-        matchPlayers: {
-          include: {
-            dashboard_player: {
-              include: {
-                votes_given: true,
-              },
-            },
-            received_votes: true,
-          },
-        },
-        match_teams: {
-          include: {
-            team: true,
-          },
-        },
-        player_votes: true,
-        competition: {
-          include: {
-            dashboard: {
-              select: {
-                admin_id: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findUnique({
+        where: { id },
+        include: MATCH_DETAILED_INCLUDE,
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findByIdWithDetails:", error);
+      throw new Error("Failed to fetch match with details");
+    }
   }
 
-  static async getMatchesWithStats(
-    dashboard_id: string,
-    user_id?: string,
-    competition_id?: string,
-    limit?: number,
-    offset?: number
+  static async findByIdWithTeams(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<MatchWithTeams | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findUnique({
+        where: { id },
+        include: MATCH_BASIC_INCLUDE,
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findByIdWithTeams:", error);
+      throw new Error("Failed to fetch match with teams");
+    }
+  }
+
+  // SIMPLE FILTERED QUERIES (Repository responsibility)
+  static async findAll(tx?: PrismaTransaction): Promise<Match[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        orderBy: { date: "desc" },
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findAll:", error);
+      throw new Error("Failed to fetch matches");
+    }
+  }
+
+  static async findAllWithDetails(
+    tx?: PrismaTransaction
   ): Promise<MatchWithDetails[]> {
-    return prisma.match.findMany({
-      where: {
-        competition_id: competition_id || undefined,
-        OR: [
-          {
-            competition: {
-              dashboard_id: dashboard_id,
-            },
-          },
-          {
-            matchPlayers: {
-              some: {
-                dashboard_player: {
-                  user_id: user_id,
-                },
-              },
-            },
-          },
-        ],
-      },
-      include: {
-        matchPlayers: {
-          include: {
-            dashboard_player: {
-              include: {
-                votes_given: true,
-              },
-            },
-            received_votes: true,
-            team: true,
-          },
-        },
-        match_teams: {
-          include: {
-            team: true,
-          },
-        },
-        player_votes: true,
-        competition: {
-          include: {
-            dashboard: {
-              select: {
-                admin_id: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        date: "desc",
-      },
-      take: limit,
-      skip: offset,
-    });
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        include: MATCH_DETAILED_INCLUDE,
+        orderBy: { date: "desc" },
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findAllWithDetails:", error);
+      throw new Error("Failed to fetch matches with details");
+    }
   }
 
-  static async getMatchWithStats(
-    match_id: string
-  ): Promise<MatchWithDetails | null> {
-    return prisma.match.findUnique({
-      where: { id: match_id },
-      include: {
-        matchPlayers: {
-          include: {
-            dashboard_player: {
-              include: {
-                votes_given: true,
-              },
-            },
-            received_votes: true,
-            team: true,
-          },
-        },
-        match_teams: {
-          include: {
-            team: true,
-          },
-        },
-        player_votes: true,
-        competition: {
-          include: {
-            dashboard: {
-              select: {
-                admin_id: true,
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
-  static async getAllMatchesFromDashboard(
-    dashboard_id: string
-  ): Promise<MatchWithTeams[]> {
-    return prisma.match.findMany({
-      where: {
-        competition: {
-          dashboard_id: dashboard_id,
-        },
-      },
-      include: {
-        match_teams: {
-          include: {
-            team: true,
-          },
-        },
-        competition: true,
-        matchPlayers: {
-          select: {
-            id: true,
-          },
-        },
-      },
-      orderBy: {
-        date: "desc",
-      },
-    });
-  }
-
-  static async getAllMatchesFromCompetition(
-    competition_id: string
+  static async findByCompetitionId(
+    competitionId: string,
+    options?: { limit?: number; offset?: number },
+    tx?: PrismaTransaction
   ): Promise<MatchWithDetails[]> {
-    return prisma.match.findMany({
-      where: {
-        competition_id,
-      },
-      include: {
-        matchPlayers: {
-          include: {
-            dashboard_player: {
-              include: {
-                votes_given: true,
-              },
-            },
-            received_votes: true,
-          },
-        },
-        match_teams: {
-          include: {
-            team: true,
-          },
-        },
-        player_votes: true,
-        competition: {
-          include: {
-            dashboard: {
-              select: {
-                admin_id: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        where: { competition_id: competitionId },
+        include: MATCH_DETAILED_INCLUDE,
+        orderBy: { date: "desc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findByCompetitionId:", error);
+      throw new Error("Failed to fetch matches by competition");
+    }
   }
 
-  static async createMatch(
+  static async findByCompetitionIds(
+    competitionIds: string[]
+  ): Promise<Match[]> {
+    try {
+      return await prisma.match.findMany({
+        where: {
+          competition_id: { in: competitionIds },
+        },
+        include: MATCH_DETAILED_INCLUDE,
+        orderBy: { date: "desc" },
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findByCompetitionIds:", error);
+      throw new Error("Failed to fetch matches by competition IDs");
+    }
+  }
+
+  static async findByDashboardId(
+    dashboardId: string,
+    options?: { limit?: number; offset?: number },
+    tx?: PrismaTransaction
+  ): Promise<MatchWithDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        where: {
+          competition: {
+            dashboard_id: dashboardId,
+          },
+        },
+        include: MATCH_DETAILED_INCLUDE,
+        orderBy: { date: "desc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findByDashboardId:", error);
+      throw new Error("Failed to fetch matches by dashboard");
+    }
+  }
+
+  static async findByPlayerId(
+    playerId: string,
+    options?: { limit?: number; offset?: number },
+    tx?: PrismaTransaction
+  ): Promise<MatchWithDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        where: {
+          matchPlayers: {
+            some: {
+              dashboard_player: {
+                user_id: playerId,
+              },
+            },
+          },
+        },
+        include: MATCH_DETAILED_INCLUDE,
+        orderBy: { date: "desc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findByPlayerId:", error);
+      throw new Error("Failed to fetch matches by player");
+    }
+  }
+
+  static async findWithExpiredVoting(tx?: PrismaTransaction): Promise<Match[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        where: {
+          voting_status: "OPEN",
+          voting_ends_at: {
+            not: null,
+            lt: new Date(),
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.findWithExpiredVoting:", error);
+      throw new Error("Failed to fetch expired voting matches");
+    }
+  }
+
+  // CREATE/UPDATE/DELETE OPERATIONS
+  static async create(
     data: Omit<Match, "id">,
     tx?: PrismaTransaction
   ): Promise<Match> {
-    const prismaClient = tx || prisma;
-    return prismaClient.match.create({ data });
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.create({ data });
+    } catch (error) {
+      console.error("Error in MatchRepo.create:", error);
+      throw new Error("Failed to create match");
+    }
   }
 
-  static async updateMatch(
+  static async update(
     id: string,
     data: Partial<Match>,
     tx?: PrismaTransaction
   ): Promise<Match> {
-    const prismaClient = tx || prisma;
-    return prismaClient.match.update({ where: { id }, data });
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.update({ where: { id }, data });
+    } catch (error) {
+      console.error("Error in MatchRepo.update:", error);
+      throw new Error("Failed to update match");
+    }
   }
 
-  static async updateMatchVotingStatus(
+  static async updateVotingStatus(
     matchId: string,
     status: VotingStatus,
-    votingEndDate: Date,
+    votingEndDate?: Date,
     tx?: PrismaTransaction
-  ) {
-    const prismaClient = tx || prisma;
-    return await prismaClient.match.update({
-      where: { id: matchId },
-      data: {
-        voting_status: status,
-        ...(status === "CLOSED" ? { voting_ends_at: new Date() } : {}),
-      },
-    });
+  ): Promise<Match> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.update({
+        where: { id: matchId },
+        data: {
+          voting_status: status,
+          ...(status === "CLOSED" ? { voting_ends_at: new Date() } : {}),
+          ...(votingEndDate ? { voting_ends_at: votingEndDate } : {}),
+        },
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.updateVotingStatus:", error);
+      throw new Error("Failed to update voting status");
+    }
   }
 
-  static async deleteMatch(id: string): Promise<Match> {
-    return prisma.match.delete({ where: { id } });
+  static async updateManyVotingStatus(
+    matchIds: string[],
+    status: VotingStatus,
+    tx?: PrismaTransaction
+  ): Promise<void> {
+    try {
+      const prismaClient = tx || prisma;
+      await prismaClient.match.updateMany({
+        where: { id: { in: matchIds } },
+        data: {
+          voting_status: status,
+          ...(status === "CLOSED" ? { voting_ends_at: new Date() } : {}),
+        },
+      });
+    } catch (error) {
+      console.error("Error in MatchRepo.updateManyVotingStatus:", error);
+      throw new Error("Failed to update voting status for multiple matches");
+    }
   }
 
-  static async closeExpiredMatchVoting(): Promise<void> {
-    const now = new Date();
-
-    const result = await prisma.match.updateMany({
-      where: {
-        voting_status: "OPEN",
-        voting_ends_at: {
-          not: null,
-          lt: now,
-        },
-      },
-      data: {
-        voting_status: "CLOSED",
-      },
-    });
-  }
-
-  static async closeExpiredMatchVotingTest() {
-    const expiredMatches = await prisma.match.findMany({
-      where: {
-        voting_status: "OPEN",
-        voting_ends_at: {
-          not: null,
-          lt: new Date(),
-        },
-      },
-      select: {
-        id: true,
-        date: true,
-        voting_ends_at: true,
-        competition: {
-          select: {
-            name: true,
-          },
-        },
-        match_teams: {
-          select: {
-            team: {
-              select: {
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    console.log(expiredMatches);
+  static async delete(id: string, tx?: PrismaTransaction): Promise<Match> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.delete({ where: { id } });
+    } catch (error) {
+      console.error("Error in MatchRepo.delete:", error);
+      throw new Error("Failed to delete match");
+    }
   }
 }
