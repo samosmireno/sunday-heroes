@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const fetchPendingVotes = async (matchId: string): Promise<MatchVotes> => {
   const { data } = await axios.get(
-    `${config.server}/api/admin/pending-votes/${matchId}`,
+    `${config.server}/api/votes/pending-votes/${matchId}`,
   );
   return data;
 };

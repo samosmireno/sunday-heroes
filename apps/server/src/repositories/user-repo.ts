@@ -2,18 +2,15 @@ import { User, Role, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 
-// Define reusable include patterns (DRY principle)
 const USER_WITH_DASHBOARD_INCLUDE = {
   dashboard: true,
 } satisfies Prisma.UserInclude;
 
-// Type definitions using the includes
 export type UserWithDashboard = Prisma.UserGetPayload<{
   include: typeof USER_WITH_DASHBOARD_INCLUDE;
 }>;
 
 export class UserRepo {
-  // BASIC CRUD OPERATIONS
   static async findById(
     id: string,
     tx?: PrismaTransaction
@@ -56,7 +53,6 @@ export class UserRepo {
     }
   }
 
-  // SIMPLE FILTERED QUERIES (Repository responsibility)
   static async findAll(tx?: PrismaTransaction): Promise<User[]> {
     try {
       const prismaClient = tx || prisma;
@@ -82,7 +78,6 @@ export class UserRepo {
     }
   }
 
-  // Simple attribute getters
   static async getUserRole(
     id: string,
     tx?: PrismaTransaction
@@ -121,7 +116,6 @@ export class UserRepo {
     }
   }
 
-  // CREATE/UPDATE/DELETE OPERATIONS
   static async create(
     data: Omit<User, "id">,
     tx?: PrismaTransaction

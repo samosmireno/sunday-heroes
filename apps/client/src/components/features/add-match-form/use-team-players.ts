@@ -46,7 +46,7 @@ export function useTeamPlayers(user_id: string | null) {
     selectedPlayers: string[],
   ) => {
     const response = await axios.get(
-      `${config.server}/api/dashboard-players?userId=${user_id}&query=${query}`,
+      `${config.server}/api/players/basic?userId=${user_id}&query=${query}`,
     );
     const data = response.data as User[];
     const playerNames = data.map((player) => player.nickname);

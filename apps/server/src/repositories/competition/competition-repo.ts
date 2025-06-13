@@ -1,8 +1,7 @@
-import { Competition, CompetitionType, Prisma } from "@prisma/client";
+import { Competition, Prisma } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaTransaction } from "../../types";
 
-// Only keep the most essential include patterns here
 const COMPETITION_BASIC_INCLUDE = {
   matches: true,
   team_competitions: true,

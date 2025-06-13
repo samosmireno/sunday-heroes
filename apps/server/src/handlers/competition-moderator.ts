@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CompetitionModeratorRepo } from "../repositories/competition/competition-moderator-repo";
 import { AuthenticatedRequest } from "../types";
-import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 
 export const addModeratorToCompetition = async (

@@ -31,7 +31,7 @@ const fetchMatches = async (
     }
 
     const res = await axios.get(
-      `${config.server}/api/matches-with-stats?${params.toString()}`,
+      `${config.server}/api/matches/stats?${params.toString()}`,
     );
     const totalCount = parseInt(res.headers["x-total-count"] || "0", 10);
     const totalPages = Math.ceil(

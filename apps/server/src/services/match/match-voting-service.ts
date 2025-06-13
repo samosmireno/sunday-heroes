@@ -1,4 +1,4 @@
-import { DashboardPlayer, Match, Prisma, VotingStatus } from "@prisma/client";
+import { Match, Prisma, VotingStatus } from "@prisma/client";
 import { createMatchRequest } from "@repo/logger";
 import { MatchRepo } from "../../repositories/match-repo";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";

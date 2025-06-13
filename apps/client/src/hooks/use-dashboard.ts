@@ -20,7 +20,9 @@ const fetchDashboardMatches = async (
   id: string,
 ): Promise<DashboardMatchResponse[]> => {
   if (!id) return [];
-  const { data } = await axios.get(`${config.server}/api/matches?userId=${id}`);
+  const { data } = await axios.get(
+    `${config.server}/api/matches/dashboard?userId=${id}`,
+  );
   return data;
 };
 

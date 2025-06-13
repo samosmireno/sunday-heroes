@@ -4,7 +4,6 @@ import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { CompetitionQueryRepo } from "../repositories/competition/competition-query-repo";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import { CompetitionVotingRepo } from "../repositories/competition/competition-voting-repo";
-import { UserRepo } from "../repositories/user-repo";
 import {
   transformCompetitionToResponse,
   transformAddCompetitionRequestToService,

@@ -43,7 +43,7 @@ const fetchCompetitions = async (
     }
 
     const res = await axios.get(
-      `${config.server}/api/competitions?${params.toString()}`,
+      `${config.server}/api/competitions/detailed?${params.toString()}`,
     );
     const totalCount = parseInt(res.headers["x-total-count"] || "0", 10);
     const totalPages = Math.ceil(

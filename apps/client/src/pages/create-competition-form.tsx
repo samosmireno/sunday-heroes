@@ -59,7 +59,7 @@ const CreateCompetitionForm = () => {
     }
     const reqData = transformCompetitionFormToRequest(values, userId);
     try {
-      const response = await axiosInstance.post(`/api/competition`, reqData, {
+      const response = await axiosInstance.post(`/api/competitions`, reqData, {
         withCredentials: true,
       });
       console.log("Form submitted with values:", response.data);

@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { VoteService } from "../services/vote-service";
 import { z } from "zod";
-import { AuthenticatedRequest } from "../types";
 import { CompetitionService } from "../services/competition-service";
 import { sendError, sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";

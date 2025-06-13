@@ -26,7 +26,7 @@ export default function ModeratorsList({
 
     try {
       await axiosInstance.delete(
-        `${config.server}/api/competition/moderators/${moderatorId}`,
+        `${config.server}/api/competitions/moderators/${moderatorId}`,
         { withCredentials: true },
       );
       onUpdate();

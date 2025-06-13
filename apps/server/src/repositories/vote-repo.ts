@@ -2,7 +2,6 @@ import { PlayerVote, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 
-// Define reusable include patterns (DRY principle)
 const VOTE_WITH_DETAILS_INCLUDE = {
   match: {
     select: {
@@ -44,13 +43,11 @@ const VOTE_WITH_DETAILS_INCLUDE = {
   },
 } satisfies Prisma.PlayerVoteInclude;
 
-// Type definitions using the includes
 export type VoteWithDetails = Prisma.PlayerVoteGetPayload<{
   include: typeof VOTE_WITH_DETAILS_INCLUDE;
 }>;
 
 export class VoteRepo {
-  // BASIC CRUD OPERATIONS
   static async findById(
     id: string,
     tx?: PrismaTransaction
@@ -80,7 +77,6 @@ export class VoteRepo {
     }
   }
 
-  // SIMPLE FILTERED QUERIES (Repository responsibility)
   static async findAll(tx?: PrismaTransaction): Promise<PlayerVote[]> {
     try {
       const prismaClient = tx || prisma;
@@ -172,7 +168,6 @@ export class VoteRepo {
     }
   }
 
-  // Simple count operations
   static async countByMatch(
     matchId: string,
     tx?: PrismaTransaction
@@ -222,7 +217,6 @@ export class VoteRepo {
     }
   }
 
-  // Simple attribute getters
   static async getDistinctVotersByMatch(
     matchId: string,
     tx?: PrismaTransaction
@@ -241,7 +235,6 @@ export class VoteRepo {
     }
   }
 
-  // CREATE/UPDATE/DELETE OPERATIONS
   static async create(
     data: Omit<PlayerVote, "id">,
     tx?: PrismaTransaction

@@ -2,7 +2,6 @@ import { Match, Prisma, VotingStatus } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 
-// Define reusable include patterns (DRY principle)
 const MATCH_DETAILED_INCLUDE = {
   matchPlayers: {
     include: {
@@ -55,7 +54,6 @@ const MATCH_BASIC_INCLUDE = {
   },
 } satisfies Prisma.MatchInclude;
 
-// Type definitions using the includes
 export type MatchWithDetails = Prisma.MatchGetPayload<{
   include: typeof MATCH_DETAILED_INCLUDE;
 }>;
@@ -65,7 +63,6 @@ export type MatchWithTeams = Prisma.MatchGetPayload<{
 }>;
 
 export class MatchRepo {
-  // BASIC CRUD OPERATIONS
   static async findById(
     id: string,
     tx?: PrismaTransaction
@@ -111,7 +108,6 @@ export class MatchRepo {
     }
   }
 
-  // SIMPLE FILTERED QUERIES (Repository responsibility)
   static async findAll(tx?: PrismaTransaction): Promise<Match[]> {
     try {
       const prismaClient = tx || prisma;
@@ -246,7 +242,6 @@ export class MatchRepo {
     }
   }
 
-  // CREATE/UPDATE/DELETE OPERATIONS
   static async create(
     data: Omit<Match, "id">,
     tx?: PrismaTransaction

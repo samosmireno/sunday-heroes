@@ -12,7 +12,10 @@ const fetchCompetition = async (
     userId,
   });
   const { data } = await axios.get(
-    `${config.server}/api/competition?${params.toString()}`,
+    `${config.server}/api/competitions/stats?${params.toString()}`,
+    {
+      withCredentials: true,
+    },
   );
   return data;
 };

@@ -3,7 +3,7 @@ import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchTeamList = async (id: string): Promise<string[]> => {
-  const { data } = await axios.get(`${config.server}/api/team-list/${id}`);
+  const { data } = await axios.get(`${config.server}/api/teams/list/${id}`);
   return data;
 };
 

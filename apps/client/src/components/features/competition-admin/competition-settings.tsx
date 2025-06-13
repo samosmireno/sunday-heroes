@@ -18,7 +18,7 @@ export default function CompetitionSettings({
 
   const handleResetCompetition = async () => {
     await axiosInstance.put(
-      `${config.server}/api/competition/${competition.id}/reset`,
+      `${config.server}/api/competitions/${competition.id}/reset`,
       { withCredentials: true },
     );
     onUpdate?.();
@@ -26,7 +26,7 @@ export default function CompetitionSettings({
 
   const handleDeleteCompetition = async () => {
     await axiosInstance.delete(
-      `${config.server}/api/competition/${competition.id}`,
+      `${config.server}/api/competitions/${competition.id}`,
       { withCredentials: true },
     );
     navigate("/competitions");

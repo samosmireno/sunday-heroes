@@ -1,7 +1,6 @@
 import {
   InvitationRepo,
   InvitationWithDetails,
-  InvitationWithBasic,
   InvitationWithDashboard,
 } from "../repositories/invitation-repo";
 import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
@@ -47,7 +46,6 @@ export class InvitationService {
     return crypto.randomBytes(8).toString("hex");
   }
 
-  // Business logic: Create invitation with validation
   static async createInvitation(data: CreateInvitationData): Promise<string> {
     const {
       invitedById,
@@ -56,20 +54,17 @@ export class InvitationService {
       expirationHours = this.DEFAULT_EXPIRATION_HOURS,
     } = data;
 
-    // Validate permissions
     const dashboardPlayer = await this.validateCreatePermissions(
       dashboardPlayerId,
       invitedById
     );
 
-    // Handle existing invitations
     const existingToken = await this.handleExistingInvitations(
       dashboardPlayerId,
       email
     );
     if (existingToken) return existingToken;
 
-    // Create new invitation
     return await this.createNewInvitation({
       invitedById,
       dashboardPlayerId,
@@ -79,7 +74,6 @@ export class InvitationService {
     });
   }
 
-  // Business logic: Validate invitation
   static async validateInvitation(
     token: string
   ): Promise<InvitationDetails | null> {
@@ -96,7 +90,6 @@ export class InvitationService {
     return this.mapToInvitationDetails(invitation);
   }
 
-  // Business logic: Accept invitation with validation and transaction
   static async acceptInvitation(token: string, userId: string): Promise<void> {
     const invitation = await this.validateInvitation(token);
     if (!invitation) {
@@ -105,7 +98,6 @@ export class InvitationService {
 
     await this.validateUserEligibility(userId, invitation);
 
-    // Execute acceptance in transaction (this is business logic orchestration)
     await this.executeInvitationAcceptance(
       token,
       userId,
@@ -113,12 +105,10 @@ export class InvitationService {
     );
   }
 
-  // Business logic: Get invitations for dashboard with authorization
   static async getInvitationsByDashboard(
     dashboardId: string,
     requestingUserId: string
   ) {
-    // Check if user can access this dashboard
     const canAccess = await this.canUserAccessDashboard(
       dashboardId,
       requestingUserId
@@ -130,14 +120,12 @@ export class InvitationService {
     return await InvitationRepo.findByDashboardId(dashboardId);
   }
 
-  // Business logic: Get invitations by user
   static async getInvitationsByUser(
     userId: string
   ): Promise<InvitationWithDashboard[]> {
     return await InvitationRepo.findByUserId(userId);
   }
 
-  // Business logic: Delete invitation with authorization
   static async deleteInvitation(
     invitationId: string,
     requestingUserId: string
@@ -147,7 +135,6 @@ export class InvitationService {
       throw new Error("Invitation not found");
     }
 
-    // Check if user can delete this invitation
     const canDelete = await this.canUserDeleteInvitation(
       invitation,
       requestingUserId
@@ -159,7 +146,6 @@ export class InvitationService {
     await InvitationRepo.delete(invitationId);
   }
 
-  // Business logic: Handle invitation flow (OAuth callback)
   static async handleInvitation(
     inviteToken: string,
     user: User,
@@ -186,7 +172,6 @@ export class InvitationService {
     }
   }
 
-  // Private business logic methods
   private static async validateCreatePermissions(
     dashboardPlayerId: string,
     invitedById: string
@@ -293,17 +278,14 @@ export class InvitationService {
     }
   }
 
-  // Business logic: Execute invitation acceptance (orchestrates multiple entities)
   private static async executeInvitationAcceptance(
     token: string,
     userId: string,
     playerId: string
   ): Promise<void> {
     await prisma.$transaction(async (tx) => {
-      // Mark invitation as used
       await InvitationRepo.markAsUsed(token, userId, tx);
 
-      // Link user to dashboard player
       await DashboardPlayerRepo.update(playerId, { user_id: userId }, tx);
     });
   }
@@ -312,7 +294,6 @@ export class InvitationService {
     dashboardId: string,
     userId: string
   ): Promise<boolean> {
-    // Check if user is dashboard admin or has a player in the dashboard
     const dashboard = await DashboardRepo.findById(dashboardId);
     if (!dashboard) return false;
 
@@ -329,7 +310,6 @@ export class InvitationService {
     invitation: InvitationWithDetails,
     userId: string
   ): Promise<boolean> {
-    // User can delete if they created it or are dashboard admin
     return (
       invitation.invited_by_id === userId ||
       invitation.dashboard_player.dashboard.admin_id === userId

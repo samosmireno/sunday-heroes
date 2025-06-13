@@ -2,7 +2,6 @@ import { RefreshToken, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 
-// Define reusable include patterns (DRY principle)
 const REFRESH_TOKEN_WITH_USER_INCLUDE = {
   user: {
     select: {
@@ -14,13 +13,11 @@ const REFRESH_TOKEN_WITH_USER_INCLUDE = {
   },
 } satisfies Prisma.RefreshTokenInclude;
 
-// Type definitions using the includes
 export type RefreshTokenWithUser = Prisma.RefreshTokenGetPayload<{
   include: typeof REFRESH_TOKEN_WITH_USER_INCLUDE;
 }>;
 
 export class RefreshTokenRepo {
-  // BASIC CRUD OPERATIONS
   static async findById(
     id: string,
     tx?: PrismaTransaction
@@ -50,7 +47,6 @@ export class RefreshTokenRepo {
     }
   }
 
-  // SIMPLE FILTERED QUERIES (Repository responsibility)
   static async findAll(tx?: PrismaTransaction): Promise<RefreshToken[]> {
     try {
       const prismaClient = tx || prisma;
@@ -143,7 +139,6 @@ export class RefreshTokenRepo {
     }
   }
 
-  // Simple count operations
   static async countByUserId(
     userId: string,
     tx?: PrismaTransaction
@@ -173,7 +168,6 @@ export class RefreshTokenRepo {
     }
   }
 
-  // Simple attribute getters
   static async getUserIdByToken(
     token: string,
     tx?: PrismaTransaction
@@ -211,7 +205,6 @@ export class RefreshTokenRepo {
     }
   }
 
-  // CREATE/UPDATE/DELETE OPERATIONS
   static async create(
     data: Omit<RefreshToken, "id">,
     tx?: PrismaTransaction
@@ -289,7 +282,6 @@ export class RefreshTokenRepo {
     try {
       const prismaClient = tx || prisma;
 
-      // First check if token exists
       const refreshToken = await prismaClient.refreshToken.findFirst({
         where: { token },
       });

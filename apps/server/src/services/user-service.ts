@@ -2,7 +2,6 @@ import { Role, User } from "@prisma/client";
 import { UserRepo, UserWithDashboard } from "../repositories/user-repo";
 
 export class UserService {
-  // Business logic: Get user with full context
   static async getUserById(id: string) {
     const user = await UserRepo.findByIdWithDashboard(id);
     if (!user) {
@@ -11,7 +10,6 @@ export class UserService {
     return user;
   }
 
-  // Business logic: Get user by email with validation
   static async getUserByEmail(email: string) {
     if (!email || !email.includes("@")) {
       throw new Error("Invalid email format");
@@ -24,7 +22,6 @@ export class UserService {
     return user;
   }
 
-  // Business logic: Get all users with role filtering
   static async getAllUsers(options: { role?: Role } = {}) {
     const { role } = options;
 
@@ -35,14 +32,12 @@ export class UserService {
     return await UserRepo.findAll();
   }
 
-  // Business logic: Create user with validation
   static async createUser(data: {
     email: string;
     given_name: string;
     family_name: string;
     role?: Role;
   }) {
-    // Check if user already exists
     const existingUser = await UserRepo.findByEmail(data.email);
     if (existingUser) {
       throw new Error("User with this email already exists");
@@ -57,7 +52,6 @@ export class UserService {
     });
   }
 
-  // Business logic: Update user with authorization
   static async updateUser(
     id: string,
     requestingUserId: string,
@@ -68,7 +62,6 @@ export class UserService {
       throw new Error("User not found");
     }
 
-    // Business rule: Users can only update themselves, unless they're admin
     const requestingUser = await UserRepo.findById(requestingUserId);
     if (!requestingUser) {
       throw new Error("Requesting user not found");
@@ -80,7 +73,6 @@ export class UserService {
       throw new Error("Not authorized to update this user");
     }
 
-    // Business rule: Only admins can change roles
     if (data.role && requestingUser.role !== "ADMIN") {
       throw new Error("Only admins can change user roles");
     }
@@ -88,7 +80,6 @@ export class UserService {
     return await UserRepo.update(id, data);
   }
 
-  // Business logic: Delete user with authorization
   static async deleteUser(id: string, requestingUserId: string) {
     const user = await UserRepo.findById(id);
     if (!user) {
@@ -100,7 +91,6 @@ export class UserService {
       throw new Error("Requesting user not found");
     }
 
-    // Business rule: Only admins can delete users
     if (requestingUser.role !== "ADMIN") {
       throw new Error("Only admins can delete users");
     }
@@ -108,7 +98,6 @@ export class UserService {
     return await UserRepo.delete(id);
   }
 
-  // Business logic: Get dashboard ID with proper error handling
   static async getDashboardIdFromUserId(userId: string): Promise<string> {
     const dashboardId = await UserRepo.getDashboardId(userId);
     if (!dashboardId) {
@@ -117,13 +106,11 @@ export class UserService {
     return dashboardId;
   }
 
-  // Business logic: Check if user has dashboard access
   static async hasUserDashboardAccess(userId: string): Promise<boolean> {
     const dashboardId = await UserRepo.getDashboardId(userId);
     return dashboardId !== null;
   }
 
-  // Business logic: Check user role
   static async isUserAdmin(userId: string): Promise<boolean> {
     const role = await UserRepo.getUserRole(userId);
     return role === "ADMIN";
@@ -139,7 +126,6 @@ export class UserService {
     return role === "ADMIN" || role === "MODERATOR";
   }
 
-  // Business logic: Get users by role with business context
   static async getAdmins() {
     return await UserRepo.findByRole("ADMIN");
   }

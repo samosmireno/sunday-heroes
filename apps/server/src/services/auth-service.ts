@@ -22,7 +22,6 @@ export class AuthService {
       expiresIn: this.ACCESS_TOKEN_EXPIRY,
     });
 
-    // Use service instead of direct repo access
     await RefreshTokenService.cleanupExpiredTokens();
     const refreshTokenData =
       await RefreshTokenService.createRefreshToken(userId);

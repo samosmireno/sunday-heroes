@@ -2,7 +2,6 @@ import { DashboardInvitation, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 
-// Define reusable include patterns (DRY principle)
 const INVITATION_WITH_DETAILS_INCLUDE = {
   invited_by: true,
   dashboard_player: {
@@ -53,7 +52,6 @@ const INVITATION_WITH_DASHBOARD_INCLUDE = {
   },
 } satisfies Prisma.DashboardInvitationInclude;
 
-// Type definitions using the includes
 export type InvitationWithDetails = Prisma.DashboardInvitationGetPayload<{
   include: typeof INVITATION_WITH_DETAILS_INCLUDE;
 }>;
@@ -67,7 +65,6 @@ export type InvitationWithDashboard = Prisma.DashboardInvitationGetPayload<{
 }>;
 
 export class InvitationRepo {
-  // BASIC CRUD OPERATIONS
   static async findById(
     id: string,
     tx?: PrismaTransaction
@@ -99,7 +96,6 @@ export class InvitationRepo {
     }
   }
 
-  // SIMPLE FILTERED QUERIES (Repository responsibility)
   static async findAll(tx?: PrismaTransaction): Promise<DashboardInvitation[]> {
     try {
       const prismaClient = tx || prisma;
@@ -218,7 +214,6 @@ export class InvitationRepo {
     }
   }
 
-  // Simple count operations
   static async countByDashboardId(
     dashboardId: string,
     tx?: PrismaTransaction
@@ -253,7 +248,6 @@ export class InvitationRepo {
     }
   }
 
-  // Simple attribute getters
   static async isTokenActive(
     token: string,
     tx?: PrismaTransaction
@@ -276,7 +270,6 @@ export class InvitationRepo {
     }
   }
 
-  // CREATE/UPDATE/DELETE OPERATIONS
   static async create(
     data: {
       invited_by_id: string;
@@ -358,7 +351,6 @@ export class InvitationRepo {
     }
   }
 
-  // Simple mark as used operation (single entity operation)
   static async markAsUsed(
     token: string,
     userId: string,

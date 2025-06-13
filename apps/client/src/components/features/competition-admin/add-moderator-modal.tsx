@@ -54,7 +54,7 @@ export default function AddModeratorModal({
 
     try {
       const response = await axiosInstance.get(
-        `${config.server}/api/dashboard-players`,
+        `${config.server}/api/players/basic`,
         {
           params: { userId: user?.id, query: searchQuery },
           withCredentials: true,
