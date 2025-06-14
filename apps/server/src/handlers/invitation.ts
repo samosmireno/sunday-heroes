@@ -3,6 +3,12 @@ import { InvitationService } from "../services/invitation-service";
 import z from "zod";
 import { AuthenticatedRequest } from "../types";
 import { config } from "../config/config";
+import {
+  sendAuthError,
+  sendNotFoundError,
+  sendSuccess,
+  sendValidationError,
+} from "../utils/response-utils";
 
 const createInvitationSchema = z.object({
   dashboardPlayerId: z.string().uuid(),
@@ -19,26 +25,28 @@ export const createInvitation = async (
     const authenticatedReq = req as AuthenticatedRequest;
     const validation = createInvitationSchema.safeParse(authenticatedReq.body);
     if (!validation.success) {
-      return res.status(400).json({ errors: validation.error.errors });
+      return sendValidationError(res, validation.error);
     }
 
     const userId = authenticatedReq.userId;
     if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return sendAuthError(res);
     }
     const token = await InvitationService.createInvitation({
       ...validation.data,
       invitedById: userId,
     });
-    res.status(201).json({
-      success: true,
-      token,
-      inviteUrl: `${config.client}/invite/${token}`,
-    });
+    sendSuccess(
+      res,
+      {
+        success: true,
+        token,
+        inviteUrl: `${config.client}/invite/${token}`,
+      },
+      201
+    );
   } catch (error) {
-    res.status(400).json({
-      error: error instanceof Error ? error.message : "An error occurred",
-    });
+    next(error);
   }
 };
 
@@ -52,13 +60,11 @@ export const validateInvitation = async (
       req.params.token
     );
     if (!invitation) {
-      return res.status(404).json({ error: "Invitation not found" });
+      return sendNotFoundError(res, "Invitation");
     }
-    res.json(invitation);
+    sendSuccess(res, invitation);
   } catch (error) {
-    res.status(400).json({
-      error: error instanceof Error ? error.message : "An error occurred",
-    });
+    next(error);
   }
 };
 
@@ -73,13 +79,14 @@ export const acceptInvitation = async (
     const userId = authenticatedReq.userId;
 
     if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return sendAuthError(res);
     }
     await InvitationService.acceptInvitation(token, userId);
-    res.json({ success: true, message: "Invitation accepted successfully" });
-  } catch (error) {
-    res.status(400).json({
-      error: error instanceof Error ? error.message : "An error occurred",
+    sendSuccess(res, {
+      success: true,
+      message: "Invitation accepted successfully",
     });
+  } catch (error) {
+    next(error);
   }
 };

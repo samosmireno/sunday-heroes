@@ -7,25 +7,31 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-let isRefreshing = false;
+//let isRefreshing = false;
+let refreshPromise: Promise<any> | null = null;
 
 const refreshAuthLogic = async (failedRequest: AxiosError) => {
   try {
-    if (isRefreshing) {
-      return Promise.reject(failedRequest);
+    // if (isRefreshing) {
+    //   return Promise.reject(failedRequest);
+    // }
+    if (refreshPromise) {
+      return refreshPromise;
     }
 
-    isRefreshing = true;
+    //isRefreshing = true;
     //const currentPath = window.location.pathname + window.location.search;
 
-    await axiosInstance.get("/auth/refresh");
+    refreshPromise = axiosInstance.get("/auth/refresh");
 
-    isRefreshing = false;
+    //isRefreshing = false;
     //todo
     //window.location.reload();
+    await refreshPromise;
     return Promise.resolve();
   } catch (error) {
-    isRefreshing = false;
+    //isRefreshing = false;
+    refreshPromise = null;
     localStorage.removeItem("user");
     window.location.href = "/login";
     return Promise.reject(error);
@@ -34,7 +40,7 @@ const refreshAuthLogic = async (failedRequest: AxiosError) => {
 
 createAuthRefreshInterceptor(axiosInstance, refreshAuthLogic, {
   shouldRefresh: (error: AxiosError) => {
-    return error.response?.status === 401 && !isRefreshing;
+    return error.response?.status === 401;
   },
 });
 

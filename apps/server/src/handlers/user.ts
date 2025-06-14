@@ -32,9 +32,6 @@ export const getUserById = async (
     const user = await UserService.getUserById(userId);
     sendSuccess(res, user);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("not found")) {
-      return sendError(res, error.message, 404);
-    }
     next(error);
   }
 };
@@ -64,9 +61,6 @@ export const createUser = async (
 
     sendSuccess(res, user, 201);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("already exists")) {
-      return sendError(res, error.message, 409);
-    }
     next(error);
   }
 };
@@ -92,17 +86,6 @@ export const updateUser = async (
     );
     sendSuccess(res, user);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (error.message.includes("Not authorized")) {
-        return sendError(res, error.message, 403);
-      }
-      if (error.message.includes("Only admins")) {
-        return sendError(res, error.message, 403);
-      }
-    }
     next(error);
   }
 };
@@ -123,14 +106,6 @@ export const deleteUser = async (
     await UserService.deleteUser(userId, requestingUserId);
     sendSuccess(res, { message: "User deleted successfully" });
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (error.message.includes("Only admins")) {
-        return sendError(res, error.message, 403);
-      }
-    }
     next(error);
   }
 };

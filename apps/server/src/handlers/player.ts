@@ -15,20 +15,16 @@ export const getAllDashboardPlayers = async (
     }
 
     const query = req.query.query?.toString();
-
-    if (query) {
-      const players = await DashboardPlayerService.getDashboardPlayersByQuery(
-        userId,
-        query
-      );
-      sendSuccess(res, players);
-    } else {
+    if (!query) {
       return sendError(res, "query parameter is required", 400);
     }
+
+    const players = await DashboardPlayerService.getDashboardPlayersByQuery(
+      userId,
+      query
+    );
+    sendSuccess(res, players);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No dashboard")) {
-      return sendError(res, error.message, 400);
-    }
     next(error);
   }
 };
@@ -59,9 +55,6 @@ export const getAllDashboardPlayersWithDetails = async (
 
     sendSuccess(res, result.players);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No dashboard")) {
-      return sendError(res, error.message, 400);
-    }
     next(error);
   }
 };
@@ -84,14 +77,6 @@ export const createDashboardPlayer = async (
     });
     sendSuccess(res, player, 201);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("already exists")) {
-        return sendError(res, error.message, 409);
-      }
-      if (error.message.includes("Only dashboard admin")) {
-        return sendError(res, error.message, 403);
-      }
-    }
     next(error);
   }
 };
@@ -117,17 +102,6 @@ export const updateDashboardPlayer = async (
     );
     sendSuccess(res, player);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (error.message.includes("Only dashboard admin")) {
-        return sendError(res, error.message, 403);
-      }
-      if (error.message.includes("already exists")) {
-        return sendError(res, error.message, 409);
-      }
-    }
     next(error);
   }
 };
@@ -148,14 +122,6 @@ export const deleteDashboardPlayer = async (
     await DashboardPlayerService.deleteDashboardPlayer(playerId, userId);
     sendSuccess(res, { message: "Player deleted successfully" });
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (error.message.includes("Only dashboard admin")) {
-        return sendError(res, error.message, 403);
-      }
-    }
     next(error);
   }
 };

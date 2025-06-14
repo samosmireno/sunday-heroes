@@ -18,14 +18,6 @@ export const getDashboardDetails = async (
       await DashboardService.getDashboardForUser(userId);
     sendSuccess(res, dashboardResponse);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (error.message.includes("No dashboard")) {
-        return sendError(res, error.message, 400);
-      }
-    }
     next(error);
   }
 };
@@ -46,9 +38,6 @@ export const createDashboard = async (
     const dashboard = await DashboardService.createDashboard(userId, name);
     sendSuccess(res, dashboard, 201);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("already has")) {
-      return sendError(res, error.message, 409);
-    }
     next(error);
   }
 };
@@ -74,14 +63,6 @@ export const updateDashboard = async (
     );
     sendSuccess(res, dashboard);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (error.message.includes("Only dashboard admin")) {
-        return sendError(res, error.message, 403);
-      }
-    }
     next(error);
   }
 };
@@ -102,14 +83,6 @@ export const deleteDashboard = async (
     await DashboardService.deleteDashboard(dashboardId, userId);
     sendSuccess(res, { message: "Dashboard deleted successfully" });
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (error.message.includes("Only dashboard admin")) {
-        return sendError(res, error.message, 403);
-      }
-    }
     next(error);
   }
 };

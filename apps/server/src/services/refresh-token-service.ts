@@ -2,10 +2,9 @@ import { RefreshToken } from "@prisma/client";
 import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
+import { AuthService } from "./auth-service";
 
 export class RefreshTokenService {
-  private static readonly REFRESH_TOKEN_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-
   static async validateRefreshToken(token: string): Promise<{
     userId: string;
     decoded: any;
@@ -49,7 +48,7 @@ export class RefreshTokenService {
 
   static async createRefreshToken(userId: string): Promise<RefreshToken> {
     const newRefreshToken = jwt.sign({ userId }, config.jwt.refreshSecret, {
-      expiresIn: "30 days",
+      expiresIn: AuthService.REFRESH_TOKEN_EXPIRY,
     });
 
     await this.cleanupExpiredTokensForUser(userId);
@@ -57,7 +56,7 @@ export class RefreshTokenService {
     return await RefreshTokenRepo.create({
       user_id: userId,
       token: newRefreshToken,
-      expires_at: new Date(Date.now() + this.REFRESH_TOKEN_EXPIRY_MS),
+      expires_at: new Date(Date.now() + AuthService.REFRESH_TOKEN_EXPIRY_MS),
       last_used_at: new Date(),
       created_at: new Date(),
     });

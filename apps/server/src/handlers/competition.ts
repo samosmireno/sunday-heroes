@@ -42,11 +42,6 @@ export const getDetailedCompetitions = async (
     const type = req.query.type as CompetitionType;
     const search = req.query.search?.toString();
 
-    // Validate pagination
-    if (page < 0 || limit < 1 || limit > 100) {
-      return sendError(res, "Invalid pagination parameters", 400);
-    }
-
     const result = await CompetitionService.getDetailedCompetitions(userId, {
       page,
       limit,
@@ -54,7 +49,6 @@ export const getDetailedCompetitions = async (
       search,
     });
 
-    // Set pagination headers
     res.setHeader("X-Total-Count", result.totalCount.toString());
     res.setHeader("X-Total-Pages", result.totalPages.toString());
     res.setHeader("X-Current-Page", page.toString());

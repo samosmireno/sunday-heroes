@@ -2,7 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { createMatchRequest } from "@repo/logger";
 import { MatchService } from "../services/match/match-service";
 import { MatchAuthService } from "../services/match/match-auth-service";
-import { sendError, sendSuccess } from "../utils/response-utils";
+import {
+  sendAuthError,
+  sendError,
+  sendNotFoundError,
+  sendSuccess,
+} from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 
 const getRequiredQuery = (req: Request, param: string): string => {
@@ -48,7 +53,7 @@ export const getMatchById = async (
 
     const match = await MatchService.getMatchById(matchId);
     if (!match) {
-      return sendError(res, "Match not found", 404);
+      return sendNotFoundError(res, "Match");
     }
 
     sendSuccess(res, match);
@@ -67,14 +72,6 @@ export const getAllMatchesFromDashboard = async (
     const matches = await MatchService.getDashboardMatches(userId);
     sendSuccess(res, matches);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("No dashboard")) {
-        return sendError(res, error.message, 400);
-      }
-      if (error.message.includes("required")) {
-        return sendError(res, error.message, 400);
-      }
-    }
     next(error);
   }
 };
@@ -89,9 +86,6 @@ export const getAllMatchesFromCompetition = async (
     const matches = await MatchService.getCompetitionMatches(competitionId);
     sendSuccess(res, matches);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("required")) {
-      return sendError(res, error.message, 400);
-    }
     next(error);
   }
 };
@@ -119,14 +113,6 @@ export const getMatchesWithStats = async (
 
     sendSuccess(res, result.matches);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("No dashboard")) {
-        return sendError(res, error.message, 400);
-      }
-      if (error.message.includes("required")) {
-        return sendError(res, error.message, 400);
-      }
-    }
     next(error);
   }
 };
@@ -150,7 +136,7 @@ export const createMatch = async (
     );
 
     if (!isAuthorized) {
-      return sendError(res, "You are not authorized to create a match", 403);
+      return sendAuthError(res);
     }
 
     const match = await MatchService.createMatch(data);
@@ -184,7 +170,7 @@ export const updateMatch = async (
     );
 
     if (!isAuthorized) {
-      return sendError(res, "You are not authorized to update this match", 403);
+      return sendAuthError(res);
     }
 
     const updatedMatch = await MatchService.updateMatch(matchId, data);
@@ -213,13 +199,13 @@ export const deleteMatch = async (
     );
 
     if (!isAuthorized) {
-      return sendError(res, "You are not authorized to delete this match", 403);
+      return sendAuthError(res);
     }
 
     const deletedMatch = await MatchService.deleteMatch(matchId);
 
     if (!deletedMatch) {
-      return sendError(res, "Match not found", 404);
+      return sendNotFoundError(res, "Match");
     }
 
     sendSuccess(res, { message: "Match deleted successfully" });

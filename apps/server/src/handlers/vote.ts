@@ -2,7 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { VoteService } from "../services/vote-service";
 import { z } from "zod";
 import { CompetitionService } from "../services/competition-service";
-import { sendError, sendSuccess } from "../utils/response-utils";
+import {
+  sendError,
+  sendNotFoundError,
+  sendSuccess,
+  sendValidationError,
+} from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 
 export const submitVotesSchema = z.object({
@@ -34,9 +39,6 @@ export const getAllVotesFromDashboard = async (
     const votes = await VoteService.getDashboardVotes(userId);
     sendSuccess(res, votes);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No dashboard")) {
-      return sendError(res, error.message, 400);
-    }
     next(error);
   }
 };
@@ -50,9 +52,9 @@ export const submitVotes = async (
     const requestingUserId = extractUserId(req);
     const data: SubmitVotesRequest = req.body;
 
-    const validationResult = submitVotesSchema.safeParse(data);
-    if (!validationResult.success) {
-      return sendError(res, "Invalid vote data", 400);
+    const validation = submitVotesSchema.safeParse(data);
+    if (!validation.success) {
+      return sendValidationError(res, validation.error);
     }
 
     const result = await VoteService.submitVotes(
@@ -64,29 +66,6 @@ export const submitVotes = async (
 
     sendSuccess(res, result, 201);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (
-        error.message.includes("closed") ||
-        error.message.includes("expired")
-      ) {
-        return sendError(res, error.message, 400);
-      }
-      if (error.message.includes("already voted")) {
-        return sendError(res, error.message, 409);
-      }
-      if (error.message.includes("Not authorized")) {
-        return sendError(res, error.message, 403);
-      }
-      if (
-        error.message.includes("Must vote") ||
-        error.message.includes("Exactly")
-      ) {
-        return sendError(res, error.message, 400);
-      }
-    }
     next(error);
   }
 };
@@ -110,14 +89,6 @@ export const getVotingStatus = async (
     const status = await VoteService.getVotingStatus(matchId, voterId);
     sendSuccess(res, status);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-      if (error.message.includes("not played")) {
-        return sendError(res, error.message, 404);
-      }
-    }
     next(error);
   }
 };
@@ -154,7 +125,7 @@ export const getPendingVotesForCompetition = async (
     const competition =
       await CompetitionService.getCompetitionWithPendingVotes(competitionId);
     if (!competition) {
-      return sendError(res, "Competition not found", 404);
+      return sendNotFoundError(res, "Competition");
     }
 
     sendSuccess(res, competition);
