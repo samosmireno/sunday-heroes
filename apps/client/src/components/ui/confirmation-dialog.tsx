@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./dialog";
-import { AlertTriangle, Archive, RotateCcw, Trash2 } from "lucide-react";
+import { AlertTriangle, Archive, Check, RotateCcw, Trash2 } from "lucide-react";
 
 interface ConfirmationDialogProps {
   title: string;
@@ -20,7 +20,7 @@ interface ConfirmationDialogProps {
   confirmClassName?: string;
   onConfirm: () => Promise<void>;
   variant?: "destructive" | "warning" | "info";
-  icon?: "trash" | "archive" | "reset" | "warning";
+  icon?: "trash" | "archive" | "reset" | "warning" | "complete";
   loadingText?: string;
 }
 
@@ -29,6 +29,7 @@ const iconMap = {
   archive: Archive,
   reset: RotateCcw,
   warning: AlertTriangle,
+  complete: Check,
 };
 
 const variantConfig = {
@@ -54,14 +55,14 @@ const variantConfig = {
     errorText: "text-orange-300",
   },
   info: {
-    borderColor: "border-blue-500",
-    titleColor: "text-blue-500",
+    borderColor: "border-yellow-500",
+    titleColor: "text-yellow-500",
     defaultTriggerClass: "bg-blue-900/30 text-blue-400 hover:bg-blue-900/70",
     defaultConfirmClass:
-      "transform rounded-lg border-2 border-blue-500 bg-blue-500/20 px-4 py-2 font-bold text-blue-400 shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-blue-500/30",
-    errorBg: "bg-blue-900/30",
-    errorBorder: "border-blue-500/50",
-    errorText: "text-blue-300",
+      "transform rounded-lg border-2 border-yellow-500 bg-yellow-500/20 px-4 py-2 font-bold text-yellow-400 shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-yellow-500/30",
+    errorBg: "bg-red-900/30",
+    errorBorder: "border-red-500/50",
+    errorText: "text-red-300",
   },
 };
 
@@ -105,7 +106,10 @@ export default function ConfirmationDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className={triggerClassName || config.defaultTriggerClass}>
+        <Button
+          size="sm"
+          className={triggerClassName || config.defaultTriggerClass}
+        >
           {triggerContent}
         </Button>
       </DialogTrigger>

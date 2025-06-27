@@ -24,15 +24,20 @@ export type PlayerTotals = {
   rating?: number;
 };
 
+export interface LeaguePlayerTotals extends PlayerTotals {
+  teamName: string;
+}
+
 export type MatchResponse = {
   id: string;
-  date: string;
+  date?: string;
   match_type: MatchType;
   round: number;
   home_team_score: number;
   away_team_score: number;
   penalty_home_score?: number;
   penalty_away_score?: number;
+  is_completed: boolean;
   teams: string[];
   players: PlayerResponse[];
 };
@@ -52,6 +57,10 @@ export type CompetitionResponse = {
   type: CompetitionType;
   userRole: Role;
   votingEnabled: boolean;
+  teams?: {
+    id: string;
+    name: string;
+  }[];
   matches: MatchResponse[];
   player_stats: PlayerTotals[];
   moderators: {
@@ -64,14 +73,17 @@ export type DashboardResponse = {
   id: string;
   name: string;
   user: string;
-  competitions: CompetitionResponse[];
+  activeCompetitions: number;
+  totalPlayers: number;
+  pendingVotes: number;
+  completedMatches: number;
 };
 
 export type DashboardMatchResponse = {
   id: string;
   competition_type: CompetitionType;
   competition_name: string;
-  date: string;
+  date?: string;
   match_type: MatchType;
   round: number;
   home_team_score: number;
@@ -102,33 +114,6 @@ export type DetailedCompetitionResponse = {
   pendingVotes?: number;
 };
 
-export type DashboardVoteResponse = {
-  id: string;
-  points: number;
-  match: {
-    id: string;
-    home_team_score: number;
-    away_team_score: number;
-    voting_status: VotingStatus;
-  };
-  competition: {
-    id: string;
-    name: string;
-    type: CompetitionType;
-  };
-  voter: {
-    id: string;
-    nickname: string;
-  };
-  match_player: {
-    id: string;
-    player_id: string;
-    nickname: string;
-    team_id: string;
-    team: string;
-  };
-};
-
 export type UserResponse = {
   id: string;
   email: string;
@@ -143,7 +128,7 @@ export type PendingVote = {
 };
 export type MatchVotes = {
   matchId: string;
-  matchDate: string;
+  matchDate?: string;
   competitionId: string;
   competitionName: string;
   teams: string[];
@@ -160,7 +145,7 @@ export type CompetitionVotes = {
 
 export type MatchPageResponse = {
   id: string;
-  date: string;
+  date?: string;
   competitionId: string;
   competitionName: string;
   competitionType: CompetitionType;
@@ -240,4 +225,45 @@ export interface PaginatedResponse<T> {
     total: number;
     totalPages: number;
   };
+}
+
+export type OrderStatsByOption = "goals" | "assists" | "rating" | "matches";
+
+export interface LeagueTeamResponse {
+  id: string;
+  name: string;
+  played: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  points: number;
+  goalDifference: number;
+  team: {
+    id: string;
+    name: string;
+  };
+}
+
+export interface LeagueMatchResponse {
+  id: string;
+  homeTeam: {
+    id: string;
+    name: string;
+    score: number;
+    penaltyScore?: number;
+  };
+  awayTeam: {
+    id: string;
+    name: string;
+    score: number;
+    penaltyScore?: number;
+  };
+  homeScore: number;
+  awayScore: number;
+  date: string | null;
+  round: number;
+  votingStatus: string;
+  isCompleted: boolean;
 }

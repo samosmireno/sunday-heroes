@@ -29,6 +29,23 @@ interface MatchDetailsFormProps {
   isEdited: boolean;
 }
 
+const formatSafeDate = (date: any): string => {
+  if (!date) return "Pick a date";
+
+  try {
+    const dateObj = date instanceof Date ? date : new Date(date);
+
+    if (isNaN(dateObj.getTime())) {
+      return "Pick a date";
+    }
+
+    return format(dateObj, "PPP");
+  } catch (error) {
+    console.error("Date formatting error:", error);
+    return "Pick a date";
+  }
+};
+
 export default function MatchDetailsForm({ isEdited }: MatchDetailsFormProps) {
   const { form, nextStep, isStepValid } = useMultiStepFormContext();
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -56,11 +73,7 @@ export default function MatchDetailsForm({ isEdited }: MatchDetailsFormProps) {
                         )}
                         onClick={() => setPopoverOpen(true)}
                       >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
+                        {formatSafeDate(field.value)}
                         <CalendarIcon className="ml-auto h-4 w-4 text-accent/60" />
                       </Button>
                     </FormControl>
@@ -234,12 +247,12 @@ export default function MatchDetailsForm({ isEdited }: MatchDetailsFormProps) {
 
         <div className="mt-8 flex justify-end">
           <Button
-            onClick={isEdited ? undefined : nextStep}
-            type={isEdited ? "submit" : "button"}
+            onClick={nextStep}
+            type={"button"}
             className="transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30"
             disabled={!isStepValid()}
           >
-            {isEdited ? "Save Changes" : "Next"}
+            Next
           </Button>
         </div>
       </Form>

@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import {
   CreateCompetitionFormSchema,
   CreateCompetitionFormValues,
-} from "../components/features/add-competition-form/schema";
+} from "../components/features/create-competition-form/create-competition-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CompetitionType } from "@repo/logger";
+import { CompetitionType, MatchType } from "@repo/logger";
 import {
   Form,
   FormControl,
@@ -33,6 +33,7 @@ import axiosInstance from "../config/axiosConfig";
 import { GuideBox } from "../components/ui/guide-box";
 import { InfoBox } from "../components/ui/info-box";
 import Header from "../components/ui/header";
+import { convertMatchType } from "../types/types";
 
 const CreateCompetitionForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,11 +60,13 @@ const CreateCompetitionForm = () => {
     }
     const reqData = transformCompetitionFormToRequest(values, userId);
     try {
-      const response = await axiosInstance.post(`/api/competitions`, reqData, {
-        withCredentials: true,
-      });
-      console.log("Form submitted with values:", response.data);
-      navigate(-1);
+      if (values.type !== CompetitionType.LEAGUE) {
+        await axiosInstance.post(`/api/competitions`, reqData);
+        navigate(-1);
+      } else {
+        const response = await axiosInstance.post(`/api/leagues`, reqData);
+        navigate(`/league-setup/${response.data.competition.id}`);
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {
@@ -78,6 +81,14 @@ const CreateCompetitionForm = () => {
       form.setValue("knockout_voting_period_days", undefined);
     }
   }, [votingEnabled, form]);
+
+  useEffect(() => {
+    if (competitionType !== CompetitionType.LEAGUE) {
+      form.setValue("number_of_teams", undefined);
+      form.setValue("match_type", undefined);
+      form.setValue("is_round_robin", false);
+    }
+  }, [competitionType, form]);
 
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 md:p-6">
@@ -134,7 +145,7 @@ const CreateCompetitionForm = () => {
                     name="type"
                     control={form.control}
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="flex w-full flex-col">
                         <FormLabel
                           htmlFor="competitionType"
                           className="mb-1 block text-sm font-medium text-gray-300"
@@ -170,6 +181,88 @@ const CreateCompetitionForm = () => {
                       </FormItem>
                     )}
                   />
+                  {competitionType === CompetitionType.LEAGUE && (
+                    <div className="space-y-4 border-l-4 border-accent/30 pl-4">
+                      <h4 className="font-medium text-accent">
+                        League Settings
+                      </h4>
+                      <FormField
+                        name="number_of_teams"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Number of Teams</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type="number"
+                                min={2}
+                                className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-red-400" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        name="is_round_robin"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-2">
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              className="border-accent text-accent"
+                            />
+                            <FormLabel>Double Round Robin</FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        name="match_type"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel
+                              htmlFor="matchType"
+                              className="mb-1 block text-sm font-medium text-gray-300"
+                            >
+                              Match Type
+                            </FormLabel>
+                            <FormControl>
+                              <Select
+                                name="matchType"
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <SelectTrigger
+                                  id="matchType"
+                                  className="w-full max-w-xs rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 sm:px-4 sm:py-2"
+                                >
+                                  <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent className="border-accent/60 bg-panel-bg text-gray-200">
+                                  {Object.values(MatchType).map((type) => (
+                                    <SelectItem
+                                      key={type}
+                                      value={type}
+                                      className="hover:bg-accent/20 focus:bg-accent/20"
+                                    >
+                                      {convertMatchType(type)}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage className="text-red-400" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="text-sm text-gray-400">
+                        Teams and fixtures will be created automatically after
+                        competition setup.
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <div>
@@ -262,7 +355,7 @@ const CreateCompetitionForm = () => {
                             </FormItem>
                           )}
                         />
-                        {competitionType !== CompetitionType.DUEL && (
+                        {competitionType === CompetitionType.KNOCKOUT && (
                           <FormField
                             name="knockout_voting_period_days"
                             control={form.control}
@@ -307,6 +400,7 @@ const CreateCompetitionForm = () => {
                   </Button>
                   <Button
                     type="submit"
+                    disabled={!form.formState.isValid}
                     className="w-full transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 text-accent shadow-md transition-all hover:bg-accent/30 sm:w-auto"
                   >
                     <Save size={18} className="mr-2" />
@@ -321,7 +415,7 @@ const CreateCompetitionForm = () => {
         <GuideBox title="Quick Start Guide">
           <p>After creating your competition, you'll need to:</p>
           <ul className="mt-1 list-disc space-y-1 pl-5">
-            <li>Add teams to your competition</li>
+            <li>Name teams in your competition</li>
             <li>Add players to teams</li>
             <li>Schedule matches</li>
           </ul>

@@ -62,7 +62,7 @@ export class MatchVotingService {
     return {
       competitionName: competition.name,
       competitionVotingDays: votingDays,
-      date: match.date,
+      date: match.date ? new Date(match.date) : new Date(),
       homeTeam: data.teams[0],
       awayTeam: data.teams[1],
       homeScore: match.home_team_score,

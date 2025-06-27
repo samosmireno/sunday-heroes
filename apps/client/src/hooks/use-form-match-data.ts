@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../config/axiosConfig";
-import { AddDuelFormValues, MatchResponse } from "@repo/logger";
+import { MatchResponse } from "@repo/logger";
+import { MatchFormData } from "../components/features/add-match-form/add-match-schemas";
 
-const transformResponseToForm = (data: MatchResponse): AddDuelFormValues => {
-  const formData: AddDuelFormValues = {
+const transformResponseToForm = (data: MatchResponse): MatchFormData => {
+  const formData: MatchFormData = {
     match: {
-      date: new Date(data.date),
+      date: new Date(data.date || ""),
       homeTeamScore: data.home_team_score,
       awayTeamScore: data.away_team_score,
       matchType: data.match_type,
       hasPenalties: data.penalty_home_score ? true : false,
       penaltyHomeScore: data.penalty_home_score,
       penaltyAwayScore: data.penalty_away_score,
+      homeTeam: data.teams[0],
+      awayTeam: data.teams[1],
     },
     players: {
       homePlayers: data.players
@@ -34,8 +37,8 @@ const transformResponseToForm = (data: MatchResponse): AddDuelFormValues => {
   return formData;
 };
 
-export const useMatchData = (matchId: string | undefined) => {
-  const [formData, setFormData] = useState<AddDuelFormValues | null>(null);
+export const useFormMatchData = (matchId: string | undefined) => {
+  const [formData, setFormData] = useState<MatchFormData | null>(null);
 
   useEffect(() => {
     if (matchId) {
@@ -43,6 +46,7 @@ export const useMatchData = (matchId: string | undefined) => {
         .get(`/api/matches/${matchId}`)
         .then((response) => {
           const data: MatchResponse = response.data;
+
           setFormData(transformResponseToForm(data));
         })
         .catch((error) => {

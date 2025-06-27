@@ -25,24 +25,6 @@ export const submitVotesSchema = z.object({
 
 type SubmitVotesRequest = z.infer<typeof submitVotesSchema>;
 
-export const getAllVotesFromDashboard = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId = req.query.userId?.toString();
-    if (!userId) {
-      return sendError(res, "userId query parameter is required", 400);
-    }
-
-    const votes = await VoteService.getDashboardVotes(userId);
-    sendSuccess(res, votes);
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const submitVotes = async (
   req: Request,
   res: Response,

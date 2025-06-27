@@ -1,6 +1,5 @@
 import {
   CompetitionResponse,
-  createCompetitionRequest,
   MatchResponse,
   PlayerTotals,
   Role,
@@ -8,6 +7,7 @@ import {
 import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { Competition } from "@prisma/client";
 import { calculatePlayerScore, calculatePlayerStats } from "./utils";
+import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 
 export function getUserRole(
   competition: CompetitionWithDetails,
@@ -34,7 +34,7 @@ export function transformCompetitionToResponse(
 ): CompetitionResponse {
   const matches: MatchResponse[] = competition.matches.map((match) => ({
     id: match.id,
-    date: match.date.toLocaleDateString(),
+    date: match.date?.toLocaleDateString(),
     match_type: match.match_type as MatchResponse["match_type"],
     round: match.round,
     home_team_score: match.home_team_score,
@@ -42,6 +42,7 @@ export function transformCompetitionToResponse(
     penalty_home_score: match.penalty_home_score ?? undefined,
     penalty_away_score: match.penalty_away_score ?? undefined,
     teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
+    is_completed: match.is_completed,
     players: match.matchPlayers.map((player) => {
       return {
         id: player.id,
@@ -58,12 +59,18 @@ export function transformCompetitionToResponse(
 
   const playerStats: PlayerTotals[] = calculatePlayerStats(matches);
 
+  const teams = competition.team_competitions.map((teamComp) => ({
+    id: teamComp.team.id,
+    name: teamComp.team.name,
+  }));
+
   return {
     id: competition.id,
     name: competition.name,
     type: competition.type as CompetitionResponse["type"],
     userRole: getUserRole(competition, userId),
     votingEnabled: competition.voting_enabled,
+    teams: teams.length > 0 ? teams : undefined,
     matches: matches,
     player_stats: playerStats,
     moderators: competition.moderators.map((moderator) => ({
@@ -90,6 +97,7 @@ export function transformAddCompetitionRequestToService(
       competitionReq.knockout_voting_period_days ?? null,
     reminder_days: competitionReq.reminder_days ?? null,
     min_players: competitionReq.min_players ?? 4,
+    is_round_robin: null,
   };
 
   return competition;

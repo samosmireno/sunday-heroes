@@ -26,7 +26,11 @@ export const COMPETITION_DETAILED_INCLUDE = {
       },
     },
   },
-  team_competitions: true,
+  team_competitions: {
+    include: {
+      team: true,
+    },
+  },
   matches: {
     include: {
       matchPlayers: {
@@ -41,6 +45,9 @@ export const COMPETITION_DETAILED_INCLUDE = {
         },
       },
       player_votes: true,
+    },
+    orderBy: {
+      date: "desc",
     },
   },
 } satisfies Prisma.CompetitionInclude;

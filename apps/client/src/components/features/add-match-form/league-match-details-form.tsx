@@ -9,7 +9,6 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { cn } from "../../../lib/utils";
 import { Calendar } from "../../ui/calendar";
@@ -17,37 +16,72 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import FormLayout from "./form-layout";
-import {
-  Select,
-  SelectItem,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
-import { MatchType, convertMatchType } from "../../../types/types";
-import { AutoComplete } from "./autocomplete";
-import { CompetitionResponse } from "@repo/logger";
-import { useTeamList } from "../../../hooks/use-team-list";
-
-interface LeagueMatchDetailsFormProps {
+import { convertMatchType } from "../../../types/types";
+interface MatchDetailsFormProps {
   isEdited: boolean;
-  competition?: CompetitionResponse;
 }
 
-export default function LeagueMatchDetailsForm({
-  isEdited,
-  competition,
-}: LeagueMatchDetailsFormProps) {
-  const [selectedValue, setSelectedValue] = useState<string>("");
+const formatSafeDate = (date: any): string => {
+  if (!date) return "Pick a date";
+
+  try {
+    const dateObj = date instanceof Date ? date : new Date(date);
+
+    if (isNaN(dateObj.getTime())) {
+      return "Pick a date";
+    }
+
+    return format(dateObj, "PPP");
+  } catch (error) {
+    console.error("Date formatting error:", error);
+    return "Pick a date";
+  }
+};
+
+export default function MatchDetailsForm({ isEdited }: MatchDetailsFormProps) {
   const { form, nextStep, isStepValid } = useMultiStepFormContext();
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const hasPenalties = form.watch("match.hasPenalties");
-  //const { teamList, isLoading, refetch } = useTeamList(competition?.id ?? "");
 
   return (
     <FormLayout title="Match Information">
       <Form {...form}>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <FormField
+            name="match.homeTeam"
+            render={({ field }) => (
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                  Home Team
+                </FormLabel>
+                <div className="w-full rounded-lg border-2 border-accent/20 bg-panel-bg/50 px-3 py-1.5 text-gray-200 sm:px-4 sm:py-2">
+                  <div className="flex items-center">
+                    <span className="font-medium">
+                      {field.value || "Home Team"}
+                    </span>
+                  </div>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="match.awayTeam"
+            render={({ field }) => (
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                  Away Team
+                </FormLabel>
+                <div className="w-full rounded-lg border-2 border-accent/20 bg-panel-bg/50 px-3 py-1.5 text-gray-200 sm:px-4 sm:py-2">
+                  <div className="flex items-center">
+                    <span className="font-medium">
+                      {field.value || "Away Team"}
+                    </span>
+                  </div>
+                </div>
+              </FormItem>
+            )}
+          />
+
           <FormField
             name="match.date"
             render={({ field }) => (
@@ -66,11 +100,7 @@ export default function LeagueMatchDetailsForm({
                         )}
                         onClick={() => setPopoverOpen(true)}
                       >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
+                        {formatSafeDate(field.value)}
                         <CalendarIcon className="ml-auto h-4 w-4 text-accent/60" />
                       </Button>
                     </FormControl>
@@ -100,35 +130,18 @@ export default function LeagueMatchDetailsForm({
           />
           <FormField
             name="match.matchType"
-            control={form.control}
             render={({ field }) => (
               <FormItem className="flex w-full flex-col">
                 <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
                   Match Type
                 </FormLabel>
-                <Select
-                  name="match_type"
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2">
-                      <SelectValue placeholder="Select match type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="border-accent/60 bg-panel-bg text-gray-200">
-                    {Object.values(MatchType).map((matchType) => (
-                      <SelectItem
-                        key={matchType}
-                        value={matchType}
-                        className="hover:bg-accent/20 focus:bg-accent/20"
-                      >
-                        {convertMatchType(matchType)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage className="text-red-400" />
+                <div className="w-full rounded-lg border-2 border-accent/20 bg-panel-bg/50 px-3 py-1.5 text-gray-200 sm:px-4 sm:py-2">
+                  <div className="flex items-center">
+                    <span className="font-medium">
+                      {convertMatchType(field.value) || ""}
+                    </span>
+                  </div>
+                </div>
               </FormItem>
             )}
           />
@@ -174,82 +187,16 @@ export default function LeagueMatchDetailsForm({
               />
             </div>
           </div>
-          <FormField
-            name="match.hasPenalties"
-            defaultValue={false}
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-2">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="border-accent text-accent"
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel className="font-medium text-gray-300">
-                    Include Penalties
-                  </FormLabel>
-                </div>
-              </FormItem>
-            )}
-          />
-          {hasPenalties && (
-            <>
-              <div className="col-span-1 sm:col-span-2">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <FormField
-                    name="match.penaltyHomeScore"
-                    render={({ field }) => (
-                      <FormItem className="flex w-full flex-col">
-                        <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
-                          Home Team Penalty Score
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="number"
-                            min={0}
-                            className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-400" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="match.penaltyAwayScore"
-                    render={({ field }) => (
-                      <FormItem className="flex w-full flex-col">
-                        <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
-                          Away Team Penalty Score
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="number"
-                            min={0}
-                            className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-400" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            </>
-          )}
         </div>
 
         <div className="mt-8 flex justify-end">
           <Button
-            onClick={isEdited ? undefined : nextStep}
-            type={isEdited ? "submit" : "button"}
+            onClick={nextStep}
+            type={"button"}
             className="transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30"
             disabled={!isStepValid()}
           >
-            {isEdited ? "Save Changes" : "Next"}
+            Next
           </Button>
         </div>
       </Form>

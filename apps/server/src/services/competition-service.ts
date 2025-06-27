@@ -1,5 +1,4 @@
 import { CompetitionType } from "@prisma/client";
-import { createCompetitionRequest } from "@repo/logger";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { CompetitionQueryRepo } from "../repositories/competition/competition-query-repo";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
@@ -13,6 +12,8 @@ import {
   transformDashboardCompetitionsToDetailedResponse,
 } from "../utils/dashboard-transforms";
 import { DashboardService } from "./dashboard-service";
+import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
+import { TeamService } from "./team-service";
 
 export class CompetitionService {
   static async getAllCompetitions() {
@@ -124,6 +125,8 @@ export class CompetitionService {
     if (!isAuthorized) {
       throw new Error("User is not authorized to delete this competition");
     }
+
+    await TeamService.deleteTeamsOnlyInCompetition(competitionId);
 
     return await CompetitionRepo.delete(competitionId);
   }

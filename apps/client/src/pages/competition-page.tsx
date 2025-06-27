@@ -8,6 +8,7 @@ import { CompetitionProvider } from "../context/competition-context";
 import DuelCompetitionPage from "./duel-competition-page";
 import { CompetitionType } from "@repo/logger";
 import { useAuth } from "../context/auth-context";
+import LeagueCompetitionPage from "./league-competition.page";
 
 function CompetitionPage() {
   const { user } = useAuth();
@@ -16,8 +17,6 @@ function CompetitionPage() {
     competitionId ?? "",
     user?.id || "",
   );
-
-  console.log("Competition data:", competition);
 
   const renderCompetitionPage = () => {
     if (!competition) {
@@ -30,7 +29,7 @@ function CompetitionPage() {
           <DuelCompetitionPage competition={competition} refetch={refetch} />
         );
       case CompetitionType.LEAGUE:
-        return <p>League</p>;
+        return <LeagueCompetitionPage competition={competition} />;
       case CompetitionType.KNOCKOUT:
         return <p>Knockout</p>;
       default:

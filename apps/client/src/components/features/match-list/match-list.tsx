@@ -33,10 +33,14 @@ export default function MatchList({
 
   const sortedMatchIndexes = matches
     .map((match, index) => ({ match, index }))
-    .sort(
-      (a, b) =>
-        new Date(b.match.date).getTime() - new Date(a.match.date).getTime(),
-    )
+    .sort((a, b) => {
+      if (!a.match.date && !b.match.date) return 0;
+      if (!a.match.date) return 1;
+      if (!b.match.date) return -1;
+      return (
+        new Date(a.match.date).getTime() - new Date(b.match.date).getTime()
+      );
+    })
     .map(({ index }) => index);
 
   useEffect(() => {
@@ -89,10 +93,12 @@ export default function MatchList({
           <CarouselContent className="px-2">
             {matches
               .slice()
-              .sort(
-                (a, b) =>
-                  new Date(b.date).getTime() - new Date(a.date).getTime(),
-              )
+              .sort((a, b) => {
+                if (!a.date && !b.date) return 0;
+                if (!a.date) return 1;
+                if (!b.date) return -1;
+                return new Date(a.date).getTime() - new Date(b.date).getTime();
+              })
               .map((match) => {
                 if (!match) return null;
                 return (
@@ -100,7 +106,7 @@ export default function MatchList({
                     <MatchResult
                       key={match.id}
                       matchId={match.id}
-                      date={match.date.split("T")[0]}
+                      date={match.date?.split("T")[0]}
                       homeScore={match.home_team_score}
                       awayScore={match.away_team_score}
                       isSelectedMatch={

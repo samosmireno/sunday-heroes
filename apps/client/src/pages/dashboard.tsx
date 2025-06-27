@@ -3,7 +3,6 @@ import DashboardBanner from "../components/features/dashboard/dashboard-banner";
 import DashboardMatchList from "../components/features/dashboard/dashboard-match-list";
 import DashboardStatCard from "../components/features/dashboard/dashboard-stat-card";
 import DashboardCompetitionList from "../components/features/dashboard/dashboard-competition-list";
-import { getTotalPlayersInDashboard } from "../utils/utils";
 import { useDashboard } from "../hooks/use-dashboard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
@@ -17,7 +16,6 @@ export default function Dashboard() {
     isLoading,
     dashboardMatches,
     dashboardCompetitions,
-    pendingVotes,
     refreshData,
   } = useDashboard(user?.id || "");
 
@@ -49,35 +47,28 @@ export default function Dashboard() {
         <div className="mb-6 grid grid-cols-1 gap-3 sm:mb-8 sm:grid-cols-2 lg:gap-4 xl:grid-cols-4">
           <DashboardStatCard
             title="Active Competitions"
-            value={dashboardData?.competitions.length || 0}
+            value={dashboardData?.activeCompetitions || 0}
             icon={Trophy}
             iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
             title="Total Players"
-            value={
-              dashboardData ? getTotalPlayersInDashboard(dashboardData) : 0
-            }
+            value={dashboardData?.totalPlayers || 0}
             icon={Users}
             iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
             title="Pending Votes"
-            value={pendingVotes || 0}
+            value={dashboardData?.pendingVotes || 0}
             icon={CheckSquare}
             iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
             title="Completed Matches"
-            value={
-              dashboardCompetitions?.reduce(
-                (total, comp) => total + comp.matches,
-                0,
-              ) || 0
-            }
+            value={dashboardData?.completedMatches || 0}
             icon={Activity}
             iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"

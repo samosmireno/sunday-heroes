@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  getAllVotesFromDashboard,
   getPendingVotesForMatch,
   getVotingStatus,
   submitVotes,
@@ -11,7 +10,6 @@ import { authenticateToken } from "../../middleware/authentication-middleware";
 
 const router = Router();
 
-router.get("/", getAllVotesFromDashboard);
 router.get("/status/:matchId", getVotingStatus);
 router.get("/pending-votes/:matchId", getPendingVotesForMatch);
 

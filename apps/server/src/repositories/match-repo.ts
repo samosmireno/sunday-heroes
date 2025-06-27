@@ -184,6 +184,9 @@ export class MatchRepo {
           competition: {
             dashboard_id: dashboardId,
           },
+          date: {
+            not: null,
+          },
         },
         include: MATCH_DETAILED_INCLUDE,
         orderBy: { date: "desc" },

@@ -39,7 +39,7 @@ export function transformMatchServiceToResponse(
 
   const transformedData: MatchResponse = {
     id: match.id,
-    date: match.date.toLocaleDateString(),
+    date: match.date?.toLocaleDateString(),
     match_type: match.match_type as MatchResponse["match_type"],
     round: match.round,
     home_team_score: match.home_team_score,
@@ -48,6 +48,7 @@ export function transformMatchServiceToResponse(
     penalty_away_score: match.penalty_away_score ?? undefined,
     teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
     players: sortedPlayers,
+    is_completed: match.is_completed,
   };
 
   return transformedData;
@@ -86,7 +87,7 @@ export function transformMatchesToMatchesResponse(
 
     return {
       id: match.id,
-      date: match.date.toDateString(),
+      date: match.date?.toLocaleDateString(),
       teams: teamNames,
       scores: [match.home_team_score, match.away_team_score],
       penaltyScores:
@@ -115,7 +116,7 @@ export function transformAddMatchRequestToService(
   const matchForService: Omit<Match, "id"> = {
     competition_id: match.competitionId,
     match_type: match.matchType,
-    date: match.date,
+    date: match.date ?? null,
     home_team_score: match.homeTeamScore,
     away_team_score: match.awayTeamScore,
     penalty_home_score: match.penaltyHomeScore ?? null,
@@ -125,7 +126,7 @@ export function transformAddMatchRequestToService(
     bracket_position: match.bracketPosition ?? null,
     voting_status: competitionVoting ? competitionVoting : VotingStatus.CLOSED,
     voting_ends_at: new Date(Date.now() + 5 * 24 * 60 * 60),
-    is_completed: false,
+    is_completed: true,
   };
 
   return matchForService;

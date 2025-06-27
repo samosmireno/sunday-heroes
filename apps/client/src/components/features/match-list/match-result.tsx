@@ -10,7 +10,7 @@ import { Role } from "@repo/logger";
 
 interface MatchProps {
   matchId: string;
-  date: string;
+  date: string | undefined;
   homeScore: number;
   awayScore: number;
   penaltyHomeScore?: number;
@@ -86,13 +86,15 @@ export default function MatchResult({
           </div>
           <div className="flex flex-col items-center justify-between px-2 pt-1 text-center sm:px-4 sm:pt-2">
             <div className="text-xs text-accent sm:text-sm">
-              {new Date(date)
-                .toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })
-                .replace(/(\d+)(?=\s)/, (d) => `${d}th`)}
+              {date
+                ? new Date(date)
+                    .toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                    .replace(/(\d+)(?=\s)/, (d) => `${d}th`)
+                : "Date TBD"}
             </div>
             {userRole !== Role.PLAYER && (
               <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">

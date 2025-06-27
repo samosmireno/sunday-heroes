@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../config/axiosConfig";
-import { useMatchData } from "../hooks/use-match-data";
+import { useFormMatchData } from "../hooks/use-form-match-data";
 import { createFootballFieldMatch } from "../utils/utils";
 import FootballField from "../components/features/football-field/football-field";
 import { useForm, useWatch } from "react-hook-form";
@@ -16,9 +16,13 @@ import StepNavigation from "../components/features/add-match-form/form-step-navi
 import { CompetitionType, MatchResponse } from "@repo/logger";
 import {
   createMatchFormSchema,
+  LeagueFormData,
   MatchFormData,
 } from "../components/features/add-match-form/add-match-schemas";
-import { transformDuelFormToRequest } from "../utils/transform";
+import {
+  transformDuelFormToRequest,
+  transformLeagueFormToRequest,
+} from "../utils/transform";
 import { config } from "../config/config";
 import Background from "../components/ui/background";
 import Header from "../components/ui/header";
@@ -27,8 +31,8 @@ import MatchDetailsForm from "../components/features/add-match-form/match-detail
 import PlayerDetailsForm from "../components/features/add-match-form/player-details-form";
 import { useCompetition } from "../hooks/use-competition";
 import PlayersListForm from "../components/features/add-match-form/player-list-form";
-import LeagueMatchDetailsForm from "../components/features/add-match-form/league-match-details-form";
 import { useAuth } from "../context/auth-context";
+import LeagueMatchDetailsForm from "../components/features/add-match-form/league-match-details-form";
 
 export default function AddMatchForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +44,7 @@ export default function AddMatchForm() {
     matchId: string;
     competitionId: string;
   }>();
-  const { formData } = useMatchData(matchId);
+  const { formData } = useFormMatchData(matchId);
   const { competition, isLoading: isLoadingCompetition } = useCompetition(
     competitionId ?? "",
     user?.id ?? "",
@@ -68,18 +72,25 @@ export default function AddMatchForm() {
     }
 
     try {
-      const reqData = transformDuelFormToRequest(data, competitionId);
+      let reqData;
+      if (competition && competition.type === CompetitionType.DUEL) {
+        reqData = transformDuelFormToRequest(data, competitionId);
+      } else {
+        reqData = transformLeagueFormToRequest(
+          data as LeagueFormData,
+          competitionId,
+        );
+      }
+
       const endpoint = matchId
         ? `${config.server}/api/matches/${matchId}`
         : `${config.server}/api/matches`;
 
       const method = matchId ? "put" : "post";
 
-      const response = await axiosInstance[method](endpoint, reqData, {
+      await axiosInstance[method](endpoint, reqData, {
         withCredentials: true,
       });
-
-      console.log("Match saved successfully:", response.data);
       navigate(`/competition/${competitionId}`);
     } catch (error) {
       console.error("Error saving match:", error);
@@ -100,8 +111,6 @@ export default function AddMatchForm() {
     if (form.getValues("match") && form.getValues("players"))
       setFootballFieldMatch(createFootballFieldMatch(form.getValues()));
   }, [form, formValues]);
-
-  console.log("formschema", formSchema);
 
   if (isLoadingCompetition) {
     return (

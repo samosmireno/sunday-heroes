@@ -30,5 +30,6 @@ export const useCompetition = (compId: string, userId: string) => {
     competition: competitionQuery.data,
     isLoading: competitionQuery.isLoading,
     refetch: competitionQuery.refetch,
+    error: competitionQuery.error,
   };
 };

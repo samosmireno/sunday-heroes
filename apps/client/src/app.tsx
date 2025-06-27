@@ -16,6 +16,7 @@ import AddMatchForm from "./pages/add-match-form-page.tsx";
 import PlayersPage from "./pages/players-page.tsx";
 import InvitationPage from "./pages/invitation-page.tsx";
 import CompetitionAdminPage from "./pages/competition-admin-page.tsx";
+import LeagueTeamSetupPage from "./pages/league-teams-setup-page.tsx";
 
 export default function App() {
   return (
@@ -54,6 +55,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <CompetitionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/league-setup/:competitionId"
+            element={
+              <ProtectedRoute>
+                <LeagueTeamSetupPage />
               </ProtectedRoute>
             }
           />

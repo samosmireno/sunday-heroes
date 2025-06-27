@@ -1,26 +1,15 @@
 import { DashboardRepo } from "../repositories/dashboard-repo";
-import { transformDashboardServiceToResponse } from "../utils/dashboard-transforms";
+import { transformDashboardToResponse } from "../utils/dashboard-transforms";
 
 export class DashboardService {
   static async getDashboardForUser(userId: string) {
-    const dashboardId = await this.getDashboardIdFromUserId(userId);
-    const dashboard = await DashboardRepo.findByIdWithDetails(dashboardId);
+    const dashboard = await DashboardRepo.findByAdminId(userId);
 
     if (!dashboard) {
       throw new Error("Dashboard not found");
     }
 
-    return transformDashboardServiceToResponse(dashboard, userId);
-  }
-
-  static async getDashboardDetails(dashboardId: string, userId: string) {
-    const dashboard = await DashboardRepo.findByIdWithDetails(dashboardId);
-
-    if (!dashboard) {
-      throw new Error("Dashboard not found");
-    }
-
-    return transformDashboardServiceToResponse(dashboard, userId);
+    return transformDashboardToResponse(dashboard);
   }
 
   static async createDashboard(userId: string, name: string) {

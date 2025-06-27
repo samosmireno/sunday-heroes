@@ -97,6 +97,7 @@ model DashboardPlayer {
   moderated_competitions CompetitionModerator[]
   votes_given           PlayerVote[]              @relation("VoterToVote")
   invitations         DashboardInvitation[]
+  team_rosters         TeamRoster[]
 
   @@unique([dashboard_id, nickname])
   @@index([dashboard_id])
@@ -116,12 +117,14 @@ model Competition {
   voting_period_days         Int?
   knockout_voting_period_days Int?
   reminder_days              Int?
+  is_round_robin          Boolean?
   created_at                 DateTime        @default(now())
 
   dashboard     Dashboard              @relation(fields: [dashboard_id], references: [id], onDelete: Cascade)
   moderators    CompetitionModerator[]
   team_competitions TeamCompetition[]
   matches       Match[]
+  team_rosters  TeamRoster[]
 
   @@index([dashboard_id])
 }
@@ -142,12 +145,13 @@ model CompetitionModerator {
 
 model Team {
   id         String   @id @default(uuid())
-  name       String   @unique
+  name       String   
   created_at DateTime @default(now())
 
   team_competitions TeamCompetition[]
   match_teams      MatchTeam[]
   match_players   MatchPlayer[]
+  team_rosters     TeamRoster[]
 
   @@index([name])
 }
@@ -176,7 +180,7 @@ model Match {
   id                String      @id @default(uuid())
   competition_id    String
   match_type        MatchType
-  date              DateTime
+  date              DateTime?
   home_team_score   Int        @default(0)
   away_team_score   Int        @default(0)
   penalty_home_score Int?
@@ -185,8 +189,9 @@ model Match {
   bracket_position  Int?
   voting_status     VotingStatus @default(OPEN)
   voting_ends_at    DateTime?
-  is_completed      Boolean      @default(false)
   created_at        DateTime     @default(now())
+  is_completed      Boolean      @default(false)
+
 
   competition    Competition  @relation(fields: [competition_id], references: [id], onDelete: Cascade)
   match_teams    MatchTeam[]
@@ -225,7 +230,7 @@ model MatchPlayer {
 
   match         Match        @relation(fields: [match_id], references: [id], onDelete: Cascade)
   dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
-  team          Team         @relation(fields: [team_id], references: [id])
+  team          Team         @relation(fields: [team_id], references: [id],onDelete: Cascade)
   received_votes PlayerVote[] 
 
   @@unique([match_id, dashboard_player_id])
@@ -272,4 +277,20 @@ model DashboardInvitation {
   @@index([invite_token])
   @@index([dashboard_player_id])
   @@index([expires_at])
+}
+
+model TeamRoster {
+  id                  String   @id @default(uuid())
+  team_id            String
+  dashboard_player_id String
+  competition_id     String
+  created_at         DateTime @default(now())
+
+  team               Team             @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  dashboard_player   DashboardPlayer  @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
+  competition        Competition      @relation(fields: [competition_id], references: [id], onDelete: Cascade)
+
+  @@unique([team_id, dashboard_player_id, competition_id])
+  @@index([team_id, competition_id])
+  @@index([dashboard_player_id, competition_id])
 }

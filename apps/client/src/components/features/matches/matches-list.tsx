@@ -108,7 +108,7 @@ export default function MatchesList({ matches }: MatchesListProps) {
                   onClick={() => toggleExpand(match.id)}
                 >
                   <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-300 md:px-4 md:py-4">
-                    {formatDate(match.date)}
+                    {match.date ? formatDate(match.date) : "TBD"}
                   </td>
                   <td className="whitespace-nowrap px-2 py-3 text-sm font-medium text-accent md:px-4 md:py-4">
                     {match.teams[0]} vs {match.teams[1]}

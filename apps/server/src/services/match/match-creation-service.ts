@@ -1,4 +1,4 @@
-import { Match, Prisma } from "@prisma/client";
+import { CompetitionType, Match, Prisma } from "@prisma/client";
 import { createMatchRequest } from "@repo/logger";
 import { MatchRepo } from "../../repositories/match-repo";
 import { TeamRepo } from "../../repositories/team-repo";
@@ -10,13 +10,15 @@ import { transformAddMatchRequestToService } from "../../utils/match-transforms"
 import { CompetitionVotingRepo } from "../../repositories/competition/competition-voting-repo";
 import { DashboardService } from "../dashboard-service";
 import { DashboardPlayerService } from "../dashboard-player-service";
+import { MatchService } from "./match-service";
+import { LeagueService } from "../league-service";
 
 export class MatchCreationService {
   static async createMatch(data: createMatchRequest) {
     const [hometeamID, awayteamID, dashboardId, competitionVoting] =
       await Promise.all([
-        TeamRepo.getTeamIDFromName(data.teams[0]),
-        TeamRepo.getTeamIDFromName(data.teams[1]),
+        TeamRepo.getTeamIDFromName(data.teams[0], data.competitionId),
+        TeamRepo.getTeamIDFromName(data.teams[1], data.competitionId),
         DashboardService.getDashboardIdFromCompetitionId(data.competitionId),
         CompetitionVotingRepo.getVotingStatus(data.competitionId),
       ]);
@@ -52,16 +54,35 @@ export class MatchCreationService {
 
   static async updateMatch(matchId: string, data: createMatchRequest) {
     const [hometeamID, awayteamID, dashboardId] = await Promise.all([
-      TeamRepo.getTeamIDFromName(data.teams[0]),
-      TeamRepo.getTeamIDFromName(data.teams[1]),
+      TeamRepo.getTeamIDFromName(data.teams[0], data.competitionId),
+      TeamRepo.getTeamIDFromName(data.teams[1], data.competitionId),
       DashboardService.getDashboardIdFromCompetitionId(data.competitionId),
     ]);
 
     const matchToUpdate: Partial<Match> = {
-      date: new Date(data.date),
+      date: data.date ? new Date(data.date) : undefined,
       home_team_score: data.homeTeamScore,
       away_team_score: data.awayTeamScore,
     };
+
+    const competitionType =
+      await MatchService.getCompetitionTypeFromMatchId(matchId);
+
+    const match = await MatchRepo.findByIdWithTeams(matchId);
+    if (!match) {
+      throw new Error("Match not found");
+    }
+
+    if (
+      competitionType === CompetitionType.LEAGUE &&
+      match.is_completed === true
+    ) {
+      await LeagueService.recalculateLeagueStandings(
+        match,
+        data.homeTeamScore,
+        data.awayTeamScore
+      );
+    }
 
     return await prisma.$transaction(async (tx) => {
       const match = await MatchRepo.update(matchId, matchToUpdate, tx);

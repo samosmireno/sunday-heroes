@@ -18,7 +18,7 @@ export function transformCompetitionServiceToPendingVotes(
 
     return players.map((p) => ({
       matchId: match.id,
-      matchDate: match.date.toDateString(),
+      matchDate: match.date?.toDateString(),
       playerName: p.name,
       playerId: p.playerId,
       voted: p.voted,
@@ -50,7 +50,7 @@ export function transformMatchServiceToPendingVotes(
 
   return {
     matchId: match.id,
-    matchDate: match.date.toDateString(),
+    matchDate: match.date?.toDateString(),
     competitionId: match.competition.id,
     competitionName: match.competition.name,
     players: players.map((p) => ({

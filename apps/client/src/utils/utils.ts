@@ -2,10 +2,6 @@ import {
   PartialAddDuelFormValues,
   MatchType,
   MatchResponse,
-  DashboardResponse,
-  DashboardMatchResponse,
-  DashboardVoteResponse,
-  VotingStatus,
 } from "@repo/logger";
 import { Team } from "../types/types";
 
@@ -60,6 +56,7 @@ export const createFootballFieldMatch = (
       match_type: MatchType.FIVE_A_SIDE,
       round: 0,
       teams: [],
+      is_completed: false,
     };
   }
 
@@ -106,39 +103,8 @@ export const createFootballFieldMatch = (
     match_type: MatchType.FIVE_A_SIDE,
     round: 0,
     teams: ["Home Team", "Away Team"],
+    is_completed: false,
   };
-};
-
-const getTotalNumPlayersInMatches = (matches: MatchResponse[]): number => {
-  const uniqueNicknames = new Set(
-    matches.flatMap((match) => match.players.map((player) => player.nickname)),
-  );
-  return uniqueNicknames.size;
-};
-
-export const getTotalPlayersInDashboard = (
-  dashboard: DashboardResponse,
-): number => {
-  const allMatches = dashboard.competitions.flatMap((comp) => comp.matches);
-  return getTotalNumPlayersInMatches(allMatches);
-};
-
-export const calculatePendingVotes = (
-  matches: DashboardMatchResponse[],
-  votes: DashboardVoteResponse[],
-): number => {
-  const matchesToVote = matches.filter(
-    (match) => match.voting_status === VotingStatus.OPEN,
-  );
-  const numPlayersToVote = matchesToVote.reduce((total, match) => {
-    return total + match.match_players;
-  }, 0);
-
-  const numVotes =
-    votes.filter((vote) => vote.match.voting_status === VotingStatus.OPEN)
-      .length / 3; // TODO: 3 represents number of players per vote
-
-  return numPlayersToVote - numVotes;
 };
 
 export default function swapItems(

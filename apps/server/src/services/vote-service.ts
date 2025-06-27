@@ -1,39 +1,12 @@
 import { VoteRepo } from "../repositories/vote-repo";
 import { MatchRepo } from "../repositories/match-repo";
 import { MatchPlayerRepo } from "../repositories/match-player-repo";
-import { CompetitionRepo } from "../repositories/competition/competition-repo";
-import { DashboardService } from "./dashboard-service";
-import { transformDashboardVotesToResponse } from "../utils/dashboard-transforms";
 import prisma from "../repositories/prisma-client";
 import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
 import { PrismaTransaction } from "../types";
 import { transformMatchServiceToPendingVotes } from "../utils/votes-transforms";
 
 export class VoteService {
-  static async getDashboardVotes(userId: string) {
-    const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
-
-    const competitions = await CompetitionRepo.findByDashboardId(dashboardId, {
-      votingEnabled: true,
-    });
-
-    if (competitions.length === 0) {
-      return [];
-    }
-
-    const competitionIds = competitions.map((c) => c.id);
-    const matches = await MatchRepo.findByCompetitionIds(competitionIds);
-
-    if (matches.length === 0) {
-      return [];
-    }
-
-    const matchIds = matches.map((m) => m.id);
-    const votes = await VoteRepo.findByMatchIds(matchIds);
-
-    return transformDashboardVotesToResponse(votes);
-  }
-
   static async submitVotes(
     matchId: string,
     voterId: string,

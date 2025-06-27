@@ -3,7 +3,7 @@ import { CompetitionType, MatchType } from "@repo/logger";
 import { createStepSchema } from "../multi-step-form/utils";
 
 const baseMatchSchema = z.object({
-  date: z.coerce.date(),
+  date: z.coerce.date().optional(),
   homeTeamScore: z.coerce
     .number({
       invalid_type_error: "Required",

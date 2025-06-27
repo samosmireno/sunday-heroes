@@ -1,6 +1,5 @@
 import { DashboardMatchResponse } from "@repo/logger";
 import DashboardMatchCard from "./dashboard-match-card";
-import { Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface MatchListProps {
@@ -24,7 +23,6 @@ export default function MatchList({
             className="flex items-center text-xl font-bold uppercase tracking-wider text-accent"
             style={{ textShadow: "1px 1px 0 #000" }}
           >
-            <Calendar className="mr-2 h-5 w-5" />
             {title}
           </h2>
 

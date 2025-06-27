@@ -83,18 +83,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
-
-          // try {
-          //   const response = await axiosInstance.get(
-          //     `${config.server}/auth/me`,
-          //   );
-          //   setUser(response.data);
-          //   localStorage.setItem("user", JSON.stringify(response.data));
-          // } catch (verifyError) {
-          //   console.error("Stored user verification failed:", verifyError);
-          //   localStorage.removeItem("user");
-          //   setUser(undefined);
-          // }
         }
       } catch (err) {
         console.error("Error initializing auth:", err);

@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { getTeamListFromCompetitionId } from "../../handlers/team";
+import { deleteTeam, getTeamListFromCompetitionId } from "../../handlers/team";
+import { authenticateToken } from "../../middleware/authentication-middleware";
 
 const router = Router();
 
 router.get("/list/:competitionId", getTeamListFromCompetitionId);
+router.delete("/:id", authenticateToken, deleteTeam);
 
 export default router;

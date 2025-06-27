@@ -1,6 +1,5 @@
 import { DashboardCompetitionResponse } from "@repo/logger";
 import DashboardCompetitionCard from "./dashboard-competition-card";
-import { Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface DashboardCompetitionListProps {
@@ -21,7 +20,6 @@ export default function DashboardCompetitionList({
           className="flex items-center text-xl font-bold uppercase tracking-wider text-accent"
           style={{ textShadow: "1px 1px 0 #000" }}
         >
-          <Trophy className="mr-2 h-5 w-5" />
           Your Competitions
         </h2>
         <button

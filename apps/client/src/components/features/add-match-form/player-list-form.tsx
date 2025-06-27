@@ -60,12 +60,12 @@ export default function PlayersListForm({ isEdited }: PlayersListFormProps) {
             Previous
           </Button>
           <Button
-            onClick={isEdited ? undefined : nextStep}
-            type={isEdited ? "submit" : "button"}
+            onClick={nextStep}
+            type={"button"}
             className="transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30"
             disabled={!isStepValid()}
           >
-            {isEdited ? "Save Changes" : "Next"}
+            Next
           </Button>
         </div>
       </Form>

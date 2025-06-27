@@ -102,11 +102,12 @@ export class DashboardRepo {
   static async findByAdminId(
     adminId: string,
     tx?: PrismaTransaction
-  ): Promise<Dashboard | null> {
+  ): Promise<DashboardWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.findUnique({
         where: { admin_id: adminId },
+        include: DASHBOARD_DETAILED_INCLUDE,
       });
     } catch (error) {
       console.error("Error in DashboardRepo.findByAdminId:", error);

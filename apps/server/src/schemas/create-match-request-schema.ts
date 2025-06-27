@@ -3,7 +3,7 @@ import { MatchType } from "@repo/logger";
 
 export const createMatchRequestSchema = z.object({
   competitionId: z.string(),
-  date: z.coerce.date(),
+  date: z.coerce.date().optional(),
   homeTeamScore: z.coerce
     .number({
       invalid_type_error: "Required",

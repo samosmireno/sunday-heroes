@@ -1,0 +1,169 @@
+import { TeamRepo } from "../repositories/team-repo";
+import { TeamRosterRepo } from "../repositories/team-roster-repo";
+import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
+import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
+import { DashboardService } from "./dashboard-service";
+import { DashboardPlayerService } from "./dashboard-player-service";
+import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
+
+export class TeamService {
+  static async createTeamInCompetition(
+    name: string,
+    competitionId: string,
+    userId: string
+  ) {
+    const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
+      competitionId,
+      userId
+    );
+    if (!hasPermission) {
+      throw new Error(
+        "User not authorized to create teams in this competition"
+      );
+    }
+
+    const isUnique = await TeamRepo.checkNameUniqueInCompetition(
+      name,
+      competitionId
+    );
+    if (!isUnique) {
+      throw new Error("Team name already exists in this competition");
+    }
+
+    const team = await TeamRepo.create({ name, created_at: new Date() });
+    await TeamCompetitionRepo.addTeamToCompetition(team.id, competitionId);
+
+    return team;
+  }
+
+  static async addPlayerToTeam(
+    teamId: string,
+    nickname: string,
+    competitionId: string,
+    userId: string
+  ) {
+    const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
+      userId,
+      competitionId
+    );
+    if (!hasPermission) {
+      throw new Error(
+        "User not authorized to manage teams in this competition"
+      );
+    }
+
+    const team = await TeamRepo.findById(teamId);
+    if (!team) {
+      throw new Error("Team not found");
+    }
+
+    const dashboardId =
+      await DashboardService.getDashboardIdFromCompetitionId(competitionId);
+
+    await DashboardPlayerService.addMissingPlayers([nickname], dashboardId);
+
+    const player = await DashboardPlayerRepo.findByNickname(
+      nickname,
+      dashboardId
+    );
+    if (!player) {
+      throw new Error("Failed to create or find player");
+    }
+
+    const existingTeam = await TeamRosterRepo.getPlayerTeamInCompetition(
+      player.id,
+      competitionId
+    );
+    if (existingTeam) {
+      throw new Error("Player is already on a team in this competition");
+    }
+
+    const currentPlayerCount = await TeamRosterRepo.getTeamPlayerCount(
+      teamId,
+      competitionId
+    );
+    if (currentPlayerCount >= 16) {
+      throw new Error("Team has reached maximum player limit (16 players)");
+    }
+
+    return await TeamRosterRepo.addPlayerToTeam(
+      teamId,
+      player.id,
+      competitionId
+    );
+  }
+
+  static async removePlayerFromTeam(
+    teamId: string,
+    playerId: string,
+    competitionId: string,
+    userId: string
+  ) {
+    const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
+      userId,
+      competitionId
+    );
+    if (!hasPermission) {
+      throw new Error(
+        "User not authorized to manage teams in this competition"
+      );
+    }
+
+    const isOnTeam = await TeamRosterRepo.isPlayerOnTeam(
+      playerId,
+      teamId,
+      competitionId
+    );
+    if (!isOnTeam) {
+      throw new Error("Player is not on this team");
+    }
+
+    await TeamRosterRepo.removePlayerFromTeam(teamId, playerId, competitionId);
+  }
+
+  static async getTeamsInCompetition(competitionId: string) {
+    return await TeamRepo.findByCompetitionId(competitionId);
+  }
+
+  static async getTeamRoster(teamId: string, competitionId: string) {
+    return await TeamRosterRepo.getTeamRoster(teamId, competitionId);
+  }
+
+  static async deleteTeam(
+    teamId: string,
+    competitionId: string,
+    userId: string
+  ) {
+    const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
+      competitionId,
+      userId
+    );
+    if (!hasPermission) {
+      throw new Error(
+        "User not authorized to delete teams in this competition"
+      );
+    }
+
+    const team = await TeamRepo.findById(teamId);
+    if (!team) {
+      throw new Error("Team not found");
+    }
+
+    await TeamRepo.delete(teamId);
+
+    return { message: "Team deleted successfully" };
+  }
+
+  static async deleteTeamsOnlyInCompetition(competitionId: string) {
+    const teams = await this.getTeamsInCompetition(competitionId);
+    if (!teams || teams.length === 0) {
+      return;
+    }
+
+    const teamIds = teams
+      .filter((team) => team.team_competitions.length === 1)
+      .map((team) => team.id);
+
+    await TeamRepo.deleteMany(teamIds);
+  }
+}

@@ -23,6 +23,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
     "bunchee": "^6.5.0",
     "node-fetch": "^3.3.2"
   }

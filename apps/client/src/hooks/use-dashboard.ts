@@ -4,11 +4,9 @@ import {
   DashboardCompetitionResponse,
   DashboardMatchResponse,
   DashboardResponse,
-  DashboardVoteResponse,
 } from "@repo/logger";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { calculatePendingVotes } from "../utils/utils";
+import { useState } from "react";
 
 const fetchDashboard = async (id: string): Promise<DashboardResponse> => {
   if (!id) return {} as DashboardResponse;
@@ -39,17 +37,8 @@ const fetchDashboardCompetitions = async (
   return data;
 };
 
-const fetchDashboardVotes = async (
-  id: string,
-): Promise<DashboardVoteResponse[]> => {
-  if (!id) return [];
-  const { data } = await axios.get(`${config.server}/api/votes?userId=${id}`);
-  return data;
-};
-
 export const useDashboard = (id: string) => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [pendingVotes, setPendingVotes] = useState<number>(0);
   const queryClient = useQueryClient();
 
   const dashboardQuery = useQuery({
@@ -70,20 +59,6 @@ export const useDashboard = (id: string) => {
     enabled: !!id,
   });
 
-  const votesQuery = useQuery({
-    queryKey: ["dashboard_votes"],
-    queryFn: () => fetchDashboardVotes(id),
-    enabled: !!id,
-  });
-
-  useEffect(() => {
-    if (matchesQuery.data && votesQuery.data) {
-      setPendingVotes(
-        calculatePendingVotes(matchesQuery.data, votesQuery.data),
-      );
-    }
-  }, [matchesQuery.data, votesQuery.data]);
-
   const refreshData = async () => {
     if (!id) return;
 
@@ -94,7 +69,6 @@ export const useDashboard = (id: string) => {
       queryClient.invalidateQueries({
         queryKey: ["dashboard_competitions", id],
       }),
-      queryClient.invalidateQueries({ queryKey: ["dashboard_votes", id] }),
     ]);
     setIsRefreshing(false);
   };
@@ -103,15 +77,12 @@ export const useDashboard = (id: string) => {
     dashboardData: dashboardQuery.data,
     dashboardMatches: matchesQuery.data,
     dashboardCompetitions: competitionsQuery.data,
-    dashboardVotes: votesQuery.data,
     isLoading:
       !id ||
       dashboardQuery.isLoading ||
       matchesQuery.isLoading ||
-      competitionsQuery.isLoading ||
-      votesQuery.isLoading,
+      competitionsQuery.isLoading,
     isRefreshing,
     refreshData,
-    pendingVotes,
   };
 };

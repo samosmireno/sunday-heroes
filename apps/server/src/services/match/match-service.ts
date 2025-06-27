@@ -8,6 +8,7 @@ import {
 import { transformDashboardMatchesToResponse } from "../../utils/dashboard-transforms";
 import { createMatchRequest } from "../../schemas/create-match-request-schema";
 import { DashboardService } from "../dashboard-service";
+import { CompetitionType } from "@prisma/client";
 
 export class MatchService {
   static async getAllMatches() {
@@ -33,6 +34,16 @@ export class MatchService {
   static async getCompetitionMatches(competitionId: string) {
     const matches = await MatchRepo.findByCompetitionId(competitionId);
     return matches.map(transformMatchServiceToResponse);
+  }
+
+  static async getCompetitionTypeFromMatchId(
+    matchId: string
+  ): Promise<CompetitionType> {
+    const match = await MatchRepo.findByIdWithDetails(matchId);
+    if (!match) {
+      throw new Error("Match not found");
+    }
+    return match.competition?.type || null;
   }
 
   static async getMatchesForUser(
@@ -100,8 +111,11 @@ export class MatchService {
         matchMap.set(match.id, match as MatchWithDetails);
       }
     });
-    return Array.from(matchMap.values()).sort(
-      (a, b) => b.date.getTime() - a.date.getTime()
-    );
+    return Array.from(matchMap.values()).sort((a, b) => {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    });
   }
 }

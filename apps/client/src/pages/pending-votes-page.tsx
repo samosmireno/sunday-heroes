@@ -105,7 +105,9 @@ export default function AdminPendingVotes() {
                       </div>
                     </td>
                     <td className="hidden p-1 text-sm text-gray-300 sm:block sm:p-3 sm:text-base">
-                      {new Date(votingData.matchDate).toLocaleDateString()}
+                      {votingData.matchDate
+                        ? new Date(votingData.matchDate).toLocaleDateString()
+                        : "TBD"}
                     </td>
 
                     <td className="p-3 px-5 text-sm sm:text-base">

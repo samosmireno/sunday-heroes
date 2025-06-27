@@ -13,11 +13,13 @@ const matchTypeStyles: Record<CompetitionType, { bg: string; text: string }> = {
 
 export default function DashboardMatchCard({ match }: MatchCardProps) {
   const { bg, text } = matchTypeStyles[match.competition_type];
-  const formattedDate = new Date(match.date).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  const formattedDate = match.date
+    ? new Date(match.date).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : "TBD";
 
   return (
     <div

@@ -74,6 +74,9 @@ export enum ViewType {
 }
 
 export function convertMatchType(matchType: string): string {
+  if (!matchType) {
+    return "";
+  }
   return matchType
     .toLowerCase()
     .split("_")

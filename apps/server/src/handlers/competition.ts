@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { CompetitionService } from "../services/competition-service";
-import { CompetitionType, createCompetitionRequest } from "@repo/logger";
+import { CompetitionType } from "@repo/logger";
 import { sendError, sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
+import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
+import { TeamService } from "../services/team-service";
 
 const getRequiredQuery = (req: Request, param: string): string => {
   const value = req.query[param]?.toString();
@@ -97,6 +99,20 @@ export const createCompetition = async (
     }
 
     const competition = await CompetitionService.createCompetition(data);
+
+    if (data.type === CompetitionType.DUEL) {
+      await TeamService.createTeamInCompetition(
+        "Home",
+        competition.id,
+        data.userId
+      );
+      await TeamService.createTeamInCompetition(
+        "Away",
+        competition.id,
+        data.userId
+      );
+    }
+
     sendSuccess(res, competition, 201);
   } catch (error) {
     if (error instanceof Error && error.message.includes("No dashboard")) {
