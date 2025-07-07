@@ -58,6 +58,26 @@ export default function AddMatchForm() {
     resolver: formSchema ? zodResolver(formSchema) : undefined,
     reValidateMode: "onBlur",
     mode: "onBlur",
+    defaultValues: {
+      match: {
+        date: undefined,
+        homeTeamScore: 0,
+        awayTeamScore: 0,
+        matchType: undefined,
+        hasPenalties: false,
+        penaltyHomeScore: 0,
+        penaltyAwayScore: 0,
+        homeTeam: undefined,
+        awayTeam: undefined,
+      },
+      players: {
+        homePlayers: [],
+        awayPlayers: [],
+      },
+      matchPlayers: {
+        players: [],
+      },
+    },
   });
 
   const formValues = useWatch({ control: form.control });
@@ -164,9 +184,9 @@ export default function AddMatchForm() {
 
               <MultiStepFormStep name="match">
                 {competition.type !== CompetitionType.DUEL ? (
-                  <LeagueMatchDetailsForm isEdited={!!matchId} />
+                  <LeagueMatchDetailsForm />
                 ) : (
-                  <MatchDetailsForm isEdited={!!matchId} />
+                  <MatchDetailsForm />
                 )}
               </MultiStepFormStep>
               <MultiStepFormStep name="players">

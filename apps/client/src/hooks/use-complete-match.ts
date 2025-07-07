@@ -11,7 +11,7 @@ export const useCompleteMatch = (competitionId: string) => {
       );
       return data;
     },
-    onSuccess: (data, matchId) => {
+    onSuccess: (_, matchId) => {
       queryClient.invalidateQueries({ queryKey: ["leagueFixtures"] });
       queryClient.invalidateQueries({ queryKey: ["leagueFixtures", matchId] });
     },

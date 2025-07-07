@@ -17,9 +17,6 @@ import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import FormLayout from "./form-layout";
 import { convertMatchType } from "../../../types/types";
-interface MatchDetailsFormProps {
-  isEdited: boolean;
-}
 
 const formatSafeDate = (date: any): string => {
   if (!date) return "Pick a date";
@@ -38,7 +35,7 @@ const formatSafeDate = (date: any): string => {
   }
 };
 
-export default function MatchDetailsForm({ isEdited }: MatchDetailsFormProps) {
+export default function MatchDetailsForm() {
   const { form, nextStep, isStepValid } = useMultiStepFormContext();
   const [popoverOpen, setPopoverOpen] = useState(false);
 

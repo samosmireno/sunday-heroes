@@ -25,9 +25,6 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { MatchType, convertMatchType } from "../../../types/types";
-interface MatchDetailsFormProps {
-  isEdited: boolean;
-}
 
 const formatSafeDate = (date: any): string => {
   if (!date) return "Pick a date";
@@ -46,7 +43,7 @@ const formatSafeDate = (date: any): string => {
   }
 };
 
-export default function MatchDetailsForm({ isEdited }: MatchDetailsFormProps) {
+export default function MatchDetailsForm() {
   const { form, nextStep, isStepValid } = useMultiStepFormContext();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const hasPenalties = form.watch("match.hasPenalties");
@@ -198,50 +195,48 @@ export default function MatchDetailsForm({ isEdited }: MatchDetailsFormProps) {
             )}
           />
           {hasPenalties && (
-            <>
-              <div className="col-span-1 sm:col-span-2">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <FormField
-                    name="match.penaltyHomeScore"
-                    render={({ field }) => (
-                      <FormItem className="flex w-full flex-col">
-                        <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
-                          Home Team Penalty Score
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="number"
-                            min={0}
-                            className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-400" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="match.penaltyAwayScore"
-                    render={({ field }) => (
-                      <FormItem className="flex w-full flex-col">
-                        <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
-                          Away Team Penalty Score
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="number"
-                            min={0}
-                            className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-400" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+            <div className="col-span-1 sm:col-span-2">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <FormField
+                  name="match.penaltyHomeScore"
+                  render={({ field }) => (
+                    <FormItem className="flex w-full flex-col">
+                      <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                        Home Team Penalty Score
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          min={0}
+                          className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  name="match.penaltyAwayScore"
+                  render={({ field }) => (
+                    <FormItem className="flex w-full flex-col">
+                      <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                        Away Team Penalty Score
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          min={0}
+                          className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
               </div>
-            </>
+            </div>
           )}
         </div>
 

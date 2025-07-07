@@ -44,6 +44,7 @@ export class DashboardPlayerService {
 
   static async getDashboardPlayersByQuery(userId: string, query: string) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
+
     return await DashboardPlayerRepo.findByNameSearch(query, dashboardId);
   }
 

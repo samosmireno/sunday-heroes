@@ -17,6 +17,9 @@ interface TeamSectionProps {
   setSelectedPlayers: (arg0: string[]) => void;
   isEdited: boolean;
   initialPlayers?: string[];
+  isAutocompleteOpen: boolean;
+  onAutocompleteOpen: () => void;
+  onAutocompleteClose: () => void;
 }
 
 export default function TeamSection({
@@ -26,6 +29,9 @@ export default function TeamSection({
   setSelectedPlayers,
   isEdited,
   initialPlayers,
+  isAutocompleteOpen,
+  onAutocompleteOpen,
+  onAutocompleteClose,
 }: TeamSectionProps) {
   const [searchValue, setSearchValue] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<string>("");
@@ -128,6 +134,14 @@ export default function TeamSection({
           isLoading={isLoading}
           onItemSelect={(value) => {
             addPlayerToForm(value);
+          }}
+          isOpen={isAutocompleteOpen}
+          onOpenChange={(open) => {
+            if (open) {
+              onAutocompleteOpen();
+            } else {
+              onAutocompleteClose();
+            }
           }}
         />
         <Button

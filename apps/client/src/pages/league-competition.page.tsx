@@ -29,16 +29,6 @@ export default function LeagueCompetitionPage({
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "standings";
 
-  const hasCustomTeamNames =
-    competition.teams?.some(
-      (team) =>
-        !team.name.match(/^team-\d+$/i) && !team.name.match(/^Team \d+$/i),
-    ) ?? false;
-
-  if (!hasCustomTeamNames) {
-    navigate(`/league-setup/${competition.id}`);
-  }
-
   const handleTabChange = (value: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("tab", value);

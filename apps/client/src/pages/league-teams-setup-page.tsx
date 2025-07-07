@@ -40,7 +40,7 @@ export default function LeagueTeamSetupPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { competition, isLoading } = useCompetition(
+  const { competition, isLoading, refetch } = useCompetition(
     competitionId ?? "",
     user?.id || "",
   );
@@ -66,6 +66,8 @@ export default function LeagueTeamSetupPage() {
       await axiosInstance.put(`/api/leagues/${competitionId}/team-names`, {
         teamUpdates,
       });
+
+      await refetch();
 
       navigate(`/competition/${competitionId}`);
     } catch (error) {

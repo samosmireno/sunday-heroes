@@ -12,6 +12,7 @@ import {
 import { UserPlus, Copy, Check, Loader2 } from "lucide-react";
 import axiosInstance from "../../../config/axiosConfig";
 import { toast } from "sonner";
+import Loading from "../../ui/loading";
 
 interface InvitePlayerDialogProps {
   dashboardPlayerId: string;
@@ -65,6 +66,10 @@ export default function InvitePlayerDialog({
       handleCreateInvitation();
     }
   }, [isOpen, inviteUrl]);
+
+  if (isLoading) {
+    return <Loading text={"Loading invitation"} />;
+  }
 
   return (
     <Dialog

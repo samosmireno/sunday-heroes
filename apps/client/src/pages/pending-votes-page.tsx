@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/auth-context";
 import { Button } from "../components/ui/button";
 import Header from "../components/ui/header";
 import Background from "../components/ui/background";
@@ -7,8 +6,6 @@ import { usePendingVotes } from "../hooks/use-pending-votes";
 
 export default function AdminPendingVotes() {
   const { matchId } = useParams();
-  console.log("Match ID:", matchId);
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   if (!matchId) return null;

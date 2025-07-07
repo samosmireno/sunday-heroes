@@ -18,10 +18,7 @@ export const usePlayerStats = (matches: MatchResponse[]) => {
             nickname: matchPlayer.nickname,
             totalGoals: matchPlayer.goals || 0,
             totalAssists: matchPlayer.assists || 0,
-            totalRating: matchPlayer.votes
-              ? matchPlayer.votes.reduce((acc, vote) => acc + vote, 0) /
-                matchPlayer.votes.length
-              : 0,
+            totalRating: matchPlayer.rating,
             totalMatches: 1,
           });
         } else {
@@ -31,10 +28,7 @@ export const usePlayerStats = (matches: MatchResponse[]) => {
             existingPlayer.totalGoals += matchPlayer.goals || 0;
             existingPlayer.totalAssists += matchPlayer.assists || 0;
             existingPlayer.totalMatches += 1;
-            existingPlayer.totalRating = matchPlayer.votes
-              ? matchPlayer.votes.reduce((acc, vote) => acc + vote, 0) /
-                matchPlayer.votes.length
-              : existingPlayer.totalRating;
+            existingPlayer.totalRating = matchPlayer.rating;
 
             playerMap.set(matchPlayer.id, existingPlayer);
           }

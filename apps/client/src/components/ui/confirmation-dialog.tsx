@@ -122,13 +122,15 @@ export default function ConfirmationDialog({
           >
             {title}
           </DialogTitle>
-          <DialogDescription className="space-y-4 pt-2">
-            {typeof description === "string" ? (
-              <p className="text-gray-200">{description}</p>
-            ) : (
-              description
-            )}
-          </DialogDescription>
+          {typeof description === "string" ? (
+            <DialogDescription className="space-y-4 pt-2">
+              <span className="text-gray-200">{description}</span>
+            </DialogDescription>
+          ) : (
+            <DialogDescription asChild>
+              <div className="space-y-4 pt-2">{description}</div>
+            </DialogDescription>
+          )}
         </DialogHeader>
 
         <DialogFooter className="flex justify-end gap-3">

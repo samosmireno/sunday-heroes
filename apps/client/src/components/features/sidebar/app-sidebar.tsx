@@ -7,7 +7,6 @@ import {
   User,
   User2,
   Users,
-  Zap,
 } from "lucide-react";
 
 import {

@@ -25,6 +25,8 @@ type Props<T extends string> = {
   placeholder?: string;
   onItemSelect?: (value: T) => void;
   className?: string;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export function AutoComplete<T extends string>({
@@ -38,8 +40,16 @@ export function AutoComplete<T extends string>({
   placeholder = "Search...",
   onItemSelect,
   className,
+  isOpen: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: Props<T>) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen =
+    controlledOnOpenChange !== undefined
+      ? controlledOnOpenChange
+      : setInternalOpen;
 
   const labels = useMemo(
     () =>
@@ -106,7 +116,7 @@ export function AutoComplete<T extends string>({
                 setOpen(e.key !== "Escape");
                 handleKeyDown(e);
               }}
-              onMouseDown={() => setOpen((open) => !!searchValue || !open)}
+              onMouseDown={() => setOpen(!!searchValue || !open)}
               onFocus={() => setOpen(true)}
             >
               <Input
@@ -129,7 +139,7 @@ export function AutoComplete<T extends string>({
             }}
             className="z-50 max-h-56 w-[--radix-popover-trigger-width] overflow-hidden border-2 border-accent/50 bg-panel-bg p-0 shadow-md"
           >
-            <CommandList>
+            <CommandList className="max-h-56 overflow-y-auto">
               {isLoading && (
                 <CommandPrimitive.Loading>
                   <div className="p-1">

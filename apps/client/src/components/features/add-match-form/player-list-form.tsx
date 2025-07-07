@@ -13,6 +13,7 @@ interface PlayersListFormProps {
 
 export default function PlayersListForm({ isEdited }: PlayersListFormProps) {
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+  const [openAutocomplete, setOpenAutocomplete] = useState<Team | null>(null);
   const { form, nextStep, prevStep, isStepValid } = useMultiStepFormContext();
 
   const formPlayers: DuelPlayersForm = form.getValues("players");
@@ -22,6 +23,14 @@ export default function PlayersListForm({ isEdited }: PlayersListFormProps) {
       formPlayers?.homePlayers?.concat(formPlayers.awayPlayers) ?? [],
     );
   }, [formPlayers]);
+
+  const handleAutocompleteOpen = (team: Team) => {
+    setOpenAutocomplete(team);
+  };
+
+  const handleAutocompleteClose = () => {
+    setOpenAutocomplete(null);
+  };
 
   return (
     <FormLayout title="Add players">
@@ -35,6 +44,9 @@ export default function PlayersListForm({ isEdited }: PlayersListFormProps) {
               setSelectedPlayers={setSelectedPlayers}
               initialPlayers={formPlayers?.homePlayers ?? []}
               isEdited={isEdited}
+              isAutocompleteOpen={openAutocomplete === Team.HOME}
+              onAutocompleteOpen={() => handleAutocompleteOpen(Team.HOME)}
+              onAutocompleteClose={handleAutocompleteClose}
             />
             <FormMessage />
           </FormItem>
@@ -46,6 +58,9 @@ export default function PlayersListForm({ isEdited }: PlayersListFormProps) {
               setSelectedPlayers={setSelectedPlayers}
               initialPlayers={formPlayers?.awayPlayers ?? []}
               isEdited={isEdited}
+              isAutocompleteOpen={openAutocomplete === Team.AWAY}
+              onAutocompleteOpen={() => handleAutocompleteOpen(Team.AWAY)}
+              onAutocompleteClose={handleAutocompleteClose}
             />
             <FormMessage />
           </FormItem>

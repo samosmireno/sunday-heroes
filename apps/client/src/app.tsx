@@ -1,5 +1,4 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import CompetitionPage from "./pages/competition-page.tsx";
 import LoginPage from "./pages/login";
 import ErrorPage from "./pages/error-page";
 import ProtectedRoute from "./pages/protected-route";
@@ -11,12 +10,11 @@ import CompetitionListPage from "./pages/competition-list-page.tsx";
 import VotePage from "./pages/vote-page.tsx";
 import AdminPendingVotes from "./pages/pending-votes-page.tsx";
 import MatchesPage from "./pages/matches-page.tsx";
-import VotesPage from "./pages/votes-page.tsx";
 import AddMatchForm from "./pages/add-match-form-page.tsx";
 import PlayersPage from "./pages/players-page.tsx";
 import InvitationPage from "./pages/invitation-page.tsx";
 import CompetitionAdminPage from "./pages/competition-admin-page.tsx";
-import LeagueTeamSetupPage from "./pages/league-teams-setup-page.tsx";
+import LeagueRouter from "./components/features/league/league-router.tsx";
 
 export default function App() {
   return (
@@ -54,7 +52,7 @@ export default function App() {
             path="/competition/:competitionId"
             element={
               <ProtectedRoute>
-                <CompetitionPage />
+                <LeagueRouter />
               </ProtectedRoute>
             }
           />
@@ -62,7 +60,7 @@ export default function App() {
             path="/league-setup/:competitionId"
             element={
               <ProtectedRoute>
-                <LeagueTeamSetupPage />
+                <LeagueRouter />
               </ProtectedRoute>
             }
           />
@@ -111,14 +109,6 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <MatchesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/voting"
-            element={
-              <ProtectedRoute>
-                <VotesPage />
               </ProtectedRoute>
             }
           />

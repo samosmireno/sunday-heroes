@@ -15,13 +15,10 @@ export const getAllDashboardPlayers = async (
     }
 
     const query = req.query.query?.toString();
-    if (!query) {
-      return sendError(res, "query parameter is required", 400);
-    }
 
     const players = await DashboardPlayerService.getDashboardPlayersByQuery(
       userId,
-      query
+      query || ""
     );
     sendSuccess(res, players);
   } catch (error) {
