@@ -6,7 +6,7 @@ import Header from "../components/ui/header";
 import Loading from "../components/ui/loading";
 import { CompetitionProvider } from "../context/competition-context";
 import DuelCompetitionPage from "./duel-competition-page";
-import { CompetitionType } from "@repo/logger";
+import { CompetitionType } from "@repo/shared-types";
 import { useAuth } from "../context/auth-context";
 import LeagueCompetitionPage from "./league-competition.page";
 

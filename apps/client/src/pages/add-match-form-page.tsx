@@ -13,7 +13,7 @@ import {
 import { MultiStepFormHeader } from "../components/features/multi-step-form/multi-step-form-header";
 import { MultiStepFormStep } from "../components/features/multi-step-form/multi-step-form-step";
 import StepNavigation from "../components/features/add-match-form/form-step-navigation";
-import { CompetitionType, MatchResponse } from "@repo/logger";
+import { CompetitionType, MatchResponse } from "@repo/shared-types";
 import {
   createMatchFormSchema,
   LeagueFormData,

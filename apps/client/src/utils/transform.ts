@@ -1,4 +1,4 @@
-import { createMatchRequest } from "@repo/logger";
+import { createMatchRequest } from "@repo/shared-types";
 import { CreateCompetitionFormValues } from "../components/features/create-competition-form/create-competition-schema";
 import {
   DuelFormData,

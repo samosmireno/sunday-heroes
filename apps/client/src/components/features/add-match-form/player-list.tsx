@@ -13,7 +13,7 @@ import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { UseFormReturn } from "react-hook-form";
 import { Team } from "../../../types/types";
 import SortableItem from "./sortable-item";
-import { DuelMatchPlayersForm } from "@repo/logger";
+import { DuelMatchPlayersForm } from "@repo/shared-types";
 import swapMatchPlayers from "./utils";
 import swapItems from "../../../utils/utils";
 

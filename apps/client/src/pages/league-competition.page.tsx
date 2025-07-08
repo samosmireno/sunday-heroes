@@ -1,4 +1,4 @@
-import { CompetitionResponse, Role } from "@repo/logger";
+import { CompetitionResponse, Role } from "@repo/shared-types";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Settings, Users, Calendar } from "lucide-react";

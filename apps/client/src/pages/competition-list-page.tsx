@@ -5,7 +5,7 @@ import CompetitionList from "../components/features/competition-list/competition
 import { useAuth } from "../context/auth-context";
 import { useCompetitions } from "../hooks/use-competitions";
 import { ViewType } from "../types/types";
-import { CompetitionType } from "@repo/logger";
+import { CompetitionType } from "@repo/shared-types";
 import { SearchViewToggle } from "../components/features/match-list/search-view-toggle";
 import useDebounce from "../hooks/use-debounce";
 import { Button } from "../components/ui/button";

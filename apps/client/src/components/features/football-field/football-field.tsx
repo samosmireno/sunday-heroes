@@ -1,5 +1,5 @@
 import "./football-field.css";
-import { MatchResponse } from "@repo/logger";
+import { MatchResponse } from "@repo/shared-types";
 import findStarPlayer from "./utils";
 import FieldLayout from "./field-layout";
 import OnFieldPlayers from "./on-field-players.tsx";

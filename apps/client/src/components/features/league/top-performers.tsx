@@ -1,5 +1,5 @@
 import { Target, Users, Star } from "lucide-react";
-import { LeaguePlayerTotals, CompetitionResponse } from "@repo/logger";
+import { LeaguePlayerTotals, CompetitionResponse } from "@repo/shared-types";
 
 interface TopPerformersProps {
   topScorer: LeaguePlayerTotals | null;

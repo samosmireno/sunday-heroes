@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../config/axiosConfig";
-import { MatchResponse } from "@repo/logger";
+import { MatchResponse } from "@repo/shared-types";
 import { MatchFormData } from "../components/features/add-match-form/add-match-schemas";
 
 const transformResponseToForm = (data: MatchResponse): MatchFormData => {

@@ -1,5 +1,5 @@
 import { useSortPlayers } from "./use-sort-players";
-import { PlayerTotals } from "@repo/logger";
+import { PlayerTotals } from "@repo/shared-types";
 import { UserTotals } from "../../../types/types";
 
 interface StatsTableProps {

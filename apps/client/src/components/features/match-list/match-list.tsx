@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "../../ui/button";
-import { MatchResponse, Role } from "@repo/logger";
+import { MatchResponse, Role } from "@repo/shared-types";
 
 interface MatchListProps {
   competitionId: string;

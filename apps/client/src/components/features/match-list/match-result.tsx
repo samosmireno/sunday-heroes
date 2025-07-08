@@ -6,7 +6,7 @@ import { useState } from "react";
 import ConfirmDeleteModal from "../modals/confirm-delete-modal";
 import { config } from "../../../config/config";
 import { useCompetitionContext } from "../../../context/competition-context";
-import { Role } from "@repo/logger";
+import { Role } from "@repo/shared-types";
 
 interface MatchProps {
   matchId: string;

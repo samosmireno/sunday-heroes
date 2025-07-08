@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { UserTotals } from "../../../types/types";
-import { MatchResponse } from "@repo/logger";
+import { MatchResponse } from "@repo/shared-types";
 
 export const usePlayerStats = (matches: MatchResponse[]) => {
   const [playersStats, setPlayersStats] = useState<UserTotals[]>([]);

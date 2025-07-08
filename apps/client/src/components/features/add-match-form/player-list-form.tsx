@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Team } from "../../../types/types";
 import TeamSection from "./team-section";
 import FormLayout from "./form-layout";
-import { DuelPlayersForm } from "@repo/logger";
+import { DuelPlayersForm } from "@repo/shared-types";
 
 interface PlayersListFormProps {
   isEdited: boolean;

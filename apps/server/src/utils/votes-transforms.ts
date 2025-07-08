@@ -1,4 +1,4 @@
-import { CompetitionVotes, MatchVotes, PendingVote } from "@repo/logger";
+import { CompetitionVotes, MatchVotes, PendingVote } from "@repo/shared-types";
 import { CompetitionWithPendingVotes } from "../repositories/competition/competition-voting-repo";
 import { MatchWithDetails } from "../repositories/match-repo";
 

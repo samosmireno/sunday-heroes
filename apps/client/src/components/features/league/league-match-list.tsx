@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Loading from "../../ui/loading";
-import { CompetitionResponse, LeagueMatchResponse } from "@repo/logger";
+import { CompetitionResponse, LeagueMatchResponse } from "@repo/shared-types";
 import { useLeagueFixtures } from "../../../hooks/use-league-fixtures";
 import { useMatchDetails } from "../../../hooks/use-match-details";
 import LeagueMatchCard from "./league-match-card";

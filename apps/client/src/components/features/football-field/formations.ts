@@ -1,4 +1,4 @@
-import { MatchType } from "@repo/logger";
+import { MatchType } from "@repo/shared-types";
 
 export interface Formation {
   name: string;

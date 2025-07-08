@@ -8,7 +8,7 @@ import { UseFormReturn } from "react-hook-form";
 import { capitalizeFirstLetter } from "../../../utils/utils";
 import PlayerList from "./player-list";
 import { useAuth } from "../../../context/auth-context";
-import { DuelMatchPlayersForm } from "@repo/logger";
+import { DuelMatchPlayersForm } from "@repo/shared-types";
 
 interface TeamSectionProps {
   team: Team;

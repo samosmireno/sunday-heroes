@@ -1,4 +1,4 @@
-import { CompetitionType, DashboardMatchResponse } from "@repo/logger";
+import { CompetitionType, DashboardMatchResponse } from "@repo/shared-types";
 import { CalendarDays } from "lucide-react";
 
 interface MatchCardProps {

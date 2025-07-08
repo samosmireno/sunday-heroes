@@ -4,7 +4,7 @@ import {
   DashboardResponse,
   DetailedCompetitionResponse,
   VotingStatus,
-} from "@repo/logger";
+} from "@repo/shared-types";
 import {
   CompetitionWithDetails,
   CompetitionWithMatches,

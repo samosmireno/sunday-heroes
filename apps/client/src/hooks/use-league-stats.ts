@@ -1,7 +1,7 @@
 import axios from "axios";
 import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
-import { LeaguePlayerTotals } from "@repo/logger";
+import { LeaguePlayerTotals } from "@repo/shared-types";
 import { useMemo } from "react";
 
 const fetchLeagueStats = async (

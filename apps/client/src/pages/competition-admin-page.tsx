@@ -10,7 +10,7 @@ import { UserPlus, AlertTriangle } from "lucide-react";
 import ModeratorsList from "../components/features/competition-admin/moderators-list";
 import CompetitionSettings from "../components/features/competition-admin/competition-settings";
 import AddModeratorModal from "../components/features/competition-admin/add-moderator-modal";
-import { Role } from "@repo/logger";
+import { Role } from "@repo/shared-types";
 
 const tabs = [
   { id: "moderators", label: "Moderators" },

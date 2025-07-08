@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CompetitionType, MatchType } from "@repo/logger";
+import { CompetitionType, MatchType } from "@repo/shared-types";
 import { createStepSchema } from "../multi-step-form/utils";
 
 const baseMatchSchema = z.object({

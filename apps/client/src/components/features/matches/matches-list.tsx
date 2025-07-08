@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckSquare, ChevronDown, ChevronUp, Shield } from "lucide-react";
 import { MatchDetails } from "./match-details";
-import { MatchPageResponse } from "@repo/logger";
+import { MatchPageResponse } from "@repo/shared-types";
 import { formatDate } from "../../../utils/utils";
 import { convertMatchType } from "../../../types/types";
 import React from "react";

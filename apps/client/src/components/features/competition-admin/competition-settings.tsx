@@ -1,4 +1,4 @@
-import { CompetitionResponse } from "@repo/logger";
+import { CompetitionResponse } from "@repo/shared-types";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import ConfirmationDialog from "../../ui/confirmation-dialog";
 import { useNavigate } from "react-router-dom";

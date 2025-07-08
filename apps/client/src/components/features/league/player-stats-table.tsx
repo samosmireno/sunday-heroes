@@ -1,4 +1,4 @@
-import { LeaguePlayerTotals, CompetitionResponse } from "@repo/logger";
+import { LeaguePlayerTotals, CompetitionResponse } from "@repo/shared-types";
 import { DataTable } from "../../ui/data-table";
 import { createPlayerColumns } from "./columns";
 

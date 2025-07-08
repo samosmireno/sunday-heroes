@@ -1,4 +1,4 @@
-import { CompetitionType, MatchType } from "@repo/logger";
+import { CompetitionType, MatchType } from "@repo/shared-types";
 import { z } from "zod";
 
 export type CreateCompetitionFormValues = z.infer<

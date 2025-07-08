@@ -1,4 +1,4 @@
-import { DetailedCompetitionResponse, Role } from "@repo/logger";
+import { DetailedCompetitionResponse, Role } from "@repo/shared-types";
 import {
   Calendar,
   CheckSquare,

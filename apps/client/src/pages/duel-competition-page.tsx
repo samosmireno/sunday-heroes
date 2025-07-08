@@ -1,4 +1,4 @@
-import { CompetitionResponse } from "@repo/logger";
+import { CompetitionResponse } from "@repo/shared-types";
 import MatchList from "../components/features/match-list/match-list";
 import FootballField from "../components/features/football-field/football-field";
 import StatsTable from "../components/features/stats-table/stats-table";

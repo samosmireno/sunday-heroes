@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Star, ArrowUp, Goal, Medal } from "lucide-react";
-import { MatchPageResponse } from "@repo/logger";
+import { MatchPageResponse } from "@repo/shared-types";
 
 interface MatchDetailsProps {
   match: MatchPageResponse;

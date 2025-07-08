@@ -2,7 +2,7 @@ import {
   PartialAddDuelFormValues,
   MatchType,
   MatchResponse,
-} from "@repo/logger";
+} from "@repo/shared-types";
 import { Team } from "../types/types";
 
 export const capitalizeFirstLetter = (string: string) => {

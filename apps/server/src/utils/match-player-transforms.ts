@@ -1,5 +1,5 @@
 import { MatchPlayer } from "@prisma/client";
-import { DuelPlayerRequest } from "@repo/logger";
+import { DuelPlayerRequest } from "@repo/shared-types";
 
 export function transformAddMatchRequestToMatchPlayer(
   player: DuelPlayerRequest,

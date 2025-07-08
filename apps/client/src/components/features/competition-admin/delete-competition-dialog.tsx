@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CompetitionResponse } from "@repo/logger";
+import { CompetitionResponse } from "@repo/shared-types";
 import { Button } from "../../ui/button";
 import {
   Dialog,

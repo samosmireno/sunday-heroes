@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CompetitionService } from "../services/competition-service";
-import { CompetitionType } from "@repo/logger";
+import { CompetitionType } from "@repo/shared-types";
 import { sendError, sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";

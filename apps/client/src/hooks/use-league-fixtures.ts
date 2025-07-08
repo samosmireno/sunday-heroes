@@ -1,7 +1,7 @@
 import axios from "axios";
 import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
-import { LeagueMatchResponse } from "@repo/logger";
+import { LeagueMatchResponse } from "@repo/shared-types";
 
 const fetchLeagueFixtures = async (
   competitionId: string,

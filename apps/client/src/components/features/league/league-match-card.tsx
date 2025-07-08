@@ -1,4 +1,4 @@
-import { LeagueMatchResponse } from "@repo/logger";
+import { LeagueMatchResponse } from "@repo/shared-types";
 
 interface LeagueMatchCardProps {
   match: LeagueMatchResponse;

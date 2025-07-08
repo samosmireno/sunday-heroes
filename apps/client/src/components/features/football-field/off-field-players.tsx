@@ -1,5 +1,5 @@
 import PlayerInfo from "../player/player-info";
-import { MatchResponse } from "@repo/logger";
+import { MatchResponse } from "@repo/shared-types";
 import { getNumPlayersOnField } from "./formations";
 
 interface OffFieldPlayersProps {

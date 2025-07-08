@@ -1,6 +1,6 @@
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 import { Star } from "lucide-react";
-import { LeaguePlayerTotals, CompetitionResponse } from "@repo/logger";
+import { LeaguePlayerTotals, CompetitionResponse } from "@repo/shared-types";
 
 const columnHelper = createColumnHelper<LeaguePlayerTotals>();
 

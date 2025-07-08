@@ -1,5 +1,5 @@
 import { useMultiStepFormContext } from "../multi-step-form/multi-step-form-context";
-import { AddDuelFormValues } from "@repo/logger";
+import { AddDuelFormValues } from "@repo/shared-types";
 import { Form } from "../../ui/form";
 import { Button } from "../../ui/button";
 import TeamInputStats from "./team-input-stats";

@@ -1,4 +1,4 @@
-import { CompetitionType } from "@repo/logger";
+import { CompetitionType } from "@repo/shared-types";
 import { z } from "zod";
 
 export const createCompetitionRequestSchema = z

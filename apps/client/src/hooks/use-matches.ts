@@ -1,7 +1,7 @@
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
-import { MatchPageResponse } from "@repo/logger";
+import { MatchPageResponse } from "@repo/shared-types";
 
 interface MatchQueryParams {
   userId: string;

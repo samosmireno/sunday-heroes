@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MatchType } from "@repo/logger";
+import { MatchType } from "@repo/shared-types";
 
 export const createMatchRequestSchema = z.object({
   competitionId: z.string(),

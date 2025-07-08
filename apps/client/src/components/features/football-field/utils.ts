@@ -1,4 +1,4 @@
-import { MatchResponse } from "@repo/logger";
+import { MatchResponse } from "@repo/shared-types";
 
 export default function findStarPlayer(
   match?: MatchResponse,

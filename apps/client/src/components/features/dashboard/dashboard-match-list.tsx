@@ -1,4 +1,4 @@
-import { DashboardMatchResponse } from "@repo/logger";
+import { DashboardMatchResponse } from "@repo/shared-types";
 import DashboardMatchCard from "./dashboard-match-card";
 import { useNavigate } from "react-router-dom";
 

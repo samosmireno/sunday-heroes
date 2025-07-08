@@ -1,4 +1,4 @@
-import { CompetitionResponse } from "@repo/logger";
+import { CompetitionResponse } from "@repo/shared-types";
 import { Users, TrendingUp } from "lucide-react";
 import Loading from "../../ui/loading";
 import { useLeagueStats } from "../../../hooks/use-league-stats";

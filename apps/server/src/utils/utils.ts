@@ -1,5 +1,9 @@
 import { MatchWithDetails } from "../repositories/match-repo";
-import { LeaguePlayerTotals, MatchResponse, PlayerTotals } from "@repo/logger";
+import {
+  LeaguePlayerTotals,
+  MatchResponse,
+  PlayerTotals,
+} from "@repo/shared-types";
 import { PlayerVote } from "@prisma/client";
 import { config } from "../config/config";
 import { VotingStatus } from "@prisma/client";

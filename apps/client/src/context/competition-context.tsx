@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode } from "react";
-import { CompetitionResponse } from "@repo/logger";
+import { CompetitionResponse } from "@repo/shared-types";
 
 interface CompetitionContextType {
   competition: CompetitionResponse | null;

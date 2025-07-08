@@ -1,4 +1,4 @@
-import { DuelMatchPlayersForm } from "@repo/logger";
+import { DuelMatchPlayersForm } from "@repo/shared-types";
 
 export default function swapMatchPlayers(
   matchPlayers: DuelMatchPlayersForm,

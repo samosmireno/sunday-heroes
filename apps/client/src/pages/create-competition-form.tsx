@@ -5,7 +5,7 @@ import {
   CreateCompetitionFormValues,
 } from "../components/features/create-competition-form/create-competition-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CompetitionType, MatchType } from "@repo/logger";
+import { CompetitionType, MatchType } from "@repo/shared-types";
 import {
   Form,
   FormControl,

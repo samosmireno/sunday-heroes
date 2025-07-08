@@ -3,7 +3,7 @@ import {
   MatchResponse,
   PlayerTotals,
   Role,
-} from "@repo/logger";
+} from "@repo/shared-types";
 import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { Competition } from "@prisma/client";
 import { calculatePlayerScore, calculatePlayerStats } from "./utils";

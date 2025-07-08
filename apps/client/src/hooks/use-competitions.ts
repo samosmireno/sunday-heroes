@@ -1,4 +1,7 @@
-import { CompetitionType, DetailedCompetitionResponse } from "@repo/logger";
+import {
+  CompetitionType,
+  DetailedCompetitionResponse,
+} from "@repo/shared-types";
 import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
 import {

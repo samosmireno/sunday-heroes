@@ -1,4 +1,4 @@
-import { PlayerResponse } from "@repo/logger";
+import { PlayerResponse } from "@repo/shared-types";
 import { useCompetitionContext } from "../../../context/competition-context";
 
 interface PlayerCardProps {

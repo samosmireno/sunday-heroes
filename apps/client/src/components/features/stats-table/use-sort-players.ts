@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PlayerTotals } from "@repo/logger";
+import { PlayerTotals } from "@repo/shared-types";
 
 export const useSortPlayers = (
   playersStats: PlayerTotals[],

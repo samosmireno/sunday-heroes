@@ -1,5 +1,5 @@
 import { CompetitionType, Match, Prisma } from "@prisma/client";
-import { createMatchRequest } from "@repo/logger";
+import { createMatchRequest } from "@repo/shared-types";
 import { MatchRepo } from "../../repositories/match-repo";
 import { TeamRepo } from "../../repositories/team-repo";
 import { MatchTeamRepo } from "../../repositories/match-team-repo";

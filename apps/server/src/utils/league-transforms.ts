@@ -3,7 +3,7 @@ import {
   LeagueTeamResponse,
   MatchResponse,
   PlayerTotals,
-} from "@repo/logger";
+} from "@repo/shared-types";
 import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { MatchWithDetails } from "../repositories/match-repo";
 import { calculateLeaguePlayerStats, calculatePlayerScore } from "./utils";

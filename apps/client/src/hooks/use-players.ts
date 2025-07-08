@@ -1,4 +1,4 @@
-import { PlayerListResponse } from "@repo/logger";
+import { PlayerListResponse } from "@repo/shared-types";
 import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
 import { config } from "../config/config";
 import axios, { AxiosError } from "axios";

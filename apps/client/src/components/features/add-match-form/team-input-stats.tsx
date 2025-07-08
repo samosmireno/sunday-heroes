@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-import { AddDuelFormValues } from "@repo/logger";
+import { AddDuelFormValues } from "@repo/shared-types";
 import { UseFormReturn } from "react-hook-form";
 
 interface TeamInputStatsProps {

@@ -4,7 +4,7 @@ import { UserRepo } from "../repositories/user-repo";
 import { DashboardRepo } from "../repositories/dashboard-repo";
 import { config } from "../config/config";
 import { Role, User } from "@prisma/client";
-import { UserResponse } from "@repo/logger";
+import { UserResponse } from "@repo/shared-types";
 import { RefreshTokenService } from "./refresh-token-service";
 
 export class AuthService {

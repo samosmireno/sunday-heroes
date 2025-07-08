@@ -1,4 +1,4 @@
-import { PlayerListResponse } from "@repo/logger";
+import { PlayerListResponse } from "@repo/shared-types";
 import { DashboardPlayerWithDetails } from "../repositories/dashboard-player-repo";
 import { calculatePlayerScore } from "./utils";
 

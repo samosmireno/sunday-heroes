@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PlayerResponse } from "@repo/logger";
+import { PlayerResponse } from "@repo/shared-types";
 import PlayerCard from "./player-card";
 import PlayerIcon from "./player-icon";
 

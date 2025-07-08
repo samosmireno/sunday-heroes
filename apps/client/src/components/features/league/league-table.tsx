@@ -1,5 +1,5 @@
 import Loading from "../../ui/loading";
-import { CompetitionResponse } from "@repo/logger";
+import { CompetitionResponse } from "@repo/shared-types";
 import { useLeagueStandings } from "../../../hooks/use-league-standings";
 
 interface LeagueTableProps {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PlayerDetails from "./player-details";
-import { PlayerListResponse } from "@repo/logger";
+import { PlayerListResponse } from "@repo/shared-types";
 import React from "react";
 import InvitePlayerDialog from "../invite-player/invite-player-dialog";
 

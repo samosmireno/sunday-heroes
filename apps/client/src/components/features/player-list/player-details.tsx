@@ -1,4 +1,4 @@
-import { PlayerListResponse } from "@repo/logger";
+import { PlayerListResponse } from "@repo/shared-types";
 import { Star, Target, UserPlus, Users } from "lucide-react";
 
 interface PlayerDetailsProps {

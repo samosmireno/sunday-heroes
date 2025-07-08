@@ -8,7 +8,7 @@ import {
 import axiosInstance from "../config/axiosConfig";
 import { config } from "../config/config";
 import { useNavigate } from "react-router-dom";
-import { UserResponse } from "@repo/logger";
+import { UserResponse } from "@repo/shared-types";
 
 interface AuthContextType {
   isLoading: boolean;

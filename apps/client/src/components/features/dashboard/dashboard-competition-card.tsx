@@ -1,4 +1,4 @@
-import { DashboardCompetitionResponse } from "@repo/logger";
+import { DashboardCompetitionResponse } from "@repo/shared-types";
 import { Button } from "../../ui/button";
 import { useNavigate } from "react-router-dom";
 

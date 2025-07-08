@@ -1,7 +1,7 @@
 import axios from "axios";
 import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
-import { MatchResponse } from "@repo/logger";
+import { MatchResponse } from "@repo/shared-types";
 
 const fetchMatchDetails = async (matchId: string): Promise<MatchResponse> => {
   const { data } = await axios.get(`${config.server}/api/matches/${matchId}`);

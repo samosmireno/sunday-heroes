@@ -1,4 +1,4 @@
-import { CompetitionResponse } from "@repo/logger";
+import { CompetitionResponse } from "@repo/shared-types";
 import axios from "axios";
 import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";

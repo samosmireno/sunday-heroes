@@ -6,7 +6,7 @@ import { config } from "../config/config";
 import { AuthenticatedRequest } from "../types";
 import { UserService } from "../services/user-service";
 import { RefreshTokenService } from "../services/refresh-token-service";
-import { UserResponse } from "@repo/logger";
+import { UserResponse } from "@repo/shared-types";
 
 export const handleRefreshToken = async (
   req: Request,

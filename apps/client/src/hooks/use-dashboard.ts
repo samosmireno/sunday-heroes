@@ -4,7 +4,7 @@ import {
   DashboardCompetitionResponse,
   DashboardMatchResponse,
   DashboardResponse,
-} from "@repo/logger";
+} from "@repo/shared-types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 

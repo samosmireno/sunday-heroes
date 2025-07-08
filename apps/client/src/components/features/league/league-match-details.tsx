@@ -3,7 +3,7 @@ import { Check, Edit } from "lucide-react";
 import ConfirmationDialog from "../../ui/confirmation-dialog";
 import FootballField from "../football-field/football-field";
 import Loading from "../../ui/loading";
-import { LeagueMatchResponse, MatchResponse, Role } from "@repo/logger";
+import { LeagueMatchResponse, MatchResponse, Role } from "@repo/shared-types";
 
 interface LeagueMatchDetailsProps {
   role: Role;

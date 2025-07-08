@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
-import { MatchVotes } from "@repo/logger";
+import { MatchVotes } from "@repo/shared-types";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchPendingVotes = async (matchId: string): Promise<MatchVotes> => {
