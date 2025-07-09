@@ -1,6 +1,7 @@
 import { RefreshToken, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const REFRESH_TOKEN_WITH_USER_INCLUDE = {
   user: {
@@ -26,8 +27,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.findUnique({ where: { id } });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.findById:", error);
-      throw new Error("Failed to fetch refresh token");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.findById");
     }
   }
 
@@ -42,8 +42,10 @@ export class RefreshTokenRepo {
         include: REFRESH_TOKEN_WITH_USER_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.findByIdWithUser:", error);
-      throw new Error("Failed to fetch refresh token with user");
+      throw PrismaErrorHandler.handle(
+        error,
+        "RefreshTokenRepo.findByIdWithUser"
+      );
     }
   }
 
@@ -54,8 +56,7 @@ export class RefreshTokenRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.findAll:", error);
-      throw new Error("Failed to fetch refresh tokens");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.findAll");
     }
   }
 
@@ -69,8 +70,7 @@ export class RefreshTokenRepo {
         where: { token },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.findByToken:", error);
-      throw new Error("Failed to fetch refresh token by token");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.findByToken");
     }
   }
 
@@ -85,8 +85,10 @@ export class RefreshTokenRepo {
         include: REFRESH_TOKEN_WITH_USER_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.findByTokenWithUser:", error);
-      throw new Error("Failed to fetch refresh token with user by token");
+      throw PrismaErrorHandler.handle(
+        error,
+        "RefreshTokenRepo.findByTokenWithUser"
+      );
     }
   }
 
@@ -101,8 +103,7 @@ export class RefreshTokenRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.findByUserId:", error);
-      throw new Error("Failed to fetch refresh tokens by user");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.findByUserId");
     }
   }
 
@@ -120,8 +121,10 @@ export class RefreshTokenRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.findActiveByUserId:", error);
-      throw new Error("Failed to fetch active refresh tokens by user");
+      throw PrismaErrorHandler.handle(
+        error,
+        "RefreshTokenRepo.findActiveByUserId"
+      );
     }
   }
 
@@ -134,8 +137,7 @@ export class RefreshTokenRepo {
         },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.findExpired:", error);
-      throw new Error("Failed to fetch expired refresh tokens");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.findExpired");
     }
   }
 
@@ -149,8 +151,7 @@ export class RefreshTokenRepo {
         where: { user_id: userId },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.countByUserId:", error);
-      throw new Error("Failed to count refresh tokens by user");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.countByUserId");
     }
   }
 
@@ -163,8 +164,7 @@ export class RefreshTokenRepo {
         },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.countActive:", error);
-      throw new Error("Failed to count active refresh tokens");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.countActive");
     }
   }
 
@@ -180,8 +180,10 @@ export class RefreshTokenRepo {
       });
       return refreshToken?.user_id || null;
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.getUserIdByToken:", error);
-      throw new Error("Failed to get user ID by token");
+      throw PrismaErrorHandler.handle(
+        error,
+        "RefreshTokenRepo.getUserIdByToken"
+      );
     }
   }
 
@@ -200,8 +202,7 @@ export class RefreshTokenRepo {
       });
       return refreshToken !== null;
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.isTokenValid:", error);
-      throw new Error("Failed to check if token is valid");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.isTokenValid");
     }
   }
 
@@ -213,8 +214,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.create({ data });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.create:", error);
-      throw new Error("Failed to create refresh token");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.create");
     }
   }
 
@@ -227,8 +227,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.update({ where: { id }, data });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.update:", error);
-      throw new Error("Failed to update refresh token");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.update");
     }
   }
 
@@ -241,8 +240,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.update({ where: { token }, data });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.updateByToken:", error);
-      throw new Error("Failed to update refresh token by token");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.updateByToken");
     }
   }
 
@@ -257,8 +255,7 @@ export class RefreshTokenRepo {
         data: { last_used_at: new Date() },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.updateLastUsed:", error);
-      throw new Error("Failed to update last used timestamp");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.updateLastUsed");
     }
   }
 
@@ -270,8 +267,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.delete:", error);
-      throw new Error("Failed to delete refresh token");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.delete");
     }
   }
 
@@ -294,8 +290,7 @@ export class RefreshTokenRepo {
         where: { id: refreshToken.id },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.deleteByToken:", error);
-      throw new Error("Failed to delete refresh token by token");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.deleteByToken");
     }
   }
 
@@ -309,8 +304,7 @@ export class RefreshTokenRepo {
         where: { user_id: userId },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.deleteByUserId:", error);
-      throw new Error("Failed to delete refresh tokens by user");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.deleteByUserId");
     }
   }
 
@@ -325,8 +319,7 @@ export class RefreshTokenRepo {
         },
       });
     } catch (error) {
-      console.error("Error in RefreshTokenRepo.deleteExpired:", error);
-      throw new Error("Failed to delete expired refresh tokens");
+      throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.deleteExpired");
     }
   }
 }

@@ -1,6 +1,7 @@
 import { Dashboard, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const DASHBOARD_BASIC_INCLUDE = {
   admin: true,
@@ -62,8 +63,7 @@ export class DashboardRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.findUnique({ where: { id } });
     } catch (error) {
-      console.error("Error in DashboardRepo.findById:", error);
-      throw new Error("Failed to fetch dashboard");
+      throw PrismaErrorHandler.handle(error, "DashboardRepo.findById");
     }
   }
 
@@ -78,8 +78,7 @@ export class DashboardRepo {
         include: DASHBOARD_BASIC_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in DashboardRepo.findByIdWithBasic:", error);
-      throw new Error("Failed to fetch dashboard with basic details");
+      throw PrismaErrorHandler.handle(error, "DashboardRepo.findByIdWithBasic");
     }
   }
 
@@ -94,8 +93,10 @@ export class DashboardRepo {
         include: DASHBOARD_DETAILED_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in DashboardRepo.findByIdWithDetails:", error);
-      throw new Error("Failed to fetch dashboard with details");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardRepo.findByIdWithDetails"
+      );
     }
   }
 
@@ -110,8 +111,7 @@ export class DashboardRepo {
         include: DASHBOARD_DETAILED_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in DashboardRepo.findByAdminId:", error);
-      throw new Error("Failed to fetch dashboard by admin");
+      throw PrismaErrorHandler.handle(error, "DashboardRepo.findByAdminId");
     }
   }
 
@@ -129,8 +129,10 @@ export class DashboardRepo {
       });
       return competition?.dashboard || null;
     } catch (error) {
-      console.error("Error in DashboardRepo.findByCompetitionId:", error);
-      throw new Error("Failed to fetch dashboard by competition");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardRepo.findByCompetitionId"
+      );
     }
   }
 
@@ -141,8 +143,7 @@ export class DashboardRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in DashboardRepo.findAll:", error);
-      throw new Error("Failed to fetch dashboards");
+      throw PrismaErrorHandler.handle(error, "DashboardRepo.findAll");
     }
   }
 
@@ -154,8 +155,7 @@ export class DashboardRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.create({ data });
     } catch (error) {
-      console.error("Error in DashboardRepo.create:", error);
-      throw new Error("Failed to create dashboard");
+      throw PrismaErrorHandler.handle(error, "DashboardRepo.create");
     }
   }
 
@@ -168,8 +168,7 @@ export class DashboardRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.update({ where: { id }, data });
     } catch (error) {
-      console.error("Error in DashboardRepo.update:", error);
-      throw new Error("Failed to update dashboard");
+      throw PrismaErrorHandler.handle(error, "DashboardRepo.update");
     }
   }
 
@@ -178,8 +177,7 @@ export class DashboardRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in DashboardRepo.delete:", error);
-      throw new Error("Failed to delete dashboard");
+      throw PrismaErrorHandler.handle(error, "DashboardRepo.delete");
     }
   }
 }

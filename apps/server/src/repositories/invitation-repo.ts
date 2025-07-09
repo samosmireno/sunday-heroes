@@ -1,6 +1,7 @@
 import { DashboardInvitation, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const INVITATION_WITH_DETAILS_INCLUDE = {
   invited_by: true,
@@ -75,8 +76,7 @@ export class InvitationRepo {
         where: { id },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.findById:", error);
-      throw new Error("Failed to fetch invitation");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.findById");
     }
   }
 
@@ -91,8 +91,10 @@ export class InvitationRepo {
         include: INVITATION_WITH_DETAILS_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.findByIdWithDetails:", error);
-      throw new Error("Failed to fetch invitation with details");
+      throw PrismaErrorHandler.handle(
+        error,
+        "InvitationRepo.findByIdWithDetails"
+      );
     }
   }
 
@@ -103,8 +105,7 @@ export class InvitationRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.findAll:", error);
-      throw new Error("Failed to fetch invitations");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.findAll");
     }
   }
 
@@ -119,8 +120,7 @@ export class InvitationRepo {
         include: INVITATION_WITH_DETAILS_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.findByToken:", error);
-      throw new Error("Failed to fetch invitation by token");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.findByToken");
     }
   }
 
@@ -145,8 +145,10 @@ export class InvitationRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.findByDashboardPlayerId:", error);
-      throw new Error("Failed to fetch invitations by dashboard player");
+      throw PrismaErrorHandler.handle(
+        error,
+        "InvitationRepo.findByDashboardPlayerId"
+      );
     }
   }
 
@@ -171,8 +173,7 @@ export class InvitationRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.findByEmail:", error);
-      throw new Error("Failed to fetch invitations by email");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.findByEmail");
     }
   }
 
@@ -192,8 +193,10 @@ export class InvitationRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.findByDashboardId:", error);
-      throw new Error("Failed to fetch invitations by dashboard");
+      throw PrismaErrorHandler.handle(
+        error,
+        "InvitationRepo.findByDashboardId"
+      );
     }
   }
 
@@ -209,8 +212,7 @@ export class InvitationRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.findByUserId:", error);
-      throw new Error("Failed to fetch invitations by user");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.findByUserId");
     }
   }
 
@@ -228,8 +230,10 @@ export class InvitationRepo {
         },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.countByDashboardId:", error);
-      throw new Error("Failed to count invitations by dashboard");
+      throw PrismaErrorHandler.handle(
+        error,
+        "InvitationRepo.countByDashboardId"
+      );
     }
   }
 
@@ -243,8 +247,7 @@ export class InvitationRepo {
         where: { invited_by_id: userId },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.countByUserId:", error);
-      throw new Error("Failed to count invitations by user");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.countByUserId");
     }
   }
 
@@ -265,8 +268,7 @@ export class InvitationRepo {
       if (!invitation) return false;
       return invitation.used_at === null && invitation.expires_at > new Date();
     } catch (error) {
-      console.error("Error in InvitationRepo.isTokenActive:", error);
-      throw new Error("Failed to check if token is active");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.isTokenActive");
     }
   }
 
@@ -284,8 +286,7 @@ export class InvitationRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.create({ data });
     } catch (error) {
-      console.error("Error in InvitationRepo.create:", error);
-      throw new Error("Failed to create invitation");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.create");
     }
   }
 
@@ -301,8 +302,7 @@ export class InvitationRepo {
         data,
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.update:", error);
-      throw new Error("Failed to update invitation");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.update");
     }
   }
 
@@ -318,8 +318,7 @@ export class InvitationRepo {
         data,
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.updateByToken:", error);
-      throw new Error("Failed to update invitation by token");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.updateByToken");
     }
   }
 
@@ -331,8 +330,7 @@ export class InvitationRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in InvitationRepo.delete:", error);
-      throw new Error("Failed to delete invitation");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.delete");
     }
   }
 
@@ -346,8 +344,7 @@ export class InvitationRepo {
         where: { invite_token: token },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.deleteByToken:", error);
-      throw new Error("Failed to delete invitation by token");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.deleteByToken");
     }
   }
 
@@ -366,8 +363,7 @@ export class InvitationRepo {
         },
       });
     } catch (error) {
-      console.error("Error in InvitationRepo.markAsUsed:", error);
-      throw new Error("Failed to mark invitation as used");
+      throw PrismaErrorHandler.handle(error, "InvitationRepo.markAsUsed");
     }
   }
 }

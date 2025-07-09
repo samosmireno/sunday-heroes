@@ -1,6 +1,7 @@
 import { Competition, Prisma } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaTransaction } from "../../types";
+import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
 const COMPETITION_BASIC_INCLUDE = {
   matches: true,
@@ -69,8 +70,7 @@ export class CompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.findUnique({ where: { id } });
     } catch (error) {
-      console.error("Error in CompetitionRepo.findById:", error);
-      throw new Error("Failed to fetch competition");
+      throw PrismaErrorHandler.handle(error, "CompetitionRepo.findById");
     }
   }
 
@@ -85,8 +85,10 @@ export class CompetitionRepo {
         include: COMPETITION_DETAILED_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in CompetitionRepo.findByIdWithDetails:", error);
-      throw new Error("Failed to fetch competition with details");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.findByIdWithDetails"
+      );
     }
   }
 
@@ -97,8 +99,7 @@ export class CompetitionRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in CompetitionRepo.findAll:", error);
-      throw new Error("Failed to fetch competitions");
+      throw PrismaErrorHandler.handle(error, "CompetitionRepo.findAll");
     }
   }
 
@@ -120,8 +121,10 @@ export class CompetitionRepo {
         orderBy: { matches: { _count: "desc" } },
       });
     } catch (error) {
-      console.error("Error in CompetitionRepo.findByDashboardId:", error);
-      throw new Error("Failed to fetch competitions by dashboard");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.findByDashboardId"
+      );
     }
   }
 
@@ -133,8 +136,7 @@ export class CompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.create({ data });
     } catch (error) {
-      console.error("Error in CompetitionRepo.create:", error);
-      throw new Error("Failed to create competition");
+      throw PrismaErrorHandler.handle(error, "CompetitionRepo.create");
     }
   }
 
@@ -147,8 +149,7 @@ export class CompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.update({ where: { id }, data });
     } catch (error) {
-      console.error("Error in CompetitionRepo.update:", error);
-      throw new Error("Failed to update competition");
+      throw PrismaErrorHandler.handle(error, "CompetitionRepo.update");
     }
   }
 
@@ -160,8 +161,7 @@ export class CompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in CompetitionRepo.delete:", error);
-      throw new Error("Failed to delete competition");
+      throw PrismaErrorHandler.handle(error, "CompetitionRepo.delete");
     }
   }
 
@@ -180,8 +180,10 @@ export class CompetitionRepo {
         include: COMPETITION_DETAILED_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in CompetitionRepo.resetCompetition:", error);
-      throw new Error("Failed to reset competition");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.resetCompetition"
+      );
     }
   }
 }

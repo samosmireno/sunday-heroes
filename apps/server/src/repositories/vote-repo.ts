@@ -1,6 +1,7 @@
 import { PlayerVote, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const VOTE_WITH_DETAILS_INCLUDE = {
   match: {
@@ -56,8 +57,7 @@ export class VoteRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.findUnique({ where: { id } });
     } catch (error) {
-      console.error("Error in VoteRepo.findById:", error);
-      throw new Error("Failed to fetch vote");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.findById");
     }
   }
 
@@ -72,8 +72,7 @@ export class VoteRepo {
         include: VOTE_WITH_DETAILS_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in VoteRepo.findByIdWithDetails:", error);
-      throw new Error("Failed to fetch vote with details");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.findByIdWithDetails");
     }
   }
 
@@ -84,8 +83,7 @@ export class VoteRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in VoteRepo.findAll:", error);
-      throw new Error("Failed to fetch votes");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.findAll");
     }
   }
 
@@ -104,8 +102,7 @@ export class VoteRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in VoteRepo.findByMatchId:", error);
-      throw new Error("Failed to fetch votes by match");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.findByMatchId");
     }
   }
 
@@ -124,8 +121,7 @@ export class VoteRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in VoteRepo.findByVoterId:", error);
-      throw new Error("Failed to fetch votes by voter");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.findByVoterId");
     }
   }
 
@@ -144,8 +140,7 @@ export class VoteRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in VoteRepo.findByVoterAndMatch:", error);
-      throw new Error("Failed to fetch votes by voter and match");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.findByVoterAndMatch");
     }
   }
 
@@ -163,8 +158,7 @@ export class VoteRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in VoteRepo.findByMatchIds:", error);
-      throw new Error("Failed to fetch votes by match IDs");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.findByMatchIds");
     }
   }
 
@@ -178,8 +172,7 @@ export class VoteRepo {
         where: { match_id: matchId },
       });
     } catch (error) {
-      console.error("Error in VoteRepo.countByMatch:", error);
-      throw new Error("Failed to count votes by match");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.countByMatch");
     }
   }
 
@@ -193,8 +186,7 @@ export class VoteRepo {
         where: { voter_id: voterId },
       });
     } catch (error) {
-      console.error("Error in VoteRepo.countByVoter:", error);
-      throw new Error("Failed to count votes by voter");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.countByVoter");
     }
   }
 
@@ -212,8 +204,7 @@ export class VoteRepo {
         },
       });
     } catch (error) {
-      console.error("Error in VoteRepo.countByVoterAndMatch:", error);
-      throw new Error("Failed to count votes by voter and match");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.countByVoterAndMatch");
     }
   }
 
@@ -230,8 +221,10 @@ export class VoteRepo {
       });
       return voters.map((v) => v.voter_id);
     } catch (error) {
-      console.error("Error in VoteRepo.getDistinctVotersByMatch:", error);
-      throw new Error("Failed to get distinct voters by match");
+      throw PrismaErrorHandler.handle(
+        error,
+        "VoteRepo.getDistinctVotersByMatch"
+      );
     }
   }
 
@@ -243,8 +236,7 @@ export class VoteRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.create({ data });
     } catch (error) {
-      console.error("Error in VoteRepo.create:", error);
-      throw new Error("Failed to create vote");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.create");
     }
   }
 
@@ -256,8 +248,7 @@ export class VoteRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.createMany({ data });
     } catch (error) {
-      console.error("Error in VoteRepo.createMany:", error);
-      throw new Error("Failed to create votes");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.createMany");
     }
   }
 
@@ -270,8 +261,7 @@ export class VoteRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.update({ where: { id }, data });
     } catch (error) {
-      console.error("Error in VoteRepo.update:", error);
-      throw new Error("Failed to update vote");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.update");
     }
   }
 
@@ -280,8 +270,7 @@ export class VoteRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in VoteRepo.delete:", error);
-      throw new Error("Failed to delete vote");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.delete");
     }
   }
 
@@ -295,8 +284,7 @@ export class VoteRepo {
         where: { match_id: matchId },
       });
     } catch (error) {
-      console.error("Error in VoteRepo.deleteByMatch:", error);
-      throw new Error("Failed to delete votes by match");
+      throw PrismaErrorHandler.handle(error, "VoteRepo.deleteByMatch");
     }
   }
 }

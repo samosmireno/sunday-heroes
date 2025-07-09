@@ -1,6 +1,7 @@
 import { Prisma, VotingStatus } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaTransaction } from "../../types";
+import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
 const COMPETITION_PENDING_VOTES_SELECT = {
   id: true,
@@ -63,11 +64,10 @@ export class CompetitionVotingRepo {
         select: COMPETITION_PENDING_VOTES_SELECT,
       });
     } catch (error) {
-      console.error(
-        "Error in CompetitionVotingRepo.findByIdWithPendingVotes:",
-        error
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionVotingRepo.findByIdWithPendingVotes"
       );
-      throw new Error("Failed to fetch competition with pending votes");
     }
   }
 
@@ -89,22 +89,32 @@ export class CompetitionVotingRepo {
       });
       return competition;
     } catch (error) {
-      console.error("Error in CompetitionVotingRepo.getVotingSettings:", error);
-      throw new Error("Failed to get voting settings");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionVotingRepo.getVotingSettings"
+      );
     }
   }
 
   static async getVotingStatus(
-    competition_id: string
+    competition_id: string,
+    tx?: PrismaTransaction
   ): Promise<VotingStatus | undefined> {
-    const competition = await prisma.competition.findUnique({
-      where: { id: competition_id },
-      select: {
-        voting_enabled: true,
-      },
-    });
-    return competition?.voting_enabled
-      ? VotingStatus.OPEN
-      : VotingStatus.CLOSED;
+    try {
+      const competition = await prisma.competition.findUnique({
+        where: { id: competition_id },
+        select: {
+          voting_enabled: true,
+        },
+      });
+      return competition?.voting_enabled
+        ? VotingStatus.OPEN
+        : VotingStatus.CLOSED;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionVotingRepo.getVotingStatus"
+      );
+    }
   }
 }

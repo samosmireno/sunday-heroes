@@ -1,6 +1,7 @@
 import { Team, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const TEAM_WITH_COMPETITIONS_INCLUDE = {
   team_competitions: true,
@@ -41,8 +42,7 @@ export class TeamRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.team.findUnique({ where: { id } });
     } catch (error) {
-      console.error("Error in TeamRepo.findById:", error);
-      throw new Error("Failed to fetch team");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.findById");
     }
   }
 
@@ -64,8 +64,7 @@ export class TeamRepo {
 
       return team;
     } catch (error) {
-      console.error("Error in TeamRepo.findByName:", error);
-      throw new Error("Failed to fetch team by name");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.findByName");
     }
   }
 
@@ -76,8 +75,7 @@ export class TeamRepo {
         orderBy: { name: "asc" },
       });
     } catch (error) {
-      console.error("Error in TeamRepo.findAll:", error);
-      throw new Error("Failed to fetch teams");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.findAll");
     }
   }
 
@@ -110,8 +108,7 @@ export class TeamRepo {
         orderBy: { name: "asc" },
       });
     } catch (error) {
-      console.error("Error in TeamRepo.findByCompetitionId:", error);
-      throw new Error("Failed to fetch teams by competition");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.findByCompetitionId");
     }
   }
 
@@ -123,8 +120,7 @@ export class TeamRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.team.create({ data });
     } catch (error) {
-      console.error("Error in TeamRepo.create:", error);
-      throw new Error("Failed to create team");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.create");
     }
   }
 
@@ -137,8 +133,7 @@ export class TeamRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.team.update({ where: { id }, data });
     } catch (error) {
-      console.error("Error in TeamRepo.update:", error);
-      throw new Error("Failed to update team");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.update");
     }
   }
 
@@ -147,8 +142,7 @@ export class TeamRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.team.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in TeamRepo.delete:", error);
-      throw new Error("Failed to delete team");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.delete");
     }
   }
 
@@ -164,8 +158,7 @@ export class TeamRepo {
         },
       });
     } catch (error) {
-      console.error("Error in TeamRepo.deleteMany:", error);
-      throw new Error("Failed to delete teams");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.deleteMany");
     }
   }
 
@@ -184,8 +177,7 @@ export class TeamRepo {
       });
       return !existing;
     } catch (error) {
-      console.error("Error in TeamRepo.checkNameUnique:", error);
-      throw new Error("Failed to check team name uniqueness");
+      throw PrismaErrorHandler.handle(error, "TeamRepo.checkNameUnique");
     }
   }
 
@@ -217,8 +209,10 @@ export class TeamRepo {
       });
       return !existing;
     } catch (error) {
-      console.error("Error in TeamRepo.checkNameUniqueInCompetition:", error);
-      throw new Error("Failed to check team name uniqueness");
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamRepo.checkNameUniqueInCompetition"
+      );
     }
   }
 
@@ -233,8 +227,7 @@ export class TeamRepo {
       }
       return team.id;
     } catch (error) {
-      console.error("Error in TeamRepo.getTeamIDFromName:", error);
-      throw error;
+      throw PrismaErrorHandler.handle(error, "TeamRepo.getTeamIDFromName");
     }
   }
 
@@ -243,16 +236,20 @@ export class TeamRepo {
     dashboardId: string,
     tx?: PrismaTransaction
   ): Promise<Team | null> {
-    const prismaClient = tx || prisma;
-    return await prismaClient.team.findFirst({
-      where: {
-        name: { equals: name.trim(), mode: "insensitive" },
-        team_competitions: {
-          some: {
-            competition: { dashboard_id: dashboardId },
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.team.findFirst({
+        where: {
+          name: { equals: name.trim(), mode: "insensitive" },
+          team_competitions: {
+            some: {
+              competition: { dashboard_id: dashboardId },
+            },
           },
         },
-      },
-    });
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "TeamRepo.findByNameInDashboard");
+    }
   }
 }

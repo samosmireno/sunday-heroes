@@ -1,6 +1,7 @@
 import { User, Role, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const USER_WITH_DASHBOARD_INCLUDE = {
   dashboard: true,
@@ -19,8 +20,7 @@ export class UserRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.user.findUnique({ where: { id } });
     } catch (error) {
-      console.error("Error in UserRepo.findById:", error);
-      throw new Error("Failed to fetch user");
+      throw PrismaErrorHandler.handle(error, "UserRepo.findById");
     }
   }
 
@@ -35,8 +35,7 @@ export class UserRepo {
         include: USER_WITH_DASHBOARD_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in UserRepo.findByIdWithDashboard:", error);
-      throw new Error("Failed to fetch user with dashboard");
+      throw PrismaErrorHandler.handle(error, "UserRepo.findByIdWithDashboard");
     }
   }
 
@@ -48,8 +47,7 @@ export class UserRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.user.findUnique({ where: { email } });
     } catch (error) {
-      console.error("Error in UserRepo.findByEmail:", error);
-      throw new Error("Failed to fetch user by email");
+      throw PrismaErrorHandler.handle(error, "UserRepo.findByEmail");
     }
   }
 
@@ -60,8 +58,7 @@ export class UserRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in UserRepo.findAll:", error);
-      throw new Error("Failed to fetch users");
+      throw PrismaErrorHandler.handle(error, "UserRepo.findAll");
     }
   }
 
@@ -73,8 +70,7 @@ export class UserRepo {
         orderBy: { created_at: "desc" },
       });
     } catch (error) {
-      console.error("Error in UserRepo.findByRole:", error);
-      throw new Error("Failed to fetch users by role");
+      throw PrismaErrorHandler.handle(error, "UserRepo.findByRole");
     }
   }
 
@@ -90,8 +86,7 @@ export class UserRepo {
       });
       return user?.role || null;
     } catch (error) {
-      console.error("Error in UserRepo.getUserRole:", error);
-      throw new Error("Failed to get user role");
+      throw PrismaErrorHandler.handle(error, "UserRepo.getUserRole");
     }
   }
 
@@ -111,8 +106,7 @@ export class UserRepo {
       });
       return user?.dashboard?.id || null;
     } catch (error) {
-      console.error("Error in UserRepo.getDashboardId:", error);
-      throw new Error("Failed to get user dashboard ID");
+      throw PrismaErrorHandler.handle(error, "UserRepo.getDashboardId");
     }
   }
 
@@ -124,8 +118,7 @@ export class UserRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.user.create({ data });
     } catch (error) {
-      console.error("Error in UserRepo.create:", error);
-      throw new Error("Failed to create user");
+      throw PrismaErrorHandler.handle(error, "UserRepo.create");
     }
   }
 
@@ -138,8 +131,7 @@ export class UserRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.user.update({ where: { id }, data });
     } catch (error) {
-      console.error("Error in UserRepo.update:", error);
-      throw new Error("Failed to update user");
+      throw PrismaErrorHandler.handle(error, "UserRepo.update");
     }
   }
 
@@ -148,8 +140,7 @@ export class UserRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.user.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in UserRepo.delete:", error);
-      throw new Error("Failed to delete user");
+      throw PrismaErrorHandler.handle(error, "UserRepo.delete");
     }
   }
 }

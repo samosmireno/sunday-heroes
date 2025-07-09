@@ -1,6 +1,7 @@
 import prisma from "./prisma-client";
 import { Prisma, TeamCompetition } from "@prisma/client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 export type TeamCompetitionWithDetails = Prisma.TeamCompetitionGetPayload<{
   include: {
@@ -10,19 +11,28 @@ export type TeamCompetitionWithDetails = Prisma.TeamCompetitionGetPayload<{
 
 export class TeamCompetitionRepo {
   static async getTeamsFromCompetitionId(
-    competition_id: string
+    competition_id: string,
+    tx?: PrismaTransaction
   ): Promise<string[]> {
-    const teams = await prisma.teamCompetition.findMany({
-      where: { competition_id },
-      select: {
-        team: {
-          select: {
-            name: true,
+    try {
+      const prismaClient = tx || prisma;
+      const teams = await prisma.teamCompetition.findMany({
+        where: { competition_id },
+        select: {
+          team: {
+            select: {
+              name: true,
+            },
           },
         },
-      },
-    });
-    return teams.map((tc) => tc.team.name);
+      });
+      return teams.map((tc) => tc.team.name);
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.getTeamsFromCompetitionId"
+      );
+    }
   }
 
   static async getTeamCompetitionStats(
@@ -30,15 +40,22 @@ export class TeamCompetitionRepo {
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<TeamCompetition | null> {
-    const prismaClient = tx || prisma;
-    return await prismaClient.teamCompetition.findUnique({
-      where: {
-        team_id_competition_id: {
-          team_id: teamId,
-          competition_id: competitionId,
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.teamCompetition.findUnique({
+        where: {
+          team_id_competition_id: {
+            team_id: teamId,
+            competition_id: competitionId,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.getTeamCompetitionStats"
+      );
+    }
   }
 
   static async incrementTeamStats(
@@ -54,33 +71,40 @@ export class TeamCompetitionRepo {
     },
     tx?: PrismaTransaction
   ): Promise<TeamCompetition> {
-    const prismaClient = tx || prisma;
+    try {
+      const prismaClient = tx || prisma;
 
-    const current = await this.getTeamCompetitionStats(
-      teamId,
-      competitionId,
-      tx
-    );
-    if (!current) {
-      throw new Error("Team competition record not found");
-    }
+      const current = await this.getTeamCompetitionStats(
+        teamId,
+        competitionId,
+        tx
+      );
+      if (!current) {
+        throw new Error("Team competition record not found");
+      }
 
-    return await prismaClient.teamCompetition.update({
-      where: {
-        team_id_competition_id: {
-          team_id: teamId,
-          competition_id: competitionId,
+      return await prismaClient.teamCompetition.update({
+        where: {
+          team_id_competition_id: {
+            team_id: teamId,
+            competition_id: competitionId,
+          },
         },
-      },
-      data: {
-        points: current.points + (updates.points || 0),
-        wins: current.wins + (updates.wins || 0),
-        draws: current.draws + (updates.draws || 0),
-        losses: current.losses + (updates.losses || 0),
-        goals_for: current.goals_for + (updates.goals_for || 0),
-        goals_against: current.goals_against + (updates.goals_against || 0),
-      },
-    });
+        data: {
+          points: current.points + (updates.points || 0),
+          wins: current.wins + (updates.wins || 0),
+          draws: current.draws + (updates.draws || 0),
+          losses: current.losses + (updates.losses || 0),
+          goals_for: current.goals_for + (updates.goals_for || 0),
+          goals_against: current.goals_against + (updates.goals_against || 0),
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.incrementTeamStats"
+      );
+    }
   }
 
   static async resetTeamStats(
@@ -88,58 +112,79 @@ export class TeamCompetitionRepo {
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<TeamCompetition> {
-    const prismaClient = tx || prisma;
-    return await prismaClient.teamCompetition.update({
-      where: {
-        team_id_competition_id: {
-          team_id: teamId,
-          competition_id: competitionId,
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.teamCompetition.update({
+        where: {
+          team_id_competition_id: {
+            team_id: teamId,
+            competition_id: competitionId,
+          },
         },
-      },
-      data: {
-        points: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        goals_for: 0,
-        goals_against: 0,
-      },
-    });
+        data: {
+          points: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          goals_for: 0,
+          goals_against: 0,
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.resetTeamStats"
+      );
+    }
   }
 
   static async getAllTeamsInCompetition(
     competitionId: string,
     tx?: PrismaTransaction
   ) {
-    const prismaClient = tx || prisma;
-    return await prismaClient.teamCompetition.findMany({
-      where: { competition_id: competitionId },
-      include: {
-        team: {
-          include: {
-            team_rosters: {
-              where: { competition_id: competitionId },
-              include: {
-                dashboard_player: true,
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.teamCompetition.findMany({
+        where: { competition_id: competitionId },
+        include: {
+          team: {
+            include: {
+              team_rosters: {
+                where: { competition_id: competitionId },
+                include: {
+                  dashboard_player: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.getAllTeamsInCompetition"
+      );
+    }
   }
 
   static async getTeamCompetitionsForLeague(
     competitionId: string,
     tx?: PrismaTransaction
   ) {
-    const prismaClient = tx || prisma;
-    return await prismaClient.teamCompetition.findMany({
-      where: { competition_id: competitionId },
-      include: {
-        team: true,
-      },
-    });
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.teamCompetition.findMany({
+        where: { competition_id: competitionId },
+        include: {
+          team: true,
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.getTeamCompetitionsForLeague"
+      );
+    }
   }
 
   static async createTeamCompetition(
@@ -147,19 +192,26 @@ export class TeamCompetitionRepo {
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<TeamCompetition> {
-    const prismaClient = tx || prisma;
-    return await prismaClient.teamCompetition.create({
-      data: {
-        team_id: teamId,
-        competition_id: competitionId,
-        points: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        goals_for: 0,
-        goals_against: 0,
-      },
-    });
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.teamCompetition.create({
+        data: {
+          team_id: teamId,
+          competition_id: competitionId,
+          points: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          goals_for: 0,
+          goals_against: 0,
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.createTeamCompetition"
+      );
+    }
   }
 
   static async deleteTeamFromCompetition(
@@ -167,15 +219,22 @@ export class TeamCompetitionRepo {
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<void> {
-    const prismaClient = tx || prisma;
-    await prismaClient.teamCompetition.delete({
-      where: {
-        team_id_competition_id: {
-          team_id: teamId,
-          competition_id: competitionId,
+    try {
+      const prismaClient = tx || prisma;
+      await prismaClient.teamCompetition.delete({
+        where: {
+          team_id_competition_id: {
+            team_id: teamId,
+            competition_id: competitionId,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.deleteTeamFromCompetition"
+      );
+    }
   }
 
   static async addTeamToCompetition(
@@ -196,8 +255,10 @@ export class TeamCompetitionRepo {
         },
       });
     } catch (error) {
-      console.error("Error in TeamRepo.addTeamToCompetition:", error);
-      throw new Error("Failed to add team to competition");
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.addTeamToCompetition"
+      );
     }
   }
 
@@ -205,18 +266,25 @@ export class TeamCompetitionRepo {
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<void> {
-    const prismaClient = tx || prisma;
-    await prismaClient.teamCompetition.updateMany({
-      where: { competition_id: competitionId },
-      data: {
-        points: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        goals_for: 0,
-        goals_against: 0,
-      },
-    });
+    try {
+      const prismaClient = tx || prisma;
+      await prismaClient.teamCompetition.updateMany({
+        where: { competition_id: competitionId },
+        data: {
+          points: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          goals_for: 0,
+          goals_against: 0,
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.bulkResetStats"
+      );
+    }
   }
 
   static async findByTeamAndCompetition(
@@ -224,18 +292,25 @@ export class TeamCompetitionRepo {
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<TeamCompetition | null> {
-    const prismaClient = tx || prisma;
-    return await prismaClient.teamCompetition.findUnique({
-      where: {
-        team_id_competition_id: {
-          team_id: teamId,
-          competition_id: competitionId,
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.teamCompetition.findUnique({
+        where: {
+          team_id_competition_id: {
+            team_id: teamId,
+            competition_id: competitionId,
+          },
         },
-      },
-      include: {
-        team: true,
-      },
-    });
+        include: {
+          team: true,
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.findByTeamAndCompetition"
+      );
+    }
   }
 
   static async updateTeamId(
@@ -244,17 +319,24 @@ export class TeamCompetitionRepo {
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<void> {
-    const prismaClient = tx || prisma;
-    await prismaClient.teamCompetition.update({
-      where: {
-        team_id_competition_id: {
-          team_id: oldTeamId,
-          competition_id: competitionId,
+    try {
+      const prismaClient = tx || prisma;
+      await prismaClient.teamCompetition.update({
+        where: {
+          team_id_competition_id: {
+            team_id: oldTeamId,
+            competition_id: competitionId,
+          },
         },
-      },
-      data: {
-        team_id: newTeamId,
-      },
-    });
+        data: {
+          team_id: newTeamId,
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.updateTeamId"
+      );
+    }
   }
 }

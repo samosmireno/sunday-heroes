@@ -1,6 +1,7 @@
 import { CompetitionType } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaTransaction } from "../../types";
+import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
 export class CompetitionAuthRepo {
   static async getCompetitionType(
@@ -15,8 +16,10 @@ export class CompetitionAuthRepo {
       });
       return competition?.type || null;
     } catch (error) {
-      console.error("Error in CompetitionAuthRepo.getCompetitionType:", error);
-      throw new Error("Failed to get competition type");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionAuthRepo.getCompetitionType"
+      );
     }
   }
 
@@ -38,8 +41,10 @@ export class CompetitionAuthRepo {
       });
       return competition?.dashboard.admin_id || null;
     } catch (error) {
-      console.error("Error in CompetitionAuthRepo.getDashboardAdmin:", error);
-      throw new Error("Failed to get dashboard admin");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionAuthRepo.getDashboardAdmin"
+      );
     }
   }
 
@@ -63,26 +68,30 @@ export class CompetitionAuthRepo {
         .map((m) => m.dashboard_player.user_id)
         .filter((userId): userId is string => userId !== null);
     } catch (error) {
-      console.error("Error in CompetitionAuthRepo.getModerators:", error);
-      throw new Error("Failed to get moderators");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionAuthRepo.getModerators"
+      );
     }
   }
 
   static async isUserAdmin(
     competitionId: string,
-    userId: string
+    userId: string,
+    tx?: PrismaTransaction
   ): Promise<boolean> {
-    const adminId = await this.getDashboardAdmin(competitionId);
+    const adminId = await this.getDashboardAdmin(competitionId, tx);
     return adminId === userId;
   }
 
   static async isUserAdminOrModerator(
     competitionId: string,
-    userId: string
+    userId: string,
+    tx?: PrismaTransaction
   ): Promise<boolean> {
     const [adminId, moderatorIds] = await Promise.all([
-      this.getDashboardAdmin(competitionId),
-      this.getModerators(competitionId),
+      this.getDashboardAdmin(competitionId, tx),
+      this.getModerators(competitionId, tx),
     ]);
     return adminId === userId || moderatorIds.includes(userId);
   }

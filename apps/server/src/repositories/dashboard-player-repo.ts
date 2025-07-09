@@ -1,6 +1,7 @@
 import { DashboardPlayer, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const DASHBOARD_PLAYER_BASIC_INCLUDE = {
   user: {
@@ -69,8 +70,7 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findUnique({ where: { id } });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.findById:", error);
-      throw new Error("Failed to fetch dashboard player");
+      throw PrismaErrorHandler.handle(error, "DashboardPlayerRepo.findById");
     }
   }
 
@@ -85,11 +85,10 @@ export class DashboardPlayerRepo {
         include: DASHBOARD_PLAYER_BASIC_INCLUDE,
       });
     } catch (error) {
-      console.error(
-        "Error in DashboardPlayerRepo.findByIdWithUserDetails:",
-        error
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByIdWithUserDetails"
       );
-      throw new Error("Failed to fetch dashboard player with user details");
     }
   }
 
@@ -104,8 +103,10 @@ export class DashboardPlayerRepo {
         include: DASHBOARD_PLAYER_WITH_ADMIN_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.findByIdWithAdmin:", error);
-      throw new Error("Failed to fetch dashboard player with admin details");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByIdWithAdmin"
+      );
     }
   }
 
@@ -116,8 +117,7 @@ export class DashboardPlayerRepo {
         orderBy: { nickname: "asc" },
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.findAll:", error);
-      throw new Error("Failed to fetch dashboard players");
+      throw PrismaErrorHandler.handle(error, "DashboardPlayerRepo.findAll");
     }
   }
 
@@ -136,8 +136,10 @@ export class DashboardPlayerRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.findByDashboardId:", error);
-      throw new Error("Failed to fetch dashboard players by dashboard");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByDashboardId"
+      );
     }
   }
 
@@ -158,8 +160,10 @@ export class DashboardPlayerRepo {
         include: DASHBOARD_PLAYER_BASIC_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.findByNickname:", error);
-      throw new Error("Failed to fetch dashboard player by nickname");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByNickname"
+      );
     }
   }
 
@@ -178,8 +182,10 @@ export class DashboardPlayerRepo {
         include: DASHBOARD_PLAYER_BASIC_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.findByNicknames:", error);
-      throw new Error("Failed to fetch dashboard players by nicknames");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByNicknames"
+      );
     }
   }
 
@@ -197,8 +203,10 @@ export class DashboardPlayerRepo {
         },
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.findByUserId:", error);
-      throw new Error("Failed to fetch dashboard player by user");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByUserId"
+      );
     }
   }
 
@@ -225,8 +233,10 @@ export class DashboardPlayerRepo {
       });
       return DashboardPlayers;
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.findByNameSearch:", error);
-      throw new Error("Failed to search dashboard players by name");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByNameSearch"
+      );
     }
   }
 
@@ -240,8 +250,10 @@ export class DashboardPlayerRepo {
         where: { dashboard_id: dashboardId },
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.countByDashboardId:", error);
-      throw new Error("Failed to count dashboard players");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.countByDashboardId"
+      );
     }
   }
 
@@ -262,8 +274,10 @@ export class DashboardPlayerRepo {
         },
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.countByNameSearch:", error);
-      throw new Error("Failed to count dashboard players by search");
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.countByNameSearch"
+      );
     }
   }
 
@@ -275,8 +289,7 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.create({ data });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.create:", error);
-      throw new Error("Failed to create dashboard player");
+      throw PrismaErrorHandler.handle(error, "DashboardPlayerRepo.create");
     }
   }
 
@@ -288,8 +301,7 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.createMany({ data });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.createMany:", error);
-      throw new Error("Failed to create dashboard players");
+      throw PrismaErrorHandler.handle(error, "DashboardPlayerRepo.createMany");
     }
   }
 
@@ -302,8 +314,7 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.update({ where: { id }, data });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.update:", error);
-      throw new Error("Failed to update dashboard player");
+      throw PrismaErrorHandler.handle(error, "DashboardPlayerRepo.update");
     }
   }
 
@@ -315,8 +326,7 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.delete:", error);
-      throw new Error("Failed to delete dashboard player");
+      throw PrismaErrorHandler.handle(error, "DashboardPlayerRepo.delete");
     }
   }
 
@@ -330,8 +340,7 @@ export class DashboardPlayerRepo {
         where: { id: { in: ids } },
       });
     } catch (error) {
-      console.error("Error in DashboardPlayerRepo.deleteMany:", error);
-      throw new Error("Failed to delete dashboard players");
+      throw PrismaErrorHandler.handle(error, "DashboardPlayerRepo.deleteMany");
     }
   }
 }

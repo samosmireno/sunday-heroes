@@ -5,6 +5,7 @@ import {
   CompetitionWithDetails,
   COMPETITION_DETAILED_INCLUDE,
 } from "./competition-repo";
+import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
 export class CompetitionQueryRepo {
   static async findByType(
@@ -22,8 +23,7 @@ export class CompetitionQueryRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in CompetitionQueryRepo.findByType:", error);
-      throw new Error("Failed to fetch competitions by type");
+      throw PrismaErrorHandler.handle(error, "CompetitionQueryRepo.findByType");
     }
   }
 
@@ -47,8 +47,10 @@ export class CompetitionQueryRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in CompetitionQueryRepo.findByNameSearch:", error);
-      throw new Error("Failed to search competitions by name");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionQueryRepo.findByNameSearch"
+      );
     }
   }
 
@@ -77,8 +79,10 @@ export class CompetitionQueryRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in CompetitionQueryRepo.findByPlayerId:", error);
-      throw new Error("Failed to fetch competitions by player");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionQueryRepo.findByPlayerId"
+      );
     }
   }
 
@@ -136,11 +140,10 @@ export class CompetitionQueryRepo {
 
       return { competitions, totalCount };
     } catch (error) {
-      console.error(
-        "Error in CompetitionQueryRepo.findByUserWithFilters:",
-        error
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionQueryRepo.findByUserWithFilters"
       );
-      throw new Error("Failed to fetch competitions with filters");
     }
   }
 
@@ -154,8 +157,10 @@ export class CompetitionQueryRepo {
         where: { dashboard_id: dashboardId },
       });
     } catch (error) {
-      console.error("Error in CompetitionQueryRepo.countByDashboardId:", error);
-      throw new Error("Failed to count competitions by dashboard");
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionQueryRepo.countByDashboardId"
+      );
     }
   }
 }

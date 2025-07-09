@@ -1,6 +1,7 @@
 import { Match, Prisma, VotingStatus } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
+import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const MATCH_DETAILED_INCLUDE = {
   matchPlayers: {
@@ -71,8 +72,7 @@ export class MatchRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.match.findUnique({ where: { id } });
     } catch (error) {
-      console.error("Error in MatchRepo.findById:", error);
-      throw new Error("Failed to fetch match");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findById");
     }
   }
 
@@ -87,8 +87,7 @@ export class MatchRepo {
         include: MATCH_DETAILED_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findByIdWithDetails:", error);
-      throw new Error("Failed to fetch match with details");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByIdWithDetails");
     }
   }
 
@@ -103,8 +102,7 @@ export class MatchRepo {
         include: MATCH_BASIC_INCLUDE,
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findByIdWithTeams:", error);
-      throw new Error("Failed to fetch match with teams");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByIdWithTeams");
     }
   }
 
@@ -115,8 +113,7 @@ export class MatchRepo {
         orderBy: { date: "desc" },
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findAll:", error);
-      throw new Error("Failed to fetch matches");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findAll");
     }
   }
 
@@ -130,8 +127,7 @@ export class MatchRepo {
         orderBy: { date: "desc" },
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findAllWithDetails:", error);
-      throw new Error("Failed to fetch matches with details");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findAllWithDetails");
     }
   }
 
@@ -150,8 +146,7 @@ export class MatchRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findByCompetitionId:", error);
-      throw new Error("Failed to fetch matches by competition");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByCompetitionId");
     }
   }
 
@@ -167,8 +162,7 @@ export class MatchRepo {
         orderBy: { date: "desc" },
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findByCompetitionIds:", error);
-      throw new Error("Failed to fetch matches by competition IDs");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByCompetitionIds");
     }
   }
 
@@ -194,8 +188,7 @@ export class MatchRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findByDashboardId:", error);
-      throw new Error("Failed to fetch matches by dashboard");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByDashboardId");
     }
   }
 
@@ -222,8 +215,7 @@ export class MatchRepo {
         skip: options?.offset,
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findByPlayerId:", error);
-      throw new Error("Failed to fetch matches by player");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByPlayerId");
     }
   }
 
@@ -240,8 +232,7 @@ export class MatchRepo {
         },
       });
     } catch (error) {
-      console.error("Error in MatchRepo.findWithExpiredVoting:", error);
-      throw new Error("Failed to fetch expired voting matches");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findWithExpiredVoting");
     }
   }
 
@@ -253,8 +244,7 @@ export class MatchRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.match.create({ data });
     } catch (error) {
-      console.error("Error in MatchRepo.create:", error);
-      throw new Error("Failed to create match");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.create");
     }
   }
 
@@ -267,8 +257,7 @@ export class MatchRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.match.update({ where: { id }, data });
     } catch (error) {
-      console.error("Error in MatchRepo.update:", error);
-      throw new Error("Failed to update match");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.update");
     }
   }
 
@@ -289,8 +278,7 @@ export class MatchRepo {
         },
       });
     } catch (error) {
-      console.error("Error in MatchRepo.updateVotingStatus:", error);
-      throw new Error("Failed to update voting status");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.updateVotingStatus");
     }
   }
 
@@ -309,8 +297,10 @@ export class MatchRepo {
         },
       });
     } catch (error) {
-      console.error("Error in MatchRepo.updateManyVotingStatus:", error);
-      throw new Error("Failed to update voting status for multiple matches");
+      throw PrismaErrorHandler.handle(
+        error,
+        "MatchRepo.updateManyVotingStatus"
+      );
     }
   }
 
@@ -319,8 +309,7 @@ export class MatchRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.match.delete({ where: { id } });
     } catch (error) {
-      console.error("Error in MatchRepo.delete:", error);
-      throw new Error("Failed to delete match");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.delete");
     }
   }
 }
