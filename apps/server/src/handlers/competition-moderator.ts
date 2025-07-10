@@ -1,12 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { CompetitionModeratorRepo } from "../repositories/competition/competition-moderator-repo";
 import { AuthenticatedRequest } from "../types";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
-import {
-  sendError,
-  sendForbiddenError,
-  sendSuccess,
-} from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
+import { AuthorizationError, BadRequestError } from "../utils/errors";
+import { CompetitionModeratorService } from "../services/competition-moderator-service";
+import { extractUserId } from "../utils/request-utils";
 
 export const addModeratorToCompetition = async (
   req: Request,
@@ -14,13 +12,14 @@ export const addModeratorToCompetition = async (
   next: NextFunction
 ) => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const adminId = authenticatedReq.userId;
+    const adminId = extractUserId(req);
     const competitionId = req.params.id;
     const { userId } = req.body;
 
     if (!competitionId || !userId) {
-      return sendError(res, "Competition ID and User ID are required", 400);
+      throw new BadRequestError(
+        "Competition ID and User ID are required to add a moderator"
+      );
     }
 
     const isAdmin = await CompetitionAuthRepo.isUserAdmin(
@@ -28,21 +27,10 @@ export const addModeratorToCompetition = async (
       adminId
     );
     if (!isAdmin) {
-      return sendForbiddenError(
-        res,
-        "User is not an admin of this competition"
-      );
+      throw new AuthorizationError("User is not an admin of this competition");
     }
 
-    const isModerator = await CompetitionModeratorRepo.isUserModerator(
-      competitionId,
-      userId
-    );
-    if (isModerator) {
-      return sendError(res, "User is already a moderator", 409);
-    }
-
-    await CompetitionModeratorRepo.addModeratorToCompetition(
+    await CompetitionModeratorService.addModeratorToCompetition(
       competitionId,
       userId
     );
@@ -58,31 +46,19 @@ export const removeModeratorFromCompetition = async (
   next: NextFunction
 ) => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const adminId = authenticatedReq.userId;
+    const adminId = extractUserId(req);
     const moderatorId = req.params.moderatorId;
 
     if (!moderatorId) {
-      return sendError(res, "Moderator ID is required", 400);
-    }
-
-    const competitionId =
-      await CompetitionModeratorRepo.getCompetitionIdByModeratorId(moderatorId);
-    if (!competitionId) {
-      return sendError(res, "Moderator is not found for this competition", 400);
-    }
-    const isAdmin = await CompetitionAuthRepo.isUserAdmin(
-      competitionId,
-      adminId
-    );
-    if (!isAdmin) {
-      return sendForbiddenError(
-        res,
-        "User is not an admin of this competition"
+      throw new BadRequestError(
+        "Moderator ID is required to remove a moderator"
       );
     }
 
-    await CompetitionModeratorRepo.removeModeratorFromCompetition(moderatorId);
+    await CompetitionModeratorService.removeModeratorFromCompetition(
+      moderatorId,
+      adminId
+    );
     sendSuccess(res, { message: "Moderator removed successfully" });
   } catch (error) {
     next(error);

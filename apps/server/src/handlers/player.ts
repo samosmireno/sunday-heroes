@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { DashboardPlayerService } from "../services/dashboard-player-service";
 import { sendError, sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
+import { BadRequestError, ValidationError } from "../utils/errors";
 
 export const getAllDashboardPlayers = async (
   req: Request,
@@ -11,7 +12,7 @@ export const getAllDashboardPlayers = async (
   try {
     const userId = req.query.userId?.toString();
     if (!userId) {
-      return sendError(res, "userId query parameter is required", 400);
+      throw new BadRequestError("userId query parameter is required");
     }
 
     const query = req.query.query?.toString();
@@ -34,7 +35,7 @@ export const getAllDashboardPlayersWithDetails = async (
   try {
     const userId = req.query.userId?.toString();
     if (!userId) {
-      return sendError(res, "userId query parameter is required", 400);
+      throw new BadRequestError("userId query parameter is required");
     }
 
     const page = parseInt(req.query.page?.toString() || "0", 10);
@@ -66,7 +67,13 @@ export const createDashboardPlayer = async (
     const { nickname } = req.body;
 
     if (!nickname) {
-      return sendError(res, "Nickname is required", 400);
+      throw new ValidationError([
+        {
+          field: "nickname",
+          message: "Nickname is required",
+          code: "REQUIRED",
+        },
+      ]);
     }
 
     const player = await DashboardPlayerService.createDashboardPlayer(userId, {
@@ -89,7 +96,7 @@ export const updateDashboardPlayer = async (
     const { nickname, user_id } = req.body;
 
     if (!playerId) {
-      return sendError(res, "Player ID is required", 400);
+      throw new BadRequestError("Player ID is required");
     }
 
     const player = await DashboardPlayerService.updateDashboardPlayer(
@@ -113,7 +120,7 @@ export const deleteDashboardPlayer = async (
     const playerId = req.params.id;
 
     if (!playerId) {
-      return sendError(res, "Player ID is required", 400);
+      throw new BadRequestError("Player ID is required");
     }
 
     await DashboardPlayerService.deleteDashboardPlayer(playerId, userId);

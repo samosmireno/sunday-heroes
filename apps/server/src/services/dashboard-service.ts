@@ -1,12 +1,17 @@
 import { DashboardRepo } from "../repositories/dashboard-repo";
 import { transformDashboardToResponse } from "../utils/dashboard-transforms";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+} from "../utils/errors";
 
 export class DashboardService {
   static async getDashboardForUser(userId: string) {
     const dashboard = await DashboardRepo.findByAdminId(userId);
 
     if (!dashboard) {
-      throw new Error("Dashboard not found");
+      throw new NotFoundError("Dashboard");
     }
 
     return transformDashboardToResponse(dashboard);
@@ -15,7 +20,9 @@ export class DashboardService {
   static async createDashboard(userId: string, name: string) {
     const existingDashboard = await DashboardRepo.findByAdminId(userId);
     if (existingDashboard) {
-      throw new Error("User already has a dashboard");
+      throw new ConflictError(
+        "User already has a dashboard. Only one dashboard per user is allowed."
+      );
     }
 
     return await DashboardRepo.create({
@@ -32,11 +39,11 @@ export class DashboardService {
   ) {
     const dashboard = await DashboardRepo.findById(dashboardId);
     if (!dashboard) {
-      throw new Error("Dashboard not found");
+      throw new NotFoundError("Dashboard");
     }
 
     if (dashboard.admin_id !== userId) {
-      throw new Error("Only dashboard admin can update dashboard");
+      throw new AuthorizationError("Only dashboard admin can update dashboard");
     }
 
     return await DashboardRepo.update(dashboardId, data);
@@ -45,11 +52,11 @@ export class DashboardService {
   static async deleteDashboard(dashboardId: string, userId: string) {
     const dashboard = await DashboardRepo.findById(dashboardId);
     if (!dashboard) {
-      throw new Error("Dashboard not found");
+      throw new NotFoundError("Dashboard");
     }
 
     if (dashboard.admin_id !== userId) {
-      throw new Error("Only dashboard admin can delete dashboard");
+      throw new AuthorizationError("Only dashboard admin can delete dashboard");
     }
 
     return await DashboardRepo.delete(dashboardId);
@@ -58,7 +65,7 @@ export class DashboardService {
   static async getDashboardIdFromUserId(userId: string): Promise<string> {
     const dashboard = await DashboardRepo.findByAdminId(userId);
     if (!dashboard) {
-      throw new Error(`No dashboard found for user ${userId}`);
+      throw new NotFoundError("Dashboard");
     }
     return dashboard.id;
   }
@@ -68,7 +75,7 @@ export class DashboardService {
   ): Promise<string> {
     const dashboard = await DashboardRepo.findByCompetitionId(competitionId);
     if (!dashboard) {
-      throw new Error(`No dashboard found for competition ${competitionId}`);
+      throw new NotFoundError("Dashboard");
     }
     return dashboard.id;
   }

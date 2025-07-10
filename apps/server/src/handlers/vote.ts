@@ -9,6 +9,11 @@ import {
   sendValidationError,
 } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
+import {
+  BadRequestError,
+  NotFoundError,
+  ValidationError,
+} from "../utils/errors";
 
 export const submitVotesSchema = z.object({
   matchId: z.string(),
@@ -36,7 +41,12 @@ export const submitVotes = async (
 
     const validation = submitVotesSchema.safeParse(data);
     if (!validation.success) {
-      return sendValidationError(res, validation.error);
+      const fields = validation.error.errors.map((err) => ({
+        field: err.path.join("."),
+        message: err.message,
+        code: err.code,
+      }));
+      throw new ValidationError(fields);
     }
 
     const result = await VoteService.submitVotes(
@@ -62,10 +72,10 @@ export const getVotingStatus = async (
     const voterId = req.query.voterId?.toString();
 
     if (!matchId) {
-      return sendError(res, "matchId parameter is required", 400);
+      throw new BadRequestError("matchId parameter is required");
     }
     if (!voterId) {
-      return sendError(res, "voterId query parameter is required", 400);
+      throw new BadRequestError("voterId query parameter is required");
     }
 
     const status = await VoteService.getVotingStatus(matchId, voterId);
@@ -83,7 +93,7 @@ export const getPendingVotesForMatch = async (
   try {
     const matchId = req.params.matchId;
     if (!matchId) {
-      return sendError(res, "matchId parameter is required", 400);
+      throw new BadRequestError("matchId parameter is required");
     }
 
     const votes = await VoteService.getMatchVotes(matchId);
@@ -101,13 +111,13 @@ export const getPendingVotesForCompetition = async (
   try {
     const competitionId = req.params.competitionId;
     if (!competitionId) {
-      return sendError(res, "competitionId parameter is required", 400);
+      throw new BadRequestError("competitionId parameter is required");
     }
 
     const competition =
       await CompetitionService.getCompetitionWithPendingVotes(competitionId);
     if (!competition) {
-      return sendNotFoundError(res, "Competition");
+      throw new NotFoundError("Competition not found");
     }
 
     sendSuccess(res, competition);

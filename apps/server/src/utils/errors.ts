@@ -80,9 +80,9 @@ export class MatchError extends AppError {
   }
 }
 
-export class DashboardError extends AppError {
+export class VotingError extends AppError {
   constructor(message: string, statusCode: number = 400) {
-    super("DashboardError", statusCode, message, true);
+    super("VotingError", statusCode, message, true);
   }
 }
 

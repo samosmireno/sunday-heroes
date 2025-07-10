@@ -1,23 +1,35 @@
 import { Role, User } from "@prisma/client";
 import { UserRepo, UserWithDashboard } from "../repositories/user-repo";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from "../utils/errors";
 
 export class UserService {
   static async getUserById(id: string) {
     const user = await UserRepo.findByIdWithDashboard(id);
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundError("User");
     }
     return user;
   }
 
   static async getUserByEmail(email: string) {
     if (!email || !email.includes("@")) {
-      throw new Error("Invalid email format");
+      throw new ValidationError([
+        {
+          field: "email",
+          message: "Invalid email format",
+          code: "INVALID_FORMAT",
+        },
+      ]);
     }
 
     const user = await UserRepo.findByEmail(email);
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundError("User with this email does not exist");
     }
     return user;
   }
@@ -40,7 +52,7 @@ export class UserService {
   }) {
     const existingUser = await UserRepo.findByEmail(data.email);
     if (existingUser) {
-      throw new Error("User with this email already exists");
+      throw new ConflictError(`User with email ${data.email} already exists`);
     }
 
     return await UserRepo.create({
@@ -59,22 +71,24 @@ export class UserService {
   ) {
     const user = await UserRepo.findById(id);
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundError("User not found");
     }
 
     const requestingUser = await UserRepo.findById(requestingUserId);
     if (!requestingUser) {
-      throw new Error("Requesting user not found");
+      throw new NotFoundError("Requesting user");
     }
 
     const canUpdate =
       id === requestingUserId || requestingUser.role === "ADMIN";
     if (!canUpdate) {
-      throw new Error("Not authorized to update this user");
+      throw new AuthorizationError(
+        "You are not authorized to update this user"
+      );
     }
 
     if (data.role && requestingUser.role !== "ADMIN") {
-      throw new Error("Only admins can change user roles");
+      throw new AuthorizationError("Only admins can change user roles");
     }
 
     return await UserRepo.update(id, data);
@@ -83,16 +97,18 @@ export class UserService {
   static async deleteUser(id: string, requestingUserId: string) {
     const user = await UserRepo.findById(id);
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundError("User");
     }
 
     const requestingUser = await UserRepo.findById(requestingUserId);
     if (!requestingUser) {
-      throw new Error("Requesting user not found");
+      throw new NotFoundError("Requesting user");
     }
 
     if (requestingUser.role !== "ADMIN") {
-      throw new Error("Only admins can delete users");
+      throw new AuthorizationError(
+        "You are not authorized to delete this user"
+      );
     }
 
     return await UserRepo.delete(id);
@@ -101,7 +117,7 @@ export class UserService {
   static async getDashboardIdFromUserId(userId: string): Promise<string> {
     const dashboardId = await UserRepo.getDashboardId(userId);
     if (!dashboardId) {
-      throw new Error(`No dashboard found for user ${userId}`);
+      throw new NotFoundError("Dashboard");
     }
     return dashboardId;
   }

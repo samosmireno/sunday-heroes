@@ -10,6 +10,7 @@ import {
 import { CreateLeagueRequest } from "../schemas/league-schemas";
 import { TeamService } from "../services/team-service";
 import { transformLeagueFixtureToResponse } from "../utils/league-transforms";
+import { BadRequestError } from "../utils/errors";
 
 export const createLeague = async (
   req: Request,
@@ -17,9 +18,9 @@ export const createLeague = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.body.userId; //extractUserId(req);
+    const userId = req.body.userId;
     if (!userId) {
-      return sendAuthError(res);
+      throw new BadRequestError("User ID is required");
     }
     const data: CreateLeagueRequest = req.body;
 
@@ -27,15 +28,6 @@ export const createLeague = async (
 
     sendSuccess(res, league, 201);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        console.error("Not authorized:", error.message);
-        return sendAuthError(res);
-      }
-      if (error.message.includes("already exists")) {
-        return sendError(res, error.message, 409);
-      }
-    }
     next(error);
   }
 };
@@ -49,21 +41,13 @@ export const getLeagueStandings = async (
     const competitionId = req.params.id;
 
     if (!competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     const standings = await LeagueService.getLeagueStandings(competitionId);
 
     sendSuccess(res, standings);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        return sendAuthError(res);
-      }
-      if (error.message.includes("not found")) {
-        return sendNotFoundError(res, "League");
-      }
-    }
     next(error);
   }
 };
@@ -77,7 +61,7 @@ export const getLeagueFixtures = async (
     const competitionId = req.params.id;
 
     if (!competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     const fixtures = await LeagueService.getLeagueFixtures(competitionId);
@@ -86,14 +70,6 @@ export const getLeagueFixtures = async (
 
     sendSuccess(res, fixtureResponse);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        return sendAuthError(res);
-      }
-      if (error.message.includes("not found")) {
-        return sendNotFoundError(res, "League");
-      }
-    }
     next(error);
   }
 };
@@ -107,7 +83,7 @@ export const getLeagueTeams = async (
     const competitionId = req.params.id;
 
     if (!competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     const teams = await LeagueService.getLeagueTeams(competitionId);
@@ -126,7 +102,7 @@ export const getPlayerStats = async (
     const competitionId = req.params.id;
 
     if (!competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     const stats = await LeagueService.getPlayerStats(competitionId);
@@ -147,7 +123,7 @@ export const addTeamToLeague = async (
     const { teamName } = req.body;
 
     if (!competitionId || !teamName) {
-      return sendError(res, "Competition ID and team name are required", 400);
+      throw new BadRequestError("Competition ID and team name are required");
     }
 
     const team = await TeamService.createTeamInCompetition(
@@ -157,14 +133,6 @@ export const addTeamToLeague = async (
     );
     sendSuccess(res, team, 201);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        return sendAuthError(res);
-      }
-      if (error.message.includes("already exists")) {
-        return sendError(res, error.message, 409);
-      }
-    }
     next(error);
   }
 };
@@ -180,17 +148,15 @@ export const updateTeamNames = async (
     const { teamUpdates } = req.body;
 
     if (!competitionId || !teamUpdates || !Array.isArray(teamUpdates)) {
-      return sendError(
-        res,
-        "Competition ID and team updates array are required",
-        400
+      throw new BadRequestError(
+        "Competition ID and team updates are required and team updates must be an array"
       );
     }
 
     for (const update of teamUpdates) {
-      if (!update.id || !update.name || typeof update.name !== "string") {
-        return sendError(res, "Each team update must have id and name", 400);
-      }
+      throw new BadRequestError(
+        "Each team update must contain teamId and newName"
+      );
     }
 
     const result = await LeagueService.updateTeamNames(
@@ -200,17 +166,6 @@ export const updateTeamNames = async (
     );
     sendSuccess(res, result);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        return sendAuthError(res);
-      }
-      if (error.message.includes("not found")) {
-        return sendNotFoundError(res, "League");
-      }
-      if (error.message.includes("already exists")) {
-        return sendError(res, error.message, 409);
-      }
-    }
     next(error);
   }
 };
@@ -227,14 +182,6 @@ export const completeLeagueMatch = async (
     const result = await LeagueService.completeMatch(matchId, userId);
     sendSuccess(res, result);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        return sendAuthError(res);
-      }
-      if (error.message.includes("already completed")) {
-        return sendError(res, error.message, 409);
-      }
-    }
     next(error);
   }
 };

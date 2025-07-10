@@ -87,13 +87,4 @@ export class AuthService {
       }
     }
   }
-
-  private static async handleInvalidRefreshToken(refreshToken: string) {
-    try {
-      const decoded = jwt.verify(refreshToken, config.jwt.refreshSecret) as any;
-      await RefreshTokenService.deleteAllUserTokens(decoded.userId);
-    } catch (err) {
-      throw new Error("Invalid refresh token");
-    }
-  }
 }

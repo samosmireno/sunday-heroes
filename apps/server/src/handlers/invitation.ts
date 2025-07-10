@@ -1,14 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { InvitationService } from "../services/invitation-service";
 import z from "zod";
-import { AuthenticatedRequest } from "../types";
 import { config } from "../config/config";
-import {
-  sendAuthError,
-  sendNotFoundError,
-  sendSuccess,
-  sendValidationError,
-} from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
+import { BadRequestError, ValidationError } from "../utils/errors";
+import { extractUserId } from "../utils/request-utils";
 
 const createInvitationSchema = z.object({
   dashboardPlayerId: z.string().uuid(),
@@ -22,16 +18,18 @@ export const createInvitation = async (
   next: NextFunction
 ) => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
-    const validation = createInvitationSchema.safeParse(authenticatedReq.body);
+    const userId = extractUserId(req);
+    const validation = createInvitationSchema.safeParse(req.body);
     if (!validation.success) {
-      return sendValidationError(res, validation.error);
+      throw new ValidationError(
+        validation.error.errors.map((error) => ({
+          field: error.path.join("."),
+          message: error.message,
+          code: "INVALID",
+        }))
+      );
     }
 
-    const userId = authenticatedReq.userId;
-    if (!userId) {
-      return sendAuthError(res);
-    }
     const token = await InvitationService.createInvitation({
       ...validation.data,
       invitedById: userId,
@@ -60,7 +58,7 @@ export const validateInvitation = async (
       req.params.token
     );
     if (!invitation) {
-      return sendNotFoundError(res, "Invitation");
+      throw new BadRequestError("Invalid or expired invitation token");
     }
     sendSuccess(res, invitation);
   } catch (error) {
@@ -74,13 +72,9 @@ export const acceptInvitation = async (
   next: NextFunction
 ) => {
   try {
-    const authenticatedReq = req as AuthenticatedRequest;
     const { token } = req.params;
-    const userId = authenticatedReq.userId;
+    const userId = extractUserId(req);
 
-    if (!userId) {
-      return sendAuthError(res);
-    }
     await InvitationService.acceptInvitation(token, userId);
     sendSuccess(res, {
       success: true,

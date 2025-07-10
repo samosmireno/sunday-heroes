@@ -6,32 +6,22 @@ export class MatchAuthService {
     competitionId: string,
     userId: string
   ): Promise<boolean> {
-    try {
-      return await CompetitionAuthRepo.isUserAdminOrModerator(
-        competitionId,
-        userId
-      );
-    } catch (error) {
-      console.error("Error in MatchAuthService.canUserCreateMatch:", error);
-      return false;
-    }
+    return await CompetitionAuthRepo.isUserAdminOrModerator(
+      competitionId,
+      userId
+    );
   }
 
   static async canUserModifyMatch(
     matchId: string,
     userId: string
   ): Promise<boolean> {
-    try {
-      const match = await MatchRepo.findByIdWithDetails(matchId);
-      if (!match) return false;
+    const match = await MatchRepo.findByIdWithDetails(matchId);
+    if (!match) return false;
 
-      return await CompetitionAuthRepo.isUserAdminOrModerator(
-        match.competition_id,
-        userId
-      );
-    } catch (error) {
-      console.error("Error in MatchAuthService.canUserModifyMatch:", error);
-      return false;
-    }
+    return await CompetitionAuthRepo.isUserAdminOrModerator(
+      match.competition_id,
+      userId
+    );
   }
 }

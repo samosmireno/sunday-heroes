@@ -5,6 +5,12 @@ import prisma from "../repositories/prisma-client";
 import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
 import { PrismaTransaction } from "../types";
 import { transformMatchServiceToPendingVotes } from "../utils/votes-transforms";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+  VotingError,
+} from "../utils/errors";
 
 export class VoteService {
   static async submitVotes(
@@ -15,17 +21,21 @@ export class VoteService {
   ) {
     const match = await MatchRepo.findById(matchId);
     if (!match) {
-      throw new Error("Match not found");
+      throw new NotFoundError("Match");
     }
 
     if (match.voting_status !== "OPEN") {
-      throw new Error("Voting is closed for this match");
+      throw new VotingError(
+        "Voting is not open for this match. Please check the match details."
+      );
     }
 
     console.log(match.voting_ends_at && match.voting_ends_at < new Date());
 
     if (match.voting_ends_at && match.voting_ends_at < new Date()) {
-      throw new Error("Voting period has expired");
+      throw new VotingError(
+        "Voting has ended for this match. You cannot submit votes."
+      );
     }
 
     const isParticipant = await MatchPlayerRepo.isPlayerInMatch(
@@ -33,7 +43,9 @@ export class VoteService {
       matchId
     );
     if (!isParticipant) {
-      throw new Error("Voter must be a participant in the match");
+      throw new VotingError(
+        "You have not played in this match. Only players who participated can vote."
+      );
     }
 
     const canVote = await this.canUserSubmitVotesForPlayer(
@@ -42,12 +54,16 @@ export class VoteService {
       requestingUserId
     );
     if (!canVote) {
-      throw new Error("Not authorized to submit votes for this player");
+      throw new AuthorizationError(
+        "You are not authorized to submit votes for this player"
+      );
     }
 
     const existingVotes = await VoteRepo.findByVoterAndMatch(voterId, matchId);
     if (existingVotes.length > 0) {
-      throw new Error("Player has already voted for this match");
+      throw new VotingError(
+        "You have already submitted votes for this match. You cannot vote again."
+      );
     }
 
     this.validateVoteData(votes);
@@ -72,7 +88,7 @@ export class VoteService {
   static async getVotingStatus(matchId: string, voterId: string) {
     const match = await MatchRepo.findByIdWithDetails(matchId);
     if (!match) {
-      throw new Error("Match not found");
+      throw new NotFoundError("Match not found");
     }
 
     const isParticipant = await MatchPlayerRepo.isPlayerInMatch(
@@ -80,7 +96,9 @@ export class VoteService {
       matchId
     );
     if (!isParticipant) {
-      throw new Error("Player has not played in this match");
+      throw new VotingError(
+        "You have not played in this match. Only players who participated can vote."
+      );
     }
 
     const hasVoted = await this.hasPlayerVoted(voterId, matchId);
@@ -123,7 +141,7 @@ export class VoteService {
   ) {
     const match = await MatchRepo.findByIdWithDetails(matchId);
     if (!match) {
-      throw new Error("Match not found");
+      throw new NotFoundError("Match not found");
     }
     const matchVoteResponse = transformMatchServiceToPendingVotes(match);
     return matchVoteResponse;
@@ -142,7 +160,9 @@ export class VoteService {
       requestingUserId
     );
     if (!canDelete) {
-      throw new Error("Only administrators can delete match votes");
+      throw new AuthorizationError(
+        "You are not authorized to delete votes for this match"
+      );
     }
 
     return await VoteRepo.deleteByMatch(matchId);
@@ -182,18 +202,22 @@ export class VoteService {
     votes: { playerId: string; points: number }[]
   ): void {
     if (!votes || votes.length !== 3) {
-      throw new Error("Exactly 3 votes are required");
+      throw new VotingError("You must vote for exactly 3 players");
     }
 
     const points = votes.map((v) => v.points).sort((a, b) => b - a);
     if (points[0] !== 3 || points[1] !== 2 || points[2] !== 1) {
-      throw new Error("Votes must be 3, 2, and 1 points respectively");
+      throw new VotingError(
+        "Votes must be 3, 2, and 1 points for the top three players"
+      );
     }
 
     const playerIds = votes.map((v) => v.playerId);
     const uniquePlayerIds = [...new Set(playerIds)];
     if (uniquePlayerIds.length !== 3) {
-      throw new Error("Must vote for 3 different players");
+      throw new VotingError(
+        "You cannot vote for the same player multiple times"
+      );
     }
   }
 

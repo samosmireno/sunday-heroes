@@ -3,6 +3,7 @@ import { UserService } from "../services/user-service";
 import { Role } from "@prisma/client";
 import { sendError, sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
+import { BadRequestError, ValidationError } from "../utils/errors";
 
 export const getAllUsers = async (
   req: Request,
@@ -26,7 +27,7 @@ export const getUserById = async (
   try {
     const userId = req.params.id;
     if (!userId) {
-      return sendError(res, "User ID is required", 400);
+      throw new BadRequestError("User ID is required");
     }
 
     const user = await UserService.getUserById(userId);
@@ -44,13 +45,7 @@ export const createUser = async (
   try {
     const { email, given_name, family_name, role } = req.body;
 
-    if (!email || !given_name || !family_name) {
-      return sendError(
-        res,
-        "Email, given name, and family name are required",
-        400
-      );
-    }
+    //TODO: Add validation for email format and required fields
 
     const user = await UserService.createUser({
       email,
@@ -76,7 +71,7 @@ export const updateUser = async (
     const updateData = req.body;
 
     if (!userId) {
-      return sendError(res, "User ID is required", 400);
+      throw new BadRequestError("User ID is required");
     }
 
     const user = await UserService.updateUser(
@@ -100,7 +95,7 @@ export const deleteUser = async (
     const userId = req.params.id;
 
     if (!userId) {
-      return sendError(res, "User ID is required", 400);
+      throw new BadRequestError("User ID is required");
     }
 
     await UserService.deleteUser(userId, requestingUserId);

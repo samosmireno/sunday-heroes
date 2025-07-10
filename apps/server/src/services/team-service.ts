@@ -5,6 +5,11 @@ import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
 import { DashboardService } from "./dashboard-service";
 import { DashboardPlayerService } from "./dashboard-player-service";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+} from "../utils/errors";
 
 export class TeamService {
   static async createTeamInCompetition(
@@ -17,7 +22,7 @@ export class TeamService {
       userId
     );
     if (!hasPermission) {
-      throw new Error(
+      throw new AuthorizationError(
         "User not authorized to create teams in this competition"
       );
     }
@@ -27,7 +32,9 @@ export class TeamService {
       competitionId
     );
     if (!isUnique) {
-      throw new Error("Team name already exists in this competition");
+      throw new ConflictError(
+        `Team name "${name}" already exists in this competition`
+      );
     }
 
     const team = await TeamRepo.create({ name, created_at: new Date() });
@@ -47,14 +54,14 @@ export class TeamService {
       competitionId
     );
     if (!hasPermission) {
-      throw new Error(
+      throw new AuthorizationError(
         "User not authorized to manage teams in this competition"
       );
     }
 
     const team = await TeamRepo.findById(teamId);
     if (!team) {
-      throw new Error("Team not found");
+      throw new NotFoundError("Team");
     }
 
     const dashboardId =
@@ -67,7 +74,7 @@ export class TeamService {
       dashboardId
     );
     if (!player) {
-      throw new Error("Failed to create or find player");
+      throw new NotFoundError("Dashboard player");
     }
 
     const existingTeam = await TeamRosterRepo.getPlayerTeamInCompetition(
@@ -75,7 +82,9 @@ export class TeamService {
       competitionId
     );
     if (existingTeam) {
-      throw new Error("Player is already on a team in this competition");
+      throw new ConflictError(
+        `Player "${nickname}" is already on a team in this competition`
+      );
     }
 
     const currentPlayerCount = await TeamRosterRepo.getTeamPlayerCount(
@@ -83,7 +92,9 @@ export class TeamService {
       competitionId
     );
     if (currentPlayerCount >= 16) {
-      throw new Error("Team has reached maximum player limit (16 players)");
+      throw new ConflictError(
+        `Team "${team.name}" already has the maximum number of players (16)`
+      );
     }
 
     return await TeamRosterRepo.addPlayerToTeam(
@@ -104,7 +115,7 @@ export class TeamService {
       competitionId
     );
     if (!hasPermission) {
-      throw new Error(
+      throw new AuthorizationError(
         "User not authorized to manage teams in this competition"
       );
     }
@@ -115,7 +126,9 @@ export class TeamService {
       competitionId
     );
     if (!isOnTeam) {
-      throw new Error("Player is not on this team");
+      throw new NotFoundError(
+        `Player with ID ${playerId} is not on team with ID ${teamId}`
+      );
     }
 
     await TeamRosterRepo.removePlayerFromTeam(teamId, playerId, competitionId);
@@ -139,14 +152,14 @@ export class TeamService {
       userId
     );
     if (!hasPermission) {
-      throw new Error(
+      throw new AuthorizationError(
         "User not authorized to delete teams in this competition"
       );
     }
 
     const team = await TeamRepo.findById(teamId);
     if (!team) {
-      throw new Error("Team not found");
+      throw new NotFoundError("Team");
     }
 
     await TeamRepo.delete(teamId);

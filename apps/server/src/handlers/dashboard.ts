@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { DashboardService } from "../services/dashboard-service";
-import { sendError, sendSuccess } from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
+import { BadRequestError, ValidationError } from "../utils/errors";
 
 export const getDashboardDetails = async (
   req: Request,
@@ -11,7 +12,7 @@ export const getDashboardDetails = async (
   try {
     const userId = req.params.id;
     if (!userId) {
-      return sendError(res, "User ID is required", 400);
+      throw new BadRequestError("User ID is required");
     }
 
     const dashboardResponse =
@@ -32,7 +33,13 @@ export const createDashboard = async (
     const { name } = req.body;
 
     if (!name) {
-      return sendError(res, "Dashboard name is required", 400);
+      throw new ValidationError([
+        {
+          field: "name",
+          message: "Dashboard name is required",
+          code: "REQUIRED",
+        },
+      ]);
     }
 
     const dashboard = await DashboardService.createDashboard(userId, name);
@@ -53,7 +60,7 @@ export const updateDashboard = async (
     const { name } = req.body;
 
     if (!dashboardId) {
-      return sendError(res, "Dashboard ID is required", 400);
+      throw new BadRequestError("Dashboard ID is required");
     }
 
     const dashboard = await DashboardService.updateDashboard(
@@ -77,7 +84,7 @@ export const deleteDashboard = async (
     const dashboardId = req.params.id;
 
     if (!dashboardId) {
-      return sendError(res, "Dashboard ID is required", 400);
+      throw new BadRequestError("Dashboard ID is required");
     }
 
     await DashboardService.deleteDashboard(dashboardId, userId);

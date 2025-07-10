@@ -4,6 +4,7 @@ import { MatchRepo } from "../../repositories/match-repo";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";
 import { EmailService } from "../email-service";
 import { DashboardPlayerWithUserDetails } from "../../repositories/dashboard-player-repo";
+import { AppError } from "../../utils/errors";
 
 interface MatchVotingEmailData {
   competitionName: string;
@@ -94,7 +95,12 @@ export class MatchVotingService {
 
         await Promise.all(emailPromises);
       } catch (error) {
-        console.error("Email sending failed:", error);
+        throw new AppError(
+          "Error sending match voting emails",
+          500,
+          error instanceof Error ? error.message : "Unknown error",
+          true
+        );
       }
     });
   }

@@ -9,6 +9,7 @@ import {
   sendSuccess,
 } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
+import { AuthorizationError, BadRequestError } from "../utils/errors";
 
 const getRequiredQuery = (req: Request, param: string): string => {
   const value = req.query[param]?.toString();
@@ -127,7 +128,7 @@ export const createMatch = async (
     const data: createMatchRequest = req.body;
 
     if (!data.competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     const isAuthorized = await MatchAuthService.canUserCreateMatch(
@@ -136,7 +137,9 @@ export const createMatch = async (
     );
 
     if (!isAuthorized) {
-      return sendAuthError(res);
+      throw new AuthorizationError(
+        "User is not authorized to create a match in this competition"
+      );
     }
 
     const match = await MatchService.createMatch(data);
@@ -157,11 +160,11 @@ export const updateMatch = async (
     const data: createMatchRequest = req.body;
 
     if (!matchId) {
-      return sendError(res, "Match ID is required", 400);
+      throw new BadRequestError("Match ID is required");
     }
 
     if (!data.competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     const isAuthorized = await MatchAuthService.canUserModifyMatch(
@@ -170,7 +173,9 @@ export const updateMatch = async (
     );
 
     if (!isAuthorized) {
-      return sendAuthError(res);
+      throw new AuthorizationError(
+        "User is not authorized to update this match"
+      );
     }
 
     const updatedMatch = await MatchService.updateMatch(matchId, data);
@@ -190,7 +195,7 @@ export const deleteMatch = async (
     const matchId = req.params.id;
 
     if (!matchId) {
-      return sendError(res, "Match ID is required", 400);
+      throw new BadRequestError("Match ID is required");
     }
 
     const isAuthorized = await MatchAuthService.canUserModifyMatch(
@@ -199,13 +204,15 @@ export const deleteMatch = async (
     );
 
     if (!isAuthorized) {
-      return sendAuthError(res);
+      throw new AuthorizationError(
+        "User is not authorized to delete this match"
+      );
     }
 
     const deletedMatch = await MatchService.deleteMatch(matchId);
 
     if (!deletedMatch) {
-      return sendNotFoundError(res, "Match");
+      throw new BadRequestError("Match not found or already deleted");
     }
 
     sendSuccess(res, { message: "Match deleted successfully" });

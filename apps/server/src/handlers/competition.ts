@@ -5,11 +5,12 @@ import { sendError, sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 import { TeamService } from "../services/team-service";
+import { BadRequestError } from "../utils/errors";
 
 const getRequiredQuery = (req: Request, param: string): string => {
   const value = req.query[param]?.toString();
   if (!value) {
-    throw new Error(`${param} query parameter is required`);
+    throw new BadRequestError(`Missing required query parameter: ${param}`);
   }
   return value;
 };
@@ -25,9 +26,6 @@ export const getAllCompetitionsFromDashboard = async (
       await CompetitionService.getDashboardCompetitions(userId);
     sendSuccess(res, competitions);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No dashboard")) {
-      return sendError(res, error.message, 400);
-    }
     next(error);
   }
 };
@@ -57,9 +55,6 @@ export const getDetailedCompetitions = async (
 
     sendSuccess(res, result.competitions);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No dashboard")) {
-      return sendError(res, error.message, 400);
-    }
     next(error);
   }
 };
@@ -95,7 +90,7 @@ export const createCompetition = async (
     const data: createCompetitionRequest = req.body;
 
     if (!data.userId) {
-      return sendError(res, "User ID is required", 400);
+      throw new BadRequestError("User ID is required");
     }
 
     const competition = await CompetitionService.createCompetition(data);
@@ -115,9 +110,6 @@ export const createCompetition = async (
 
     sendSuccess(res, competition, 201);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("No dashboard")) {
-      return sendError(res, error.message, 400);
-    }
     next(error);
   }
 };
@@ -132,7 +124,7 @@ export const resetCompetition = async (
     const competitionId = req.params.id;
 
     if (!competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     const resetCompetition = await CompetitionService.resetCompetition(
@@ -141,14 +133,6 @@ export const resetCompetition = async (
     );
     sendSuccess(res, resetCompetition);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        return sendError(res, error.message, 403);
-      }
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-    }
     next(error);
   }
 };
@@ -163,20 +147,12 @@ export const deleteCompetition = async (
     const competitionId = req.params.id;
 
     if (!competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     await CompetitionService.deleteCompetition(competitionId, userId);
     sendSuccess(res, { message: "Competition deleted successfully" }, 204);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        return sendError(res, error.message, 403);
-      }
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-    }
     next(error);
   }
 };

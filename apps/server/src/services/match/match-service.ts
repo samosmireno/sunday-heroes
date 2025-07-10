@@ -9,6 +9,8 @@ import { transformDashboardMatchesToResponse } from "../../utils/dashboard-trans
 import { createMatchRequest } from "../../schemas/create-match-request-schema";
 import { DashboardService } from "../dashboard-service";
 import { CompetitionType } from "@prisma/client";
+import { ConflictError, NotFoundError } from "../../utils/errors";
+import { CompetitionRepo } from "../../repositories/competition/competition-repo";
 
 export class MatchService {
   static async getAllMatches() {
@@ -24,7 +26,7 @@ export class MatchService {
   static async getDashboardMatches(userId: string) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
     if (!dashboardId) {
-      throw new Error("No dashboard for the given userId");
+      throw new NotFoundError("Dashboard");
     }
 
     const matches = await MatchRepo.findByDashboardId(dashboardId);
@@ -41,7 +43,7 @@ export class MatchService {
   ): Promise<CompetitionType> {
     const match = await MatchRepo.findByIdWithDetails(matchId);
     if (!match) {
-      throw new Error("Match not found");
+      throw new NotFoundError("Match");
     }
     return match.competition?.type || null;
   }
@@ -56,7 +58,7 @@ export class MatchService {
   ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
     if (!dashboardId) {
-      throw new Error("No dashboard for the given userId");
+      throw new NotFoundError("Dashboard");
     }
 
     const { competitionId, limit = 10, offset = 0 } = options;
@@ -93,6 +95,17 @@ export class MatchService {
   }
 
   static async deleteMatch(matchId: string) {
+    const competition = await CompetitionRepo.findByMatchId(matchId);
+    if (!competition) {
+      throw new NotFoundError("Competition");
+    }
+
+    if (competition.type !== CompetitionType.DUEL) {
+      throw new ConflictError(
+        "Cannot delete match in a league/knockout competition"
+      );
+    }
+
     return MatchRepo.delete(matchId);
   }
 

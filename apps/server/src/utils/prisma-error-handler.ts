@@ -9,7 +9,6 @@ import {
 
 export class PrismaErrorHandler {
   static handle(error: unknown, context?: string): AppError {
-    // Log the original error for debugging (server-side only)
     console.error(`Prisma error${context ? ` in ${context}` : ""}:`, error);
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

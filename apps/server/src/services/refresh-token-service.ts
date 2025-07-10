@@ -1,8 +1,9 @@
 import { RefreshToken } from "@prisma/client";
 import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
-import jwt from "jsonwebtoken";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 import { config } from "../config/config";
 import { AuthService } from "./auth-service";
+import { InvalidTokenError } from "../utils/errors";
 
 export class RefreshTokenService {
   static async validateRefreshToken(token: string): Promise<{
@@ -11,17 +12,20 @@ export class RefreshTokenService {
     refreshToken: RefreshToken;
   }> {
     if (!token || typeof token !== "string") {
-      throw new Error("Invalid token format");
+      throw new InvalidTokenError("Invalid token format");
     }
 
     const refreshToken = await RefreshTokenRepo.findByToken(token);
     if (!refreshToken) {
-      throw new Error("Refresh token not found");
+      throw new InvalidTokenError("Refresh token not found");
     }
 
     if (refreshToken.expires_at < new Date()) {
       await this.deleteToken(token);
-      throw new Error("Refresh token expired");
+      throw new TokenExpiredError(
+        "Refresh token has expired",
+        refreshToken.expires_at
+      );
     }
 
     let decoded;
@@ -29,12 +33,12 @@ export class RefreshTokenService {
       decoded = jwt.verify(token, config.jwt.refreshSecret) as any;
     } catch (error) {
       await this.deleteToken(token);
-      throw new Error("Invalid token signature");
+      throw new InvalidTokenError("Invalid refresh token");
     }
 
     if (decoded.userId !== refreshToken.user_id) {
       await this.deleteAllUserTokens(refreshToken.user_id);
-      throw new Error("Token user mismatch");
+      throw new InvalidTokenError("User ID mismatch in token");
     }
 
     await RefreshTokenRepo.updateLastUsed(token);
@@ -106,18 +110,13 @@ export class RefreshTokenService {
       return null;
     }
 
-    try {
-      const userId = await RefreshTokenRepo.getUserIdByToken(token);
-      if (!userId) {
-        return null;
-      }
-
-      const isValid = await RefreshTokenRepo.isTokenValid(token);
-      return isValid ? userId : null;
-    } catch (error) {
-      console.error("Error getting user ID from token:", error);
+    const userId = await RefreshTokenRepo.getUserIdByToken(token);
+    if (!userId) {
       return null;
     }
+
+    const isValid = await RefreshTokenRepo.isTokenValid(token);
+    return isValid ? userId : null;
   }
 
   static async rotateRefreshToken(oldToken: string): Promise<RefreshToken> {

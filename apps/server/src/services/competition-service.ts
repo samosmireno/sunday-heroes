@@ -14,6 +14,7 @@ import {
 import { DashboardService } from "./dashboard-service";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 import { TeamService } from "./team-service";
+import { AuthorizationError, NotFoundError } from "../utils/errors";
 
 export class CompetitionService {
   static async getAllCompetitions() {
@@ -30,7 +31,7 @@ export class CompetitionService {
     const competition =
       await CompetitionRepo.findByIdWithDetails(competitionId);
     if (!competition) {
-      throw new Error("Competition not found");
+      throw new NotFoundError("Competition");
     }
     return transformCompetitionToResponse(competition, userId);
   }
@@ -38,7 +39,7 @@ export class CompetitionService {
   static async getDashboardCompetitions(userId: string) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
     if (!dashboardId) {
-      throw new Error("No dashboard for the given userId");
+      throw new NotFoundError("Dashboard");
     }
 
     const competitions = await CompetitionRepo.findByDashboardId(dashboardId);
@@ -56,7 +57,7 @@ export class CompetitionService {
   ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
     if (!dashboardId) {
-      throw new Error("No dashboard for the given userId");
+      throw new NotFoundError("Dashboard");
     }
 
     const { page = 0, limit = 10, type, search } = options;
@@ -89,7 +90,7 @@ export class CompetitionService {
       data.userId
     );
     if (!dashboardId) {
-      throw new Error("No dashboard for the given userId");
+      throw new NotFoundError("Dashboard");
     }
 
     const competitionToAdd = transformAddCompetitionRequestToService(
@@ -105,13 +106,15 @@ export class CompetitionService {
       userId
     );
     if (!isAuthorized) {
-      throw new Error("User is not authorized to reset this competition");
+      throw new AuthorizationError(
+        "User is not authorized to reset this competition"
+      );
     }
 
     const competition =
       await CompetitionRepo.findByIdWithDetails(competitionId);
     if (!competition) {
-      throw new Error("Competition not found");
+      throw new NotFoundError("Competition");
     }
 
     return await CompetitionRepo.resetCompetition(competitionId);
@@ -123,7 +126,9 @@ export class CompetitionService {
       userId
     );
     if (!isAuthorized) {
-      throw new Error("User is not authorized to delete this competition");
+      throw new AuthorizationError(
+        "User is not authorized to delete this competition"
+      );
     }
 
     await TeamService.deleteTeamsOnlyInCompetition(competitionId);

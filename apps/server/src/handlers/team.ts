@@ -3,6 +3,7 @@ import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
 import { sendError, sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { TeamService } from "../services/team-service";
+import { BadRequestError } from "../utils/errors";
 
 export const getTeamListFromCompetitionId = async (
   req: Request,
@@ -12,7 +13,7 @@ export const getTeamListFromCompetitionId = async (
   try {
     const competitionId = req.params.competitionId;
     if (!competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     const teams =
@@ -34,24 +35,16 @@ export const deleteTeam = async (
     const { competitionId } = req.body;
 
     if (!teamId) {
-      return sendError(res, "Team ID is required", 400);
+      throw new BadRequestError("Team ID is required");
     }
 
     if (!competitionId) {
-      return sendError(res, "Competition ID is required", 400);
+      throw new BadRequestError("Competition ID is required");
     }
 
     await TeamService.deleteTeam(teamId, competitionId, userId);
     sendSuccess(res, { message: "Team deleted successfully" });
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("not authorized")) {
-        return sendError(res, error.message, 403);
-      }
-      if (error.message.includes("not found")) {
-        return sendError(res, error.message, 404);
-      }
-    }
     next(error);
   }
 };

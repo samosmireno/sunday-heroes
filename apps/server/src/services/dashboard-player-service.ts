@@ -5,6 +5,11 @@ import {
 import { DashboardService } from "./dashboard-service";
 import { transformDashboardPlayersToResponse } from "../utils/players-transforms";
 import prisma from "../repositories/prisma-client";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+} from "../utils/errors";
 
 export class DashboardPlayerService {
   static async getDashboardPlayers(
@@ -45,6 +50,10 @@ export class DashboardPlayerService {
   static async getDashboardPlayersByQuery(userId: string, query: string) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
 
+    if (!dashboardId) {
+      throw new NotFoundError("Dashboard");
+    }
+
     return await DashboardPlayerRepo.findByNameSearch(query, dashboardId);
   }
 
@@ -54,12 +63,18 @@ export class DashboardPlayerService {
   ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
 
+    if (!dashboardId) {
+      throw new NotFoundError("Dashboard");
+    }
+
     const canCreate = await DashboardService.canUserAccessDashboard(
       dashboardId,
       userId
     );
     if (!canCreate) {
-      throw new Error("Only dashboard admin can create players");
+      throw new AuthorizationError(
+        "User is not authorized to create players in this dashboard"
+      );
     }
 
     const existingPlayer = await DashboardPlayerRepo.findByNickname(
@@ -67,7 +82,9 @@ export class DashboardPlayerService {
       dashboardId
     );
     if (existingPlayer) {
-      throw new Error("Player with this nickname already exists");
+      throw new ConflictError(
+        "Player with this nickname already exists in the dashboard"
+      );
     }
 
     return await DashboardPlayerRepo.create({
@@ -85,12 +102,12 @@ export class DashboardPlayerService {
   ) {
     const player = await DashboardPlayerRepo.findByIdWithAdmin(playerId);
     if (!player) {
-      throw new Error("Dashboard player not found");
+      throw new NotFoundError("Dashboard player");
     }
 
     const isAdmin = player.dashboard.admin_id === userId;
     if (!isAdmin) {
-      throw new Error("Only dashboard admin can update players");
+      throw new AuthorizationError("Only dashboard admin can update players");
     }
 
     if (data.nickname && data.nickname !== player.nickname) {
@@ -99,7 +116,9 @@ export class DashboardPlayerService {
         player.dashboard_id
       );
       if (existingPlayer) {
-        throw new Error("Player with this nickname already exists");
+        throw new ConflictError(
+          "Player with this nickname already exists in the dashboard"
+        );
       }
     }
 
@@ -109,12 +128,12 @@ export class DashboardPlayerService {
   static async deleteDashboardPlayer(playerId: string, userId: string) {
     const player = await DashboardPlayerRepo.findByIdWithAdmin(playerId);
     if (!player) {
-      throw new Error("Dashboard player not found");
+      throw new NotFoundError("Dashboard player");
     }
 
     const isAdmin = player.dashboard.admin_id === userId;
     if (!isAdmin) {
-      throw new Error("Only dashboard admin can delete players");
+      throw new AuthorizationError("Only dashboard admin can delete players");
     }
 
     return await DashboardPlayerRepo.delete(playerId);
@@ -185,11 +204,11 @@ export class DashboardPlayerService {
   static async linkUserToPlayer(playerId: string, userId: string) {
     const player = await DashboardPlayerRepo.findById(playerId);
     if (!player) {
-      throw new Error("Dashboard player not found");
+      throw new NotFoundError("Dashboard player");
     }
 
     if (player.user_id) {
-      throw new Error("Player already has a user linked");
+      throw new ConflictError("This player is already linked to a user");
     }
 
     return await DashboardPlayerRepo.update(playerId, { user_id: userId });
@@ -198,6 +217,9 @@ export class DashboardPlayerService {
   static async getModerators(userId: string) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
 
+    if (!dashboardId) {
+      throw new NotFoundError("Dashboard");
+    }
     return await prisma.dashboardPlayer.findMany({
       where: {
         dashboard_id: dashboardId,

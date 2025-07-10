@@ -4,6 +4,7 @@ import { MatchPlayerRepo } from "../repositories/match-player-repo";
 import { transformAddMatchRequestToMatchPlayer } from "../utils/match-player-transforms";
 import { matchPlayersMatchRequest } from "@repo/shared-types";
 import { DashboardPlayerService } from "./dashboard-player-service";
+import { NotFoundError } from "../utils/errors";
 
 export class MatchPlayerService {
   static async createMatchPlayers(
@@ -33,7 +34,7 @@ export class MatchPlayerService {
     const matchPlayersData = players.map((player) => {
       const dashboardPlayer = playerMap.get(player.nickname);
       if (!dashboardPlayer) {
-        throw new Error(`Player not found for nickname: ${player.nickname}`);
+        throw new NotFoundError("Dashboard player");
       }
 
       return transformAddMatchRequestToMatchPlayer(

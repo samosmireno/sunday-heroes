@@ -13,6 +13,12 @@ import { Response } from "express";
 import { config } from "../config/config";
 import { User } from "@prisma/client";
 import { DashboardRepo } from "../repositories/dashboard-repo";
+import {
+  AuthorizationError,
+  ConflictError,
+  InvitationError,
+  NotFoundError,
+} from "../utils/errors";
 
 export interface CreateInvitationData {
   invitedById: string;
@@ -93,7 +99,7 @@ export class InvitationService {
   static async acceptInvitation(token: string, userId: string): Promise<void> {
     const invitation = await this.validateInvitation(token);
     if (!invitation) {
-      throw new Error("Invalid or expired invitation");
+      throw new InvitationError("Invalid or expired invitation token");
     }
 
     await this.validateUserEligibility(userId, invitation);
@@ -114,7 +120,9 @@ export class InvitationService {
       requestingUserId
     );
     if (!canAccess) {
-      throw new Error("Not authorized to view invitations for this dashboard");
+      throw new AuthorizationError(
+        "User is not authorized to access this dashboard"
+      );
     }
 
     return await InvitationRepo.findByDashboardId(dashboardId);
@@ -132,7 +140,7 @@ export class InvitationService {
   ): Promise<void> {
     const invitation = await InvitationRepo.findByIdWithDetails(invitationId);
     if (!invitation) {
-      throw new Error("Invitation not found");
+      throw new NotFoundError("Invitation");
     }
 
     const canDelete = await this.canUserDeleteInvitation(
@@ -140,7 +148,9 @@ export class InvitationService {
       requestingUserId
     );
     if (!canDelete) {
-      throw new Error("Not authorized to delete this invitation");
+      throw new AuthorizationError(
+        "User is not authorized to delete this invitation"
+      );
     }
 
     await InvitationRepo.delete(invitationId);
@@ -167,8 +177,7 @@ export class InvitationService {
         `${config.google.redirectClientUrl}?user=${AuthService.encodeUserInfo(userInfo)}&invitation=accepted&dashboard=${invitation.dashboardPlayer.dashboard.id}`
       );
     } catch (error) {
-      console.error("Failed to accept invitation:", error);
-      return this.handleInvitationError(error, user, res);
+      throw new InvitationError("Failed to handle invitation");
     }
   }
 
@@ -180,15 +189,19 @@ export class InvitationService {
       await DashboardPlayerRepo.findByIdWithAdmin(dashboardPlayerId);
 
     if (!dashboardPlayer) {
-      throw new Error("Dashboard player not found");
+      throw new NotFoundError("Dashboard player");
     }
 
     if (dashboardPlayer.dashboard.admin_id !== invitedById) {
-      throw new Error("Insufficient permissions to create invitation");
+      throw new AuthorizationError(
+        "Only dashboard admin can create invitations"
+      );
     }
 
     if (dashboardPlayer.user_id) {
-      throw new Error("Dashboard player already has a user assigned");
+      throw new ConflictError(
+        "Dashboard player already has a user associated with it"
+      );
     }
 
     return dashboardPlayer;
@@ -212,7 +225,7 @@ export class InvitationService {
         activeOnly: true,
       });
       if (existingEmailInvitations.length > 0) {
-        throw new Error("Active invitation already exists for this email");
+        throw new ConflictError("An invitation with this email already exists");
       }
     }
 
@@ -274,7 +287,7 @@ export class InvitationService {
     );
 
     if (existingPlayer) {
-      throw new Error("User already has a player in this dashboard");
+      throw new ConflictError("User already has a player in this dashboard");
     }
   }
 
@@ -336,27 +349,5 @@ export class InvitationService {
       },
       expiresAt: invitation.expires_at,
     };
-  }
-
-  private static handleInvitationError(
-    error: unknown,
-    user: User,
-    res: Response
-  ) {
-    const userInfo = AuthService.createUserResponse(user);
-    const encodedUser = AuthService.encodeUserInfo(userInfo);
-
-    if (
-      error instanceof Error &&
-      error.message.includes("already has a player")
-    ) {
-      return res.redirect(
-        `${config.google.redirectClientUrl}?error=already_connected&user=${encodedUser}`
-      );
-    }
-
-    return res.redirect(
-      `${config.google.redirectClientUrl}?error=invitation_failed&user=${encodedUser}`
-    );
   }
 }

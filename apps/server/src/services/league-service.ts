@@ -18,6 +18,11 @@ import {
   transformCompetitionToPlayerStatsResponse,
   transformTeamCompetitionToStandingsResponse,
 } from "../utils/league-transforms";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+} from "../utils/errors";
 
 interface MatchStats {
   points: number;
@@ -32,9 +37,6 @@ export class LeagueService {
   static async createLeague(request: CreateLeagueRequest, userId: string) {
     return await prisma.$transaction(async (tx) => {
       const competition = await CompetitionService.createCompetition(request);
-      if (!competition) {
-        throw new Error("Failed to create competition");
-      }
 
       const teams = [];
       for (let i = 0; i < request.number_of_teams; i++) {
@@ -218,7 +220,7 @@ export class LeagueService {
     const awayTeam = match.match_teams.find((mt) => !mt.is_home);
 
     if (!homeTeam || !awayTeam) {
-      throw new Error("Match teams not found");
+      throw new NotFoundError("Match team");
     }
 
     const result = this.calculateMatchResult(newHomeScore, newAwayScore);
@@ -331,7 +333,7 @@ export class LeagueService {
     const competition =
       await CompetitionRepo.findByIdWithDetails(competitionId);
     if (!competition) {
-      throw new Error("Competition not found");
+      throw new NotFoundError("Competition");
     }
     return transformCompetitionToPlayerStatsResponse(competition);
   }
@@ -353,7 +355,9 @@ export class LeagueService {
       userId
     );
     if (!hasPermission) {
-      throw new Error("User not authorized to update team names");
+      throw new AuthorizationError(
+        "User is not authorized to update team names in this competition"
+      );
     }
 
     const dashboardId =
@@ -402,7 +406,9 @@ export class LeagueService {
         );
 
       if (existingInCompetition) {
-        throw new Error(`Team "${newName}" already exists in this competition`);
+        throw new ConflictError(
+          `Team with name "${newName}" already exists in this competition`
+        );
       }
       await TeamCompetitionRepo.updateTeamId(
         teamId,
@@ -435,15 +441,17 @@ export class LeagueService {
   static async completeMatch(matchId: string, userId: string) {
     const match = await MatchRepo.findByIdWithTeams(matchId);
     if (!match) {
-      throw new Error("Match not found");
+      throw new NotFoundError("Match");
     }
 
     if (match.is_completed) {
-      throw new Error("Match is already completed");
+      throw new ConflictError("Match is already completed");
     }
 
     if (!this.isMatchFinished(match)) {
-      throw new Error("Match is not finished");
+      throw new ConflictError(
+        "Match cannot be completed. Ensure all players have played and the match has a date."
+      );
     }
 
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
@@ -452,14 +460,16 @@ export class LeagueService {
     );
 
     if (!hasPermission) {
-      throw new Error("User not authorized to complete matches");
+      throw new AuthorizationError(
+        "User is not authorized to complete this match"
+      );
     }
 
     const homeTeam = match.match_teams.find((mt) => mt.is_home);
     const awayTeam = match.match_teams.find((mt) => !mt.is_home);
 
     if (!homeTeam || !awayTeam) {
-      throw new Error("Match teams not found");
+      throw new NotFoundError("Match team");
     }
 
     await prisma.$transaction(async (tx) => {

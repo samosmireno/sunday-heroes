@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { config } from "../config/config";
+import { AppError } from "../utils/errors";
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.gmail.com",
@@ -86,8 +87,12 @@ export class EmailService {
       await transporter.sendMail(mailOptions);
       return true;
     } catch (error) {
-      console.error("Failed to send voting email:", error);
-      return false;
+      throw new AppError(
+        "Failed to send voting invitation email",
+        500,
+        error instanceof Error ? error.message : "Unknown error",
+        true
+      );
     }
   }
 
@@ -149,8 +154,12 @@ export class EmailService {
       await transporter.sendMail(mailOptions);
       return true;
     } catch (error) {
-      console.error("Failed to send invitation email:", error);
-      return false;
+      throw new AppError(
+        "Failed to send dashboard invitation email",
+        500,
+        error instanceof Error ? error.message : "Unknown error",
+        true
+      );
     }
   }
 
@@ -159,8 +168,12 @@ export class EmailService {
       await transporter.verify();
       return true;
     } catch (error) {
-      console.error("SMTP connection verification failed:", error);
-      return false;
+      throw new AppError(
+        "Failed to verify email connection",
+        500,
+        error instanceof Error ? error.message : "Unknown error",
+        true
+      );
     }
   }
 }

@@ -12,6 +12,7 @@ import { DashboardService } from "../dashboard-service";
 import { DashboardPlayerService } from "../dashboard-player-service";
 import { MatchService } from "./match-service";
 import { LeagueService } from "../league-service";
+import { NotFoundError } from "../../utils/errors";
 
 export class MatchCreationService {
   static async createMatch(data: createMatchRequest) {
@@ -70,7 +71,7 @@ export class MatchCreationService {
 
     const match = await MatchRepo.findByIdWithTeams(matchId);
     if (!match) {
-      throw new Error("Match not found");
+      throw new NotFoundError("Match");
     }
 
     if (
