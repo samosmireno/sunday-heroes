@@ -40,6 +40,7 @@ export class DashboardPlayerService {
         DashboardPlayerRepo.countByDashboardId(dashboardId),
       ]);
     }
+
     return {
       players: transformDashboardPlayersToResponse(players),
       totalCount,

@@ -21,6 +21,54 @@ const generateRandomId = () => {
     .join("");
 };
 
+export function formatErrorStack(stack?: string): string {
+  if (!stack) return "No stack trace available";
+
+  const lines = stack.split("\n");
+  const formattedLines = lines
+    .filter((line) => line.trim()) // Remove empty lines
+    .map((line) => {
+      // Extract function name and file path
+      const match = line.match(/^(.+?)@(.+?)$/);
+      if (!match) return line;
+
+      const [, functionName, fullPath] = match;
+
+      // Clean up function name
+      const cleanFunctionName = functionName.trim() || "anonymous";
+
+      // Extract meaningful file path (remove localhost and node_modules noise)
+      let cleanPath = fullPath;
+
+      // Remove localhost prefix
+      cleanPath = cleanPath.replace(/^https?:\/\/localhost:\d+\//, "");
+
+      // Simplify node_modules paths
+      if (cleanPath.includes("node_modules")) {
+        const nodeModulesMatch = cleanPath.match(/node_modules\/([^\/]+)/);
+        if (nodeModulesMatch) {
+          cleanPath = `node_modules/${nodeModulesMatch[1]}`;
+        }
+      }
+
+      // Extract line and column numbers
+      const lineColMatch = cleanPath.match(/:(\d+):(\d+)$/);
+      let lineCol = "";
+      if (lineColMatch) {
+        lineCol = `:${lineColMatch[1]}:${lineColMatch[2]}`;
+        cleanPath = cleanPath.replace(/:(\d+):(\d+)$/, "");
+      }
+
+      // Remove query parameters and hash
+      cleanPath = cleanPath.replace(/\?.*$/, "").replace(/#.*$/, "");
+
+      return `  ${cleanFunctionName}\n    at ${cleanPath}${lineCol}`;
+    })
+    .slice(0, 10); // Limit to first 10 stack frames
+
+  return formattedLines.join("\n");
+}
+
 const getPositionByPlayerName = (
   formData: PartialAddDuelFormValues,
   playerName: string,
