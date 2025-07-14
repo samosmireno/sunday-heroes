@@ -38,7 +38,7 @@ export class NotFoundError extends AppError {
 
   constructor(resource: string = "Resource") {
     super("NotFoundError", 404, `${resource} not found`, true);
-    this.resource = resource.toLowerCase();
+    this.resource = resource;
   }
 }
 

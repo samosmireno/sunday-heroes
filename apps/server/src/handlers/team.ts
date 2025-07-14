@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
-import { sendError, sendSuccess } from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { TeamService } from "../services/team-service";
 import { BadRequestError } from "../utils/errors";

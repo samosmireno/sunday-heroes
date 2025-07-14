@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { UserService } from "../services/user-service";
 import { Role } from "@prisma/client";
-import { sendError, sendSuccess } from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
-import { BadRequestError, ValidationError } from "../utils/errors";
+import { BadRequestError } from "../utils/errors";
 
 export const getAllUsers = async (
   req: Request,

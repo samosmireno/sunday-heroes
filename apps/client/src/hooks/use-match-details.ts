@@ -2,13 +2,27 @@ import axios from "axios";
 import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
 import { MatchResponse } from "@repo/shared-types";
-
-const fetchMatchDetails = async (matchId: string): Promise<MatchResponse> => {
-  const { data } = await axios.get(`${config.server}/api/matches/${matchId}`);
-  return data;
-};
+import { useErrorHandler } from "./use-error-handler";
 
 export const useMatchDetails = (matchId: string) => {
+  const { handleError } = useErrorHandler();
+
+  const fetchMatchDetails = async (matchId: string): Promise<MatchResponse> => {
+    try {
+      const { data } = await axios.get(
+        `${config.server}/api/matches/${matchId}`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
   const leagueFixturesQuery = useQuery({
     queryKey: ["leagueFixtures", matchId],
     queryFn: () => fetchMatchDetails(matchId),

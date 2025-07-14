@@ -52,7 +52,7 @@ export default function CompetitionGrid({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/competition/${competition.id}/admin`);
+                      navigate(`/competition-admin/${competition.id}`);
                     }}
                     className="rounded-md bg-amber-900/30 p-1.5 text-amber-400 transition-all hover:scale-105 hover:bg-amber-900/50"
                     title="Admin Panel"
@@ -128,18 +128,6 @@ export default function CompetitionGrid({
               >
                 <Users size={14} className="mr-1 inline" /> Teams
               </button>
-
-              {/* Admin-specific actions - shown as a secondary row for admins */}
-              {competition.userRole === Role.ADMIN && (
-                <button
-                  onClick={() =>
-                    navigate(`/competition/${competition.id}/admin`)
-                  }
-                  className="text-3xs mt-1 w-full rounded-lg border-2 border-amber-500/40 bg-amber-900/20 px-2 py-1.5 font-bold text-amber-400 transition-all hover:bg-amber-900/30 sm:px-3 sm:py-2 sm:text-xs"
-                >
-                  <Settings size={14} className="mr-1 inline" /> Admin Panel
-                </button>
-              )}
             </div>
           </div>
         </div>

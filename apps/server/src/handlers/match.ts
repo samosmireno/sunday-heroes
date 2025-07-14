@@ -2,12 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { createMatchRequest } from "@repo/shared-types";
 import { MatchService } from "../services/match/match-service";
 import { MatchAuthService } from "../services/match/match-auth-service";
-import {
-  sendAuthError,
-  sendError,
-  sendNotFoundError,
-  sendSuccess,
-} from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { AuthorizationError, BadRequestError } from "../utils/errors";
 
@@ -48,14 +43,8 @@ export const getMatchById = async (
 ): Promise<void> => {
   try {
     const matchId = req.params.id;
-    if (!matchId) {
-      return sendError(res, "Match ID is required", 400);
-    }
 
     const match = await MatchService.getMatchById(matchId);
-    if (!match) {
-      return sendNotFoundError(res, "Match");
-    }
 
     sendSuccess(res, match);
   } catch (error) {

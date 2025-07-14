@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { DashboardPlayerService } from "../services/dashboard-player-service";
-import { sendError, sendSuccess } from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { BadRequestError, ValidationError } from "../utils/errors";
 

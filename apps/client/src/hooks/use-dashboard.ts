@@ -7,39 +7,70 @@ import {
 } from "@repo/shared-types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-
-const fetchDashboard = async (id: string): Promise<DashboardResponse> => {
-  if (!id) return {} as DashboardResponse;
-  const { data } = await axios.get(`${config.server}/api/dashboard/${id}`);
-  return data;
-};
-
-const fetchDashboardMatches = async (
-  id: string,
-): Promise<DashboardMatchResponse[]> => {
-  if (!id) return [];
-  const { data } = await axios.get(
-    `${config.server}/api/matches/dashboard?userId=${id}`,
-  );
-  return data;
-};
-
-const fetchDashboardCompetitions = async (
-  id: string,
-): Promise<DashboardCompetitionResponse[]> => {
-  if (!id) return [];
-
-  const params = new URLSearchParams({ userId: id, detailed: "false" });
-
-  const { data } = await axios.get(
-    `${config.server}/api/competitions?${params.toString()}`,
-  );
-  return data;
-};
+import { useErrorHandler } from "./use-error-handler";
 
 export const useDashboard = (id: string) => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
+
+  const fetchDashboard = async (
+    id: string,
+  ): Promise<DashboardResponse | undefined> => {
+    try {
+      if (!id) return {} as DashboardResponse;
+      const { data } = await axios.get(`${config.server}/api/dashboard/${id}`);
+      return data;
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
+  const fetchDashboardMatches = async (
+    id: string,
+  ): Promise<DashboardMatchResponse[]> => {
+    try {
+      if (!id) return [];
+      const { data } = await axios.get(
+        `${config.server}/api/matches/dashboard?userId=${id}`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
+  const fetchDashboardCompetitions = async (
+    id: string,
+  ): Promise<DashboardCompetitionResponse[]> => {
+    try {
+      if (!id) return [];
+
+      const params = new URLSearchParams({ userId: id, detailed: "false" });
+
+      const { data } = await axios.get(
+        `${config.server}/api/competitions?${params.toString()}`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
 
   const dashboardQuery = useQuery({
     queryKey: ["dashboard"],
@@ -84,5 +115,6 @@ export const useDashboard = (id: string) => {
       competitionsQuery.isLoading,
     isRefreshing,
     refreshData,
+    error: dashboardQuery.error,
   };
 };

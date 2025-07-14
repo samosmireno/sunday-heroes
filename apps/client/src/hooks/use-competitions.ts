@@ -10,6 +10,7 @@ import {
   QueryFunctionContext,
 } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useErrorHandler } from "./use-error-handler";
 
 interface CompetitionQueryParams {
   id: string;
@@ -24,46 +25,6 @@ interface CompetitionResult {
   totalPages: number;
 }
 
-const fetchCompetitions = async (
-  context: QueryFunctionContext<[string, CompetitionQueryParams]>,
-): Promise<CompetitionResult> => {
-  try {
-    const [, { id, page, type, searchTerm }] = context.queryKey;
-
-    const params = new URLSearchParams({
-      userId: id,
-      detailed: "true",
-      page: page.toString(),
-      limit: config.pagination.competition_per_page.toString(),
-    });
-
-    if (type) {
-      params.append("type", type.toString());
-    }
-
-    if (searchTerm) {
-      params.append("search", searchTerm);
-    }
-
-    const res = await axios.get(
-      `${config.server}/api/competitions/detailed?${params.toString()}`,
-    );
-    const totalCount = parseInt(res.headers["x-total-count"] || "0", 10);
-    const totalPages = Math.ceil(
-      totalCount / config.pagination.competition_per_page,
-    );
-
-    return {
-      data: res.data,
-      totalCount,
-      totalPages,
-    };
-  } catch (error) {
-    console.error("Error fetching competitions:", error);
-    throw error;
-  }
-};
-
 export const useCompetitions = ({
   id,
   page,
@@ -71,6 +32,51 @@ export const useCompetitions = ({
   searchTerm,
 }: CompetitionQueryParams) => {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
+
+  const fetchCompetitions = async (
+    context: QueryFunctionContext<[string, CompetitionQueryParams]>,
+  ): Promise<CompetitionResult> => {
+    try {
+      const [, { id, page, type, searchTerm }] = context.queryKey;
+
+      const params = new URLSearchParams({
+        userId: id,
+        detailed: "true",
+        page: page.toString(),
+        limit: config.pagination.competition_per_page.toString(),
+      });
+
+      if (type) {
+        params.append("type", type.toString());
+      }
+
+      if (searchTerm) {
+        params.append("search", searchTerm);
+      }
+
+      const res = await axios.get(
+        `${config.server}/api/competitions/detailed?${params.toString()}`,
+      );
+      const totalCount = parseInt(res.headers["x-total-count"] || "0", 10);
+      const totalPages = Math.ceil(
+        totalCount / config.pagination.competition_per_page,
+      );
+
+      return {
+        data: res.data,
+        totalCount,
+        totalPages,
+      };
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
 
   useEffect(() => {
     queryClient.prefetchQuery({

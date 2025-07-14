@@ -7,6 +7,7 @@ import voteRoutes from "./api/vote-routes";
 import invitationRoutes from "./api/invitation-routes";
 import teamRoutes from "./api/team-routes";
 import leagueRoutes from "./api/league-routes";
+import testRoutes from "./api/test-routes";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/votes", voteRoutes);
 router.use("/invitations", invitationRoutes);
 router.use("/teams", teamRoutes);
 router.use("/leagues", leagueRoutes);
+router.use("/test-errors", testRoutes);
 
 export default router;

@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../config/axiosConfig";
+import { useErrorHandler } from "./use-error-handler";
 
 export const useCompleteMatch = (competitionId: string) => {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: async (matchId: string) => {
@@ -16,7 +18,11 @@ export const useCompleteMatch = (competitionId: string) => {
       queryClient.invalidateQueries({ queryKey: ["leagueFixtures", matchId] });
     },
     onError: (error) => {
-      console.error("Error completing match:", error);
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
     },
   });
 };

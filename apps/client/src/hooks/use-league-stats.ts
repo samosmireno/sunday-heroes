@@ -3,17 +3,28 @@ import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
 import { LeaguePlayerTotals } from "@repo/shared-types";
 import { useMemo } from "react";
-
-const fetchLeagueStats = async (
-  competitionId: string,
-): Promise<LeaguePlayerTotals[]> => {
-  const { data } = await axios.get(
-    `${config.server}/api/leagues/${competitionId}/stats`,
-  );
-  return data;
-};
+import { useErrorHandler } from "./use-error-handler";
 
 export const useLeagueStats = (competitionId: string) => {
+  const { handleError } = useErrorHandler();
+  const fetchLeagueStats = async (
+    competitionId: string,
+  ): Promise<LeaguePlayerTotals[]> => {
+    try {
+      const { data } = await axios.get(
+        `${config.server}/api/leagues/${competitionId}/stats`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
   const leagueStatsQuery = useQuery({
     queryKey: ["leagueStats", competitionId],
     queryFn: () => fetchLeagueStats(competitionId),

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
+import { useErrorHandler } from "./use-error-handler";
 
 interface VotePlayer {
   id: string;
@@ -17,17 +18,28 @@ interface VotingStatus {
   players: VotePlayer[];
 }
 
-const fetchVotingStatus = async (
-  matchId: string,
-  voterId: string,
-): Promise<VotingStatus> => {
-  const { data } = await axios.get(
-    `${config.server}/api/votes/status/${matchId}?voterId=${voterId}`,
-  );
-  return data;
-};
-
 export const useVotingStatus = (matchId: string, voterId: string) => {
+  const { handleError } = useErrorHandler();
+
+  const fetchVotingStatus = async (
+    matchId: string,
+    voterId: string,
+  ): Promise<VotingStatus> => {
+    try {
+      const { data } = await axios.get(
+        `${config.server}/api/votes/status/${matchId}?voterId=${voterId}`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
   const votingStatusQuery = useQuery({
     queryKey: ["voting_status"],
     queryFn: () => fetchVotingStatus(matchId, voterId),

@@ -1,12 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { LeagueService } from "../services/league-service";
 import { extractUserId } from "../utils/request-utils";
-import {
-  sendError,
-  sendSuccess,
-  sendAuthError,
-  sendNotFoundError,
-} from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
 import { CreateLeagueRequest } from "../schemas/league-schemas";
 import { TeamService } from "../services/team-service";
 import { transformLeagueFixtureToResponse } from "../utils/league-transforms";

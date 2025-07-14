@@ -2,12 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { VoteService } from "../services/vote-service";
 import { z } from "zod";
 import { CompetitionService } from "../services/competition-service";
-import {
-  sendError,
-  sendNotFoundError,
-  sendSuccess,
-  sendValidationError,
-} from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import {
   BadRequestError,
@@ -117,7 +112,7 @@ export const getPendingVotesForCompetition = async (
     const competition =
       await CompetitionService.getCompetitionWithPendingVotes(competitionId);
     if (!competition) {
-      throw new NotFoundError("Competition not found");
+      throw new NotFoundError("Competition");
     }
 
     sendSuccess(res, competition);

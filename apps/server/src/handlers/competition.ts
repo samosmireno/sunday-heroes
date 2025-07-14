@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CompetitionService } from "../services/competition-service";
 import { CompetitionType } from "@repo/shared-types";
-import { sendError, sendSuccess } from "../utils/response-utils";
+import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 import { TeamService } from "../services/team-service";
@@ -74,9 +74,6 @@ export const getCompetitionStats = async (
     );
     sendSuccess(res, competition);
   } catch (error) {
-    if (error instanceof Error && error.message.includes("not found")) {
-      return sendError(res, error.message, 404);
-    }
     next(error);
   }
 };

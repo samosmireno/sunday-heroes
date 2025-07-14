@@ -16,8 +16,6 @@ import InvitationPage from "./pages/invitation-page.tsx";
 import CompetitionAdminPage from "./pages/competition-admin-page.tsx";
 import LeagueRouter from "./components/features/league/league-router.tsx";
 import { GlobalErrorBoundary } from "./components/features/error-boundary/global-error-boundary.tsx";
-import { PageErrorBoundary } from "./components/features/error-boundary/page-error-boundary.tsx";
-import { ErrorTest } from "./components/test-components/error-test.tsx";
 
 export default function App() {
   return (
@@ -26,136 +24,130 @@ export default function App() {
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
             <Route path="/login" element={<LoginPage />} />
+
             <Route path="/auth/callback" element={<AuthCallback />} />
+
             <Route
               path="/vote/:matchId"
               element={
-                <PageErrorBoundary pageName="Vote">
-                  <ProtectedRoute>
-                    <VotePage />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <VotePage />
+                </ProtectedRoute>
               }
             />
+
             <Route
               path="/pending/:matchId"
               element={
-                <PageErrorBoundary pageName="Pending Votes">
-                  <ProtectedRoute>
-                    <AdminPendingVotes />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <AdminPendingVotes />
+                </ProtectedRoute>
               }
             />
+
             <Route
               path="/dashboard"
               element={
-                <PageErrorBoundary pageName="Dashboard">
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
               }
             />
+
             <Route
               path="/competition/:competitionId"
               element={
-                <PageErrorBoundary pageName="Competition">
-                  <ProtectedRoute>
-                    <LeagueRouter />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <LeagueRouter />
+                </ProtectedRoute>
               }
             />
+
             <Route
               path="/league-setup/:competitionId"
               element={
-                <PageErrorBoundary pageName="League Setup">
-                  <ProtectedRoute>
-                    <LeagueRouter />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <LeagueRouter />
+                </ProtectedRoute>
               }
             />
+
             <Route
-              path="/invite/:token"
+              path="/create-competition/:userId"
               element={
-                <PageErrorBoundary pageName="Invitation">
-                  <InvitationPage />
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <CreateCompetitionForm />
+                </ProtectedRoute>
               }
             />
+
             <Route
-              path="/competition-admin/:competitionId"
+              path="/add-match/:competitionId"
               element={
-                <PageErrorBoundary pageName="Competition Admin">
-                  <ProtectedRoute>
-                    <CompetitionAdminPage />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <AddMatchForm />
+                </ProtectedRoute>
               }
             />
+
             <Route
-              path="/create-competition"
+              path="/edit-match/:competitionId/:matchId"
               element={
-                <PageErrorBoundary pageName="Create Competition">
-                  <ProtectedRoute>
-                    <CreateCompetitionForm />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <AddMatchForm />
+                </ProtectedRoute>
               }
             />
+
             <Route
               path="/competitions"
               element={
-                <PageErrorBoundary pageName="Competitions">
-                  <ProtectedRoute>
-                    <CompetitionListPage />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <CompetitionListPage />
+                </ProtectedRoute>
               }
             />
+
             <Route
               path="/matches"
               element={
-                <PageErrorBoundary pageName="Matches">
-                  <ProtectedRoute>
-                    <MatchesPage />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <MatchesPage />
+                </ProtectedRoute>
               }
             />
+
             <Route
-              path="/add-match"
+              path="/matches/:competitionId"
               element={
-                <PageErrorBoundary pageName="Add Match">
-                  <ProtectedRoute>
-                    <AddMatchForm />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <MatchesPage />
+                </ProtectedRoute>
               }
             />
+
             <Route
               path="/players"
               element={
-                <PageErrorBoundary pageName="Players">
-                  <ProtectedRoute>
-                    <PlayersPage />
-                  </ProtectedRoute>
-                </PageErrorBoundary>
+                <ProtectedRoute>
+                  <PlayersPage />
+                </ProtectedRoute>
               }
             />
-            {process.env.NODE_ENV === "development" && (
-              <Route
-                path="/test-errors"
-                element={
-                  <PageErrorBoundary pageName="TestError">
-                    <ErrorTest />
-                  </PageErrorBoundary>
-                }
-              />
-            )}
+
+            <Route
+              path="/competition/:competitionId/admin"
+              element={
+                <ProtectedRoute>
+                  <CompetitionAdminPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="/invite/:token" element={<InvitationPage />} />
+
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </AuthProvider>

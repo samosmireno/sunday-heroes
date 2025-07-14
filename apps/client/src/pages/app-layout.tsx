@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { SidebarProvider } from "../components/ui/sidebar";
 import { AppSidebar } from "../components/features/sidebar/app-sidebar";
+import { Toaster } from "sonner";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -9,6 +10,13 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        duration={4000}
+        theme="dark"
+      />
       <div
         className="pointer-events-none fixed inset-0 z-50 bg-repeat"
         style={{

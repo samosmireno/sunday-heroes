@@ -27,9 +27,8 @@ export const useErrorHandler = () => {
         console.error("Error occurred:", error);
       }
 
-      // Handle different error types based on backend structure
       if (error.name === "ValidationError" && error.fields) {
-        const messages = error.fields.map(
+        const messages = error.response.data.fields.map(
           (field: any) => `${field.field}: ${field.message}`,
         );
         if (showToast) {
@@ -39,7 +38,7 @@ export const useErrorHandler = () => {
         return;
       }
 
-      if (error.name === "AuthenticationError" || error.statusCode === 401) {
+      if (error.name === "AuthenticationError" || error.status === 401) {
         if (showToast) {
           toast.error("Authentication required. Please log in again.");
         }
@@ -50,7 +49,7 @@ export const useErrorHandler = () => {
         return;
       }
 
-      if (error.name === "AuthorizationError" || error.statusCode === 403) {
+      if (error.name === "AuthorizationError" || error.status === 403) {
         if (showToast) {
           toast.error("You are not authorized to perform this action.");
         }
@@ -58,9 +57,11 @@ export const useErrorHandler = () => {
         return;
       }
 
-      if (error.name === "NotFoundError" || error.statusCode === 404) {
+      if (error.name === "NotFoundError" || error.status === 404) {
         if (showToast) {
-          toast.error(`${error.resource || "Resource"} not found.`);
+          toast.error(
+            `${error.response.data.resource || "Resource"} not found.`,
+          );
         }
         if (throwError) showBoundary(error);
         return;
@@ -69,7 +70,8 @@ export const useErrorHandler = () => {
       if (error.name === "ConflictError" || error.statusCode === 409) {
         if (showToast) {
           toast.error(
-            error.message || "A conflict occurred with existing data.",
+            error.response.data.message ||
+              "A conflict occurred with existing data.",
           );
         }
         if (throwError) showBoundary(error);
@@ -84,7 +86,6 @@ export const useErrorHandler = () => {
         return;
       }
 
-      // Generic error handling
       if (showToast) {
         toast.error(error.message || "An unexpected error occurred.");
       }

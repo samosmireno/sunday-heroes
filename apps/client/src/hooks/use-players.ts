@@ -2,6 +2,7 @@ import { PlayerListResponse } from "@repo/shared-types";
 import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
 import { config } from "../config/config";
 import axios, { AxiosError } from "axios";
+import { useErrorHandler } from "./use-error-handler";
 
 interface PlayerListQueryParams {
   userId: string;
@@ -16,47 +17,52 @@ interface PlayersListResult {
   totalPages: number;
 }
 
-const fetchPlayers = async (
-  context: QueryFunctionContext<[string, PlayerListQueryParams]>,
-): Promise<PlayersListResult> => {
-  try {
-    const [, { userId, page, searchTerm }] = context.queryKey;
-
-    const params = new URLSearchParams({
-      userId,
-      page: page.toString(),
-      limit: config.pagination.players_per_page.toString(),
-    });
-
-    if (searchTerm) {
-      params.append("search", searchTerm);
-    }
-
-    const res = await axios.get(
-      `${config.server}/api/players?${params.toString()}`,
-    );
-    const totalCount = parseInt(res.headers["x-total-count"] || "0", 10);
-
-    const totalPages = Math.ceil(
-      totalCount / config.pagination.players_per_page,
-    );
-
-    return {
-      players: res.data,
-      totalCount,
-      totalPages,
-    };
-  } catch (error) {
-    console.error("Error fetching players:", error);
-    throw error;
-  }
-};
-
 export const usePlayers = ({
   userId,
   page,
   searchTerm,
 }: PlayerListQueryParams) => {
+  const { handleError } = useErrorHandler();
+
+  const fetchPlayers = async (
+    context: QueryFunctionContext<[string, PlayerListQueryParams]>,
+  ): Promise<PlayersListResult> => {
+    try {
+      const [, { userId, page, searchTerm }] = context.queryKey;
+
+      const params = new URLSearchParams({
+        userId,
+        page: page.toString(),
+        limit: config.pagination.players_per_page.toString(),
+      });
+
+      if (searchTerm) {
+        params.append("search", searchTerm);
+      }
+
+      const res = await axios.get(
+        `${config.server}/api/players?${params.toString()}`,
+      );
+      const totalCount = parseInt(res.headers["x-total-count"] || "0", 10);
+
+      const totalPages = Math.ceil(
+        totalCount / config.pagination.players_per_page,
+      );
+
+      return {
+        players: res.data,
+        totalCount,
+        totalPages,
+      };
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
   const { data, isLoading, refetch, isError, error } = useQuery<
     PlayersListResult,
     AxiosError,

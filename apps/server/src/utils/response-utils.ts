@@ -57,37 +57,3 @@ export const sendValidationError = (
 
   res.status(statusCode).json(errorResponse);
 };
-
-export const sendAuthError = (
-  res: Response,
-  message: string = "Authentication required",
-  statusCode = 401
-): void => {
-  res.status(statusCode).json({
-    error: message,
-    code: "AUTH_ERROR",
-  });
-};
-
-export const sendForbiddenError = (
-  res: Response,
-  message: string = "Access forbidden",
-  resource?: string
-): void => {
-  res.status(403).json({
-    error: message,
-    code: "FORBIDDEN",
-    ...(resource && { resource }),
-  });
-};
-
-export const sendNotFoundError = (
-  res: Response,
-  resource: string = "Resource"
-): void => {
-  res.status(404).json({
-    error: `${resource} not found`,
-    code: "NOT_FOUND",
-    resource: resource.toLowerCase(),
-  });
-};
