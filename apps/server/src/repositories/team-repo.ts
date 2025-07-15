@@ -217,13 +217,13 @@ export class TeamRepo {
   }
 
   static async getTeamIDFromName(
-    team_name: string,
-    competition_id: string
+    teamName: string,
+    competitionId: string
   ): Promise<string> {
     try {
-      const team = await this.findByName(team_name, competition_id);
+      const team = await this.findByName(teamName, competitionId);
       if (!team) {
-        throw new Error(`Team with name ${team_name} not found`);
+        throw new Error(`Team with name ${teamName} not found`);
       }
       return team.id;
     } catch (error) {

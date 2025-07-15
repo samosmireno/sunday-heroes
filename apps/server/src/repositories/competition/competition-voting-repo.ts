@@ -97,13 +97,13 @@ export class CompetitionVotingRepo {
   }
 
   static async getVotingStatus(
-    competition_id: string,
+    competitionId: string,
     tx?: PrismaTransaction
   ): Promise<VotingStatus | undefined> {
     try {
       const prismaClient = tx || prisma;
       const competition = await prismaClient.competition.findUnique({
-        where: { id: competition_id },
+        where: { id: competitionId },
         select: {
           votingEnabled: true,
         },
