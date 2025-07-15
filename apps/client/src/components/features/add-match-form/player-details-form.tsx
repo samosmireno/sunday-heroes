@@ -1,10 +1,10 @@
 import { useMultiStepFormContext } from "../multi-step-form/multi-step-form-context";
-import { AddDuelFormValues } from "@repo/shared-types";
 import { Form } from "../../ui/form";
 import { Button } from "../../ui/button";
 import TeamInputStats from "./team-input-stats";
 import { Team } from "../../../types/types";
 import FormLayout from "./form-layout";
+import { DuelFormData } from "./add-match-schemas";
 
 interface PlayerDetailsFormProps {
   isEdited: boolean;
@@ -14,7 +14,7 @@ export default function PlayerDetailsForm({
   isEdited,
 }: PlayerDetailsFormProps) {
   const { form, prevStep, isStepValid } = useMultiStepFormContext();
-  const data: AddDuelFormValues = form.getValues();
+  const data: DuelFormData = form.getValues();
 
   return (
     <FormLayout title="Add player stats">

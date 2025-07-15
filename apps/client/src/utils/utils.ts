@@ -1,9 +1,6 @@
-import {
-  PartialAddDuelFormValues,
-  MatchType,
-  MatchResponse,
-} from "@repo/shared-types";
+import { MatchType, MatchResponse } from "@repo/shared-types";
 import { Team } from "../types/types";
+import { PartialDuelFormData } from "../components/features/add-match-form/add-match-schemas";
 
 export const capitalizeFirstLetter = (string: string) => {
   return string
@@ -63,7 +60,7 @@ export function formatErrorStack(stack?: string): string {
 }
 
 const getPositionByPlayerName = (
-  formData: PartialAddDuelFormValues,
+  formData: PartialDuelFormData,
   playerName: string,
 ) => {
   let position = 0;
@@ -80,7 +77,7 @@ const getPositionByPlayerName = (
 };
 
 export const createFootballFieldMatch = (
-  formData: PartialAddDuelFormValues,
+  formData: PartialDuelFormData,
 ): MatchResponse => {
   const matchDate =
     formData.match?.date instanceof Date

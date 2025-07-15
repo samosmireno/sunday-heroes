@@ -90,7 +90,11 @@ export const createMatchFormSchema = (competitionType: CompetitionType) => {
   }
 };
 
+export type CompetitionPlayersData = z.infer<typeof playersSchema>;
+export type MatchPlayersData = z.infer<typeof matchPlayersSchema>;
+
 export type DuelFormData = z.infer<typeof AddDuelFormSchema>;
+export type PartialDuelFormData = Partial<DuelFormData>;
 export type LeagueFormData = z.infer<typeof AddLeagueFormSchema>;
 export type KnockoutFormData = z.infer<typeof AddKnockoutFormSchema>;
 

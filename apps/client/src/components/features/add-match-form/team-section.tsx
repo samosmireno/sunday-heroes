@@ -8,7 +8,7 @@ import { UseFormReturn } from "react-hook-form";
 import { capitalizeFirstLetter } from "../../../utils/utils";
 import PlayerList from "./player-list";
 import { useAuth } from "../../../context/auth-context";
-import { DuelMatchPlayersForm } from "@repo/shared-types";
+import { MatchPlayersData } from "./add-match-schemas";
 
 interface TeamSectionProps {
   team: Team;
@@ -61,7 +61,7 @@ export default function TeamSection({
         team === Team.HOME
           ? homePlayers.length - 1
           : homePlayers.length + awayPlayers.length - 1;
-      const matchPlayers: DuelMatchPlayersForm["players"] = form.getValues(
+      const matchPlayers: MatchPlayersData["players"] = form.getValues(
         "matchPlayers.players",
       );
       const newMatchPlayer = {
@@ -87,7 +87,7 @@ export default function TeamSection({
       ...players[team].filter((p) => p !== player),
     ]);
     if (isEdited) {
-      const matchPlayers: DuelMatchPlayersForm["players"] =
+      const matchPlayers: MatchPlayersData["players"] =
         form.getValues("matchPlayers.players") || [];
       form.setValue(
         "matchPlayers.players",

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Team } from "../../../types/types";
 import TeamSection from "./team-section";
 import FormLayout from "./form-layout";
-import { DuelPlayersForm } from "@repo/shared-types";
+import { CompetitionPlayersData } from "./add-match-schemas";
 
 interface PlayersListFormProps {
   isEdited: boolean;
@@ -16,7 +16,7 @@ export default function PlayersListForm({ isEdited }: PlayersListFormProps) {
   const [openAutocomplete, setOpenAutocomplete] = useState<Team | null>(null);
   const { form, nextStep, prevStep, isStepValid } = useMultiStepFormContext();
 
-  const formPlayers: DuelPlayersForm = form.getValues("players");
+  const formPlayers: CompetitionPlayersData = form.getValues("players");
 
   useEffect(() => {
     setSelectedPlayers(

@@ -1,7 +1,7 @@
-import { DuelMatchPlayersForm } from "@repo/shared-types";
+import { MatchPlayersData } from "./add-match-schemas";
 
 export default function swapMatchPlayers(
-  matchPlayers: DuelMatchPlayersForm,
+  matchPlayers: MatchPlayersData,
   activeId: string,
   overId: string,
 ) {
