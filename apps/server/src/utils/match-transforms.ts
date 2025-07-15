@@ -27,12 +27,12 @@ export function transformMatchServiceToResponse(
 ): MatchResponse {
   const mappedPlayers = match.matchPlayers.map((player) => ({
     id: player.id,
-    nickname: player.dashboard_player.nickname,
-    isHome: player.is_home,
+    nickname: player.dashboardPlayer.nickname,
+    isHome: player.isHome,
     goals: player.goals,
     assists: player.assists,
     position: player.position,
-    rating: calculatePlayerScore(player.received_votes, match.player_votes),
+    rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
   }));
 
   const sortedPlayers = sortPlayersHomeAwayByPosition(mappedPlayers);
@@ -40,15 +40,15 @@ export function transformMatchServiceToResponse(
   const transformedData: MatchResponse = {
     id: match.id,
     date: match.date?.toLocaleDateString(),
-    match_type: match.match_type as MatchResponse["match_type"],
+    matchType: match.matchType as MatchResponse["matchType"],
     round: match.round,
-    home_team_score: match.home_team_score,
-    away_team_score: match.away_team_score,
-    penalty_home_score: match.penalty_home_score ?? undefined,
-    penalty_away_score: match.penalty_away_score ?? undefined,
-    teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
+    homeTeamScore: match.homeTeamScore,
+    awayTeamScore: match.awayTeamScore,
+    penaltyHomeScore: match.penaltyHomeScore ?? undefined,
+    penaltyAwayScore: match.penaltyAwayScore ?? undefined,
+    teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
     players: sortedPlayers,
-    is_completed: match.is_completed,
+    isCompleted: match.isCompleted,
   };
 
   return transformedData;
@@ -60,51 +60,51 @@ export function transformMatchesToMatchesResponse(
 ): MatchPageResponse[] {
   return matches.map((match) => {
     const homeTeamPlayers: PlayerResponse[] = match.matchPlayers
-      .filter((player) => player.is_home)
+      .filter((player) => player.isHome)
       .map((player) => ({
         id: player.id,
-        nickname: player.dashboard_player.nickname,
+        nickname: player.dashboardPlayer.nickname,
         position: player.position,
         goals: player.goals,
         assists: player.assists,
-        isHome: player.is_home,
-        rating: calculatePlayerScore(player.received_votes, match.player_votes),
+        isHome: player.isHome,
+        rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
       }));
 
     const awayTeamPlayers: PlayerResponse[] = match.matchPlayers
-      .filter((player) => !player.is_home)
+      .filter((player) => !player.isHome)
       .map((player) => ({
         id: player.id,
-        nickname: player.dashboard_player.nickname,
+        nickname: player.dashboardPlayer.nickname,
         position: player.position,
         goals: player.goals,
         assists: player.assists,
-        isHome: player.is_home,
-        rating: calculatePlayerScore(player.received_votes, match.player_votes),
+        isHome: player.isHome,
+        rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
       }));
 
-    const teamNames = match.match_teams.map((teamMatch) => teamMatch.team.name);
+    const teamNames = match.matchTeams.map((teamMatch) => teamMatch.team.name);
 
     return {
       id: match.id,
       date: match.date?.toLocaleDateString(),
       teams: teamNames,
-      scores: [match.home_team_score, match.away_team_score],
+      scores: [match.homeTeamScore, match.awayTeamScore],
       penaltyScores:
-        match.penalty_home_score && match.penalty_away_score
-          ? [match.penalty_home_score, match.penalty_away_score]
+        match.penaltyHomeScore && match.penaltyAwayScore
+          ? [match.penaltyHomeScore, match.penaltyAwayScore]
           : undefined,
-      matchType: match.match_type as MatchPageResponse["matchType"],
-      votingEnabled: match.competition.voting_enabled,
-      votingStatus: match.voting_status as MatchPageResponse["votingStatus"],
-      votingEndsAt: match.voting_ends_at?.toDateString(),
+      matchType: match.matchType as MatchPageResponse["matchType"],
+      votingEnabled: match.competition.votingEnabled,
+      votingStatus: match.votingStatus as MatchPageResponse["votingStatus"],
+      votingEndsAt: match.votingEndsAt?.toDateString(),
       playerCount: match.matchPlayers.length,
       pendingVotes: calculatePendingVotes(match),
       playerStats: [...homeTeamPlayers, ...awayTeamPlayers],
       competitionId: match.competition.id,
       competitionName: match.competition.name,
       competitionType: match.competition.type as CompetitionResponse["type"],
-      isAdmin: match.competition.dashboard.admin_id === userId,
+      isAdmin: match.competition.dashboard.adminId === userId,
     };
   });
 }
@@ -114,19 +114,19 @@ export function transformAddMatchRequestToService(
   competitionVoting?: VotingStatus
 ): Omit<Match, "id"> {
   const matchForService: Omit<Match, "id"> = {
-    competition_id: match.competitionId,
-    match_type: match.matchType,
+    competitionId: match.competitionId,
+    matchType: match.matchType,
     date: match.date ?? null,
-    home_team_score: match.homeTeamScore,
-    away_team_score: match.awayTeamScore,
-    penalty_home_score: match.penaltyHomeScore ?? null,
-    penalty_away_score: match.penaltyHomeScore ?? null,
-    created_at: new Date(Date.now()),
+    homeTeamScore: match.homeTeamScore,
+    awayTeamScore: match.awayTeamScore,
+    penaltyHomeScore: match.penaltyHomeScore ?? null,
+    penaltyAwayScore: match.penaltyHomeScore ?? null,
+    createdAt: new Date(Date.now()),
     round: match.round,
-    bracket_position: match.bracketPosition ?? null,
-    voting_status: competitionVoting ? competitionVoting : VotingStatus.CLOSED,
-    voting_ends_at: new Date(Date.now() + 5 * 24 * 60 * 60),
-    is_completed: true,
+    bracketPosition: match.bracketPosition ?? null,
+    votingStatus: competitionVoting ? competitionVoting : VotingStatus.CLOSED,
+    votingEndsAt: new Date(Date.now() + 5 * 24 * 60 * 60),
+    isCompleted: true,
   };
 
   return matchForService;

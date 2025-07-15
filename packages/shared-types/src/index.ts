@@ -11,7 +11,7 @@ export type PlayerResponse = {
   assists: number;
   position: number;
   rating: number;
-  penalty_scored?: boolean;
+  penaltyScored?: boolean;
 };
 
 export type PlayerTotals = {
@@ -20,7 +20,7 @@ export type PlayerTotals = {
   matches: number;
   goals: number;
   assists: number;
-  penalty_scored?: number;
+  penaltyScored?: number;
   rating?: number;
 };
 
@@ -31,13 +31,13 @@ export interface LeaguePlayerTotals extends PlayerTotals {
 export type MatchResponse = {
   id: string;
   date?: string;
-  match_type: MatchType;
+  matchType: MatchType;
   round: number;
-  home_team_score: number;
-  away_team_score: number;
-  penalty_home_score?: number;
-  penalty_away_score?: number;
-  is_completed: boolean;
+  homeTeamScore: number;
+  awayTeamScore: number;
+  penaltyHomeScore?: number;
+  penaltyAwayScore?: number;
+  isCompleted: boolean;
   teams: string[];
   players: PlayerResponse[];
 };
@@ -62,7 +62,7 @@ export type CompetitionResponse = {
     name: string;
   }[];
   matches: MatchResponse[];
-  player_stats: PlayerTotals[];
+  playerStats: PlayerTotals[];
   moderators: {
     id: string;
     nickname: string;
@@ -81,18 +81,18 @@ export type DashboardResponse = {
 
 export type DashboardMatchResponse = {
   id: string;
-  competition_type: CompetitionType;
-  competition_name: string;
+  competitionType: CompetitionType;
+  competitionName: string;
   date?: string;
-  match_type: MatchType;
+  matchType: MatchType;
   round: number;
-  home_team_score: number;
-  away_team_score: number;
-  penalty_home_score?: number;
-  penalty_away_score?: number;
+  homeTeamScore: number;
+  awayTeamScore: number;
+  penaltyHomeScore?: number;
+  penaltyAwayScore?: number;
   teams: string[];
-  match_players: number;
-  voting_status: VotingStatus;
+  matchPlayers: number;
+  votingStatus: VotingStatus;
 };
 
 export type DashboardCompetitionResponse = {

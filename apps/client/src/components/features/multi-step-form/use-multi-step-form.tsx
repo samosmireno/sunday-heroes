@@ -22,9 +22,7 @@ export function useMultiStepForm<Schema extends z.ZodType>(
         }
 
         const stepData = form.getValues(stepName) ?? {};
-        //console.log("stepData: ", stepData);
         const result = stepSchema.safeParse(stepData);
-        //console.log(result.error);
 
         return result.success;
       }

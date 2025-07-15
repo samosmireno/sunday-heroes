@@ -2,8 +2,9 @@ import { CompetitionResponse } from "@repo/shared-types";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import ConfirmationDialog from "../../ui/confirmation-dialog";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../config/axiosConfig";
+import axiosInstance from "../../../config/axios-config";
 import { config } from "../../../config/config";
+import { useErrorHandler } from "../../../hooks/use-error-handler";
 
 interface CompetitionSettingsProps {
   competition: CompetitionResponse;
@@ -15,21 +16,38 @@ export default function CompetitionSettings({
   onUpdate,
 }: CompetitionSettingsProps) {
   const navigate = useNavigate();
+  const { handleError } = useErrorHandler();
 
   const handleResetCompetition = async () => {
-    await axiosInstance.put(
-      `${config.server}/api/competitions/${competition.id}/reset`,
-      { withCredentials: true },
-    );
-    onUpdate?.();
+    try {
+      await axiosInstance.put(
+        `${config.server}/api/competitions/${competition.id}/reset`,
+        { withCredentials: true },
+      );
+      onUpdate?.();
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+    }
   };
 
   const handleDeleteCompetition = async () => {
-    await axiosInstance.delete(
-      `${config.server}/api/competitions/${competition.id}`,
-      { withCredentials: true },
-    );
-    navigate("/competitions");
+    try {
+      await axiosInstance.delete(
+        `${config.server}/api/competitions/${competition.id}`,
+        { withCredentials: true },
+      );
+      navigate("/competitions");
+    } catch (error) {
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+    }
   };
 
   return (

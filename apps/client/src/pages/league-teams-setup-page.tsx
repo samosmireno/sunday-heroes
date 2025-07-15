@@ -17,13 +17,14 @@ import Header from "../components/ui/header";
 import Background from "../components/ui/background";
 import Loading from "../components/ui/loading";
 import { Save } from "lucide-react";
-import axiosInstance from "../config/axiosConfig";
+import axiosInstance from "../config/axios-config";
 import { useAuth } from "../context/auth-context";
 import { useCompetition } from "../hooks/use-competition";
+import { useErrorHandler } from "../hooks/use-error-handler";
 
 const createTeamNamesSchema = (numberOfTeams: number = 0) => {
   const teamFields = Array.from({ length: numberOfTeams }, (_, i) => [
-    `team_${i}`,
+    `team${i}`,
     z
       .string()
       .min(1, `Team ${i + 1} name is required`)
@@ -44,6 +45,7 @@ export default function LeagueTeamSetupPage() {
     competitionId ?? "",
     user?.id || "",
   );
+  const { handleError } = useErrorHandler();
 
   const formSchema = competition
     ? createTeamNamesSchema(competition.teams?.length)
@@ -60,7 +62,7 @@ export default function LeagueTeamSetupPage() {
     try {
       const teamUpdates = competition.teams.map((team, index) => ({
         id: team.id,
-        name: data[`team_${index}`] || team.name,
+        name: data[`team${index}`] || team.name,
       }));
 
       await axiosInstance.put(`/api/leagues/${competitionId}/team-names`, {
@@ -71,7 +73,11 @@ export default function LeagueTeamSetupPage() {
 
       navigate(`/competition/${competitionId}`);
     } catch (error) {
-      console.error("Error updating team names:", error);
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -141,8 +147,8 @@ export default function LeagueTeamSetupPage() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {competition.teams?.map((team, index) => (
                   <FormField
-                    key={`team_${index}`}
-                    name={`team_${index}`}
+                    key={`team${index}`}
+                    name={`team${index}`}
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>

@@ -48,18 +48,18 @@ export class AuthService {
     if (!user) {
       user = await UserRepo.create({
         email: googleUser.email,
-        given_name: googleUser.given_name,
-        family_name: googleUser.family_name,
+        givenName: googleUser.given_name,
+        familyName: googleUser.family_name,
         role: Role.ADMIN,
-        is_registered: true,
-        created_at: new Date(),
-        last_login: new Date(),
+        isRegistered: true,
+        createdAt: new Date(),
+        lastLogin: new Date(),
       });
 
       await DashboardRepo.create({
-        admin_id: user.id,
+        adminId: user.id,
         name: `${googleUser.given_name}'s Dashboard`,
-        created_at: new Date(),
+        createdAt: new Date(),
       });
     }
 

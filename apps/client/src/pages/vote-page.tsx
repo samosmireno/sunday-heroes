@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import axiosInstance from "../config/axiosConfig";
+import axiosInstance from "../config/axios-config";
 import { config } from "../config/config";
 import { CheckCircle2, Info } from "lucide-react";
 import Background from "../components/ui/background";
@@ -11,6 +11,7 @@ import { GuideBox } from "../components/ui/guide-box";
 import { InfoBox } from "../components/ui/info-box";
 import PlayerSelection from "../components/features/voting/player-selection";
 import VotePlayerList from "../components/features/voting/vote-player-list";
+import { useErrorHandler } from "../hooks/use-error-handler";
 
 interface SelectedPlayer {
   id: string;
@@ -34,6 +35,7 @@ export default function VotePage() {
   const [selectedPlayers, setSelectedPlayers] = useState<SelectedPlayer[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const { handleError } = useErrorHandler();
 
   if (!matchId || !voterId) return;
 
@@ -75,7 +77,11 @@ export default function VotePage() {
 
       setSuccess(true);
     } catch (err) {
-      console.error(err);
+      handleError(err, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
     } finally {
       setIsSubmitting(false);
     }

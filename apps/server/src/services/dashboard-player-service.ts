@@ -89,10 +89,10 @@ export class DashboardPlayerService {
     }
 
     return await DashboardPlayerRepo.create({
-      user_id: userId,
+      userId,
       nickname: data.nickname,
-      dashboard_id: dashboardId,
-      created_at: new Date(),
+      dashboardId,
+      createdAt: new Date(),
     });
   }
 
@@ -106,7 +106,7 @@ export class DashboardPlayerService {
       throw new NotFoundError("Dashboard player");
     }
 
-    const isAdmin = player.dashboard.admin_id === userId;
+    const isAdmin = player.dashboard.adminId === userId;
     if (!isAdmin) {
       throw new AuthorizationError("Only dashboard admin can update players");
     }
@@ -114,7 +114,7 @@ export class DashboardPlayerService {
     if (data.nickname && data.nickname !== player.nickname) {
       const existingPlayer = await DashboardPlayerRepo.findByNickname(
         data.nickname,
-        player.dashboard_id
+        player.dashboardId
       );
       if (existingPlayer) {
         throw new ConflictError(
@@ -132,7 +132,7 @@ export class DashboardPlayerService {
       throw new NotFoundError("Dashboard player");
     }
 
-    const isAdmin = player.dashboard.admin_id === userId;
+    const isAdmin = player.dashboard.adminId === userId;
     if (!isAdmin) {
       throw new AuthorizationError("Only dashboard admin can delete players");
     }
@@ -155,10 +155,10 @@ export class DashboardPlayerService {
       if (!existingPlayer) {
         await DashboardPlayerRepo.create(
           {
-            user_id: null,
+            userId: null,
             nickname: playerName,
-            dashboard_id: dashboardId,
-            created_at: new Date(),
+            dashboardId,
+            createdAt: new Date(),
           },
           tx
         );
@@ -182,8 +182,8 @@ export class DashboardPlayerService {
     return await prisma.$transaction(async (transaction) => {
       const unusedPlayers = await transaction.dashboardPlayer.findMany({
         where: {
-          match_players: { none: {} },
-          user_id: null,
+          matchPlayers: { none: {} },
+          userId: null,
         },
         select: { id: true },
       });
@@ -208,11 +208,11 @@ export class DashboardPlayerService {
       throw new NotFoundError("Dashboard player");
     }
 
-    if (player.user_id) {
+    if (player.userId) {
       throw new ConflictError("This player is already linked to a user");
     }
 
-    return await DashboardPlayerRepo.update(playerId, { user_id: userId });
+    return await DashboardPlayerRepo.update(playerId, { userId });
   }
 
   static async getModerators(userId: string) {
@@ -223,12 +223,12 @@ export class DashboardPlayerService {
     }
     return await prisma.dashboardPlayer.findMany({
       where: {
-        dashboard_id: dashboardId,
+        dashboardId,
         user: { role: "MODERATOR" },
       },
       include: {
         user: {
-          select: { id: true, role: true, given_name: true, family_name: true },
+          select: { id: true, role: true, givenName: true, familyName: true },
         },
       },
     });

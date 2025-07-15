@@ -17,10 +17,10 @@ const DASHBOARD_PLAYER_DETAILED_INCLUDE = {
     select: {
       id: true,
       email: true,
-      is_registered: true,
+      isRegistered: true,
     },
   },
-  match_players: {
+  matchPlayers: {
     select: {
       match: {
         select: {
@@ -31,10 +31,10 @@ const DASHBOARD_PLAYER_DETAILED_INCLUDE = {
               name: true,
             },
           },
-          player_votes: true,
+          playerVotes: true,
         },
       },
-      received_votes: true,
+      receivedVotes: true,
       goals: true,
       assists: true,
     },
@@ -129,7 +129,7 @@ export class DashboardPlayerRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findMany({
-        where: { dashboard_id: dashboardId },
+        where: { dashboardId },
         include: DASHBOARD_PLAYER_DETAILED_INCLUDE,
         orderBy: { nickname: "asc" },
         take: options?.limit,
@@ -152,9 +152,9 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findUnique({
         where: {
-          dashboard_id_nickname: {
-            dashboard_id: dashboardId,
-            nickname: nickname,
+          dashboardId_nickname: {
+            dashboardId,
+            nickname,
           },
         },
         include: DASHBOARD_PLAYER_BASIC_INCLUDE,
@@ -176,7 +176,7 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findMany({
         where: {
-          dashboard_id: dashboardId,
+          dashboardId,
           nickname: { in: nicknames },
         },
         include: DASHBOARD_PLAYER_BASIC_INCLUDE,
@@ -198,8 +198,8 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findFirst({
         where: {
-          dashboard_id: dashboardId,
-          user_id: userId,
+          dashboardId,
+          userId,
         },
       });
     } catch (error) {
@@ -220,7 +220,7 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       const DashboardPlayers = await prismaClient.dashboardPlayer.findMany({
         where: {
-          dashboard_id: dashboardId,
+          dashboardId,
           nickname: {
             startsWith: searchTerm,
             mode: "insensitive",
@@ -247,7 +247,7 @@ export class DashboardPlayerRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.count({
-        where: { dashboard_id: dashboardId },
+        where: { dashboardId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(
@@ -266,7 +266,7 @@ export class DashboardPlayerRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.count({
         where: {
-          dashboard_id: dashboardId,
+          dashboardId,
           nickname: {
             startsWith: searchTerm,
             mode: "insensitive",

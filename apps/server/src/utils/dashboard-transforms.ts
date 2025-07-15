@@ -22,7 +22,7 @@ export function transformDashboardToResponse(
 
   const uniquePlayers = new Set(
     matches.flatMap((match) =>
-      match.matchPlayers.map((player) => player.dashboard_player.nickname)
+      match.matchPlayers.map((player) => player.dashboardPlayer.nickname)
     )
   );
   const totalPlayers = uniquePlayers.size;
@@ -33,13 +33,13 @@ export function transformDashboardToResponse(
 
   const pendingVotes = matches
     .map((match) => {
-      if (match.voting_status !== VotingStatus.OPEN) return 0;
+      if (match.votingStatus !== VotingStatus.OPEN) return 0;
 
       const playerIds = match.matchPlayers.map(
-        (player) => player.dashboard_player_id
+        (player) => player.dashboardPlayerId
       );
       const votedPlayerIds = new Set(
-        match.player_votes.map((vote) => vote.voter_id)
+        match.playerVotes.map((vote) => vote.voterId)
       );
 
       return playerIds.filter((id) => !votedPlayerIds.has(id)).length;
@@ -49,7 +49,7 @@ export function transformDashboardToResponse(
   return {
     id: dashboard.id,
     name: dashboard.name,
-    user: dashboard.admin.given_name,
+    user: dashboard.admin.givenName,
     activeCompetitions,
     totalPlayers,
     pendingVotes,
@@ -62,20 +62,19 @@ export function transformDashboardMatchesToResponse(
 ): DashboardMatchResponse[] {
   const matchesResponse: DashboardMatchResponse[] = matches.map((match) => ({
     id: match.id,
-    competition_type: match.competition
-      .type as DashboardMatchResponse["competition_type"],
-    competition_name: match.competition.name,
+    competitionType: match.competition
+      .type as DashboardMatchResponse["competitionType"],
+    competitionName: match.competition.name,
     date: match.date?.toLocaleDateString(),
-    match_type: match.match_type as DashboardMatchResponse["match_type"],
+    matchType: match.matchType as DashboardMatchResponse["matchType"],
     round: match.round,
-    home_team_score: match.home_team_score,
-    away_team_score: match.away_team_score,
-    penalty_home_score: match.penalty_home_score ?? undefined,
-    penalty_away_score: match.penalty_away_score ?? undefined,
-    teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
-    match_players: match.matchPlayers.length,
-    voting_status:
-      match.voting_status as DashboardMatchResponse["voting_status"],
+    homeTeamScore: match.homeTeamScore,
+    awayTeamScore: match.awayTeamScore,
+    penaltyHomeScore: match.penaltyHomeScore ?? undefined,
+    penaltyAwayScore: match.penaltyAwayScore ?? undefined,
+    teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
+    matchPlayers: match.matchPlayers.length,
+    votingStatus: match.votingStatus as DashboardMatchResponse["votingStatus"],
   }));
 
   return matchesResponse;
@@ -98,7 +97,7 @@ const getNumUniquePlayers = (
   matchPlayers: MatchPlayerWithDetails[]
 ): number => {
   const uniqueNicknames = new Set(
-    matchPlayers.map((player) => player.dashboard_player.nickname)
+    matchPlayers.map((player) => player.dashboardPlayer.nickname)
   );
   return uniqueNicknames.size;
 };
@@ -112,13 +111,13 @@ export function transformDashboardCompetitionsToDetailedResponse(
     userRole: getUserRole(comp, userId),
     name: comp.name,
     type: comp.type as DetailedCompetitionResponse["type"],
-    teams: comp.team_competitions.length,
+    teams: comp.teamCompetitions.length,
     players: getNumUniquePlayers(
       comp.matches.flatMap((match) => match.matchPlayers)
     ),
     matches: comp.matches.length,
-    votingEnabled: comp.voting_enabled,
-    pendingVotes: comp.voting_enabled ? 0 : undefined,
+    votingEnabled: comp.votingEnabled,
+    pendingVotes: comp.votingEnabled ? 0 : undefined,
   }));
 
   return competitions;

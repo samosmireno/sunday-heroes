@@ -7,14 +7,14 @@ export function transformCompetitionServiceToPendingVotes(
 ): CompetitionVotes {
   const pendingVotes: PendingVote[] = competition.matches.flatMap((match) => {
     const players = match.matchPlayers.flatMap((player) => ({
-      playerId: player.dashboard_player_id,
-      name: player.dashboard_player.nickname,
-      voted: player.dashboard_player.votes_given
-        .map((match) => match.match_id)
+      playerId: player.dashboardPlayerId,
+      name: player.dashboardPlayer.nickname,
+      voted: player.dashboardPlayer.votesGiven
+        .map((match) => match.matchId)
         .includes(match.id),
     }));
 
-    const teams = match.match_teams.flatMap((mt) => mt.team.name);
+    const teams = match.matchTeams.flatMap((mt) => mt.team.name);
 
     return players.map((p) => ({
       matchId: match.id,
@@ -23,8 +23,8 @@ export function transformCompetitionServiceToPendingVotes(
       playerId: p.playerId,
       voted: p.voted,
       teams: teams,
-      homeScore: match.home_team_score,
-      awayScore: match.away_team_score,
+      homeScore: match.homeTeamScore,
+      awayScore: match.awayTeamScore,
     }));
   });
 
@@ -39,14 +39,14 @@ export function transformMatchServiceToPendingVotes(
   match: MatchWithDetails
 ): MatchVotes {
   const players = match.matchPlayers.flatMap((player) => ({
-    playerId: player.dashboard_player_id,
-    name: player.dashboard_player.nickname,
-    voted: player.dashboard_player.votes_given
-      .map((match) => match.match_id)
+    playerId: player.dashboardPlayerId,
+    name: player.dashboardPlayer.nickname,
+    voted: player.dashboardPlayer.votesGiven
+      .map((match) => match.matchId)
       .includes(match.id),
   }));
 
-  const teams = match.match_teams.flatMap((mt) => mt.team.name);
+  const teams = match.matchPlayers.flatMap((mt) => mt.team.name);
 
   return {
     matchId: match.id,
@@ -59,7 +59,7 @@ export function transformMatchServiceToPendingVotes(
       voted: p.voted,
     })),
     teams: teams,
-    homeScore: match.home_team_score,
-    awayScore: match.away_team_score,
+    homeScore: match.homeTeamScore,
+    awayScore: match.awayTeamScore,
   };
 }

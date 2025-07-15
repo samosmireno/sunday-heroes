@@ -29,25 +29,27 @@ import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { transformCompetitionFormToRequest } from "../utils/transform";
 import { useParams } from "react-router-dom";
-import axiosInstance from "../config/axiosConfig";
+import axiosInstance from "../config/axios-config";
 import { GuideBox } from "../components/ui/guide-box";
 import { InfoBox } from "../components/ui/info-box";
 import Header from "../components/ui/header";
 import { convertMatchType } from "../types/types";
+import { useErrorHandler } from "../hooks/use-error-handler";
 
 const CreateCompetitionForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { handleError } = useErrorHandler();
   const form = useForm<CreateCompetitionFormValues>({
     resolver: zodResolver(CreateCompetitionFormSchema),
     defaultValues: {
-      track_seasons: false,
-      voting_enabled: false,
+      trackSeasons: false,
+      votingEnabled: false,
     },
   });
   const navigate = useNavigate();
   const { userId } = useParams() as { userId: string };
 
-  const votingEnabled: boolean = form.watch("voting_enabled");
+  const votingEnabled: boolean = form.watch("votingEnabled");
   const competitionType: CompetitionType = form.watch("type");
 
   async function onSubmit(values: CreateCompetitionFormValues) {
@@ -68,7 +70,11 @@ const CreateCompetitionForm = () => {
         navigate(`/league-setup/${response.data.competition.id}`);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -76,17 +82,17 @@ const CreateCompetitionForm = () => {
 
   useEffect(() => {
     if (votingEnabled === false) {
-      form.setValue("voting_period_days", undefined);
-      form.setValue("reminder_days", undefined);
-      form.setValue("knockout_voting_period_days", undefined);
+      form.setValue("votingPeriodDays", undefined);
+      form.setValue("reminderDays", undefined);
+      form.setValue("knockoutVotingPeriodDays", undefined);
     }
   }, [votingEnabled, form]);
 
   useEffect(() => {
     if (competitionType !== CompetitionType.LEAGUE) {
-      form.setValue("number_of_teams", undefined);
-      form.setValue("match_type", undefined);
-      form.setValue("is_round_robin", false);
+      form.setValue("numberOfTeams", undefined);
+      form.setValue("matchType", undefined);
+      form.setValue("isRoundRobin", false);
     }
   }, [competitionType, form]);
 
@@ -187,7 +193,7 @@ const CreateCompetitionForm = () => {
                         League Settings
                       </h4>
                       <FormField
-                        name="number_of_teams"
+                        name="numberOfTeams"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Number of Teams</FormLabel>
@@ -204,7 +210,7 @@ const CreateCompetitionForm = () => {
                         )}
                       />
                       <FormField
-                        name="is_round_robin"
+                        name="isRoundRobin"
                         render={({ field }) => (
                           <FormItem className="flex items-center space-x-2">
                             <Checkbox
@@ -217,7 +223,7 @@ const CreateCompetitionForm = () => {
                         )}
                       />
                       <FormField
-                        name="match_type"
+                        name="matchType"
                         control={form.control}
                         render={({ field }) => (
                           <FormItem>
@@ -272,7 +278,7 @@ const CreateCompetitionForm = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <FormField
-                      name="track_seasons"
+                      name="trackSeasons"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-2">
@@ -292,7 +298,7 @@ const CreateCompetitionForm = () => {
                       )}
                     />
                     <FormField
-                      name="voting_enabled"
+                      name="votingEnabled"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-2">
@@ -316,7 +322,7 @@ const CreateCompetitionForm = () => {
                     <div className="ml-0 mt-2 rounded-lg bg-bg/20 p-3 sm:ml-7 sm:p-4">
                       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         <FormField
-                          name="voting_period_days"
+                          name="votingPeriodDays"
                           control={form.control}
                           render={({ field }) => (
                             <FormItem className="flex flex-col">
@@ -336,7 +342,7 @@ const CreateCompetitionForm = () => {
                           )}
                         />
                         <FormField
-                          name="reminder_days"
+                          name="reminderDays"
                           control={form.control}
                           render={({ field }) => (
                             <FormItem className="flex flex-col">
@@ -357,7 +363,7 @@ const CreateCompetitionForm = () => {
                         />
                         {competitionType === CompetitionType.KNOCKOUT && (
                           <FormField
-                            name="knockout_voting_period_days"
+                            name="knockoutVotingPeriodDays"
                             control={form.control}
                             render={({ field }) => (
                               <FormItem className="flex flex-col">

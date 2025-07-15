@@ -6,35 +6,35 @@ import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 const MATCH_DETAILED_INCLUDE = {
   matchPlayers: {
     include: {
-      dashboard_player: {
+      dashboardPlayer: {
         include: {
-          votes_given: true,
+          votesGiven: true,
         },
       },
-      received_votes: true,
+      receivedVotes: true,
       team: true,
     },
   },
-  match_teams: {
+  matchTeams: {
     include: {
       team: true,
     },
   },
-  player_votes: true,
+  playerVotes: true,
   competition: {
     include: {
       moderators: {
         select: {
-          dashboard_player: {
+          dashboardPlayer: {
             select: {
-              user_id: true,
+              userId: true,
             },
           },
         },
       },
       dashboard: {
         select: {
-          admin_id: true,
+          adminId: true,
         },
       },
     },
@@ -42,7 +42,7 @@ const MATCH_DETAILED_INCLUDE = {
 } satisfies Prisma.MatchInclude;
 
 const MATCH_BASIC_INCLUDE = {
-  match_teams: {
+  matchTeams: {
     include: {
       team: true,
     },
@@ -139,7 +139,7 @@ export class MatchRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.match.findMany({
-        where: { competition_id: competitionId },
+        where: { competitionId },
         include: MATCH_DETAILED_INCLUDE,
         orderBy: { date: "desc" },
         take: options?.limit,
@@ -156,7 +156,7 @@ export class MatchRepo {
     try {
       return await prisma.match.findMany({
         where: {
-          competition_id: { in: competitionIds },
+          competitionId: { in: competitionIds },
         },
         include: MATCH_DETAILED_INCLUDE,
         orderBy: { date: "desc" },
@@ -176,7 +176,7 @@ export class MatchRepo {
       return await prismaClient.match.findMany({
         where: {
           competition: {
-            dashboard_id: dashboardId,
+            dashboardId,
           },
           date: {
             not: null,
@@ -203,8 +203,8 @@ export class MatchRepo {
         where: {
           matchPlayers: {
             some: {
-              dashboard_player: {
-                user_id: playerId,
+              dashboardPlayer: {
+                userId: playerId,
               },
             },
           },
@@ -224,8 +224,8 @@ export class MatchRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.match.findMany({
         where: {
-          voting_status: "OPEN",
-          voting_ends_at: {
+          votingStatus: "OPEN",
+          votingEndsAt: {
             not: null,
             lt: new Date(),
           },
@@ -263,7 +263,7 @@ export class MatchRepo {
 
   static async updateVotingStatus(
     matchId: string,
-    status: VotingStatus,
+    votingStatus: VotingStatus,
     votingEndDate?: Date,
     tx?: PrismaTransaction
   ): Promise<Match> {
@@ -272,9 +272,9 @@ export class MatchRepo {
       return await prismaClient.match.update({
         where: { id: matchId },
         data: {
-          voting_status: status,
-          ...(status === "CLOSED" ? { voting_ends_at: new Date() } : {}),
-          ...(votingEndDate ? { voting_ends_at: votingEndDate } : {}),
+          votingStatus,
+          ...(votingStatus === "CLOSED" ? { votingEndsAt: new Date() } : {}),
+          ...(votingEndDate ? { votingEndsAt: votingEndDate } : {}),
         },
       });
     } catch (error) {
@@ -284,7 +284,7 @@ export class MatchRepo {
 
   static async updateManyVotingStatus(
     matchIds: string[],
-    status: VotingStatus,
+    votingStatus: VotingStatus,
     tx?: PrismaTransaction
   ): Promise<void> {
     try {
@@ -292,8 +292,8 @@ export class MatchRepo {
       await prismaClient.match.updateMany({
         where: { id: { in: matchIds } },
         data: {
-          voting_status: status,
-          ...(status === "CLOSED" ? { voting_ends_at: new Date() } : {}),
+          votingStatus,
+          ...(votingStatus === "CLOSED" ? { votingEndsAt: new Date() } : {}),
         },
       });
     } catch (error) {

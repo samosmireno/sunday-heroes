@@ -5,29 +5,29 @@ import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
 const COMPETITION_BASIC_INCLUDE = {
   matches: true,
-  team_competitions: true,
+  teamCompetitions: true,
 } satisfies Prisma.CompetitionInclude;
 
 export const COMPETITION_DETAILED_INCLUDE = {
   dashboard: {
     select: {
       id: true,
-      admin_id: true,
+      adminId: true,
     },
   },
   moderators: {
     select: {
       id: true,
-      dashboard_player: {
+      dashboardPlayer: {
         select: {
           nickname: true,
           id: true,
-          user_id: true,
+          userId: true,
         },
       },
     },
   },
-  team_competitions: {
+  teamCompetitions: {
     include: {
       team: true,
     },
@@ -36,16 +36,16 @@ export const COMPETITION_DETAILED_INCLUDE = {
     include: {
       matchPlayers: {
         include: {
-          dashboard_player: true,
-          received_votes: true,
+          dashboardPlayer: true,
+          receivedVotes: true,
         },
       },
-      match_teams: {
+      matchTeams: {
         include: {
           team: true,
         },
       },
-      player_votes: true,
+      playerVotes: true,
     },
     orderBy: {
       date: "desc",
@@ -96,7 +96,7 @@ export class CompetitionRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.findMany({
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "CompetitionRepo.findAll");
@@ -114,8 +114,8 @@ export class CompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.findMany({
         where: {
-          dashboard_id: dashboardId,
-          voting_enabled: options?.votingEnabled,
+          dashboardId,
+          votingEnabled: options?.votingEnabled,
         },
         include: COMPETITION_BASIC_INCLUDE,
         orderBy: { matches: { _count: "desc" } },
@@ -196,7 +196,7 @@ export class CompetitionRepo {
         where: { id },
         data: {
           matches: { deleteMany: {} },
-          team_competitions: { deleteMany: {} },
+          teamCompetitions: { deleteMany: {} },
         },
         include: COMPETITION_DETAILED_INCLUDE,
       });

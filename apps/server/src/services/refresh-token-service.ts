@@ -20,11 +20,11 @@ export class RefreshTokenService {
       throw new InvalidTokenError("Refresh token not found");
     }
 
-    if (refreshToken.expires_at < new Date()) {
+    if (refreshToken.expiresAt < new Date()) {
       await this.deleteToken(token);
       throw new TokenExpiredError(
         "Refresh token has expired",
-        refreshToken.expires_at
+        refreshToken.expiresAt
       );
     }
 
@@ -36,15 +36,15 @@ export class RefreshTokenService {
       throw new InvalidTokenError("Invalid refresh token");
     }
 
-    if (decoded.userId !== refreshToken.user_id) {
-      await this.deleteAllUserTokens(refreshToken.user_id);
+    if (decoded.userId !== refreshToken.userId) {
+      await this.deleteAllUserTokens(refreshToken.userId);
       throw new InvalidTokenError("User ID mismatch in token");
     }
 
     await RefreshTokenRepo.updateLastUsed(token);
 
     return {
-      userId: refreshToken.user_id,
+      userId: refreshToken.userId,
       decoded,
       refreshToken,
     };
@@ -58,11 +58,11 @@ export class RefreshTokenService {
     await this.cleanupExpiredTokensForUser(userId);
 
     return await RefreshTokenRepo.create({
-      user_id: userId,
+      userId,
       token: newRefreshToken,
-      expires_at: new Date(Date.now() + AuthService.REFRESH_TOKEN_EXPIRY_MS),
-      last_used_at: new Date(),
-      created_at: new Date(),
+      expiresAt: new Date(Date.now() + AuthService.REFRESH_TOKEN_EXPIRY_MS),
+      lastUsedAt: new Date(),
+      createdAt: new Date(),
     });
   }
 
@@ -91,7 +91,7 @@ export class RefreshTokenService {
   static async cleanupExpiredTokensForUser(userId: string): Promise<void> {
     const userTokens = await RefreshTokenRepo.findByUserId(userId);
     const expiredTokens = userTokens.filter(
-      (token) => token.expires_at < new Date()
+      (token) => token.expiresAt < new Date()
     );
 
     for (const token of expiredTokens) {

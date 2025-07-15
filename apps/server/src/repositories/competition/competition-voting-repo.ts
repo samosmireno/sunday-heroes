@@ -8,16 +8,16 @@ const COMPETITION_PENDING_VOTES_SELECT = {
   name: true,
   matches: {
     where: {
-      voting_status: VotingStatus.OPEN,
+      votingStatus: VotingStatus.OPEN,
     },
     select: {
       id: true,
       date: true,
-      home_team_score: true,
-      away_team_score: true,
-      penalty_home_score: true,
-      penalty_away_score: true,
-      match_teams: {
+      homeTeamScore: true,
+      awayTeamScore: true,
+      penaltyHomeScore: true,
+      penaltyAwayScore: true,
+      matchTeams: {
         select: {
           team: {
             select: {
@@ -28,13 +28,13 @@ const COMPETITION_PENDING_VOTES_SELECT = {
       },
       matchPlayers: {
         select: {
-          dashboard_player_id: true,
-          dashboard_player: {
+          dashboardPlayerId: true,
+          dashboardPlayer: {
             select: {
               nickname: true,
-              votes_given: {
+              votesGiven: {
                 select: {
-                  match_id: true,
+                  matchId: true,
                 },
               },
             },
@@ -59,7 +59,7 @@ export class CompetitionVotingRepo {
       return await prismaClient.competition.findUnique({
         where: {
           id,
-          voting_enabled: true,
+          votingEnabled: true,
         },
         select: COMPETITION_PENDING_VOTES_SELECT,
       });
@@ -75,16 +75,16 @@ export class CompetitionVotingRepo {
     id: string,
     tx?: PrismaTransaction
   ): Promise<{
-    voting_enabled: boolean;
-    voting_period_days: number | null;
+    votingEnabled: boolean;
+    votingPeriodDays: number | null;
   } | null> {
     try {
       const prismaClient = tx || prisma;
       const competition = await prismaClient.competition.findUnique({
         where: { id },
         select: {
-          voting_enabled: true,
-          voting_period_days: true,
+          votingEnabled: true,
+          votingPeriodDays: true,
         },
       });
       return competition;
@@ -101,13 +101,14 @@ export class CompetitionVotingRepo {
     tx?: PrismaTransaction
   ): Promise<VotingStatus | undefined> {
     try {
-      const competition = await prisma.competition.findUnique({
+      const prismaClient = tx || prisma;
+      const competition = await prismaClient.competition.findUnique({
         where: { id: competition_id },
         select: {
-          voting_enabled: true,
+          votingEnabled: true,
         },
       });
-      return competition?.voting_enabled
+      return competition?.votingEnabled
         ? VotingStatus.OPEN
         : VotingStatus.CLOSED;
     } catch (error) {

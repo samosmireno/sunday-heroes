@@ -149,9 +149,11 @@ export const updateTeamNames = async (
     }
 
     for (const update of teamUpdates) {
-      throw new BadRequestError(
-        "Each team update must contain teamId and newName"
-      );
+      if (!update.id || !update.name) {
+        throw new BadRequestError(
+          "Each team update must contain teamId and newName"
+        );
+      }
     }
 
     const result = await LeagueService.updateTeamNames(

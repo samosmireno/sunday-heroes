@@ -10,7 +10,7 @@ import {
 } from "../../ui/dialog";
 import { Search, Loader2 } from "lucide-react";
 import { InfoBox } from "../../ui/info-box";
-import axiosInstance from "../../../config/axiosConfig";
+import axiosInstance from "../../../config/axios-config";
 import { config } from "../../../config/config";
 import { toast } from "sonner";
 import { useAuth } from "../../../context/auth-context";

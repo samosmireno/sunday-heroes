@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "../../ui/dialog";
 import { AlertTriangle, Trash2 } from "lucide-react";
-import axiosInstance from "../../../config/axiosConfig";
+import axiosInstance from "../../../config/axios-config";
 import { config } from "../../../config/config";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 

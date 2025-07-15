@@ -6,17 +6,17 @@ import { TeamRoster } from "@prisma/client";
 export class TeamRosterRepo {
   static async addPlayerToTeam(
     teamId: string,
-    playerId: string,
+    dashboardPlayerId: string,
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<TeamRoster> {
     try {
       const prismaClient = tx || prisma;
-      return await prisma.teamRoster.create({
+      return await prismaClient.teamRoster.create({
         data: {
-          team_id: teamId,
-          dashboard_player_id: playerId,
-          competition_id: competitionId,
+          teamId,
+          dashboardPlayerId,
+          competitionId,
         },
       });
     } catch (error) {
@@ -26,18 +26,18 @@ export class TeamRosterRepo {
 
   static async removePlayerFromTeam(
     teamId: string,
-    playerId: string,
+    dashboardPlayerId: string,
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
-      await prisma.teamRoster.delete({
+      await prismaClient.teamRoster.delete({
         where: {
-          team_id_dashboard_player_id_competition_id: {
-            team_id: teamId,
-            dashboard_player_id: playerId,
-            competition_id: competitionId,
+          teamId_dashboardPlayerId_competitionId: {
+            teamId,
+            dashboardPlayerId,
+            competitionId,
           },
         },
       });
@@ -56,13 +56,13 @@ export class TeamRosterRepo {
   ) {
     try {
       const prismaClient = tx || prisma;
-      return await prisma.teamRoster.findMany({
+      return await prismaClient.teamRoster.findMany({
         where: {
-          team_id: teamId,
-          competition_id: competitionId,
+          teamId,
+          competitionId,
         },
         include: {
-          dashboard_player: true,
+          dashboardPlayer: true,
         },
       });
     } catch (error) {
@@ -71,16 +71,16 @@ export class TeamRosterRepo {
   }
 
   static async getPlayerTeamInCompetition(
-    playerId: string,
+    dashboardPlayerId: string,
     competitionId: string,
     tx?: PrismaTransaction
   ) {
     try {
       const prismaClient = tx || prisma;
-      return await prisma.teamRoster.findFirst({
+      return await prismaClient.teamRoster.findFirst({
         where: {
-          dashboard_player_id: playerId,
-          competition_id: competitionId,
+          dashboardPlayerId,
+          competitionId,
         },
         include: {
           team: true,
@@ -101,10 +101,10 @@ export class TeamRosterRepo {
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
-      return await prisma.teamRoster.count({
+      return await prismaClient.teamRoster.count({
         where: {
-          team_id: teamId,
-          competition_id: competitionId,
+          teamId,
+          competitionId,
         },
       });
     } catch (error) {
@@ -116,19 +116,19 @@ export class TeamRosterRepo {
   }
 
   static async isPlayerOnTeam(
-    playerId: string,
+    dashboardPlayerId: string,
     teamId: string,
     competitionId: string,
     tx?: PrismaTransaction
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
-      const roster = await prisma.teamRoster.findUnique({
+      const roster = await prismaClient.teamRoster.findUnique({
         where: {
-          team_id_dashboard_player_id_competition_id: {
-            team_id: teamId,
-            dashboard_player_id: playerId,
-            competition_id: competitionId,
+          teamId_dashboardPlayerId_competitionId: {
+            teamId,
+            dashboardPlayerId,
+            competitionId,
           },
         },
       });

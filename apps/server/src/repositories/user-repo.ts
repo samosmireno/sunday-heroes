@@ -55,7 +55,7 @@ export class UserRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.user.findMany({
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "UserRepo.findAll");
@@ -67,7 +67,7 @@ export class UserRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.user.findMany({
         where: { role },
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "UserRepo.findByRole");

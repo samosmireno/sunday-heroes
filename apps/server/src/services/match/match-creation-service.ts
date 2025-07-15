@@ -62,8 +62,8 @@ export class MatchCreationService {
 
     const matchToUpdate: Partial<Match> = {
       date: data.date ? new Date(data.date) : undefined,
-      home_team_score: data.homeTeamScore,
-      away_team_score: data.awayTeamScore,
+      homeTeamScore: data.homeTeamScore,
+      awayTeamScore: data.awayTeamScore,
     };
 
     const competitionType =
@@ -76,7 +76,7 @@ export class MatchCreationService {
 
     if (
       competitionType === CompetitionType.LEAGUE &&
-      match.is_completed === true
+      match.isCompleted === true
     ) {
       await LeagueService.recalculateLeagueStandings(
         match,
@@ -112,22 +112,22 @@ export class MatchCreationService {
 
   private static async createMatchTeams(
     matchId: string,
-    hometeamID: string,
-    awayteamID: string,
+    hometeamId: string,
+    awayteamId: string,
     tx: Prisma.TransactionClient
   ) {
     const matchTeamsData = [
       {
-        match_id: matchId,
-        team_id: hometeamID,
-        is_home: true,
-        created_at: new Date(),
+        matchId: matchId,
+        teamId: hometeamId,
+        isHome: true,
+        createdAt: new Date(),
       },
       {
-        match_id: matchId,
-        team_id: awayteamID,
-        is_home: false,
-        created_at: new Date(),
+        matchId: matchId,
+        teamId: awayteamId,
+        isHome: false,
+        createdAt: new Date(),
       },
     ];
 

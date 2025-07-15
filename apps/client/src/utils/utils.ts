@@ -26,24 +26,19 @@ export function formatErrorStack(stack?: string): string {
 
   const lines = stack.split("\n");
   const formattedLines = lines
-    .filter((line) => line.trim()) // Remove empty lines
+    .filter((line) => line.trim())
     .map((line) => {
-      // Extract function name and file path
       const match = line.match(/^(.+?)@(.+?)$/);
       if (!match) return line;
 
       const [, functionName, fullPath] = match;
 
-      // Clean up function name
       const cleanFunctionName = functionName.trim() || "anonymous";
 
-      // Extract meaningful file path (remove localhost and node_modules noise)
       let cleanPath = fullPath;
 
-      // Remove localhost prefix
       cleanPath = cleanPath.replace(/^https?:\/\/localhost:\d+\//, "");
 
-      // Simplify node_modules paths
       if (cleanPath.includes("node_modules")) {
         const nodeModulesMatch = cleanPath.match(/node_modules\/([^\/]+)/);
         if (nodeModulesMatch) {
@@ -51,7 +46,6 @@ export function formatErrorStack(stack?: string): string {
         }
       }
 
-      // Extract line and column numbers
       const lineColMatch = cleanPath.match(/:(\d+):(\d+)$/);
       let lineCol = "";
       if (lineColMatch) {
@@ -59,12 +53,11 @@ export function formatErrorStack(stack?: string): string {
         cleanPath = cleanPath.replace(/:(\d+):(\d+)$/, "");
       }
 
-      // Remove query parameters and hash
       cleanPath = cleanPath.replace(/\?.*$/, "").replace(/#.*$/, "");
 
       return `  ${cleanFunctionName}\n    at ${cleanPath}${lineCol}`;
     })
-    .slice(0, 10); // Limit to first 10 stack frames
+    .slice(0, 10);
 
   return formattedLines.join("\n");
 }
@@ -99,12 +92,12 @@ export const createFootballFieldMatch = (
       id: generateRandomId(),
       date: new Date().toISOString(),
       players: [],
-      home_team_score: 0,
-      away_team_score: 0,
-      match_type: MatchType.FIVE_A_SIDE,
+      homeTeamScore: 0,
+      awayTeamScore: 0,
+      matchType: MatchType.FIVE_A_SIDE,
       round: 0,
       teams: [],
-      is_completed: false,
+      isCompleted: false,
     };
   }
 
@@ -146,12 +139,12 @@ export const createFootballFieldMatch = (
         }),
       ) ?? []),
     ],
-    home_team_score: 0,
-    away_team_score: 0,
-    match_type: MatchType.FIVE_A_SIDE,
+    homeTeamScore: 0,
+    awayTeamScore: 0,
+    matchType: MatchType.FIVE_A_SIDE,
     round: 0,
     teams: ["Home Team", "Away Team"],
-    is_completed: false,
+    isCompleted: false,
   };
 };
 

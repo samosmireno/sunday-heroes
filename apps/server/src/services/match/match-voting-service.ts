@@ -45,11 +45,11 @@ export class MatchVotingService {
     data: createMatchRequest,
     tx?: Prisma.TransactionClient
   ): Promise<MatchVotingEmailData | null> {
-    const competition = await CompetitionRepo.findById(match.competition_id);
+    const competition = await CompetitionRepo.findById(match.competitionId);
 
-    if (!competition?.voting_enabled) return null;
+    if (!competition?.votingEnabled) return null;
 
-    const votingDays = competition.voting_period_days ?? 7;
+    const votingDays = competition.votingPeriodDays ?? 7;
     const votingEndDate = new Date();
     votingEndDate.setDate(votingEndDate.getDate() + votingDays);
 
@@ -66,8 +66,8 @@ export class MatchVotingService {
       date: match.date ? new Date(match.date) : new Date(),
       homeTeam: data.teams[0],
       awayTeam: data.teams[1],
-      homeScore: match.home_team_score,
-      awayScore: match.away_team_score,
+      homeScore: match.homeTeamScore,
+      awayScore: match.awayTeamScore,
     };
   }
 

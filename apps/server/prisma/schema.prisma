@@ -40,18 +40,18 @@ enum Role {
 model User {
   id             String     @id @default(uuid())
   email          String    @unique
-  given_name     String
-  family_name    String?
+  givenName     String
+  familyName    String?
   role           Role       @default(PLAYER)
-  is_registered  Boolean    @default(false)
-  last_login     DateTime?
-  created_at     DateTime   @default(now())
+  isRegistered  Boolean    @default(false)
+  lastLogin     DateTime?
+  createdAt     DateTime   @default(now())
 
-  refresh_tokens         RefreshToken[]
+  refreshTokens         RefreshToken[]
   dashboard             Dashboard?
-  dashboard_players     DashboardPlayer[]
-  sent_invitations DashboardInvitation[] @relation("InvitedByUser")
-  used_invitations DashboardInvitation[] @relation("UsedByUser")
+  dashboardPlayers     DashboardPlayer[]
+  sentInvitations DashboardInvitation[] @relation("InvitedByUser")
+  usedInvitations DashboardInvitation[] @relation("UsedByUser")
 
   @@index([email])
   @@index([role])
@@ -59,238 +59,238 @@ model User {
 
 model RefreshToken {
   id           String   @id @default(uuid())
-  user_id      String
+  userId      String
   token        String   @unique
-  expires_at   DateTime
-  last_used_at DateTime
-  created_at   DateTime @default(now())
+  expiresAt   DateTime
+  lastUsedAt DateTime
+  createdAt   DateTime @default(now())
 
-  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([user_id])
+  @@index([userId])
   @@index([token])
 }
 
 model Dashboard {
   id         String   @id @default(uuid())
   name       String
-  admin_id   String   @unique
-  created_at DateTime @default(now())
+  adminId   String   @unique
+  createdAt DateTime @default(now())
 
-  admin        User          @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+  admin        User          @relation(fields: [adminId], references: [id], onDelete: Cascade)
   competitions Competition[]
-  dashboard_players DashboardPlayer[]
+  dashboardPlayers DashboardPlayer[]
 
-  @@index([admin_id])
+  @@index([adminId])
 }
 
 model DashboardPlayer {
   id           String   @id @default(uuid())
-  dashboard_id String
-  user_id      String?
+  dashboardId String
+  userId      String?
   nickname     String
-  created_at   DateTime @default(now())
+  createdAt   DateTime @default(now())
   
-  dashboard             Dashboard                 @relation(fields: [dashboard_id], references: [id],onDelete: Cascade)
-  user                  User?                     @relation(fields: [user_id], references: [id])
-  match_players        MatchPlayer[]
-  moderated_competitions CompetitionModerator[]
-  votes_given           PlayerVote[]              @relation("VoterToVote")
+  dashboard             Dashboard                 @relation(fields: [dashboardId], references: [id],onDelete: Cascade)
+  user                  User?                     @relation(fields: [userId], references: [id])
+  matchPlayers        MatchPlayer[]
+  moderatedCompetitions CompetitionModerator[]
+  votesGiven           PlayerVote[]              @relation("VoterToVote")
   invitations         DashboardInvitation[]
-  team_rosters         TeamRoster[]
+  teamRosters         TeamRoster[]
 
-  @@unique([dashboard_id, nickname])
-  @@index([dashboard_id])
-  @@index([user_id])
-  @@index([dashboard_id, user_id])
+  @@unique([dashboardId, nickname])
+  @@index([dashboardId])
+  @@index([userId])
+  @@index([dashboardId, userId])
 }
 
 model Competition {
   id                          String          @id @default(uuid())
-  dashboard_id                String
+  dashboardId                String
   name                        String
   type                        CompetitionType
-  track_seasons              Boolean         @default(false)
-  current_season             Int             @default(1)
-  min_players                Int
-  voting_enabled             Boolean         @default(false)
-  voting_period_days         Int?
-  knockout_voting_period_days Int?
-  reminder_days              Int?
-  is_round_robin          Boolean?
-  created_at                 DateTime        @default(now())
+  trackSeasons              Boolean         @default(false)
+  currentSeason             Int             @default(1)
+  minPlayers                Int
+  votingEnabled             Boolean         @default(false)
+  votingPeriodDays         Int?
+  knockoutVotingPeriodDays Int?
+  reminderDays              Int?
+  isRoundRobin          Boolean?
+  createdAt                 DateTime        @default(now())
 
-  dashboard     Dashboard              @relation(fields: [dashboard_id], references: [id], onDelete: Cascade)
+  dashboard     Dashboard              @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
   moderators    CompetitionModerator[]
-  team_competitions TeamCompetition[]
+  teamCompetitions TeamCompetition[]
   matches       Match[]
-  team_rosters  TeamRoster[]
+  teamRosters  TeamRoster[]
 
-  @@index([dashboard_id])
+  @@index([dashboardId])
 }
 
 model CompetitionModerator {
   id             String   @id @default(uuid())
-  competition_id String
-  dashboard_player_id String
-  created_at     DateTime @default(now())
+  competitionId String
+  dashboardPlayerId String
+  createdAt     DateTime @default(now())
 
-  competition    Competition @relation(fields: [competition_id], references: [id], onDelete: Cascade)
-  dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
+  competition    Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  dashboardPlayer DashboardPlayer @relation(fields: [dashboardPlayerId], references: [id], onDelete: Cascade)
 
-  @@unique([competition_id, dashboard_player_id])
-  @@index([competition_id])
-  @@index([dashboard_player_id])
+  @@unique([competitionId, dashboardPlayerId])
+  @@index([competitionId])
+  @@index([dashboardPlayerId])
 }
 
 model Team {
   id         String   @id @default(uuid())
   name       String   
-  created_at DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  team_competitions TeamCompetition[]
-  match_teams      MatchTeam[]
-  match_players   MatchPlayer[]
-  team_rosters     TeamRoster[]
+  teamCompetitions TeamCompetition[]
+  matchTeams      MatchTeam[]
+  matchPlayers   MatchPlayer[]
+  teamRosters     TeamRoster[]
 
   @@index([name])
 }
 
 model TeamCompetition {
   id             String   @id @default(uuid())
-  team_id        String
-  competition_id String
+  teamId        String
+  competitionId String
   points         Int      @default(0)
   wins           Int      @default(0)
   draws          Int      @default(0)
   losses         Int      @default(0)
-  goals_for      Int      @default(0)
-  goals_against  Int      @default(0)
-  created_at     DateTime @default(now())
+  goalsFor      Int      @default(0)
+  goalsAgainst  Int      @default(0)
+  createdAt     DateTime @default(now())
 
-  team           Team        @relation(fields: [team_id], references: [id], onDelete: Cascade)
-  competition    Competition @relation(fields: [competition_id], references: [id], onDelete: Cascade)
+  team           Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  competition    Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
 
-  @@unique([team_id, competition_id])
-  @@index([team_id])
-  @@index([competition_id])
+  @@unique([teamId, competitionId])
+  @@index([teamId])
+  @@index([competitionId])
 }
 
 model Match {
   id                String      @id @default(uuid())
-  competition_id    String
-  match_type        MatchType
+  competitionId    String
+  matchType        MatchType
   date              DateTime?
-  home_team_score   Int        @default(0)
-  away_team_score   Int        @default(0)
-  penalty_home_score Int?
-  penalty_away_score Int?
+  homeTeamScore   Int        @default(0)
+  awayTeamScore   Int        @default(0)
+  penaltyHomeScore Int?
+  penaltyAwayScore Int?
   round             Int
-  bracket_position  Int?
-  voting_status     VotingStatus @default(OPEN)
-  voting_ends_at    DateTime?
-  created_at        DateTime     @default(now())
-  is_completed      Boolean      @default(false)
+  bracketPosition  Int?
+  votingStatus     VotingStatus @default(OPEN)
+  votingEndsAt    DateTime?
+  createdAt        DateTime     @default(now())
+  isCompleted      Boolean      @default(false)
 
 
-  competition    Competition  @relation(fields: [competition_id], references: [id], onDelete: Cascade)
-  match_teams    MatchTeam[]
+  competition    Competition  @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  matchTeams    MatchTeam[]
   matchPlayers MatchPlayer[]
-  player_votes   PlayerVote[]
+  playerVotes   PlayerVote[]
 
-  @@index([competition_id])
+  @@index([competitionId])
 }
 
 model MatchTeam {
-  id         String   @id @default(uuid())
-  match_id   String
-  team_id    String
-  is_home    Boolean
-  created_at DateTime @default(now())
+  id        String   @id @default(uuid())
+  matchId   String
+  teamId    String
+  isHome    Boolean
+  createdAt DateTime @default(now())
 
-  match      Match     @relation(fields: [match_id], references: [id],onDelete: Cascade)
-  team       Team      @relation(fields: [team_id], references: [id],onDelete: Cascade)
+  match      Match     @relation(fields: [matchId], references: [id],onDelete: Cascade)
+  team       Team      @relation(fields: [teamId], references: [id],onDelete: Cascade)
 
-  @@unique([match_id, team_id])
-  @@index([match_id])
-  @@index([team_id])
+  @@unique([matchId, teamId])
+  @@index([matchId])
+  @@index([teamId])
 }
 
 model MatchPlayer {
   id             String   @id @default(uuid())
-  match_id       String
-  dashboard_player_id String
-  team_id        String
-  is_home        Boolean
+  matchId       String
+  dashboardPlayerId String
+  teamId        String
+  isHome        Boolean
   goals          Int      @default(0)
   assists        Int      @default(0)
-  penalty_scored Boolean? 
+  penaltyScored Boolean? 
   position       Int
-  created_at     DateTime @default(now())
+  createdAt     DateTime @default(now())
 
-  match         Match        @relation(fields: [match_id], references: [id], onDelete: Cascade)
-  dashboard_player DashboardPlayer @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
-  team          Team         @relation(fields: [team_id], references: [id],onDelete: Cascade)
-  received_votes PlayerVote[] 
+  match         Match        @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  dashboardPlayer DashboardPlayer @relation(fields: [dashboardPlayerId], references: [id], onDelete: Cascade)
+  team          Team         @relation(fields: [teamId], references: [id],onDelete: Cascade)
+  receivedVotes PlayerVote[] 
 
-  @@unique([match_id, dashboard_player_id])
-  @@index([match_id])
-  @@index([dashboard_player_id])
-  @@index([team_id])
-  @@index([is_home])
+  @@unique([matchId, dashboardPlayerId])
+  @@index([matchId])
+  @@index([dashboardPlayerId])
+  @@index([teamId])
+  @@index([isHome])
 }
 
 model PlayerVote {
   id              String   @id @default(uuid())
-  match_id        String
-  voter_id        String
-  match_player_id String
+  matchId        String
+  voterId        String
+  matchPlayerId String
   points          Int
-  created_at      DateTime @default(now())
+  createdAt      DateTime @default(now())
 
-  match          Match       @relation(fields: [match_id], references: [id], onDelete: Cascade)
-  voter          DashboardPlayer @relation("VoterToVote", fields: [voter_id], references: [id],onDelete: Cascade)
-  player_match   MatchPlayer @relation(fields: [match_player_id], references: [id], onDelete: Cascade)
+  match          Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  voter          DashboardPlayer @relation("VoterToVote", fields: [voterId], references: [id],onDelete: Cascade)
+  matchPlayer   MatchPlayer @relation(fields: [matchPlayerId], references: [id], onDelete: Cascade)
 
-  @@unique([match_id, voter_id, match_player_id])
-  @@index([match_id])
-  @@index([voter_id])
-  @@index([match_player_id])
+  @@unique([matchId, voterId, matchPlayerId])
+  @@index([matchId])
+  @@index([voterId])
+  @@index([matchPlayerId])
 }
 
 model DashboardInvitation {
   id                  String    @id @default(uuid())
-  invited_by_id       String
-  dashboard_player_id String
-  invite_token        String    @unique
+  invitedById       String
+  dashboardPlayerId String
+  inviteToken        String    @unique
   email               String?
-  expires_at          DateTime
-  used_at             DateTime?
-  used_by_user_id     String?
-  created_at          DateTime  @default(now())
-  updated_at          DateTime  @updatedAt
+  expiresAt          DateTime
+  usedAt             DateTime?
+  usedByUserId     String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  invited_by          User             @relation("InvitedByUser", fields: [invited_by_id], references: [id])
-  dashboard_player    DashboardPlayer  @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
-  used_by_user        User?            @relation("UsedByUser", fields: [used_by_user_id], references: [id])
+  invitedBy          User             @relation("InvitedByUser", fields: [invitedById], references: [id])
+  dashboardPlayer    DashboardPlayer  @relation(fields: [dashboardPlayerId], references: [id], onDelete: Cascade)
+  usedByUser        User?            @relation("UsedByUser", fields: [usedByUserId], references: [id])
 
-  @@index([invite_token])
-  @@index([dashboard_player_id])
-  @@index([expires_at])
+  @@index([inviteToken])
+  @@index([dashboardPlayerId])
+  @@index([expiresAt])
 }
 
 model TeamRoster {
   id                  String   @id @default(uuid())
-  team_id            String
-  dashboard_player_id String
-  competition_id     String
-  created_at         DateTime @default(now())
+  teamId            String
+  dashboardPlayerId String
+  competitionId     String
+  createdAt         DateTime @default(now())
 
-  team               Team             @relation(fields: [team_id], references: [id], onDelete: Cascade)
-  dashboard_player   DashboardPlayer  @relation(fields: [dashboard_player_id], references: [id], onDelete: Cascade)
-  competition        Competition      @relation(fields: [competition_id], references: [id], onDelete: Cascade)
+  team               Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  dashboardPlayer   DashboardPlayer  @relation(fields: [dashboardPlayerId], references: [id], onDelete: Cascade)
+  competition        Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
 
-  @@unique([team_id, dashboard_player_id, competition_id])
-  @@index([team_id, competition_id])
-  @@index([dashboard_player_id, competition_id])
+  @@unique([teamId, dashboardPlayerId, competitionId])
+  @@index([teamId, competitionId])
+  @@index([dashboardPlayerId, competitionId])
 }

@@ -12,7 +12,7 @@ const matchTypeStyles: Record<CompetitionType, { bg: string; text: string }> = {
 };
 
 export default function DashboardMatchCard({ match }: MatchCardProps) {
-  const { bg, text } = matchTypeStyles[match.competition_type];
+  const { bg, text } = matchTypeStyles[match.competitionType];
   const formattedDate = match.date
     ? new Date(match.date).toLocaleDateString(undefined, {
         year: "numeric",
@@ -31,7 +31,7 @@ export default function DashboardMatchCard({ match }: MatchCardProps) {
         <span
           className={`rounded px-2 py-0.5 text-xs font-bold uppercase ${bg} ${text}`}
         >
-          {match.competition_type}
+          {match.competitionType}
         </span>
         <span className="flex items-center gap-1 text-xs text-gray-400">
           <CalendarDays className="h-3 w-3" />
@@ -43,9 +43,9 @@ export default function DashboardMatchCard({ match }: MatchCardProps) {
           {match.teams[0]} vs {match.teams[1]}
         </h3>
         <div className="mt-1 flex items-center justify-between">
-          <p className="text-xs uppercase text-gray-400">{match.match_type}</p>
+          <p className="text-xs uppercase text-gray-400">{match.matchType}</p>
           <span className="font-bold text-accent">
-            {match.home_team_score} : {match.away_team_score}
+            {match.homeTeamScore} : {match.awayTeamScore}
           </span>
         </div>
       </div>

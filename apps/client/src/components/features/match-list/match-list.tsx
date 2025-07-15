@@ -107,8 +107,8 @@ export default function MatchList({
                       key={match.id}
                       matchId={match.id}
                       date={match.date?.split("T")[0]}
-                      homeScore={match.home_team_score}
-                      awayScore={match.away_team_score}
+                      homeScore={match.homeTeamScore}
+                      awayScore={match.awayTeamScore}
                       isSelectedMatch={
                         matches[selectedMatch] &&
                         matches[selectedMatch].id === match.id

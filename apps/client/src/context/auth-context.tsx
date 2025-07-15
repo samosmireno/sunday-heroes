@@ -5,7 +5,7 @@ import {
   useState,
   ReactNode,
 } from "react";
-import axiosInstance from "../config/axiosConfig";
+import axiosInstance from "../config/axios-config";
 import { config } from "../config/config";
 import { useNavigate } from "react-router-dom";
 import { UserResponse } from "@repo/shared-types";

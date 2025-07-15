@@ -27,8 +27,8 @@ export class DashboardService {
 
     return await DashboardRepo.create({
       name,
-      admin_id: userId,
-      created_at: new Date(),
+      adminId: userId,
+      createdAt: new Date(),
     });
   }
 
@@ -42,7 +42,7 @@ export class DashboardService {
       throw new NotFoundError("Dashboard");
     }
 
-    if (dashboard.admin_id !== userId) {
+    if (dashboard.adminId !== userId) {
       throw new AuthorizationError("Only dashboard admin can update dashboard");
     }
 
@@ -55,7 +55,7 @@ export class DashboardService {
       throw new NotFoundError("Dashboard");
     }
 
-    if (dashboard.admin_id !== userId) {
+    if (dashboard.adminId !== userId) {
       throw new AuthorizationError("Only dashboard admin can delete dashboard");
     }
 
@@ -87,9 +87,9 @@ export class DashboardService {
     const dashboard = await DashboardRepo.findByIdWithBasic(dashboardId);
     if (!dashboard) return false;
 
-    const isAdmin = dashboard.admin_id === userId;
-    const isPlayer = dashboard.dashboard_players.some(
-      (player) => player.user_id === userId
+    const isAdmin = dashboard.adminId === userId;
+    const isPlayer = dashboard.dashboardPlayers.some(
+      (player) => player.userId === userId
     );
 
     return isAdmin || isPlayer;

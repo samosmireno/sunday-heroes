@@ -34,7 +34,7 @@ export default function FootballField({
 
   useEffect(() => {
     if (match) {
-      const matchFormations = matchTypeFormations[match.match_type];
+      const matchFormations = matchTypeFormations[match.matchType];
       setFormations(matchFormations);
       if (matchFormations.length > 0) {
         setSelectedFormationHome(matchFormations[0].formation);

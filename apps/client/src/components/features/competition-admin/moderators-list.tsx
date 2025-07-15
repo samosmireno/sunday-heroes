@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Shield, Trash2 } from "lucide-react";
-import axiosInstance from "../../../config/axiosConfig";
+import axiosInstance from "../../../config/axios-config";
 import { config } from "../../../config/config";
 import ConfirmationDialog from "../../ui/confirmation-dialog";
 

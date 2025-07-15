@@ -7,9 +7,9 @@ const VOTE_WITH_DETAILS_INCLUDE = {
   match: {
     select: {
       id: true,
-      home_team_score: true,
-      away_team_score: true,
-      voting_status: true,
+      homeTeamScore: true,
+      awayTeamScore: true,
+      votingStatus: true,
       competition: {
         select: {
           id: true,
@@ -25,10 +25,10 @@ const VOTE_WITH_DETAILS_INCLUDE = {
       nickname: true,
     },
   },
-  player_match: {
+  matchPlayer: {
     select: {
       id: true,
-      dashboard_player: {
+      dashboardPlayer: {
         select: {
           id: true,
           nickname: true,
@@ -80,7 +80,7 @@ export class VoteRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.findMany({
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "VoteRepo.findAll");
@@ -95,9 +95,9 @@ export class VoteRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.findMany({
-        where: { match_id: matchId },
+        where: { matchId },
         include: VOTE_WITH_DETAILS_INCLUDE,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
         take: options?.limit,
         skip: options?.offset,
       });
@@ -114,9 +114,9 @@ export class VoteRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.findMany({
-        where: { voter_id: voterId },
+        where: { voterId },
         include: VOTE_WITH_DETAILS_INCLUDE,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
         take: options?.limit,
         skip: options?.offset,
       });
@@ -134,10 +134,10 @@ export class VoteRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.findMany({
         where: {
-          voter_id: voterId,
-          match_id: matchId,
+          voterId,
+          matchId,
         },
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "VoteRepo.findByVoterAndMatch");
@@ -152,10 +152,10 @@ export class VoteRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.findMany({
         where: {
-          match_id: { in: matchIds },
+          matchId: { in: matchIds },
         },
         include: VOTE_WITH_DETAILS_INCLUDE,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "VoteRepo.findByMatchIds");
@@ -169,7 +169,7 @@ export class VoteRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.count({
-        where: { match_id: matchId },
+        where: { matchId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "VoteRepo.countByMatch");
@@ -183,7 +183,7 @@ export class VoteRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.count({
-        where: { voter_id: voterId },
+        where: { voterId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "VoteRepo.countByVoter");
@@ -199,8 +199,8 @@ export class VoteRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.count({
         where: {
-          voter_id: voterId,
-          match_id: matchId,
+          voterId,
+          matchId,
         },
       });
     } catch (error) {
@@ -215,11 +215,11 @@ export class VoteRepo {
     try {
       const prismaClient = tx || prisma;
       const voters = await prismaClient.playerVote.findMany({
-        where: { match_id: matchId },
-        select: { voter_id: true },
-        distinct: ["voter_id"],
+        where: { matchId },
+        select: { voterId: true },
+        distinct: ["voterId"],
       });
-      return voters.map((v) => v.voter_id);
+      return voters.map((v) => v.voterId);
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
@@ -281,7 +281,7 @@ export class VoteRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.playerVote.deleteMany({
-        where: { match_id: matchId },
+        where: { matchId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "VoteRepo.deleteByMatch");

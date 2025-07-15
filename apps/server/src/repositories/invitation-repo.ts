@@ -4,8 +4,8 @@ import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const INVITATION_WITH_DETAILS_INCLUDE = {
-  invited_by: true,
-  dashboard_player: {
+  invitedBy: true,
+  dashboardPlayer: {
     include: {
       dashboard: true,
     },
@@ -13,29 +13,29 @@ const INVITATION_WITH_DETAILS_INCLUDE = {
 } satisfies Prisma.DashboardInvitationInclude;
 
 const INVITATION_WITH_BASIC_INCLUDE = {
-  invited_by: {
+  invitedBy: {
     select: {
-      given_name: true,
-      family_name: true,
+      givenName: true,
+      familyName: true,
       email: true,
     },
   },
-  dashboard_player: {
+  dashboardPlayer: {
     select: {
       nickname: true,
     },
   },
-  used_by_user: {
+  usedByUser: {
     select: {
-      given_name: true,
-      family_name: true,
+      givenName: true,
+      familyName: true,
       email: true,
     },
   },
 } satisfies Prisma.DashboardInvitationInclude;
 
 const INVITATION_WITH_DASHBOARD_INCLUDE = {
-  dashboard_player: {
+  dashboardPlayer: {
     include: {
       dashboard: {
         select: {
@@ -44,10 +44,10 @@ const INVITATION_WITH_DASHBOARD_INCLUDE = {
       },
     },
   },
-  used_by_user: {
+  usedByUser: {
     select: {
-      given_name: true,
-      family_name: true,
+      givenName: true,
+      familyName: true,
       email: true,
     },
   },
@@ -102,7 +102,7 @@ export class InvitationRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.findMany({
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "InvitationRepo.findAll");
@@ -110,13 +110,13 @@ export class InvitationRepo {
   }
 
   static async findByToken(
-    token: string,
+    inviteToken: string,
     tx?: PrismaTransaction
   ): Promise<InvitationWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.findUnique({
-        where: { invite_token: token },
+        where: { inviteToken },
         include: INVITATION_WITH_DETAILS_INCLUDE,
       });
     } catch (error) {
@@ -132,17 +132,17 @@ export class InvitationRepo {
     try {
       const prismaClient = tx || prisma;
       const whereClause: Prisma.DashboardInvitationWhereInput = {
-        dashboard_player_id: dashboardPlayerId,
+        dashboardPlayerId,
       };
 
       if (options?.activeOnly) {
-        whereClause.expires_at = { gt: new Date() };
-        whereClause.used_at = null;
+        whereClause.expiresAt = { gt: new Date() };
+        whereClause.usedAt = null;
       }
 
       return await prismaClient.dashboardInvitation.findMany({
         where: whereClause,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(
@@ -164,13 +164,13 @@ export class InvitationRepo {
       };
 
       if (options?.activeOnly) {
-        whereClause.expires_at = { gt: new Date() };
-        whereClause.used_at = null;
+        whereClause.expiresAt = { gt: new Date() };
+        whereClause.usedAt = null;
       }
 
       return await prismaClient.dashboardInvitation.findMany({
         where: whereClause,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "InvitationRepo.findByEmail");
@@ -185,12 +185,12 @@ export class InvitationRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.findMany({
         where: {
-          dashboard_player: {
-            dashboard_id: dashboardId,
+          dashboardPlayer: {
+            dashboardId,
           },
         },
         include: INVITATION_WITH_BASIC_INCLUDE,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(
@@ -207,9 +207,9 @@ export class InvitationRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.findMany({
-        where: { invited_by_id: userId },
+        where: { invitedById: userId },
         include: INVITATION_WITH_DASHBOARD_INCLUDE,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "InvitationRepo.findByUserId");
@@ -224,8 +224,8 @@ export class InvitationRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.count({
         where: {
-          dashboard_player: {
-            dashboard_id: dashboardId,
+          dashboardPlayer: {
+            dashboardId,
           },
         },
       });
@@ -244,7 +244,7 @@ export class InvitationRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.count({
-        where: { invited_by_id: userId },
+        where: { invitedById: userId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "InvitationRepo.countByUserId");
@@ -252,21 +252,21 @@ export class InvitationRepo {
   }
 
   static async isTokenActive(
-    token: string,
+    inviteToken: string,
     tx?: PrismaTransaction
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
       const invitation = await prismaClient.dashboardInvitation.findUnique({
-        where: { invite_token: token },
+        where: { inviteToken },
         select: {
-          expires_at: true,
-          used_at: true,
+          expiresAt: true,
+          usedAt: true,
         },
       });
 
       if (!invitation) return false;
-      return invitation.used_at === null && invitation.expires_at > new Date();
+      return invitation.usedAt === null && invitation.expiresAt > new Date();
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "InvitationRepo.isTokenActive");
     }
@@ -274,11 +274,11 @@ export class InvitationRepo {
 
   static async create(
     data: {
-      invited_by_id: string;
-      dashboard_player_id: string;
-      invite_token: string;
+      invitedById: string;
+      dashboardPlayerId: string;
+      inviteToken: string;
       email?: string;
-      expires_at: Date;
+      expiresAt: Date;
     },
     tx?: PrismaTransaction
   ): Promise<DashboardInvitation> {
@@ -307,14 +307,14 @@ export class InvitationRepo {
   }
 
   static async updateByToken(
-    token: string,
+    inviteToken: string,
     data: Partial<DashboardInvitation>,
     tx?: PrismaTransaction
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.update({
-        where: { invite_token: token },
+        where: { inviteToken },
         data,
       });
     } catch (error) {
@@ -335,13 +335,13 @@ export class InvitationRepo {
   }
 
   static async deleteByToken(
-    token: string,
+    inviteToken: string,
     tx?: PrismaTransaction
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.delete({
-        where: { invite_token: token },
+        where: { inviteToken },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "InvitationRepo.deleteByToken");
@@ -349,17 +349,17 @@ export class InvitationRepo {
   }
 
   static async markAsUsed(
-    token: string,
+    inviteToken: string,
     userId: string,
     tx?: PrismaTransaction
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardInvitation.update({
-        where: { invite_token: token },
+        where: { inviteToken },
         data: {
-          used_at: new Date(),
-          used_by_user_id: userId,
+          usedAt: new Date(),
+          usedByUserId: userId,
         },
       });
     } catch (error) {

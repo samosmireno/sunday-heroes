@@ -64,7 +64,7 @@ export class MatchPlayerService {
 
     const existingPlayerMap = new Map(
       existingMatchPlayers.map((mp) => [
-        `${mp.dashboard_player.nickname}-${mp.is_home}`,
+        `${mp.dashboardPlayer.nickname}-${mp.isHome}`,
         mp,
       ])
     );

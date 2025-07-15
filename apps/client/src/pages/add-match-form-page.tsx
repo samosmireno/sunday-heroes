@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axiosInstance from "../config/axiosConfig";
+import axiosInstance from "../config/axios-config";
 import { useFormMatchData } from "../hooks/use-form-match-data";
 import { createFootballFieldMatch } from "../utils/utils";
 import FootballField from "../components/features/football-field/football-field";
@@ -33,11 +33,13 @@ import { useCompetition } from "../hooks/use-competition";
 import PlayersListForm from "../components/features/add-match-form/player-list-form";
 import { useAuth } from "../context/auth-context";
 import LeagueMatchDetailsForm from "../components/features/add-match-form/league-match-details-form";
+import { useErrorHandler } from "../hooks/use-error-handler";
 
 export default function AddMatchForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [footballFieldMatch, setFootballFieldMatch] = useState<MatchResponse>();
   const { user } = useAuth();
+  const { handleError } = useErrorHandler();
 
   const navigate = useNavigate();
   const { matchId, competitionId } = useParams<{
@@ -113,7 +115,11 @@ export default function AddMatchForm() {
       });
       navigate(`/competition/${competitionId}`);
     } catch (error) {
-      console.error("Error saving match:", error);
+      handleError(error, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
     } finally {
       setIsSubmitting(false);
     }

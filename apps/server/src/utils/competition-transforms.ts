@@ -13,12 +13,12 @@ export function getUserRole(
   competition: CompetitionWithDetails,
   userId: string
 ): Role {
-  if (competition.dashboard.admin_id === userId) {
+  if (competition.dashboard.adminId === userId) {
     return Role.ADMIN;
   }
 
   const moderator = competition.moderators.find(
-    (mod) => mod.dashboard_player.user_id === userId
+    (mod) => mod.dashboardPlayer.userId === userId
   );
 
   if (moderator) {
@@ -35,31 +35,31 @@ export function transformCompetitionToResponse(
   const matches: MatchResponse[] = competition.matches.map((match) => ({
     id: match.id,
     date: match.date?.toLocaleDateString(),
-    match_type: match.match_type as MatchResponse["match_type"],
+    matchType: match.matchType as MatchResponse["matchType"],
     round: match.round,
-    home_team_score: match.home_team_score,
-    away_team_score: match.away_team_score,
-    penalty_home_score: match.penalty_home_score ?? undefined,
-    penalty_away_score: match.penalty_away_score ?? undefined,
-    teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
-    is_completed: match.is_completed,
+    homeTeamScore: match.homeTeamScore,
+    awayTeamScore: match.awayTeamScore,
+    penaltyHomeScore: match.penaltyHomeScore ?? undefined,
+    penaltyAwayScore: match.penaltyAwayScore ?? undefined,
+    teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
+    isCompleted: match.isCompleted,
     players: match.matchPlayers.map((player) => {
       return {
         id: player.id,
-        nickname: player.dashboard_player.nickname,
-        isHome: player.is_home,
+        nickname: player.dashboardPlayer.nickname,
+        isHome: player.isHome,
         goals: player.goals,
         assists: player.assists,
         position: player.position,
-        penalty_scored: player.penalty_scored ?? undefined,
-        rating: calculatePlayerScore(player.received_votes, match.player_votes),
+        penaltyScored: player.penaltyScored ?? undefined,
+        rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
       };
     }),
   }));
 
   const playerStats: PlayerTotals[] = calculatePlayerStats(matches);
 
-  const teams = competition.team_competitions.map((teamComp) => ({
+  const teams = competition.teamCompetitions.map((teamComp) => ({
     id: teamComp.team.id,
     name: teamComp.team.name,
   }));
@@ -69,13 +69,13 @@ export function transformCompetitionToResponse(
     name: competition.name,
     type: competition.type as CompetitionResponse["type"],
     userRole: getUserRole(competition, userId),
-    votingEnabled: competition.voting_enabled,
+    votingEnabled: competition.votingEnabled,
     teams: teams.length > 0 ? teams : undefined,
     matches: matches,
-    player_stats: playerStats,
+    playerStats: playerStats,
     moderators: competition.moderators.map((moderator) => ({
       id: moderator.id,
-      nickname: moderator.dashboard_player.nickname,
+      nickname: moderator.dashboardPlayer.nickname,
     })),
   };
 }
@@ -85,19 +85,18 @@ export function transformAddCompetitionRequestToService(
   dashboardId: string
 ): Omit<Competition, "id"> {
   const competition: Omit<Competition, "id"> = {
-    dashboard_id: dashboardId,
+    dashboardId,
     name: competitionReq.name,
     type: competitionReq.type,
-    created_at: new Date(Date.now()),
-    track_seasons: competitionReq.track_seasons,
-    current_season: competitionReq.current_season ?? 1,
-    voting_enabled: competitionReq.voting_enabled,
-    voting_period_days: competitionReq.voting_period_days ?? null,
-    knockout_voting_period_days:
-      competitionReq.knockout_voting_period_days ?? null,
-    reminder_days: competitionReq.reminder_days ?? null,
-    min_players: competitionReq.min_players ?? 4,
-    is_round_robin: null,
+    createdAt: new Date(Date.now()),
+    trackSeasons: competitionReq.trackSeasons,
+    currentSeason: competitionReq.currentSeason ?? 1,
+    votingEnabled: competitionReq.votingEnabled,
+    votingPeriodDays: competitionReq.votingPeriodDays ?? null,
+    knockoutVotingPeriodDays: competitionReq.knockoutVotingPeriodDays ?? null,
+    reminderDays: competitionReq.reminderDays ?? null,
+    minPlayers: competitionReq.minPlayers ?? 4,
+    isRoundRobin: null,
   };
 
   return competition;

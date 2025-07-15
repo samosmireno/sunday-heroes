@@ -43,14 +43,14 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
-    const { email, given_name, family_name, role } = req.body;
+    const { email, givenName, familyName, role } = req.body;
 
     //TODO: Add validation for email format and required fields
 
     const user = await UserService.createUser({
       email,
-      given_name,
-      family_name,
+      givenName,
+      familyName,
       role,
     });
 

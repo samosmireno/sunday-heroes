@@ -29,8 +29,6 @@ const VotePlayerList = ({
 }: VotePlayerListProps) => {
   const teamPlayers = players.filter(filterFn);
 
-  console.log(selectedPlayers);
-
   return (
     <div className="space-y-4">
       <div className="rounded-lg bg-bg/40 p-3">

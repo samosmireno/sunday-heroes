@@ -1,5 +1,5 @@
 import { MdDelete, MdEdit } from "react-icons/md";
-import axiosInstance from "../../../config/axiosConfig";
+import axiosInstance from "../../../config/axios-config";
 import { Link } from "react-router-dom";
 import Modal from "../../ui/modal";
 import { useState } from "react";
@@ -44,7 +44,6 @@ export default function MatchResult({
       await axiosInstance.delete(`${config.server}/api/matches/${id}`, {
         withCredentials: true,
       });
-      console.log("match deleted");
       refetchMatches();
     } catch (error) {
       console.error("Error deleting match:", error);

@@ -10,7 +10,7 @@ import {
 import { Trophy, User, Calendar, ExternalLink } from "lucide-react";
 import Loading from "../components/ui/loading";
 import ErrorPage from "./error-page";
-import axiosInstance from "../config/axiosConfig";
+import axiosInstance from "../config/axios-config";
 import { useAuth } from "../context/auth-context";
 import { toast } from "sonner";
 import { config } from "../config/config";

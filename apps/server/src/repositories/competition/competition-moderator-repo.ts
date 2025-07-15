@@ -4,7 +4,7 @@ import prisma from "../prisma-client";
 
 export class CompetitionModeratorRepo {
   static async addModeratorToCompetition(
-    competition_id: string,
+    competitionId: string,
     userId: string,
     tx?: PrismaTransaction
   ): Promise<void> {
@@ -12,8 +12,8 @@ export class CompetitionModeratorRepo {
       const prismaClient = tx || prisma;
       await prismaClient.competitionModerator.create({
         data: {
-          competition_id,
-          dashboard_player_id: userId,
+          competitionId,
+          dashboardPlayerId: userId,
         },
       });
     } catch (error) {
@@ -44,16 +44,16 @@ export class CompetitionModeratorRepo {
   }
 
   static async getModeratorsByCompetitionId(
-    competition_id: string,
+    competitionId: string,
     tx?: PrismaTransaction
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
       const moderators = await prismaClient.competitionModerator.findMany({
-        where: { competition_id },
-        select: { dashboard_player_id: true },
+        where: { competitionId },
+        select: { dashboardPlayerId: true },
       });
-      return moderators.map((mod) => mod.dashboard_player_id);
+      return moderators.map((mod) => mod.dashboardPlayerId);
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
@@ -70,9 +70,9 @@ export class CompetitionModeratorRepo {
       const prismaClient = tx || prisma;
       const competition = await prismaClient.competitionModerator.findFirst({
         where: { id: moderatorId },
-        select: { competition_id: true },
+        select: { competitionId: true },
       });
-      return competition ? competition.competition_id : null;
+      return competition ? competition.competitionId : null;
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
@@ -82,7 +82,7 @@ export class CompetitionModeratorRepo {
   }
 
   static async isUserModerator(
-    competition_id: string,
+    competitionId: string,
     userId: string,
     tx?: PrismaTransaction
   ): Promise<boolean> {
@@ -90,8 +90,8 @@ export class CompetitionModeratorRepo {
       const prismaClient = tx || prisma;
       const count = await prismaClient.competitionModerator.count({
         where: {
-          competition_id,
-          dashboard_player_id: userId,
+          competitionId,
+          dashboardPlayerId: userId,
         },
       });
       return count > 0;

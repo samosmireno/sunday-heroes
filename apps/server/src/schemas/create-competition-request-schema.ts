@@ -6,19 +6,18 @@ export const createCompetitionRequestSchema = z
     userId: z.string(),
     name: z.string(),
     type: z.nativeEnum(CompetitionType),
-    track_seasons: z.boolean(),
-    current_season: z.coerce.number().min(1).optional(),
-    min_players: z.coerce.number().min(4).optional(),
-    voting_enabled: z.boolean(),
-    voting_period_days: z.coerce.number().optional(),
-    knockout_voting_period_days: z.coerce.number().optional(),
-    reminder_days: z.coerce.number().optional(),
+    trackSeasons: z.boolean(),
+    currentSeason: z.coerce.number().min(1).optional(),
+    minPlayers: z.coerce.number().min(4).optional(),
+    votingEnabled: z.boolean(),
+    votingPeriodDays: z.coerce.number().optional(),
+    knockoutVotingPeriodDays: z.coerce.number().optional(),
+    reminderDays: z.coerce.number().optional(),
   })
   .refine(
     (data) =>
-      !data.voting_enabled ||
-      (data.voting_period_days !== undefined &&
-        data.reminder_days !== undefined),
+      !data.votingEnabled ||
+      (data.votingPeriodDays !== undefined && data.reminderDays !== undefined),
     {
       message: "Voting period and Reminder are required when voting is enabled",
       path: ["voting_period_days"],

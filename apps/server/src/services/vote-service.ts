@@ -24,15 +24,13 @@ export class VoteService {
       throw new NotFoundError("Match");
     }
 
-    if (match.voting_status !== "OPEN") {
+    if (match.votingStatus !== "OPEN") {
       throw new VotingError(
         "Voting is not open for this match. Please check the match details."
       );
     }
 
-    console.log(match.voting_ends_at && match.voting_ends_at < new Date());
-
-    if (match.voting_ends_at && match.voting_ends_at < new Date()) {
+    if (match.votingEndsAt && match.votingEndsAt < new Date()) {
       throw new VotingError(
         "Voting has ended for this match. You cannot submit votes."
       );
@@ -70,11 +68,11 @@ export class VoteService {
 
     return await prisma.$transaction(async (tx) => {
       const voteData = votes.map((vote) => ({
-        match_id: matchId,
-        voter_id: voterId,
-        match_player_id: vote.playerId,
+        matchId,
+        voterId,
+        matchPlayerId: vote.playerId,
         points: vote.points,
-        created_at: new Date(),
+        createdAt: new Date(),
       }));
 
       await VoteRepo.createMany(voteData, tx);
@@ -105,14 +103,14 @@ export class VoteService {
 
     return {
       matchId,
-      votingOpen: match.voting_status === "OPEN",
-      votingEndsAt: match.voting_ends_at,
+      votingOpen: match.votingStatus === "OPEN",
+      votingEndsAt: match.votingEndsAt,
       hasVoted,
       players: match.matchPlayers.map((player) => ({
         id: player.id,
-        nickname: player.dashboard_player.nickname,
-        isHome: player.is_home,
-        canVoteFor: player.dashboard_player_id !== voterId,
+        nickname: player.dashboardPlayer.nickname,
+        isHome: player.isHome,
+        canVoteFor: player.dashboardPlayerId !== voterId,
       })),
     };
   }
@@ -120,7 +118,7 @@ export class VoteService {
   static async getPendingVoters(matchId: string): Promise<string[]> {
     const matchPlayers =
       await MatchPlayerRepo.getMatchPlayersFromMatch(matchId);
-    const allPlayerIds = matchPlayers.map((mp) => mp.dashboard_player_id);
+    const allPlayerIds = matchPlayers.map((mp) => mp.dashboardPlayerId);
 
     const votedPlayerIds = await VoteRepo.getDistinctVotersByMatch(matchId);
 
@@ -174,7 +172,7 @@ export class VoteService {
     requestingUserId: string
   ): Promise<boolean> {
     const voterUser = await DashboardPlayerRepo.findById(voterId);
-    if (voterUser?.user_id === requestingUserId) {
+    if (voterUser?.userId === requestingUserId) {
       return true;
     }
 
@@ -188,11 +186,11 @@ export class VoteService {
     const match = await MatchRepo.findByIdWithDetails(matchId);
     if (!match) return false;
 
-    const isDashboardAdmin = match.competition.dashboard.admin_id === userId;
+    const isDashboardAdmin = match.competition.dashboard.adminId === userId;
     if (isDashboardAdmin) return true;
 
     const isCompetitionModerator = match.competition.moderators.some(
-      (mod) => mod.dashboard_player.user_id === userId
+      (mod) => mod.dashboardPlayer.userId === userId
     );
 
     return isCompetitionModerator;

@@ -4,23 +4,23 @@ import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const TEAM_WITH_COMPETITIONS_INCLUDE = {
-  team_competitions: true,
-  team_rosters: {
+  teamCompetitions: true,
+  teamRosters: {
     include: {
-      dashboard_player: true,
+      dashboardPlayer: true,
     },
   },
 } satisfies Prisma.TeamInclude;
 
 const TEAM_IN_COMPETITION_INCLUDE = {
-  team_competitions: {
+  teamCompetitions: {
     include: {
       competition: true,
     },
   },
-  team_rosters: {
+  teamRosters: {
     include: {
-      dashboard_player: true,
+      dashboardPlayer: true,
     },
   },
 } satisfies Prisma.TeamInclude;
@@ -48,7 +48,7 @@ export class TeamRepo {
 
   static async findByName(
     name: string,
-    competition_id: string,
+    competitionId: string,
     tx?: PrismaTransaction
   ): Promise<Team | null> {
     try {
@@ -56,8 +56,8 @@ export class TeamRepo {
       const team = await prismaClient.team.findFirst({
         where: {
           name,
-          team_competitions: {
-            some: { competition_id },
+          teamCompetitions: {
+            some: { competitionId },
           },
         },
       });
@@ -87,21 +87,21 @@ export class TeamRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.team.findMany({
         where: {
-          team_competitions: {
-            some: { competition_id: competitionId },
+          teamCompetitions: {
+            some: { competitionId },
           },
         },
         include: {
-          team_competitions: {
-            where: { competition_id: competitionId },
+          teamCompetitions: {
+            where: { competitionId },
             include: {
               competition: true,
             },
           },
-          team_rosters: {
-            where: { competition_id: competitionId },
+          teamRosters: {
+            where: { competitionId },
             include: {
-              dashboard_player: true,
+              dashboardPlayer: true,
             },
           },
         },
@@ -195,9 +195,9 @@ export class TeamRepo {
             equals: name.trim(),
             mode: "insensitive",
           },
-          team_competitions: {
+          teamCompetitions: {
             some: {
-              competition_id: competitionId,
+              competitionId,
             },
           },
           ...(excludeTeamId && {
@@ -241,9 +241,9 @@ export class TeamRepo {
       return await prismaClient.team.findFirst({
         where: {
           name: { equals: name.trim(), mode: "insensitive" },
-          team_competitions: {
+          teamCompetitions: {
             some: {
-              competition: { dashboard_id: dashboardId },
+              competition: { dashboardId },
             },
           },
         },

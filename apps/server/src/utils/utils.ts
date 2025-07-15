@@ -38,7 +38,7 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
         matches: 0,
         goals: 0,
         assists: 0,
-        penalty_scored: 0,
+        penaltyScored: 0,
         rating: 0,
       };
 
@@ -47,9 +47,8 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
         matches: existingPlayer.matches + 1,
         goals: existingPlayer.goals + player.goals,
         assists: existingPlayer.assists + player.assists,
-        penalty_scored:
-          (existingPlayer.penalty_scored || 0) +
-          (player.penalty_scored ? 1 : 0),
+        penaltyScored:
+          (existingPlayer.penaltyScored || 0) + (player.penaltyScored ? 1 : 0),
         rating: (existingPlayer.rating || 0) + (player.rating || 0),
       };
 
@@ -81,7 +80,7 @@ export function calculateLeaguePlayerStats(
         matches: 0,
         goals: 0,
         assists: 0,
-        penalty_scored: 0,
+        penaltyScored: 0,
         rating: 0,
         teamName: match.teams[player.isHome ? 0 : 1],
       };
@@ -91,9 +90,8 @@ export function calculateLeaguePlayerStats(
         matches: existingPlayer.matches + 1,
         goals: existingPlayer.goals + player.goals,
         assists: existingPlayer.assists + player.assists,
-        penalty_scored:
-          (existingPlayer.penalty_scored || 0) +
-          (player.penalty_scored ? 1 : 0),
+        penaltyScored:
+          (existingPlayer.penaltyScored || 0) + (player.penaltyScored ? 1 : 0),
         rating: (existingPlayer.rating || 0) + (player.rating || 0),
       };
 
@@ -114,17 +112,15 @@ export function calculateLeaguePlayerStats(
 
 export function calculatePendingVotes(match: MatchWithDetails): number {
   if (
-    match.voting_status !== VotingStatus.OPEN ||
-    match.competition.voting_enabled === false
+    match.votingStatus !== VotingStatus.OPEN ||
+    match.competition.votingEnabled === false
   )
     return 0;
 
   const playerIds = match.matchPlayers.map(
-    (player) => player.dashboard_player_id
+    (player) => player.dashboardPlayerId
   );
-  const votedPlayerIds = new Set(
-    match.player_votes.map((vote) => vote.voter_id)
-  );
+  const votedPlayerIds = new Set(match.playerVotes.map((vote) => vote.voterId));
 
   return playerIds.filter((id) => !votedPlayerIds.has(id)).length;
 }

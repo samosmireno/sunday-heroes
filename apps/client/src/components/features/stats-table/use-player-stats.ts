@@ -4,7 +4,6 @@ import { MatchResponse } from "@repo/shared-types";
 
 export const usePlayerStats = (matches: MatchResponse[]) => {
   const [playersStats, setPlayersStats] = useState<UserTotals[]>([]);
-  console.log("matches", matches);
   useEffect(() => {
     const playerMap = new Map<string, UserTotals>();
 

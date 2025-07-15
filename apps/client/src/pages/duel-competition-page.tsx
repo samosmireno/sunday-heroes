@@ -36,7 +36,7 @@ function DuelCompetitionPage({
       </div>
       <div className="relative overflow-hidden rounded-lg border-2 border-accent bg-panel-bg p-5 shadow-lg">
         <StatsTable
-          playerStats={competition.player_stats}
+          playerStats={competition.playerStats}
           votingEnabled={competition.votingEnabled}
         />
       </div>

@@ -26,9 +26,9 @@ export class MatchTeamRepo {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.create({
         data: {
-          match_id: matchId,
-          team_id: teamId,
-          is_home: isHome,
+          matchId,
+          teamId,
+          isHome,
         },
       });
     } catch (error) {
@@ -43,7 +43,7 @@ export class MatchTeamRepo {
     try {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.findMany({
-        where: { match_id: matchId },
+        where: { matchId },
         include: {
           team: true,
         },
@@ -60,7 +60,7 @@ export class MatchTeamRepo {
     try {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.findMany({
-        where: { team_id: teamId },
+        where: { teamId },
         include: {
           match: true,
           team: true,
@@ -80,8 +80,8 @@ export class MatchTeamRepo {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.findFirst({
         where: {
-          match_id: matchId,
-          team_id: teamId,
+          matchId,
+          teamId,
         },
         include: {
           team: true,
@@ -103,8 +103,8 @@ export class MatchTeamRepo {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.findFirst({
         where: {
-          match_id: matchId,
-          is_home: true,
+          matchId,
+          isHome: true,
         },
         include: {
           team: true,
@@ -123,8 +123,8 @@ export class MatchTeamRepo {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.findFirst({
         where: {
-          match_id: matchId,
-          is_home: false,
+          matchId,
+          isHome: false,
         },
         include: {
           team: true,
@@ -142,7 +142,7 @@ export class MatchTeamRepo {
     try {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.deleteMany({
-        where: { match_id: matchId },
+        where: { matchId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchTeamRepo.deleteByMatchId");
@@ -156,7 +156,7 @@ export class MatchTeamRepo {
     try {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.deleteMany({
-        where: { team_id: teamId },
+        where: { teamId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchTeamRepo.deleteByTeamId");
@@ -199,17 +199,17 @@ export class MatchTeamRepo {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.findMany({
         where: {
-          team_id: teamId,
+          teamId,
           ...(competitionId && {
             match: {
-              competition_id: competitionId,
+              competitionId,
             },
           }),
         },
         include: {
           match: {
             include: {
-              match_teams: {
+              matchTeams: {
                 include: {
                   team: true,
                 },
@@ -237,8 +237,8 @@ export class MatchTeamRepo {
     try {
       const prismaClient = tx || prisma;
       await prismaClient.matchTeam.updateMany({
-        where: { team_id: oldTeamId },
-        data: { team_id: newTeamId },
+        where: { teamId: oldTeamId },
+        data: { teamId: newTeamId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(

@@ -2,12 +2,10 @@ import {
   LeaguePlayerTotals,
   LeagueTeamResponse,
   MatchResponse,
-  PlayerTotals,
 } from "@repo/shared-types";
 import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { MatchWithDetails } from "../repositories/match-repo";
 import { calculateLeaguePlayerStats, calculatePlayerScore } from "./utils";
-import { TeamCompetition } from "@prisma/client";
 import { TeamCompetitionWithDetails } from "../repositories/team-competition-repo";
 
 interface LeagueMatch {
@@ -37,19 +35,19 @@ export function transformLeagueFixtureToResponse(
     transformedFixtures[Number(round)] = matches.map((match) => ({
       id: match.id,
       homeTeam: {
-        id: match.match_teams[0].team_id,
-        name: match.match_teams[0].team.name,
+        id: match.matchTeams[0].teamId,
+        name: match.matchTeams[0].team.name,
       },
       awayTeam: {
-        id: match.match_teams[1].team_id,
-        name: match.match_teams[1].team.name,
+        id: match.matchTeams[1].teamId,
+        name: match.matchTeams[1].team.name,
       },
-      homeScore: match.home_team_score,
-      awayScore: match.away_team_score,
+      homeScore: match.homeTeamScore,
+      awayScore: match.awayTeamScore,
       date: match.date ? match.date.toISOString() : null,
       round: match.round,
-      votingStatus: match.voting_status,
-      isCompleted: match.is_completed,
+      votingStatus: match.votingStatus,
+      isCompleted: match.isCompleted,
     }));
   }
 
@@ -62,24 +60,24 @@ export function transformCompetitionToPlayerStatsResponse(
   const matches: MatchResponse[] = competition.matches.map((match) => ({
     id: match.id,
     date: match.date?.toLocaleDateString(),
-    match_type: match.match_type as MatchResponse["match_type"],
+    matchType: match.matchType as MatchResponse["matchType"],
     round: match.round,
-    home_team_score: match.home_team_score,
-    away_team_score: match.away_team_score,
-    penalty_home_score: match.penalty_home_score ?? undefined,
-    penalty_away_score: match.penalty_away_score ?? undefined,
-    teams: match.match_teams.map((matchTeam) => matchTeam.team.name),
-    is_completed: match.is_completed,
+    homeTeamScore: match.homeTeamScore,
+    awayTeamScore: match.awayTeamScore,
+    penaltyHomeScore: match.penaltyHomeScore ?? undefined,
+    penaltyAwayScore: match.penaltyAwayScore ?? undefined,
+    teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
+    isCompleted: match.isCompleted,
     players: match.matchPlayers.map((player) => {
       return {
         id: player.id,
-        nickname: player.dashboard_player.nickname,
-        isHome: player.is_home,
+        nickname: player.dashboardPlayer.nickname,
+        isHome: player.isHome,
         goals: player.goals,
         assists: player.assists,
         position: player.position,
-        penalty_scored: player.penalty_scored ?? undefined,
-        rating: calculatePlayerScore(player.received_votes, match.player_votes),
+        penalty_scored: player.penaltyScored ?? undefined,
+        rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
       };
     }),
   }));
@@ -101,9 +99,9 @@ export function transformTeamCompetitionToStandingsResponse(
       wins: tc.wins,
       draws: tc.draws,
       losses: tc.losses,
-      goalsFor: tc.goals_for,
-      goalsAgainst: tc.goals_against,
-      goalDifference: tc.goals_for - tc.goals_against,
+      goalsFor: tc.goalsFor,
+      goalsAgainst: tc.goalsAgainst,
+      goalDifference: tc.goalsFor - tc.goalsAgainst,
       played: tc.wins + tc.draws + tc.losses,
       team: {
         id: team.id,

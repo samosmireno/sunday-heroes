@@ -5,17 +5,17 @@ import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const DASHBOARD_BASIC_INCLUDE = {
   admin: true,
-  dashboard_players: true,
+  dashboardPlayers: true,
 } satisfies Prisma.DashboardInclude;
 
 const DASHBOARD_DETAILED_INCLUDE = {
   admin: true,
-  dashboard_players: true,
+  dashboardPlayers: true,
   competitions: {
     include: {
       moderators: {
         include: {
-          dashboard_player: {
+          dashboardPlayer: {
             select: {
               nickname: true,
             },
@@ -26,20 +26,20 @@ const DASHBOARD_DETAILED_INCLUDE = {
         include: {
           matchPlayers: {
             include: {
-              dashboard_player: {
+              dashboardPlayer: {
                 include: {
-                  votes_given: true,
+                  votesGiven: true,
                 },
               },
-              received_votes: true,
+              receivedVotes: true,
             },
           },
-          match_teams: {
+          matchTeams: {
             include: {
               team: true,
             },
           },
-          player_votes: true,
+          playerVotes: true,
         },
       },
     },
@@ -107,7 +107,7 @@ export class DashboardRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.findUnique({
-        where: { admin_id: adminId },
+        where: { adminId },
         include: DASHBOARD_DETAILED_INCLUDE,
       });
     } catch (error) {
@@ -140,7 +140,7 @@ export class DashboardRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.findMany({
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "DashboardRepo.findAll");

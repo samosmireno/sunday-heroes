@@ -52,7 +52,7 @@ export const handleRefreshToken = async (
     const authResponse = {
       id: user.id,
       email: user.email,
-      name: user.given_name,
+      name: user.givenName,
       role: user.role as UserResponse["role"],
     };
 
@@ -139,7 +139,7 @@ export const getCurrentUser = async (
     const userResponse = {
       id: user.id,
       email: user.email,
-      name: user.given_name,
+      name: user.givenName,
       role: user.role as UserResponse["role"],
     };
     res.status(200).json(userResponse);

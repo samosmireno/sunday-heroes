@@ -47,7 +47,7 @@ export const useMatchDetails = (matchId: string) => {
   return {
     match: leagueFixturesQuery.data,
     isMatchLoading: leagueFixturesQuery.isLoading,
-    isMatchCompleted: leagueFixturesQuery.data?.is_completed,
+    isMatchCompleted: leagueFixturesQuery.data?.isCompleted,
     isMatchUnfinished: !isMatchUnfinished(leagueFixturesQuery.data),
     refetch: leagueFixturesQuery.refetch,
     error: leagueFixturesQuery.error,

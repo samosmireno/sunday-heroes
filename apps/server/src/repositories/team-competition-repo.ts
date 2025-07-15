@@ -11,13 +11,13 @@ export type TeamCompetitionWithDetails = Prisma.TeamCompetitionGetPayload<{
 
 export class TeamCompetitionRepo {
   static async getTeamsFromCompetitionId(
-    competition_id: string,
+    competitionId: string,
     tx?: PrismaTransaction
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
-      const teams = await prisma.teamCompetition.findMany({
-        where: { competition_id },
+      const teams = await prismaClient.teamCompetition.findMany({
+        where: { competitionId },
         select: {
           team: {
             select: {
@@ -44,9 +44,9 @@ export class TeamCompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.teamCompetition.findUnique({
         where: {
-          team_id_competition_id: {
-            team_id: teamId,
-            competition_id: competitionId,
+          teamId_competitionId: {
+            teamId,
+            competitionId,
           },
         },
       });
@@ -66,8 +66,8 @@ export class TeamCompetitionRepo {
       wins?: number;
       draws?: number;
       losses?: number;
-      goals_for?: number;
-      goals_against?: number;
+      goalsFor?: number;
+      goalsAgainst?: number;
     },
     tx?: PrismaTransaction
   ): Promise<TeamCompetition> {
@@ -85,9 +85,9 @@ export class TeamCompetitionRepo {
 
       return await prismaClient.teamCompetition.update({
         where: {
-          team_id_competition_id: {
-            team_id: teamId,
-            competition_id: competitionId,
+          teamId_competitionId: {
+            teamId,
+            competitionId,
           },
         },
         data: {
@@ -95,8 +95,8 @@ export class TeamCompetitionRepo {
           wins: current.wins + (updates.wins || 0),
           draws: current.draws + (updates.draws || 0),
           losses: current.losses + (updates.losses || 0),
-          goals_for: current.goals_for + (updates.goals_for || 0),
-          goals_against: current.goals_against + (updates.goals_against || 0),
+          goalsFor: current.goalsFor + (updates.goalsFor || 0),
+          goalsAgainst: current.goalsAgainst + (updates.goalsAgainst || 0),
         },
       });
     } catch (error) {
@@ -116,9 +116,9 @@ export class TeamCompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.teamCompetition.update({
         where: {
-          team_id_competition_id: {
-            team_id: teamId,
-            competition_id: competitionId,
+          teamId_competitionId: {
+            teamId,
+            competitionId,
           },
         },
         data: {
@@ -126,8 +126,8 @@ export class TeamCompetitionRepo {
           wins: 0,
           draws: 0,
           losses: 0,
-          goals_for: 0,
-          goals_against: 0,
+          goalsFor: 0,
+          goalsAgainst: 0,
         },
       });
     } catch (error) {
@@ -145,14 +145,14 @@ export class TeamCompetitionRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.teamCompetition.findMany({
-        where: { competition_id: competitionId },
+        where: { competitionId },
         include: {
           team: {
             include: {
-              team_rosters: {
-                where: { competition_id: competitionId },
+              teamRosters: {
+                where: { competitionId },
                 include: {
-                  dashboard_player: true,
+                  dashboardPlayer: true,
                 },
               },
             },
@@ -174,7 +174,7 @@ export class TeamCompetitionRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.teamCompetition.findMany({
-        where: { competition_id: competitionId },
+        where: { competitionId },
         include: {
           team: true,
         },
@@ -196,14 +196,14 @@ export class TeamCompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.teamCompetition.create({
         data: {
-          team_id: teamId,
-          competition_id: competitionId,
+          teamId,
+          competitionId,
           points: 0,
           wins: 0,
           draws: 0,
           losses: 0,
-          goals_for: 0,
-          goals_against: 0,
+          goalsFor: 0,
+          goalsAgainst: 0,
         },
       });
     } catch (error) {
@@ -223,9 +223,9 @@ export class TeamCompetitionRepo {
       const prismaClient = tx || prisma;
       await prismaClient.teamCompetition.delete({
         where: {
-          team_id_competition_id: {
-            team_id: teamId,
-            competition_id: competitionId,
+          teamId_competitionId: {
+            teamId,
+            competitionId,
           },
         },
       });
@@ -244,14 +244,14 @@ export class TeamCompetitionRepo {
     try {
       return await prisma.teamCompetition.create({
         data: {
-          team_id: teamId,
-          competition_id: competitionId,
+          teamId,
+          competitionId,
           points: 0,
           wins: 0,
           draws: 0,
           losses: 0,
-          goals_for: 0,
-          goals_against: 0,
+          goalsFor: 0,
+          goalsAgainst: 0,
         },
       });
     } catch (error) {
@@ -269,14 +269,14 @@ export class TeamCompetitionRepo {
     try {
       const prismaClient = tx || prisma;
       await prismaClient.teamCompetition.updateMany({
-        where: { competition_id: competitionId },
+        where: { competitionId },
         data: {
           points: 0,
           wins: 0,
           draws: 0,
           losses: 0,
-          goals_for: 0,
-          goals_against: 0,
+          goalsFor: 0,
+          goalsAgainst: 0,
         },
       });
     } catch (error) {
@@ -296,9 +296,9 @@ export class TeamCompetitionRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.teamCompetition.findUnique({
         where: {
-          team_id_competition_id: {
-            team_id: teamId,
-            competition_id: competitionId,
+          teamId_competitionId: {
+            teamId,
+            competitionId,
           },
         },
         include: {
@@ -323,13 +323,13 @@ export class TeamCompetitionRepo {
       const prismaClient = tx || prisma;
       await prismaClient.teamCompetition.update({
         where: {
-          team_id_competition_id: {
-            team_id: oldTeamId,
-            competition_id: competitionId,
+          teamId_competitionId: {
+            teamId: oldTeamId,
+            competitionId,
           },
         },
         data: {
-          team_id: newTeamId,
+          teamId: newTeamId,
         },
       });
     } catch (error) {

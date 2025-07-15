@@ -20,7 +20,7 @@ export class MatchAuthService {
     if (!match) return false;
 
     return await CompetitionAuthRepo.isUserAdminOrModerator(
-      match.competition_id,
+      match.competitionId,
       userId
     );
   }

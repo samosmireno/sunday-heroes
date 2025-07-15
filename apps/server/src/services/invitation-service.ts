@@ -85,11 +85,7 @@ export class InvitationService {
   ): Promise<InvitationDetails | null> {
     const invitation = await InvitationRepo.findByToken(token);
 
-    if (
-      !invitation ||
-      invitation.used_at ||
-      invitation.expires_at < new Date()
-    ) {
+    if (!invitation || invitation.usedAt || invitation.expiresAt < new Date()) {
       return null;
     }
 
@@ -192,13 +188,13 @@ export class InvitationService {
       throw new NotFoundError("Dashboard player");
     }
 
-    if (dashboardPlayer.dashboard.admin_id !== invitedById) {
+    if (dashboardPlayer.dashboard.adminId !== invitedById) {
       throw new AuthorizationError(
         "Only dashboard admin can create invitations"
       );
     }
 
-    if (dashboardPlayer.user_id) {
+    if (dashboardPlayer.userId) {
       throw new ConflictError(
         "Dashboard player already has a user associated with it"
       );
@@ -217,7 +213,7 @@ export class InvitationService {
     );
 
     if (existingInvitations.length > 0) {
-      return existingInvitations[0].invite_token;
+      return existingInvitations[0].inviteToken;
     }
 
     if (email) {
@@ -247,22 +243,22 @@ export class InvitationService {
       dashboardPlayer,
     } = params;
 
-    const token = this.generateInviteToken();
+    const inviteToken = this.generateInviteToken();
     const expiresAt = new Date(Date.now() + expirationHours * 60 * 60 * 1000);
 
     await InvitationRepo.create({
-      invited_by_id: invitedById,
-      dashboard_player_id: dashboardPlayerId,
-      invite_token: token,
+      invitedById,
+      dashboardPlayerId,
+      inviteToken,
       email,
-      expires_at: expiresAt,
+      expiresAt,
     });
 
     if (email) {
-      await this.sendInvitationEmail(email, token, dashboardPlayer);
+      await this.sendInvitationEmail(email, inviteToken, dashboardPlayer);
     }
 
-    return token;
+    return inviteToken;
   }
 
   private static async sendInvitationEmail(
@@ -273,7 +269,7 @@ export class InvitationService {
     await EmailService.sendDashboardInvitation(email, token, {
       dashboardName: dashboardPlayer.dashboard.name,
       playerNickname: dashboardPlayer.nickname,
-      inviterName: `${dashboardPlayer.dashboard.admin.given_name} ${dashboardPlayer.dashboard.admin.family_name}`,
+      inviterName: `${dashboardPlayer.dashboard.admin.givenName} ${dashboardPlayer.dashboard.admin.familyName}`,
     });
   }
 
@@ -299,7 +295,7 @@ export class InvitationService {
     await prisma.$transaction(async (tx) => {
       await InvitationRepo.markAsUsed(token, userId, tx);
 
-      await DashboardPlayerRepo.update(playerId, { user_id: userId }, tx);
+      await DashboardPlayerRepo.update(playerId, { userId }, tx);
     });
   }
 
@@ -310,7 +306,7 @@ export class InvitationService {
     const dashboard = await DashboardRepo.findById(dashboardId);
     if (!dashboard) return false;
 
-    if (dashboard.admin_id === userId) return true;
+    if (dashboard.adminId === userId) return true;
 
     const player = await DashboardPlayerService.getPlayerInDashboard(
       dashboardId,
@@ -324,8 +320,8 @@ export class InvitationService {
     userId: string
   ): Promise<boolean> {
     return (
-      invitation.invited_by_id === userId ||
-      invitation.dashboard_player.dashboard.admin_id === userId
+      invitation.invitedById === userId ||
+      invitation.dashboardPlayer.dashboard.adminId === userId
     );
   }
 
@@ -334,20 +330,20 @@ export class InvitationService {
   ): InvitationDetails {
     return {
       id: invitation.id,
-      token: invitation.invite_token,
+      token: invitation.inviteToken,
       dashboardPlayer: {
-        id: invitation.dashboard_player.id,
-        nickname: invitation.dashboard_player.nickname,
+        id: invitation.dashboardPlayer.id,
+        nickname: invitation.dashboardPlayer.nickname,
         dashboard: {
-          id: invitation.dashboard_player.dashboard.id,
-          name: invitation.dashboard_player.dashboard.name,
+          id: invitation.dashboardPlayer.dashboard.id,
+          name: invitation.dashboardPlayer.dashboard.name,
         },
       },
       invitedBy: {
-        name: `${invitation.invited_by.given_name} ${invitation.invited_by.family_name}`,
-        email: invitation.invited_by.email,
+        name: `${invitation.invitedBy.givenName} ${invitation.invitedBy.familyName}`,
+        email: invitation.invitedBy.email,
       },
-      expiresAt: invitation.expires_at,
+      expiresAt: invitation.expiresAt,
     };
   }
 }

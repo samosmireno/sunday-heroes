@@ -7,30 +7,6 @@ export interface UserTotals {
   totalRating: number;
 }
 
-export interface MatchDetail {
-  id: string;
-  date: string;
-  players: MatchPlayer[];
-  home_team_score: number;
-  away_team_score: number;
-  match_type: MatchType;
-  round: number;
-  bracket_position?: number;
-  penalty_home_score?: number;
-  penalty_away_score?: number;
-}
-
-export interface MatchPlayer {
-  matchId: string;
-  user: User;
-  goals: number;
-  assists: number;
-  rating: number;
-  position: number;
-  isHome: boolean;
-  penaltyScored?: boolean;
-}
-
 export interface User {
   id: string;
   nickname: string;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../config/axiosConfig";
+import axiosInstance from "../config/axios-config";
 import { MatchResponse } from "@repo/shared-types";
 import { MatchFormData } from "../components/features/add-match-form/add-match-schemas";
 
@@ -7,12 +7,12 @@ const transformResponseToForm = (data: MatchResponse): MatchFormData => {
   const formData: MatchFormData = {
     match: {
       date: new Date(data.date || ""),
-      homeTeamScore: data.home_team_score,
-      awayTeamScore: data.away_team_score,
-      matchType: data.match_type,
-      hasPenalties: data.penalty_home_score ? true : false,
-      penaltyHomeScore: data.penalty_home_score,
-      penaltyAwayScore: data.penalty_away_score,
+      homeTeamScore: data.homeTeamScore,
+      awayTeamScore: data.awayTeamScore,
+      matchType: data.matchType,
+      hasPenalties: data.penaltyHomeScore ? true : false,
+      penaltyHomeScore: data.penaltyHomeScore,
+      penaltyAwayScore: data.penaltyAwayScore,
       homeTeam: data.teams[0],
       awayTeam: data.teams[1],
     },

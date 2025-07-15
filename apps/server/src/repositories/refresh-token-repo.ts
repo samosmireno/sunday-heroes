@@ -8,8 +8,8 @@ const REFRESH_TOKEN_WITH_USER_INCLUDE = {
     select: {
       id: true,
       email: true,
-      given_name: true,
-      family_name: true,
+      givenName: true,
+      familyName: true,
     },
   },
 } satisfies Prisma.RefreshTokenInclude;
@@ -53,7 +53,7 @@ export class RefreshTokenRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.findMany({
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.findAll");
@@ -99,8 +99,8 @@ export class RefreshTokenRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.findMany({
-        where: { user_id: userId },
-        orderBy: { created_at: "desc" },
+        where: { userId },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.findByUserId");
@@ -115,10 +115,10 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.findMany({
         where: {
-          user_id: userId,
-          expires_at: { gt: new Date() },
+          userId,
+          expiresAt: { gt: new Date() },
         },
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(
@@ -133,7 +133,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.findMany({
         where: {
-          expires_at: { lt: new Date() },
+          expiresAt: { lt: new Date() },
         },
       });
     } catch (error) {
@@ -148,7 +148,7 @@ export class RefreshTokenRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.count({
-        where: { user_id: userId },
+        where: { userId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.countByUserId");
@@ -160,7 +160,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.count({
         where: {
-          expires_at: { gt: new Date() },
+          expiresAt: { gt: new Date() },
         },
       });
     } catch (error) {
@@ -176,9 +176,9 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       const refreshToken = await prismaClient.refreshToken.findFirst({
         where: { token },
-        select: { user_id: true },
+        select: { userId: true },
       });
-      return refreshToken?.user_id || null;
+      return refreshToken?.userId || null;
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
@@ -196,7 +196,7 @@ export class RefreshTokenRepo {
       const refreshToken = await prismaClient.refreshToken.findFirst({
         where: {
           token,
-          expires_at: { gt: new Date() },
+          expiresAt: { gt: new Date() },
         },
         select: { id: true },
       });
@@ -252,7 +252,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.update({
         where: { token },
-        data: { last_used_at: new Date() },
+        data: { lastUsedAt: new Date() },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.updateLastUsed");
@@ -301,7 +301,7 @@ export class RefreshTokenRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.deleteMany({
-        where: { user_id: userId },
+        where: { userId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "RefreshTokenRepo.deleteByUserId");
@@ -315,7 +315,7 @@ export class RefreshTokenRepo {
       const prismaClient = tx || prisma;
       return await prismaClient.refreshToken.deleteMany({
         where: {
-          expires_at: { lt: new Date() },
+          expiresAt: { lt: new Date() },
         },
       });
     } catch (error) {

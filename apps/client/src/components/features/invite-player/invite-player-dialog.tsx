@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "../../ui/dialog";
 import { UserPlus, Copy, Check, Loader2 } from "lucide-react";
-import axiosInstance from "../../../config/axiosConfig";
+import axiosInstance from "../../../config/axios-config";
 import { toast } from "sonner";
 import Loading from "../../ui/loading";
 

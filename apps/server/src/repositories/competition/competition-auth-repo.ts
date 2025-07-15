@@ -34,12 +34,12 @@ export class CompetitionAuthRepo {
         select: {
           dashboard: {
             select: {
-              admin_id: true,
+              adminId: true,
             },
           },
         },
       });
-      return competition?.dashboard.admin_id || null;
+      return competition?.dashboard.adminId || null;
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
@@ -49,23 +49,23 @@ export class CompetitionAuthRepo {
   }
 
   static async getModerators(
-    id: string,
+    competitionId: string,
     tx?: PrismaTransaction
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
       const moderators = await prismaClient.competitionModerator.findMany({
-        where: { competition_id: id },
+        where: { competitionId },
         select: {
-          dashboard_player: {
+          dashboardPlayer: {
             select: {
-              user_id: true,
+              userId: true,
             },
           },
         },
       });
       return moderators
-        .map((m) => m.dashboard_player.user_id)
+        .map((m) => m.dashboardPlayer.userId)
         .filter((userId): userId is string => userId !== null);
     } catch (error) {
       throw PrismaErrorHandler.handle(

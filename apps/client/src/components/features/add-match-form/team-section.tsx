@@ -79,7 +79,6 @@ export default function TeamSection({
       form.setValue("matchPlayers.players", newMatchPlayers);
     }
     setSelectedPlayers([...selectedPlayers, player]);
-    console.log(selectedPlayers);
   }
 
   function removePlayerFromForm(player: string) {

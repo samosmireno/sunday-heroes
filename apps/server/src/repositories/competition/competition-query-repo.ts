@@ -18,7 +18,7 @@ export class CompetitionQueryRepo {
       return await prismaClient.competition.findMany({
         where: { type },
         include: COMPETITION_DETAILED_INCLUDE,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
         take: options?.limit,
         skip: options?.offset,
       });
@@ -42,7 +42,7 @@ export class CompetitionQueryRepo {
           },
         },
         include: COMPETITION_DETAILED_INCLUDE,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
         take: options?.limit,
         skip: options?.offset,
       });
@@ -67,14 +67,14 @@ export class CompetitionQueryRepo {
             some: {
               matchPlayers: {
                 some: {
-                  dashboard_player: { user_id: playerId },
+                  dashboardPlayer: { userId: playerId },
                 },
               },
             },
           },
         },
         include: COMPETITION_DETAILED_INCLUDE,
-        orderBy: { created_at: "desc" },
+        orderBy: { createdAt: "desc" },
         take: options?.limit,
         skip: options?.offset,
       });
@@ -103,13 +103,13 @@ export class CompetitionQueryRepo {
 
       const whereClause: Prisma.CompetitionWhereInput = {
         OR: [
-          { dashboard_id: dashboardId },
+          { dashboardId },
           {
             matches: {
               some: {
                 matchPlayers: {
                   some: {
-                    dashboard_player: { user_id: userId },
+                    dashboardPlayer: { userId },
                   },
                 },
               },
@@ -129,7 +129,7 @@ export class CompetitionQueryRepo {
         prismaClient.competition.findMany({
           where: whereClause,
           include: COMPETITION_DETAILED_INCLUDE,
-          orderBy: { created_at: "desc" },
+          orderBy: { createdAt: "desc" },
           take: limit,
           skip: offset,
         }),
@@ -154,7 +154,7 @@ export class CompetitionQueryRepo {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.count({
-        where: { dashboard_id: dashboardId },
+        where: { dashboardId },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(

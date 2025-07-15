@@ -46,8 +46,8 @@ export class UserService {
 
   static async createUser(data: {
     email: string;
-    given_name: string;
-    family_name: string;
+    givenName: string;
+    familyName: string;
     role?: Role;
   }) {
     const existingUser = await UserRepo.findByEmail(data.email);
@@ -58,9 +58,9 @@ export class UserService {
     return await UserRepo.create({
       ...data,
       role: data.role || "PLAYER",
-      is_registered: false,
-      created_at: new Date(),
-      last_login: null,
+      isRegistered: false,
+      createdAt: new Date(),
+      lastLogin: null,
     });
   }
 

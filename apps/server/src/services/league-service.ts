@@ -29,8 +29,8 @@ interface MatchStats {
   wins: number;
   draws: number;
   losses: number;
-  goals_for: number;
-  goals_against: number;
+  goalsFor: number;
+  goalsAgainst: number;
 }
 
 export class LeagueService {
@@ -39,7 +39,7 @@ export class LeagueService {
       const competition = await CompetitionService.createCompetition(request);
 
       const teams = [];
-      for (let i = 0; i < request.number_of_teams; i++) {
+      for (let i = 0; i < request.numberOfTeams; i++) {
         const teamName = `team-${Math.floor(Math.random() * 10000)}`;
 
         const team = await TeamService.createTeamInCompetition(
@@ -53,8 +53,8 @@ export class LeagueService {
       const fixtures = await this.generateLeagueFixtures(
         competition.id,
         teams,
-        request.is_round_robin || false,
-        request.match_type,
+        request.isRoundRobin || false,
+        request.matchType,
         tx
       );
 
@@ -85,19 +85,19 @@ export class LeagueService {
 
       for (const match of roundMatches[roundIndex]) {
         const createdMatch = await MatchRepo.create({
-          created_at: new Date(),
-          competition_id: competitionId,
-          match_type: matchType,
+          createdAt: new Date(),
+          competitionId,
+          matchType,
           date: null,
           round: round,
-          home_team_score: 0,
-          away_team_score: 0,
-          penalty_home_score: null,
-          penalty_away_score: null,
-          bracket_position: null,
-          voting_status: VotingStatus.CLOSED,
-          voting_ends_at: null,
-          is_completed: false,
+          homeTeamScore: 0,
+          awayTeamScore: 0,
+          penaltyHomeScore: null,
+          penaltyAwayScore: null,
+          bracketPosition: null,
+          votingStatus: VotingStatus.CLOSED,
+          votingEndsAt: null,
+          isCompleted: false,
         });
 
         await MatchTeamRepo.create(
@@ -216,8 +216,8 @@ export class LeagueService {
     newHomeScore: number,
     newAwayScore: number
   ) {
-    const homeTeam = match.match_teams.find((mt) => mt.is_home);
-    const awayTeam = match.match_teams.find((mt) => !mt.is_home);
+    const homeTeam = match.matchTeams.find((mt) => mt.isHome);
+    const awayTeam = match.matchTeams.find((mt) => !mt.isHome);
 
     if (!homeTeam || !awayTeam) {
       throw new NotFoundError("Match team");
@@ -225,8 +225,8 @@ export class LeagueService {
 
     const result = this.calculateMatchResult(newHomeScore, newAwayScore);
     const previousResult = this.calculateMatchResult(
-      match.home_team_score,
-      match.away_team_score
+      match.homeTeamScore,
+      match.awayTeamScore
     );
 
     const diffHomeStats = this.calculateStatsDifference(
@@ -241,15 +241,15 @@ export class LeagueService {
 
     await prisma.$transaction(async (tx) => {
       await TeamCompetitionRepo.incrementTeamStats(
-        homeTeam.team_id,
-        match.competition_id,
+        homeTeam.teamId,
+        match.competitionId,
         diffHomeStats,
         tx
       );
 
       await TeamCompetitionRepo.incrementTeamStats(
-        awayTeam.team_id,
-        match.competition_id,
+        awayTeam.teamId,
+        match.competitionId,
         diffAwayStats,
         tx
       );
@@ -265,8 +265,8 @@ export class LeagueService {
       wins: newStats.wins - previousStats.wins,
       draws: newStats.draws - previousStats.draws,
       losses: newStats.losses - previousStats.losses,
-      goals_for: newStats.goals_for - previousStats.goals_for,
-      goals_against: newStats.goals_against - previousStats.goals_against,
+      goalsFor: newStats.goalsFor - previousStats.goalsFor,
+      goalsAgainst: newStats.goalsAgainst - previousStats.goalsAgainst,
     };
   }
 
@@ -299,16 +299,16 @@ export class LeagueService {
         wins: homeWins,
         draws: homeDraws,
         losses: homeLosses,
-        goals_for: homeScore,
-        goals_against: awayScore,
+        goalsFor: homeScore,
+        goalsAgainst: awayScore,
       },
       awayTeamStats: {
         points: awayPoints,
         wins: awayWins,
         draws: awayDraws,
         losses: awayLosses,
-        goals_for: awayScore,
-        goals_against: homeScore,
+        goalsFor: awayScore,
+        goalsAgainst: homeScore,
       },
     };
   }
@@ -444,7 +444,7 @@ export class LeagueService {
       throw new NotFoundError("Match");
     }
 
-    if (match.is_completed) {
+    if (match.isCompleted) {
       throw new ConflictError("Match is already completed");
     }
 
@@ -455,7 +455,7 @@ export class LeagueService {
     }
 
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
-      match.competition_id,
+      match.competitionId,
       userId
     );
 
@@ -465,31 +465,31 @@ export class LeagueService {
       );
     }
 
-    const homeTeam = match.match_teams.find((mt) => mt.is_home);
-    const awayTeam = match.match_teams.find((mt) => !mt.is_home);
+    const homeTeam = match.matchTeams.find((mt) => mt.isHome);
+    const awayTeam = match.matchTeams.find((mt) => !mt.isHome);
 
     if (!homeTeam || !awayTeam) {
       throw new NotFoundError("Match team");
     }
 
     await prisma.$transaction(async (tx) => {
-      await MatchRepo.update(matchId, { is_completed: true }, tx);
+      await MatchRepo.update(matchId, { isCompleted: true }, tx);
 
       const result = this.calculateMatchResult(
-        match.home_team_score,
-        match.away_team_score
+        match.homeTeamScore,
+        match.awayTeamScore
       );
 
       await TeamCompetitionRepo.incrementTeamStats(
-        homeTeam.team_id,
-        match.competition_id,
+        homeTeam.teamId,
+        match.competitionId,
         result.homeTeamStats,
         tx
       );
 
       await TeamCompetitionRepo.incrementTeamStats(
-        awayTeam.team_id,
-        match.competition_id,
+        awayTeam.teamId,
+        match.competitionId,
         result.awayTeamStats,
         tx
       );
@@ -505,7 +505,7 @@ export class LeagueService {
 
     if (!match.matchPlayers || match.matchPlayers.length === 0) return false;
 
-    if (!match.match_teams || match.match_teams.length === 0) return false;
+    if (!match.matchTeams || match.matchTeams.length === 0) return false;
 
     if (!match.date) return false;
 

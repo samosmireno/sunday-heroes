@@ -37,7 +37,7 @@ export class TeamService {
       );
     }
 
-    const team = await TeamRepo.create({ name, created_at: new Date() });
+    const team = await TeamRepo.create({ name, createdAt: new Date() });
     await TeamCompetitionRepo.addTeamToCompetition(team.id, competitionId);
 
     return team;
@@ -174,7 +174,7 @@ export class TeamService {
     }
 
     const teamIds = teams
-      .filter((team) => team.team_competitions.length === 1)
+      .filter((team) => team.teamCompetitions.length === 1)
       .map((team) => team.id);
 
     await TeamRepo.deleteMany(teamIds);

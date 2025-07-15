@@ -5,13 +5,13 @@ import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 export type MatchPlayerWithDetails = Prisma.MatchPlayerGetPayload<{
   include: {
-    dashboard_player: true;
+    dashboardPlayer: true;
   };
 }>;
 
 export type MatchPlayerWithUserDetails = Prisma.MatchPlayerGetPayload<{
   include: {
-    dashboard_player: {
+    dashboardPlayer: {
       include: {
         user: true;
       };
@@ -27,7 +27,7 @@ export class MatchPlayerRepo {
       const prismaClient = tx || prisma;
       return prismaClient.matchPlayer.findMany({
         include: {
-          dashboard_player: true,
+          dashboardPlayer: true,
         },
       });
     } catch (error) {
@@ -47,7 +47,7 @@ export class MatchPlayerRepo {
       return prismaClient.matchPlayer.findUnique({
         where: { id },
         include: {
-          dashboard_player: true,
+          dashboardPlayer: true,
         },
       });
     } catch (error) {
@@ -59,15 +59,15 @@ export class MatchPlayerRepo {
   }
 
   static async getMatchPlayersFromMatch(
-    match_id: string,
+    matchId: string,
     tx?: PrismaTransaction
   ): Promise<MatchPlayerWithUserDetails[]> {
     try {
       const prismaClient = tx || prisma;
       return prismaClient.matchPlayer.findMany({
-        where: { match_id },
+        where: { matchId },
         include: {
-          dashboard_player: {
+          dashboardPlayer: {
             include: { user: true },
           },
         },
@@ -183,12 +183,12 @@ export class MatchPlayerRepo {
   }
 
   static async deleteMatchPlayersFromMatch(
-    match_id: string,
+    matchId: string,
     tx?: PrismaTransaction
   ) {
     try {
       const prismaClient = tx || prisma;
-      return prismaClient.matchPlayer.deleteMany({ where: { match_id } });
+      return prismaClient.matchPlayer.deleteMany({ where: { matchId } });
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
@@ -206,8 +206,8 @@ export class MatchPlayerRepo {
       const prismaClient = tx || prisma;
       const player = await prismaClient.matchPlayer.findFirst({
         where: {
-          match_id: matchId,
-          dashboard_player_id: playerId,
+          matchId,
+          dashboardPlayerId: playerId,
         },
       });
       return player !== null;

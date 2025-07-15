@@ -19,7 +19,7 @@ export default function OffFieldPlayers({
     return null;
   }
 
-  const numPlayersOnField = getNumPlayersOnField(match.match_type);
+  const numPlayersOnField = getNumPlayersOnField(match.matchType);
   const playersOffField = match.players
     .sort((a, b) => a.position - b.position)
     .filter((player) => player.isHome === homeTeam)

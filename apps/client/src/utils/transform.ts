@@ -11,7 +11,7 @@ const isPlayerHome = (nickname: string, homePlayers: string[]): boolean => {
 
 export const transformDuelFormToRequest = (
   data: DuelFormData,
-  competition_id: string,
+  competitionId: string,
   round?: number,
 ): createMatchRequest => {
   const duelPlayers = data.matchPlayers.players.map((player) => ({
@@ -28,7 +28,7 @@ export const transformDuelFormToRequest = (
     awayTeamScore: data.match.awayTeamScore,
     matchType: data.match.matchType,
     players: duelPlayers,
-    competitionId: competition_id,
+    competitionId,
     round: round ? round : 1,
     teams: ["Home", "Away"],
   };
@@ -38,7 +38,7 @@ export const transformDuelFormToRequest = (
 
 export const transformLeagueFormToRequest = (
   data: LeagueFormData,
-  competition_id: string,
+  competitionId: string,
   round?: number,
 ): createMatchRequest => {
   const duelPlayers = data.matchPlayers.players.map((player) => ({
@@ -55,7 +55,7 @@ export const transformLeagueFormToRequest = (
     awayTeamScore: data.match.awayTeamScore,
     matchType: data.match.matchType,
     players: duelPlayers,
-    competitionId: competition_id,
+    competitionId,
     round: round ? round : 1,
     teams: [data.match.homeTeam, data.match.awayTeam],
   };
@@ -71,16 +71,16 @@ export const transformCompetitionFormToRequest = (
     userId: userId,
     type: data.type,
     name: data.name,
-    track_seasons: data.track_seasons,
-    voting_enabled: data.voting_enabled,
-    current_season: 1,
-    min_players: 4,
-    voting_period_days: data.voting_period_days ?? undefined,
-    knockout_voting_period_days: data.knockout_voting_period_days ?? undefined,
-    reminder_days: data.reminder_days ?? undefined,
-    is_round_robin: data.is_round_robin ?? false,
-    number_of_teams: data.number_of_teams ?? undefined,
-    match_type: data.match_type ?? undefined,
+    trackSeasons: data.trackSeasons,
+    votingEnabled: data.votingEnabled,
+    currentSeason: 1,
+    minPlayers: 4,
+    votingPeriodDays: data.votingPeriodDays ?? undefined,
+    knockoutVotingPeriodDays: data.knockoutVotingPeriodDays ?? undefined,
+    reminderDays: data.reminderDays ?? undefined,
+    isRoundRobin: data.isRoundRobin ?? false,
+    numberOfTeams: data.numberOfTeams ?? undefined,
+    matchType: data.matchType ?? undefined,
   };
 
   return competitionRequest;
