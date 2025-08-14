@@ -21,6 +21,8 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
+  console.log("User:", user);
+
   useEffect(() => {
     if (user) {
       refreshData();

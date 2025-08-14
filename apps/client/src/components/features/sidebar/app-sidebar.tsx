@@ -45,11 +45,11 @@ const sidebarItems = [
     url: "/matches",
     icon: Calendar,
   },
-  {
-    title: "Teams",
-    url: "#/teams",
-    icon: Users,
-  },
+  // {
+  //   title: "Teams",
+  //   url: "#/teams",
+  //   icon: Users,
+  // },
   {
     title: "Players",
     url: "/players",
@@ -60,11 +60,11 @@ const sidebarItems = [
   //   url: "/voting",
   //   icon: CheckSquare,
   // },
-  {
-    title: "Stats",
-    url: "#/stats",
-    icon: BarChart,
-  },
+  // {
+  //   title: "Stats",
+  //   url: "#/stats",
+  //   icon: BarChart,
+  // },
 ];
 
 export function AppSidebar() {

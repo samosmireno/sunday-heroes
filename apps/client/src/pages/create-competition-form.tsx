@@ -171,15 +171,19 @@ const CreateCompetitionForm = () => {
                               <SelectValue placeholder="Select type" />
                             </SelectTrigger>
                             <SelectContent className="border-accent/60 bg-panel-bg text-gray-200">
-                              {Object.values(CompetitionType).map((type) => (
-                                <SelectItem
-                                  key={type}
-                                  value={type}
-                                  className="hover:bg-accent/20 focus:bg-accent/20"
-                                >
-                                  {capitalizeFirstLetter(type.toString())}
-                                </SelectItem>
-                              ))}
+                              {Object.values(CompetitionType)
+                                .filter(
+                                  (type) => type !== CompetitionType.KNOCKOUT,
+                                )
+                                .map((type) => (
+                                  <SelectItem
+                                    key={type}
+                                    value={type}
+                                    className="hover:bg-accent/20 focus:bg-accent/20"
+                                  >
+                                    {capitalizeFirstLetter(type.toString())}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
                         </FormControl>

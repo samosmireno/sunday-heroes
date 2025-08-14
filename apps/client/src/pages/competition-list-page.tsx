@@ -27,11 +27,11 @@ const filterOptions = [
     label: "Duels",
     color: "border-duel-500 bg-duel-700/20 text-duel-400",
   },
-  {
-    value: CompetitionType.KNOCKOUT,
-    label: "Knockouts",
-    color: "border-knockout-500 bg-knockout-700/20 text-knockout-400",
-  },
+  // {
+  //   value: CompetitionType.KNOCKOUT,
+  //   label: "Knockouts",
+  //   color: "border-knockout-500 bg-knockout-700/20 text-knockout-400",
+  // },
 ];
 
 export default function CompetitionListPage() {
