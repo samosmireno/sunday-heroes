@@ -32,6 +32,9 @@ if (!process.env.JWT_APP_REFRESH_SECRET) {
 }
 
 const isProd = process.env.NODE_ENV === "production";
+const baseUrl = isProd
+  ? process.env.PRODUCTION_URL
+  : process.env.DEV_SERVER_URL;
 
 export const config = {
   env: process.env.NODE_ENV,
@@ -42,12 +45,8 @@ export const config = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     accessTokenUrl: "https://oauth2.googleapis.com/token",
     tokenInfoUrl: "https://oauth2.googleapis.com/tokeninfo",
-    redirectUri: isProd
-      ? process.env.PRODUCTION_URL + "/auth/google/callback"
-      : process.env.DEV_SERVER_URL + "/auth/google/callback",
-    redirectClientUrl: isProd
-      ? process.env.PRODUCTION_URL + "/auth/callback"
-      : process.env.DEV_CLIENT_URL + "/auth/callback",
+    redirectUri: `${baseUrl}/auth/google/callback`,
+    redirectClientUrl: `${baseUrl}/auth/callback`,
   },
   jwt: {
     accessSecret: process.env.JWT_APP_ACCESS_SECRET,

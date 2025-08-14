@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/index.ts",
-    "dev": "ts-node src/index.ts",
-    "build": "npx prisma generate && tsc",
-    "build:vercel": "npx prisma generate && tsc --outDir ../../dist && mkdir -p ../../dist/api && cp -r ./prisma ../../dist/api/prisma && cp package.json ../../dist/api/"
+    "build": "npm run build:tsc && npm run copy:client",
+    "build:tsc": "tsc",
+    "copy:client": "mkdir -p dist && cp -r ../client/dist dist/client 2>/dev/null || true",
+    "dev": "nodemon src/index.ts",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",

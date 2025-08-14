@@ -3,14 +3,23 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:combined": "npm run build:client && npm run build:server",
+    "build:client": "cd apps/client && npm run build",
+    "build:server": "cd apps/server && npm run build",
+    "build:packages": "cd packages && npm run build",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
+    "dev:combined": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd apps/server && npm run dev",
+    "dev:client": "cd apps/client && npm run dev",
+    "start": "cd apps/server && npm start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "prettier": "^3.5.0",
     "turbo": "^2.4.4"
   },

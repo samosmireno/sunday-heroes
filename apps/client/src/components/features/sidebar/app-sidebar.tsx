@@ -1,13 +1,4 @@
-import {
-  BarChart,
-  Calendar,
-  ChevronUp,
-  Home,
-  Trophy,
-  User,
-  User2,
-  Users,
-} from "lucide-react";
+import { Calendar, ChevronUp, Home, Trophy, User, User2 } from "lucide-react";
 
 import {
   Sidebar,

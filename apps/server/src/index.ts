@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth";
 import { config } from "./config/config";
 import { errorHandler } from "./middleware/error-handler";
 import { setupScheduledTasks } from "./services/match/match-expired-service";
+import path from "path";
 
 const app = express();
 
@@ -25,6 +26,16 @@ app.use(
 
 app.use("/api", apiRoutes);
 app.use("/auth", authRoutes);
+
+// Serve static files from the client build
+const clientBuildPath = path.join(__dirname, "../../client/dist");
+app.use(express.static(clientBuildPath));
+
+// Catch-all handler: send back React's index.html file for client-side routing
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientBuildPath, "index.html"));
+});
+
 app.use(errorHandler);
 
 setupScheduledTasks();

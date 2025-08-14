@@ -6,12 +6,17 @@
     "DIRECT_URL",
     "NODE_ENV",
     "VITE_MODE",
+    "VITE_SERVER_PROD_URL",
+    "VITE_SERVER_DEV_URL",
     "JWT_SECRET",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "GOOGLE_CALLBACK_URL",
     "VERCEL_URL",
-    "API_URL"
+    "API_URL",
+    "PRODUCTION_URL",
+    "DEV_SERVER_URL",
+    "DEV_CLIENT_URL"
   ],
   "tasks": {
     "build": {
@@ -24,6 +29,11 @@
         ".next/**",
         "!.next/cache/**"
       ]
+    },
+    "build:combined": {
+      "dependsOn": ["build"],
+      "outputs": ["apps/server/dist/**"],
+      "env": ["NODE_ENV=production", "VITE_MODE=production"]
     },
     "build:vercel": {
       "dependsOn": ["^build"],
