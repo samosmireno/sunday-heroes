@@ -8,6 +8,9 @@ const requiredEnvVars = [
   "JWT_APP_ACCESS_SECRET",
   "JWT_APP_REFRESH_SECRET",
   "NODE_ENV",
+  "PRODUCTION_URL",
+  "DEV_SERVER_URL",
+  "DEV_CLIENT_URL",
 ];
 
 requiredEnvVars.forEach((varName) => {
@@ -33,18 +36,18 @@ const isProd = process.env.NODE_ENV === "production";
 export const config = {
   env: process.env.NODE_ENV,
   port: process.env.PORT || 5000,
-  client: isProd ? "https://sunday-heroes.vercel.app" : "http://localhost:5173",
+  client: isProd ? process.env.PRODUCTION_URL : process.env.DEV_CLIENT_URL,
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     accessTokenUrl: "https://oauth2.googleapis.com/token",
     tokenInfoUrl: "https://oauth2.googleapis.com/tokeninfo",
     redirectUri: isProd
-      ? "https://sunday-heroes.vercel.app/auth/google/callback"
-      : "http://localhost:5000/auth/google/callback",
+      ? process.env.PRODUCTION_URL + "/auth/google/callback"
+      : process.env.DEV_SERVER_URL + "/auth/google/callback",
     redirectClientUrl: isProd
-      ? "https://sunday-heroes.vercel.app/auth/callback"
-      : "http://localhost:5173/auth/callback",
+      ? process.env.PRODUCTION_URL + "/auth/callback"
+      : process.env.DEV_CLIENT_URL + "/auth/callback",
   },
   jwt: {
     accessSecret: process.env.JWT_APP_ACCESS_SECRET,
