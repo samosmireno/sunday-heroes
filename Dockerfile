@@ -7,6 +7,7 @@ COPY package*.json ./
 COPY apps/client/package*.json ./apps/client/
 COPY apps/server/package*.json ./apps/server/
 COPY packages/*/package*.json ./packages/*/
+RUN npm install
 RUN npm ci
 
 # Build the application
@@ -16,14 +17,19 @@ COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/client/node_modules ./apps/client/node_modules
 COPY --from=deps /app/apps/server/node_modules ./apps/server/node_modules
+COPY --from=deps /app/packages/*/node_modules ./packages/*/node_modules
 
 # Build packages first
 RUN npm run build -w packages/shared-types
-RUN npm run build -w packages/config-typescript
-RUN npm run build -w packages/config-eslint
+
+# Try to rebuild node_modules links after building shared-types
+RUN npm install --workspaces
 
 # Build client
 RUN npm run build -w apps/client
+
+# Generate Prisma client
+RUN cd /app/apps/server && npx prisma generate
 
 # Build server
 RUN npm run build -w apps/server
