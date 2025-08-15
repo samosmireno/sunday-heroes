@@ -46,10 +46,21 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 sundayheroes
 
+# Copy package files first
+COPY --from=builder --chown=sundayheroes:nodejs /app/apps/server/package*.json ./
+
 # Copy built application
 COPY --from=builder --chown=sundayheroes:nodejs /app/apps/server/dist ./
-COPY --from=builder --chown=sundayheroes:nodejs /app/apps/server/package*.json ./
-COPY --from=builder --chown=sundayheroes:nodejs /app/apps/server/node_modules ./node_modules
+
+# Copy node_modules for runtime dependencies
+COPY --from=builder --chown=sundayheroes:nodejs /app/node_modules ./node_modules
+
+# Copy the built shared-types package to ensure it's available at runtime
+COPY --from=builder --chown=sundayheroes:nodejs /app/packages/shared-types/dist ./node_modules/@repo/shared-types/dist
+
+# Ensure the package.json for shared-types is also available
+COPY --from=builder --chown=sundayheroes:nodejs /app/packages/shared-types/package.json ./node_modules/@repo/shared-types/package.json
+
 
 USER sundayheroes
 
@@ -57,4 +68,4 @@ EXPOSE 5000
 
 ENV PORT=5000
 
-CMD ["node", "index.js"]
+CMD ["node", "src/index.js"]

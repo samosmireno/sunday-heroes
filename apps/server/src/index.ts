@@ -28,7 +28,7 @@ app.use("/api", apiRoutes);
 app.use("/auth", authRoutes);
 
 // Serve static files from the client build
-const clientBuildPath = path.join(__dirname, "../../client/dist");
+const clientBuildPath = path.join(__dirname, "../client");
 app.use(express.static(clientBuildPath));
 
 // Catch-all handler: send back React's index.html file for client-side routing
