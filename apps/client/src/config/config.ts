@@ -20,7 +20,7 @@ export const config = {
     ? import.meta.env.VITE_SERVER_PROD_URL
     : import.meta.env.VITE_SERVER_DEV_URL,
   redirect_uri: isProd
-    ? `${window.location.origin}/auth/google/callback`
+    ? `${import.meta.env.VITE_SERVER_PROD_URL}/auth/google/callback`
     : `${import.meta.env.VITE_SERVER_DEV_URL}/auth/google/callback`,
   google: {
     authEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
