@@ -2,6 +2,7 @@ import { Button } from "../../ui/button";
 import { cn } from "../../../lib/utils";
 import { PlusCircle } from "lucide-react";
 import { SidebarTrigger } from "../../ui/sidebar";
+import { capitalizeFirstLetter } from "../../../utils/utils";
 
 interface DashboardBannerProps {
   name?: string;
@@ -20,7 +21,7 @@ export default function DashboardBanner({
       <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
         <div>
           <h2 className="text-xl font-bold text-gray-200">
-            Welcome{name ? `, ${name}` : ""}!
+            Welcome{name ? `, ${capitalizeFirstLetter(name)}` : ""}!
           </h2>
           <p className="text-sm text-gray-400 sm:text-base">
             Track your football competitions, matches, and player stats

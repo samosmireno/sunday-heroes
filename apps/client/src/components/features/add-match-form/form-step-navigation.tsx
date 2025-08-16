@@ -15,17 +15,19 @@ export default function StepNavigation({
   useEffect(() => {}, []);
 
   return (
-    <div className="relative mb-6 w-full">
-      <div className="flex items-center justify-between">
+    <div className="relative mb-4 w-full sm:mb-6">
+      <div className="flex items-center justify-between gap-1 sm:gap-2 md:gap-4">
         {steps.map((_step, index) => (
           <div
             key={index}
             className="flex flex-1 flex-col items-center hover:cursor-pointer"
             onClick={() => goToStep(index)}
           >
-            <div className="text-center">{steps[index]}</div>
+            <div className="mb-2 text-center text-xs font-medium sm:mb-3 sm:text-sm md:text-base">
+              <span className="inline">{steps[index]}</span>
+            </div>
             <div
-              className={`h-2 w-full rounded-xl ${
+              className={`h-1.5 w-full rounded-xl transition-all duration-200 sm:h-2 ${
                 currentStep === index
                   ? "border-accent bg-accent text-accent"
                   : checkStepValid(index)

@@ -116,39 +116,41 @@ export default function TeamSection({
   }, [initialPlayers]);
 
   return (
-    <div className="flex flex-col px-12">
-      <div className="mb-2 font-semibold text-gray-400">
+    <div className="flex flex-col px-3 sm:px-6 md:px-8 lg:px-12">
+      <div className="mb-3 text-sm font-semibold text-gray-400 sm:mb-2 sm:text-base">
         {team} Team Players
       </div>
-      <div className="flex justify-between">
-        <AutoComplete
-          selectedValue={selectedValue}
-          onSelectedValueChange={setSelectedValue}
-          searchValue={searchValue}
-          onSearchValueChange={setSearchValue}
-          items={(data ?? []).map((item: string) => ({
-            value: item,
-            label: item,
-          }))}
-          isLoading={isLoading}
-          onItemSelect={(value) => {
-            addPlayerToForm(value);
-          }}
-          isOpen={isAutocompleteOpen}
-          onOpenChange={(open) => {
-            if (open) {
-              onAutocompleteOpen();
-            } else {
-              onAutocompleteClose();
-            }
-          }}
-        />
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <AutoComplete
+            selectedValue={selectedValue}
+            onSelectedValueChange={setSelectedValue}
+            searchValue={searchValue}
+            onSearchValueChange={setSearchValue}
+            items={(data ?? []).map((item: string) => ({
+              value: item,
+              label: item,
+            }))}
+            isLoading={isLoading}
+            onItemSelect={(value) => {
+              addPlayerToForm(value);
+            }}
+            isOpen={isAutocompleteOpen}
+            onOpenChange={(open) => {
+              if (open) {
+                onAutocompleteOpen();
+              } else {
+                onAutocompleteClose();
+              }
+            }}
+          />
+        </div>
         <Button
           onClick={() => {
             addPlayerToForm(capitalizeFirstLetter(searchValue));
             reset();
           }}
-          className="border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent transition-all hover:bg-accent/30"
+          className="w-full border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent transition-all hover:bg-accent/30 sm:w-auto sm:min-w-[80px]"
           disabled={!searchValue.trim()}
         >
           Add

@@ -111,7 +111,11 @@ export default function MatchesList({ matches }: MatchesListProps) {
                     {match.date ? formatDate(match.date) : "TBD"}
                   </td>
                   <td className="whitespace-nowrap px-2 py-3 text-sm font-medium text-accent md:px-4 md:py-4">
-                    {match.teams[0]} vs {match.teams[1]}
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                      <span className="truncate">{match.teams[0]}</span>
+                      <span className="hidden sm:inline">vs</span>
+                      <span className="truncate">{match.teams[1]}</span>
+                    </div>
                   </td>
                   <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-300 md:px-4 md:py-4">
                     <div>

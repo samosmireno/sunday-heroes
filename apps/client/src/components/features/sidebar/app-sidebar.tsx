@@ -10,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "../../ui/sidebar";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../../context/auth-context";
@@ -19,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
+import { capitalizeFirstLetter } from "../../../utils/utils";
 
 const sidebarItems = [
   {
@@ -61,9 +63,16 @@ const sidebarItems = [
 export function AppSidebar() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const isActive = (url: string) => {
     return location.pathname.startsWith(url) && url !== "#";
+  };
+
+  const handleMenuItemClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   };
 
   return (
@@ -91,6 +100,7 @@ export function AppSidebar() {
                   >
                     <Link
                       to={item.url}
+                      onClick={handleMenuItemClick}
                       className="group flex w-full items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 text-gray-200 transition-all duration-200 hover:border-accent/70 hover:bg-accent/50 data-[active=true]:border-accent data-[active=true]:bg-accent/10 data-[active=true]:text-gray-200"
                       aria-current={isActive(item.url) ? "page" : undefined}
                     >
@@ -115,7 +125,7 @@ export function AppSidebar() {
                       <User2 className="h-5 w-5 text-accent opacity-80 group-hover:opacity-100" />
                     </div>
                     <span className="flex-1 truncate">
-                      {user?.name || "User"}
+                      {capitalizeFirstLetter(user?.name || "User")}
                     </span>
                     <ChevronUp className="h-4 w-4 transform transition-transform group-data-[state=open]:-rotate-180" />
                   </div>
@@ -127,7 +137,10 @@ export function AppSidebar() {
                 className="w-48 border-accent/60 bg-panel-bg"
               >
                 <DropdownMenuItem
-                  onClick={logout}
+                  onClick={() => {
+                    logout();
+                    handleMenuItemClick();
+                  }}
                   className="cursor-pointer text-gray-200 hover:bg-accent/20 focus:bg-accent/20"
                 >
                   <span>Sign out</span>
