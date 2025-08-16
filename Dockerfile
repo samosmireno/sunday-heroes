@@ -13,6 +13,13 @@ RUN npm ci
 # Build the application
 FROM base AS builder
 WORKDIR /app
+
+# Declare environment variables that will be available from Render
+ENV VITE_MODE=${VITE_MODE:-production}
+ENV VITE_CLIENT_ID=${VITE_CLIENT_ID}
+ENV VITE_SERVER_PROD_URL=${VITE_SERVER_PROD_URL}
+ENV VITE_SERVER_DEV_URL=${VITE_SERVER_DEV_URL}
+
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/client/node_modules ./apps/client/node_modules
