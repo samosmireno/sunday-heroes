@@ -155,7 +155,7 @@ export default function CompetitionList({
                     {competition.userRole === Role.ADMIN && (
                       <Button
                         onClick={() =>
-                          navigate(`/competition-admin/${competition.id}`)
+                          navigate(`/competition/${competition.id}/admin`)
                         }
                         className="rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:p-1.5"
                         title="Settings"

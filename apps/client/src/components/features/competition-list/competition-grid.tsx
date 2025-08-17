@@ -52,7 +52,7 @@ export default function CompetitionGrid({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/competition-admin/${competition.id}`);
+                      navigate(`/competition/${competition.id}/admin`);
                     }}
                     className="rounded-md bg-amber-900/30 p-1.5 text-amber-400 transition-all hover:scale-105 hover:bg-amber-900/50"
                     title="Admin Panel"

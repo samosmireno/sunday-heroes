@@ -78,7 +78,7 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="z-10 flex h-[100dvh] flex-col border-r-2 border-accent/60 bg-sidebar-bg font-retro shadow-md transition-all duration-300 ease-in-out"
+      className="z-10 flex h-[100dvh] flex-col border-r-2 border-accent/60 bg-sidebar-bg font-exo shadow-md transition-all duration-300 ease-in-out"
     >
       <SidebarContent className="flex flex-1 flex-col gap-3 overflow-y-auto">
         <SidebarGroup>
@@ -101,11 +101,11 @@ export function AppSidebar() {
                     <Link
                       to={item.url}
                       onClick={handleMenuItemClick}
-                      className="group flex w-full items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 text-gray-200 transition-all duration-200 hover:border-accent/70 hover:bg-accent/50 data-[active=true]:border-accent data-[active=true]:bg-accent/10 data-[active=true]:text-gray-200"
+                      className="group flex w-full items-center gap-3 rounded-md border-l-4 border-transparent px-3 py-2.5 font-exo text-sm font-medium text-gray-200 transition-all duration-200 hover:border-accent/70 hover:bg-accent/50 data-[active=true]:border-accent data-[active=true]:bg-accent/10 data-[active=true]:text-gray-200"
                       aria-current={isActive(item.url) ? "page" : undefined}
                     >
                       <item.icon className="h-5 w-5 flex-shrink-0 opacity-80 group-hover:opacity-100 group-data-[active=true]:text-accent" />
-                      <span className="truncate">{item.title}</span>
+                      <span className="truncate font-exo">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -124,7 +124,7 @@ export function AppSidebar() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/20">
                       <User2 className="h-5 w-5 text-accent opacity-80 group-hover:opacity-100" />
                     </div>
-                    <span className="flex-1 truncate">
+                    <span className="flex-1 truncate font-exo text-sm font-medium">
                       {capitalizeFirstLetter(user?.name || "User")}
                     </span>
                     <ChevronUp className="h-4 w-4 transform transition-transform group-data-[state=open]:-rotate-180" />
@@ -134,14 +134,14 @@ export function AppSidebar() {
               <DropdownMenuContent
                 side="top"
                 align="end"
-                className="w-48 border-accent/60 bg-panel-bg"
+                className="w-48 border-accent/60 bg-panel-bg font-exo"
               >
                 <DropdownMenuItem
                   onClick={() => {
                     logout();
                     handleMenuItemClick();
                   }}
-                  className="cursor-pointer text-gray-200 hover:bg-accent/20 focus:bg-accent/20"
+                  className="cursor-pointer font-exo text-sm text-gray-200 hover:bg-accent/20 focus:bg-accent/20"
                 >
                   <span>Sign out</span>
                 </DropdownMenuItem>
