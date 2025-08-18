@@ -14,7 +14,7 @@ export default function ConfirmDeleteModal({
   const ref = useOutsideClick(onCancel);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 font-retro">
       <div
         ref={ref as React.RefObject<HTMLDivElement>}
         className="relative w-full max-w-md transform overflow-hidden rounded-lg border-2 border-accent bg-panel-bg p-5 text-center shadow-lg transition-all sm:p-6"

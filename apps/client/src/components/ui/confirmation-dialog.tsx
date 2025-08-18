@@ -114,7 +114,7 @@ export default function ConfirmationDialog({
         </Button>
       </DialogTrigger>
       <DialogContent
-        className={`w-full max-w-md border-2 ${config.borderColor} bg-panel-bg`}
+        className={`w-full max-w-md border-2 font-retro ${config.borderColor} bg-panel-bg`}
       >
         <DialogHeader>
           <DialogTitle

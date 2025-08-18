@@ -1,7 +1,7 @@
 import { CompetitionResponse, Role } from "@repo/shared-types";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { Settings, Users, Calendar } from "lucide-react";
+import { Settings, Calendar } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -35,9 +35,9 @@ export default function LeagueCompetitionPage({
     setSearchParams(newSearchParams);
   };
 
-  const handleManageTeams = () => {
-    navigate(`/competition/${competition.id}/teams`);
-  };
+  // const handleManageTeams = () => {
+  //   navigate(`/competition/${competition.id}/teams`);
+  // };
 
   const handleViewMatches = () => {
     navigate(`/matches/${competition.id}`);
@@ -55,14 +55,14 @@ export default function LeagueCompetitionPage({
             <Calendar className="mr-2 h-4 w-4" />
             <span className="text-sm sm:text-base">All Matches</span>
           </Button>
-          <Button
+          {/* <Button
             onClick={handleManageTeams}
             className="w-full border-2 border-accent/40 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:w-auto"
             size="sm"
           >
             <Users className="mr-2 h-4 w-4" />
             <span className="text-sm sm:text-base">Manage Teams</span>
-          </Button>
+          </Button> */}
           {competition.userRole === Role.ADMIN && (
             <Button
               onClick={() => navigate(`/competition/${competition.id}/admin`)}
@@ -81,7 +81,7 @@ export default function LeagueCompetitionPage({
         className="w-full"
       >
         <div className="mb-4 sm:mb-6">
-          <TabsList className="grid h-10 w-full grid-cols-3 bg-bg/30 p-1 sm:h-11">
+          <TabsList className="grid h-full w-full grid-cols-3 bg-bg/30 p-1">
             <TabsTrigger
               value="standings"
               className="text-xs data-[state=active]:bg-accent/20 data-[state=active]:text-accent sm:text-sm"

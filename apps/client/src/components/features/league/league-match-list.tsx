@@ -83,8 +83,8 @@ export default function LeagueMatchList({ competition }: LeagueMatchListProps) {
           onValueChange={handleRoundChange}
           className="w-full"
         >
-          <div className="w-full overflow-x-auto">
-            <TabsList className="scrollbar-hide flex w-max min-w-full gap-1 overflow-x-auto bg-bg/30 p-2 pb-4">
+          <div className="h-full w-full overflow-x-auto">
+            <TabsList className="flex h-full w-max min-w-full gap-1 bg-bg/30 p-2 pb-4">
               {rounds.map((round) => (
                 <TabsTrigger
                   key={round}
