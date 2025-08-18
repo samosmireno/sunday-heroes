@@ -5,6 +5,7 @@ import LeagueTeamSetupPage from "../../../pages/league-teams-setup-page";
 import Loading from "../../ui/loading";
 import Background from "../../ui/background";
 import CompetitionPage from "../../../pages/competition-page";
+import { CompetitionType } from "@repo/shared-types";
 
 export default function LeagueRouter() {
   const { competitionId } = useParams<{ competitionId: string }>();
@@ -38,7 +39,7 @@ export default function LeagueRouter() {
 
   const needsTeamSetup = !hasCustomTeamNames(competition.teams || []);
 
-  if (needsTeamSetup) {
+  if (needsTeamSetup && competition.type !== CompetitionType.DUEL) {
     return <LeagueTeamSetupPage />;
   }
 

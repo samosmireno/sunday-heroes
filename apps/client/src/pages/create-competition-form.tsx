@@ -200,7 +200,7 @@ const CreateCompetitionForm = () => {
                         name="numberOfTeams"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Number of Teams</FormLabel>
+                            <FormLabel>Number of Teams (Max 16)</FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
@@ -250,15 +250,21 @@ const CreateCompetitionForm = () => {
                                   <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
                                 <SelectContent className="border-accent/60 bg-panel-bg text-gray-200">
-                                  {Object.values(MatchType).map((type) => (
-                                    <SelectItem
-                                      key={type}
-                                      value={type}
-                                      className="hover:bg-accent/20 focus:bg-accent/20"
-                                    >
-                                      {convertMatchType(type)}
-                                    </SelectItem>
-                                  ))}
+                                  {Object.values(MatchType)
+                                    .filter(
+                                      (type) =>
+                                        type !== MatchType.ELEVEN_A_SIDE &&
+                                        type !== MatchType.SEVEN_A_SIDE,
+                                    )
+                                    .map((type) => (
+                                      <SelectItem
+                                        key={type}
+                                        value={type}
+                                        className="hover:bg-accent/20 focus:bg-accent/20"
+                                      >
+                                        {convertMatchType(type)}
+                                      </SelectItem>
+                                    ))}
                                 </SelectContent>
                               </Select>
                             </FormControl>
