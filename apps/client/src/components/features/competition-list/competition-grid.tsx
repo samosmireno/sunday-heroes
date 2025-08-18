@@ -1,12 +1,5 @@
 import { DetailedCompetitionResponse, Role } from "@repo/shared-types";
-import {
-  Calendar,
-  CheckSquare,
-  Shield,
-  Trophy,
-  Users,
-  Settings,
-} from "lucide-react";
+import { Calendar, CheckSquare, Shield, Trophy, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../ui/button";
 
