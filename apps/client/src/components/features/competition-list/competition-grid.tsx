@@ -8,6 +8,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../ui/button";
 
 interface CompetitionGridProps {
   competitions: DetailedCompetitionResponse[];
@@ -95,8 +96,31 @@ export default function CompetitionGrid({
               </div>
             </div>
 
+            <div
+              className={`flex gap-1 sm:gap-2 ${competition.userRole === Role.ADMIN ? "flex-wrap" : ""}`}
+            >
+              <Button
+                onClick={() => navigate(`/competition/${competition.id}`)}
+                className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
+              >
+                <Trophy size={14} className="mr-1 inline" /> View
+              </Button>
+              <Button
+                onClick={() => navigate(`/matches/${competition.id}`)}
+                className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
+              >
+                <Calendar size={14} className="mr-1 inline" /> Matches
+              </Button>
+              {/* <button
+                onClick={() => navigate(`/competition/${competition.id}/teams`)}
+                className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
+              >
+                <Users size={14} className="mr-1 inline" /> Teams
+              </button> */}
+            </div>
+
             {competition.votingEnabled && (
-              <div className="mb-3 flex items-center text-xs sm:mb-4">
+              <div className="mt-3 flex items-center text-xs sm:mt-4">
                 <CheckSquare size={14} className="mr-1.5 text-amber-500" />
                 <span className="text-gray-300">Voting Enabled</span>
                 {(competition.pendingVotes ?? 0) > 0 && (
@@ -106,29 +130,6 @@ export default function CompetitionGrid({
                 )}
               </div>
             )}
-
-            <div
-              className={`flex gap-1 sm:gap-2 ${competition.userRole === Role.ADMIN ? "flex-wrap" : ""}`}
-            >
-              <button
-                onClick={() => navigate(`/competition/${competition.id}`)}
-                className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
-              >
-                <Trophy size={14} className="mr-1 inline" /> View
-              </button>
-              <button
-                onClick={() => navigate(`/matches/${competition.id}`)}
-                className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
-              >
-                <Calendar size={14} className="mr-1 inline" /> Matches
-              </button>
-              <button
-                onClick={() => navigate(`/competition/${competition.id}/teams`)}
-                className="text-3xs flex-1 rounded-lg border-2 border-accent/40 bg-bg/30 px-2 py-1.5 font-bold text-gray-300 transition-all hover:bg-accent/10 sm:px-3 sm:py-2 sm:text-xs"
-              >
-                <Users size={14} className="mr-1 inline" /> Teams
-              </button>
-            </div>
           </div>
         </div>
       ))}
