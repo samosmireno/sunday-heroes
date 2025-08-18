@@ -141,7 +141,7 @@ export function AppSidebar() {
                     logout();
                     handleMenuItemClick();
                   }}
-                  className="cursor-pointer font-exo text-sm text-gray-200 hover:bg-accent/20 focus:bg-accent/20"
+                  className="cursor-pointer font-retro text-sm text-gray-200 hover:bg-accent/20 focus:bg-accent/20"
                 >
                   <span>Sign out</span>
                 </DropdownMenuItem>

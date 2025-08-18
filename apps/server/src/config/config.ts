@@ -36,6 +36,10 @@ const baseUrl = isProd
   ? process.env.PRODUCTION_URL
   : process.env.DEV_SERVER_URL;
 
+const redirectBaseUrl = isProd
+  ? process.env.PRODUCTION_URL
+  : process.env.DEV_CLIENT_URL;
+
 export const config = {
   env: process.env.NODE_ENV,
   port: process.env.PORT || 5000,
@@ -46,7 +50,7 @@ export const config = {
     accessTokenUrl: "https://oauth2.googleapis.com/token",
     tokenInfoUrl: "https://oauth2.googleapis.com/tokeninfo",
     redirectUri: `${baseUrl}/auth/google/callback`,
-    redirectClientUrl: `${process.env.DEV_CLIENT_URL}/auth/callback`,
+    redirectClientUrl: `${redirectBaseUrl}/auth/callback`,
   },
   jwt: {
     accessSecret: process.env.JWT_APP_ACCESS_SECRET,

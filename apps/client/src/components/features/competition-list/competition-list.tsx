@@ -20,7 +20,7 @@ export default function CompetitionList({
   const navigate = useNavigate();
 
   return (
-    <div className="relative -mx-4 sm:-mx-0">
+    <div className="relative -mx-4 p-2 sm:-mx-0">
       <div className="overflow-x-auto pb-2">
         <table className="min-w-full divide-y divide-accent/30">
           <thead>
