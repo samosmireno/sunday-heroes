@@ -89,7 +89,7 @@ export default function InvitePlayerDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="w-full max-w-md border-2 border-accent/60 bg-panel-bg p-0 sm:max-w-lg">
+      <DialogContent className="w-full max-w-md border-2 border-accent/60 bg-panel-bg p-0 font-retro sm:max-w-lg">
         <DialogHeader className="border-b border-accent/30 bg-accent/10 px-4 py-3 sm:px-6 sm:py-4">
           <DialogTitle className="flex items-center gap-2 text-lg font-bold text-accent">
             <UserPlus className="h-5 w-5" />
