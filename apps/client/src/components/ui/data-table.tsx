@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className={`px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-accent ${
+                    className={`px-1 py-3 text-left text-xs font-bold uppercase tracking-wider text-accent sm:px-4 ${
                       header.column.getCanSort()
                         ? "cursor-pointer hover:text-accent/80"
                         : ""
@@ -78,12 +78,14 @@ export function DataTable<TData, TValue>({
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     <div className="flex items-center">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      <span className="truncate">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </span>
                       {header.column.getCanSort() && (
-                        <span className="ml-1">
+                        <span className="ml-1 flex-shrink-0">
                           {header.column.getIsSorted() === "desc" ? (
                             <ChevronDown className="h-3 w-3" />
                           ) : header.column.getIsSorted() === "asc" ? (

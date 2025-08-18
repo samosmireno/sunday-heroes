@@ -6,28 +6,14 @@ import DashboardCompetitionList from "../components/features/dashboard/dashboard
 import { useDashboard } from "../hooks/use-dashboard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
-import { useEffect } from "react";
 import Loading from "../components/ui/loading";
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const {
-    dashboardData,
-    isLoading,
-    dashboardMatches,
-    dashboardCompetitions,
-    refreshData,
-  } = useDashboard(user?.id || "");
+  const { dashboardData, isLoading, dashboardMatches, dashboardCompetitions } =
+    useDashboard(user?.id || "");
 
   const navigate = useNavigate();
-
-  console.log("User:", user);
-
-  useEffect(() => {
-    if (user) {
-      refreshData();
-    }
-  }, [user, refreshData]);
 
   if (isLoading) {
     return <Loading text="Loading dashboard..." />;

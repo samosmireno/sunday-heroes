@@ -46,7 +46,7 @@ export const config = {
     accessTokenUrl: "https://oauth2.googleapis.com/token",
     tokenInfoUrl: "https://oauth2.googleapis.com/tokeninfo",
     redirectUri: `${baseUrl}/auth/google/callback`,
-    redirectClientUrl: `${baseUrl}/auth/callback`,
+    redirectClientUrl: `${process.env.DEV_CLIENT_URL}/auth/callback`,
   },
   jwt: {
     accessSecret: process.env.JWT_APP_ACCESS_SECRET,

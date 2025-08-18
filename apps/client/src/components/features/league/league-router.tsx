@@ -4,7 +4,6 @@ import { useCompetition } from "../../../hooks/use-competition";
 import LeagueTeamSetupPage from "../../../pages/league-teams-setup-page";
 import Loading from "../../ui/loading";
 import Background from "../../ui/background";
-import Header from "../../ui/header";
 import CompetitionPage from "../../../pages/competition-page";
 
 export default function LeagueRouter() {
@@ -28,7 +27,6 @@ export default function LeagueRouter() {
     return (
       <div className="relative flex-1 p-3 sm:p-4 md:p-6">
         <Background />
-        <Header title="Loading Competition..." hasSidebar={true} />
         <Loading text="Loading competition details..." />
       </div>
     );

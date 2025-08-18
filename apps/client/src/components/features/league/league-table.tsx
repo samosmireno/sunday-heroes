@@ -22,46 +22,95 @@ export default function LeagueTable({ competition }: LeagueTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b-2 border-accent/30 text-accent">
-            <th className="py-2 text-left font-bold">Pos</th>
-            <th className="py-2 text-left font-bold">Team</th>
-            <th className="py-2 text-center font-bold">P</th>
-            <th className="py-2 text-center font-bold">W</th>
-            <th className="py-2 text-center font-bold">D</th>
-            <th className="py-2 text-center font-bold">L</th>
-            <th className="py-2 text-center font-bold">GF</th>
-            <th className="py-2 text-center font-bold">GA</th>
-            <th className="py-2 text-center font-bold">GD</th>
-            <th className="py-2 text-center font-bold">Pts</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leagueStandings.map((team, index) => (
-            <tr
-              key={team.id}
-              className={`border-b border-accent/10 text-white`}
-            >
-              <td className="py-2 text-left">{index + 1}</td>
-              <td className="py-2 text-left font-medium">
-                {team.team?.name || team.name}
-              </td>
-              <td className="py-2 text-center">{team.played | 0}</td>
-              <td className="py-2 text-center">{team.wins | 0}</td>
-              <td className="py-2 text-center">{team.draws | 0}</td>
-              <td className="py-2 text-center">{team.losses | 0}</td>
-              <td className="py-2 text-center">{team.goalsFor | 0}</td>
-              <td className="py-2 text-center">{team.goalsAgainst | 0}</td>
-              <td className="py-2 text-center">{team.goalDifference | 0}</td>
-              <td className="py-2 text-center font-bold text-accent">
-                {team.points}
-              </td>
+    <div className="w-full">
+      <div className="overflow-x-auto rounded-lg border-2 border-accent/30 bg-bg/20">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b-2 border-accent/30 bg-accent/10 text-accent">
+              <th className="px-3 py-3 text-left text-sm font-bold lg:px-4 lg:text-base">
+                Pos
+              </th>
+              <th className="px-3 py-3 text-left text-sm font-bold lg:px-4 lg:text-base">
+                Team
+              </th>
+              <th className="px-1 py-3 text-center text-sm font-bold lg:px-3 lg:text-base">
+                P
+              </th>
+              <th className="px-1 py-3 text-center text-sm font-bold lg:px-3 lg:text-base">
+                W
+              </th>
+              <th className="px-1 py-3 text-center text-sm font-bold lg:px-3 lg:text-base">
+                D
+              </th>
+              <th className="px-1 py-3 text-center text-sm font-bold lg:px-3 lg:text-base">
+                L
+              </th>
+              <th className="hidden px-1 py-3 text-center text-sm font-bold lg:table-cell lg:px-3 lg:text-base">
+                GF
+              </th>
+              <th className="hidden px-1 py-3 text-center text-sm font-bold lg:table-cell lg:px-3 lg:text-base">
+                GA
+              </th>
+              <th className="px-1 py-3 text-center text-sm font-bold lg:px-3 lg:text-base">
+                GD
+              </th>
+              <th className="px-3 py-3 text-center text-sm font-bold lg:px-4 lg:text-base">
+                Pts
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {leagueStandings.map((team, index) => (
+              <tr
+                key={team.id}
+                className="border-b border-accent/10 text-white transition-colors hover:bg-accent/5"
+              >
+                <td className="px-2 py-3 text-left text-sm lg:px-4 lg:text-base">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/20 text-xs font-bold text-accent lg:h-7 lg:w-7 lg:text-sm">
+                    {index + 1}
+                  </span>
+                </td>
+                <td className="px-2 py-3 text-left text-sm font-medium lg:px-4 lg:text-base">
+                  <span className="truncate">
+                    {team.team?.name || team.name}
+                  </span>
+                </td>
+                <td className="px-1 py-3 text-center text-sm lg:px-3 lg:text-base">
+                  {team.played || 0}
+                </td>
+                <td className="px-1 py-3 text-center text-sm lg:px-3 lg:text-base">
+                  {team.wins || 0}
+                </td>
+                <td className="px-1 py-3 text-center text-sm lg:px-3 lg:text-base">
+                  {team.draws || 0}
+                </td>
+                <td className="px-1 py-3 text-center text-sm lg:px-3 lg:text-base">
+                  {team.losses || 0}
+                </td>
+                <td className="hidden px-1 py-3 text-center text-sm lg:table-cell lg:px-3 lg:text-base">
+                  {team.goalsFor || 0}
+                </td>
+                <td className="hidden px-1 py-3 text-center text-sm lg:table-cell lg:px-3 lg:text-base">
+                  {team.goalsAgainst || 0}
+                </td>
+                <td className="px-1 py-3 text-center text-sm lg:px-3 lg:text-base">
+                  <span
+                    className={`${team.goalDifference >= 0 ? "text-green-400" : "text-red-400"}`}
+                  >
+                    {team.goalDifference > 0 ? "+" : ""}
+                    {team.goalDifference || 0}
+                  </span>
+                </td>
+                <td className="px-2 py-3 text-center text-sm font-bold lg:px-4 lg:text-base">
+                  <span className="rounded bg-accent/20 px-2 py-1 text-accent">
+                    {team.points}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function ModeratorsList({
   };
 
   return (
-    <Card className="w-1/2 border-2 border-accent/50 bg-panel-bg">
+    <Card className="w-full border-2 border-accent/50 bg-panel-bg xl:w-1/2">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-accent">
           Moderators ({moderators.length})
