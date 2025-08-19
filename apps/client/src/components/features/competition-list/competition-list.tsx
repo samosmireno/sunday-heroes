@@ -1,12 +1,5 @@
 import { DetailedCompetitionResponse, Role } from "@repo/shared-types";
-import {
-  Calendar,
-  CheckSquare,
-  Settings,
-  Shield,
-  Trophy,
-  Users,
-} from "lucide-react";
+import { Calendar, CheckSquare, Settings, Shield, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../ui/button";
 
@@ -146,12 +139,12 @@ export default function CompetitionList({
                     >
                       <Calendar size={14} className="sm:h-4 sm:w-4" />
                     </Button>
-                    <Button
+                    {/* <Button
                       className="hidden rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:inline-block sm:p-1.5"
                       title="View teams"
                     >
                       <Users size={14} className="sm:h-4 sm:w-4" />
-                    </Button>
+                    </Button> */}
                     {competition.userRole === Role.ADMIN && (
                       <Button
                         onClick={() =>

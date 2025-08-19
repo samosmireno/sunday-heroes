@@ -83,7 +83,7 @@ export default function AddModeratorModal({
 
     try {
       await axiosInstance.post(
-        `${config.server}/api/competition/${competitionId}/moderators`,
+        `${config.server}/api/competitions/${competitionId}/moderators`,
         { userId },
         { withCredentials: true },
       );

@@ -143,21 +143,27 @@ export default function PlayerDetails({ player }: PlayerDetailsProps) {
             <div className="text-center">
               <div className="text-xs text-gray-400">Best Performance</div>
               <div className="text-sm font-bold text-green-400 sm:text-lg">
-                {Math.max(
-                  ...player.competitions.map((c) => c.averageRating || 0),
-                ).toFixed(1)}
+                {player.competitions.length !== 0
+                  ? Math.max(
+                      ...player.competitions.map((c) => c.averageRating || 0),
+                    ).toFixed(1)
+                  : 0}
               </div>
             </div>
             <div className="text-center">
               <div className="text-xs text-gray-400">Most Goals</div>
               <div className="text-sm font-bold text-green-400 sm:text-lg">
-                {Math.max(...player.competitions.map((c) => c.goals))}
+                {player.competitions.length !== 0
+                  ? Math.max(...player.competitions.map((c) => c.goals))
+                  : 0}
               </div>
             </div>
             <div className="text-center">
               <div className="text-xs text-gray-400">Most Assists</div>
               <div className="text-sm font-bold text-purple-400 sm:text-lg">
-                {Math.max(...player.competitions.map((c) => c.assists))}
+                {player.competitions.length !== 0
+                  ? Math.max(...player.competitions.map((c) => c.assists))
+                  : 0}
               </div>
             </div>
           </div>

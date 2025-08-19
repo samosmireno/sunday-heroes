@@ -80,7 +80,7 @@ export default function CompetitionAdminPage() {
       <div className="relative mb-4 sm:mb-6">
         <div className="flex overflow-x-auto rounded-lg bg-bg/70 p-1">
           {tabs.map(({ id, label }) => (
-            <button
+            <Button
               key={id}
               onClick={() => setActiveTab(id as any)}
               className={`flex min-w-0 flex-shrink-0 items-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all sm:px-4 sm:text-sm ${
@@ -90,7 +90,7 @@ export default function CompetitionAdminPage() {
               }`}
             >
               {label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

@@ -10,6 +10,7 @@ import {
   ConflictError,
   NotFoundError,
 } from "../utils/errors";
+import { PrismaTransaction } from "../types";
 
 export class TeamService {
   static async createTeamInCompetition(
@@ -167,7 +168,10 @@ export class TeamService {
     return { message: "Team deleted successfully" };
   }
 
-  static async deleteTeamsOnlyInCompetition(competitionId: string) {
+  static async deleteTeamsOnlyInCompetition(
+    competitionId: string,
+    tx: PrismaTransaction
+  ) {
     const teams = await this.getTeamsInCompetition(competitionId);
     if (!teams || teams.length === 0) {
       return;
@@ -177,6 +181,6 @@ export class TeamService {
       .filter((team) => team.teamCompetitions.length === 1)
       .map((team) => team.id);
 
-    await TeamRepo.deleteMany(teamIds);
+    await TeamRepo.deleteMany(teamIds, tx);
   }
 }

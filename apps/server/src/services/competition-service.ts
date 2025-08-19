@@ -15,6 +15,8 @@ import { DashboardService } from "./dashboard-service";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 import { TeamService } from "./team-service";
 import { AuthorizationError, NotFoundError } from "../utils/errors";
+import { DashboardPlayerService } from "./dashboard-player-service";
+import prisma from "../repositories/prisma-client";
 
 export class CompetitionService {
   static async getAllCompetitions() {
@@ -116,8 +118,10 @@ export class CompetitionService {
     if (!competition) {
       throw new NotFoundError("Competition");
     }
-
-    return await CompetitionRepo.resetCompetition(competitionId);
+    return await prisma.$transaction(async (tx) => {
+      await CompetitionRepo.resetCompetition(competitionId, tx);
+      await DashboardPlayerService.cleanupUnusedPlayers(tx);
+    });
   }
 
   static async deleteCompetition(competitionId: string, userId: string) {
@@ -130,10 +134,13 @@ export class CompetitionService {
         "User is not authorized to delete this competition"
       );
     }
+    return await prisma.$transaction(async (tx) => {
+      await TeamService.deleteTeamsOnlyInCompetition(competitionId, tx);
 
-    await TeamService.deleteTeamsOnlyInCompetition(competitionId);
+      await CompetitionRepo.delete(competitionId, tx);
 
-    return await CompetitionRepo.delete(competitionId);
+      await DashboardPlayerService.cleanupUnusedPlayers(tx);
+    });
   }
 
   static async isUserAdmin(

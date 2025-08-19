@@ -61,7 +61,7 @@ export default function FootballField({
               <SelectTrigger className="h-8 w-8 -rotate-90 rounded-tr-none bg-secondary md:w-40 md:rotate-0 md:rounded-tl-none">
                 <SelectValue placeholder="Formation" />
               </SelectTrigger>
-              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary text-gray-300 md:translate-x-0">
+              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary font-retro text-gray-300 md:translate-x-0">
                 {formations.map((formation, index) => {
                   return (
                     <SelectItem key={index} value={formation.name}>
