@@ -26,7 +26,7 @@ export default function CompetitionList({
               </th>
               <th
                 scope="col"
-                className="whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+                className="whitespace-nowrap px-1 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
               >
                 Type
               </th>
@@ -38,7 +38,7 @@ export default function CompetitionList({
               </th>
               <th
                 scope="col"
-                className="whitespace-nowrap px-2 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+                className="whitespace-nowrap px-1 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
               >
                 Matches
               </th>
@@ -50,7 +50,7 @@ export default function CompetitionList({
               </th>
               <th
                 scope="col"
-                className="whitespace-nowrap px-2 py-2 text-right text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
+                className="whitespace-nowrap px-1 py-2 text-right text-xs font-bold uppercase tracking-wider text-accent sm:px-4 sm:py-3"
               >
                 Actions
               </th>
@@ -75,7 +75,7 @@ export default function CompetitionList({
                     )}
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-2 py-3 sm:px-4 sm:py-4">
+                <td className="whitespace-nowrap px-1 py-3 sm:px-4 sm:py-4">
                   <span
                     className={`inline-block rounded px-1.5 py-0.5 text-xs font-bold sm:px-2 sm:py-1 ${
                       competition.type === "LEAGUE"
@@ -96,7 +96,7 @@ export default function CompetitionList({
                     {competition.players} players
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-2 py-3 text-center sm:px-4 sm:py-4">
+                <td className="whitespace-nowrap px-1 py-3 text-center sm:px-4 sm:py-4">
                   <div className="text-sm font-bold text-accent">
                     {competition.matches}
                   </div>
@@ -123,7 +123,7 @@ export default function CompetitionList({
                     </span>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-2 py-3 text-right sm:px-4 sm:py-4">
+                <td className="whitespace-nowrap px-1 py-3 text-right sm:px-4 sm:py-4">
                   <div className="flex justify-end space-x-1 sm:space-x-2">
                     <Button
                       onClick={() => navigate(`/competition/${competition.id}`)}
