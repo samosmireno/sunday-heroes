@@ -187,7 +187,7 @@ const CreateCompetitionForm = () => {
                                   <SelectItem
                                     key={type}
                                     value={type}
-                                    className="hover:bg-accent/20 focus:bg-accent/20"
+                                    className="font-retro hover:bg-accent/20 focus:bg-accent/20"
                                   >
                                     {capitalizeFirstLetter(type.toString())}
                                   </SelectItem>
@@ -268,7 +268,7 @@ const CreateCompetitionForm = () => {
                                       <SelectItem
                                         key={type}
                                         value={type}
-                                        className="hover:bg-accent/20 focus:bg-accent/20"
+                                        className="font-retro hover:bg-accent/20 focus:bg-accent/20"
                                       >
                                         {convertMatchType(type)}
                                       </SelectItem>
@@ -295,7 +295,7 @@ const CreateCompetitionForm = () => {
                 </h3>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <FormField
+                    {/* <FormField
                       name="trackSeasons"
                       control={form.control}
                       render={({ field }) => (
@@ -314,7 +314,7 @@ const CreateCompetitionForm = () => {
                           </div>
                         </FormItem>
                       )}
-                    />
+                    /> */}
                     <FormField
                       name="votingEnabled"
                       control={form.control}
