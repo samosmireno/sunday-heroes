@@ -118,10 +118,14 @@ export class CompetitionService {
     if (!competition) {
       throw new NotFoundError("Competition");
     }
-    return await prisma.$transaction(async (tx) => {
-      await CompetitionRepo.resetCompetition(competitionId, tx);
-      await DashboardPlayerService.cleanupUnusedPlayers(tx);
-    });
+
+    if (competition.type === CompetitionType.DUEL) {
+      await CompetitionRepo.resetCompetitionWithoutTeams(competitionId);
+    } else {
+      await CompetitionRepo.resetCompetition(competitionId);
+    }
+
+    await DashboardPlayerService.cleanupUnusedPlayers();
   }
 
   static async deleteCompetition(competitionId: string, userId: string) {
@@ -134,13 +138,11 @@ export class CompetitionService {
         "User is not authorized to delete this competition"
       );
     }
-    return await prisma.$transaction(async (tx) => {
-      await TeamService.deleteTeamsOnlyInCompetition(competitionId, tx);
+    await TeamService.deleteTeamsOnlyInCompetition(competitionId);
 
-      await CompetitionRepo.delete(competitionId, tx);
+    await CompetitionRepo.delete(competitionId);
 
-      await DashboardPlayerService.cleanupUnusedPlayers(tx);
-    });
+    await DashboardPlayerService.cleanupUnusedPlayers();
   }
 
   static async isUserAdmin(

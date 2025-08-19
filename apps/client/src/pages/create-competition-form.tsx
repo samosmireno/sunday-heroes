@@ -42,8 +42,16 @@ const CreateCompetitionForm = () => {
   const form = useForm<CreateCompetitionFormValues>({
     resolver: zodResolver(CreateCompetitionFormSchema),
     defaultValues: {
+      name: "",
+      type: undefined,
       trackSeasons: false,
       votingEnabled: false,
+      votingPeriodDays: undefined,
+      reminderDays: undefined,
+      knockoutVotingPeriodDays: undefined,
+      numberOfTeams: undefined,
+      matchType: undefined,
+      isRoundRobin: false,
     },
   });
   const navigate = useNavigate();

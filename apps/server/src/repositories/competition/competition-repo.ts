@@ -207,4 +207,25 @@ export class CompetitionRepo {
       );
     }
   }
+
+  static async resetCompetitionWithoutTeams(
+    id: string,
+    tx?: PrismaTransaction
+  ): Promise<CompetitionWithDetails> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.competition.update({
+        where: { id },
+        data: {
+          matches: { deleteMany: {} },
+        },
+        include: COMPETITION_DETAILED_INCLUDE,
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.resetCompetitionWithoutTeam"
+      );
+    }
+  }
 }

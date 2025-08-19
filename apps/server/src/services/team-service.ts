@@ -168,10 +168,7 @@ export class TeamService {
     return { message: "Team deleted successfully" };
   }
 
-  static async deleteTeamsOnlyInCompetition(
-    competitionId: string,
-    tx: PrismaTransaction
-  ) {
+  static async deleteTeamsOnlyInCompetition(competitionId: string) {
     const teams = await this.getTeamsInCompetition(competitionId);
     if (!teams || teams.length === 0) {
       return;
@@ -181,6 +178,6 @@ export class TeamService {
       .filter((team) => team.teamCompetitions.length === 1)
       .map((team) => team.id);
 
-    await TeamRepo.deleteMany(teamIds, tx);
+    await TeamRepo.deleteMany(teamIds);
   }
 }
