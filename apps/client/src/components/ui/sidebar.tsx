@@ -107,7 +107,7 @@ const SidebarProvider = React.forwardRef<
       let startX = 0;
       let currentX = 0;
       let isDragging = false;
-      const EDGE_SIZE = 30; // Increased for better accessibility
+      const EDGE_SIZE = 100; // Increased for better accessibility
       const DRAG_THRESHOLD = 80; // Slightly reduced for easier triggering
 
       const handleTouchStart = (e: TouchEvent) => {

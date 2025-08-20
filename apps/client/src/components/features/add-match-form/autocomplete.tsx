@@ -104,7 +104,7 @@ export function AutoComplete<T extends string>({
   };
 
   return (
-    <div className={cn("relative flex w-2/5 items-center", className)}>
+    <div className={cn("relative flex w-3/5 items-center", className)}>
       <Popover open={open} onOpenChange={setOpen}>
         <Command shouldFilter={false}>
           <PopoverAnchor asChild>
@@ -137,7 +137,7 @@ export function AutoComplete<T extends string>({
                 e.preventDefault();
               }
             }}
-            className="z-50 max-h-56 w-[--radix-popover-trigger-width] overflow-hidden border-2 border-accent/50 bg-panel-bg p-0 shadow-md"
+            className="z-50 max-h-56 w-[--radix-popover-trigger-width] overflow-hidden border-2 border-accent/50 bg-panel-bg p-0 font-retro shadow-md"
           >
             <CommandList className="max-h-56 overflow-y-auto">
               {isLoading && (

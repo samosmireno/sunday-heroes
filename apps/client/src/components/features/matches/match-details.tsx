@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, ArrowUp, Goal, Medal } from "lucide-react";
+import { Medal } from "lucide-react";
 import { MatchPageResponse } from "@repo/shared-types";
 
 interface MatchDetailsProps {
@@ -14,6 +14,11 @@ export function MatchDetails({ match }: MatchDetailsProps) {
   );
   const awayTeamPlayers = match.playerStats.filter(
     (player) => player.isHome === false,
+  );
+
+  const topPlayer = match.playerStats.find(
+    (player) =>
+      player.rating === Math.max(...match.playerStats.map((p) => p.rating)),
   );
 
   const activePlayers = activeTab === 0 ? homeTeamPlayers : awayTeamPlayers;
@@ -52,23 +57,14 @@ export function MatchDetails({ match }: MatchDetailsProps) {
                 Player
               </th>
               <th className="px-2 py-2 text-center text-xs font-bold text-accent">
-                <div className="flex items-center justify-center">
-                  <Goal size={14} className="mr-1" />
-                  Goals
-                </div>
+                <div className="flex items-center justify-center">Goals</div>
               </th>
               <th className="px-2 py-2 text-center text-xs font-bold text-accent">
-                <div className="flex items-center justify-center">
-                  <ArrowUp size={14} className="mr-1" />
-                  Assists
-                </div>
+                <div className="flex items-center justify-center">Assists</div>
               </th>
               {match.votingEnabled && (
                 <th className="px-2 py-2 text-center text-xs font-bold text-accent">
-                  <div className="flex items-center justify-center">
-                    <Star size={14} className="mr-1" />
-                    Rating
-                  </div>
+                  <div className="flex items-center justify-center">Rating</div>
                 </th>
               )}
             </tr>
@@ -78,7 +74,7 @@ export function MatchDetails({ match }: MatchDetailsProps) {
               <tr key={player.id} className="hover:bg-accent/5">
                 <td className="px-2 py-2 text-sm font-medium text-gray-200">
                   <div className="flex items-center">
-                    {sortedPlayers[0].id === player.id && (
+                    {topPlayer?.id === player.id && topPlayer.rating !== 0 && (
                       <Medal size={14} className="mr-1.5 text-amber-400" />
                     )}
                     {player.nickname}

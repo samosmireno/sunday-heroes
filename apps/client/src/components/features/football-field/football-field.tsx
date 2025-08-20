@@ -46,7 +46,7 @@ export default function FootballField({
   const starPlayerId = findStarPlayer(match);
 
   return (
-    <div className="flex w-full rotate-90 flex-col items-center py-16 md:rotate-0 md:py-8">
+    <div className="flex w-full rotate-90 flex-col items-center py-16 sm:rotate-0 sm:py-8">
       <FieldLayout>
         <>
           <div className="absolute left-0 top-0">
@@ -58,10 +58,10 @@ export default function FootballField({
                 }
               }}
             >
-              <SelectTrigger className="h-8 w-8 -rotate-90 rounded-tr-none bg-secondary md:w-40 md:rotate-0 md:rounded-tl-none">
+              <SelectTrigger className="h-8 w-8 -rotate-90 rounded-tr-none bg-secondary sm:w-40 sm:rotate-0 sm:rounded-tl-none">
                 <SelectValue placeholder="Formation" />
               </SelectTrigger>
-              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary font-retro text-gray-300 md:translate-x-0">
+              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary font-retro text-gray-300 sm:translate-x-0">
                 {formations.map((formation, index) => {
                   return (
                     <SelectItem key={index} value={formation.name}>
@@ -88,10 +88,10 @@ export default function FootballField({
                 }
               }}
             >
-              <SelectTrigger className="w-8 -translate-x-1 -translate-y-1 -rotate-90 rounded-br-none bg-secondary md:w-40 md:translate-x-0 md:translate-y-0 md:rotate-0 md:rounded-tr-none">
+              <SelectTrigger className="w-8 -translate-x-1 -translate-y-1 -rotate-90 rounded-br-none bg-secondary sm:w-40 sm:translate-x-0 sm:translate-y-0 sm:rotate-0 sm:rounded-tr-none">
                 <SelectValue placeholder="Formation" />
               </SelectTrigger>
-              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary text-gray-300 md:translate-x-0">
+              <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary text-gray-300 sm:translate-x-0">
                 {formations.map((formation, index) => {
                   return (
                     <SelectItem key={index} value={formation.name}>

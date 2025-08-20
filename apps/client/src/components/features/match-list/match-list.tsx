@@ -123,7 +123,7 @@ export default function MatchList({
               })}
           </CarouselContent>
         ) : (
-          <div className="w-full rounded-lg bg-primary/20 py-8 text-center text-sm sm:text-base">
+          <div className="w-full rounded-lg bg-primary/20 py-4 text-center text-sm sm:text-base">
             Add your first match
           </div>
         )}

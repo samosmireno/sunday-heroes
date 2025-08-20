@@ -21,18 +21,23 @@ function DuelCompetitionPage({
   function handleMatchClick(getCurrentMatch: number) {
     setCurrentMatch(getCurrentMatch);
   }
+
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-      <div className="relative mb-6 flex flex-col rounded-lg border-2 border-accent bg-panel-bg p-6 text-center shadow-inner">
-        <MatchList
-          competitionId={competition.id}
-          userRole={competition.userRole}
-          matches={competition.matches}
-          selectedMatch={currentMatch}
-          onMatchClick={handleMatchClick}
-          refetchMatches={refetch}
-        />
-        <FootballField match={competition.matches[currentMatch]} />
+      <div className="relative flex min-h-[80vh] flex-col gap-2 overflow-hidden rounded-lg border-2 border-accent bg-panel-bg p-6 text-center shadow-inner md:min-h-fit">
+        <div className="flex-shrink-0">
+          <MatchList
+            competitionId={competition.id}
+            userRole={competition.userRole}
+            matches={competition.matches}
+            selectedMatch={currentMatch}
+            onMatchClick={handleMatchClick}
+            refetchMatches={refetch}
+          />
+        </div>
+        <div className="flex flex-1 items-center justify-center">
+          <FootballField match={competition.matches[currentMatch]} />
+        </div>
       </div>
       <div className="relative overflow-hidden rounded-lg border-2 border-accent bg-panel-bg p-5 shadow-lg">
         <StatsTable
@@ -43,4 +48,5 @@ function DuelCompetitionPage({
     </div>
   );
 }
+
 export default DuelCompetitionPage;

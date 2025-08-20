@@ -30,9 +30,9 @@ export default function PlayerInfo({
 
   return (
     <div
-      className={`z-10 mx-0 my-1 flex -rotate-90 flex-col items-center hover:z-20 hover:cursor-pointer md:rotate-0 ${
+      className={`z-10 mx-0 my-1 flex -rotate-90 flex-col items-center hover:z-20 hover:cursor-pointer sm:rotate-0 ${
         isOnPitch &&
-        "absolute -translate-x-[55%] -translate-y-1/2 md:-translate-y-1/4"
+        "absolute -translate-x-[55%] -translate-y-1/2 sm:-translate-y-1/4"
       }`}
       style={style}
       onMouseEnter={() => setIsHovered(true)}
@@ -45,7 +45,7 @@ export default function PlayerInfo({
         playerPosition={matchPlayer.position}
       />
       <div
-        className="mt-1 hidden max-w-20 overflow-hidden truncate whitespace-nowrap rounded-sm bg-black/50 px-1 text-center text-xs text-white md:inline"
+        className="mt-1 hidden max-w-20 overflow-hidden truncate whitespace-nowrap rounded-sm bg-black/50 px-1 text-center text-xs text-white sm:inline"
         title={matchPlayer.nickname}
       >
         {matchPlayer.nickname}
