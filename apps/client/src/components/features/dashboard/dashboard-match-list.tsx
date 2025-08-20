@@ -17,7 +17,7 @@ export default function MatchList({
   const displayedMatches = matches.slice(0, maxDisplay);
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b-2 border-accent/70 bg-panel-bg px-4 py-3">
+      <div className="rounded-t-xl border-b-2 border-accent/70 bg-panel-bg px-4 py-3">
         <div className="flex items-center justify-between">
           <h2
             className="flex items-center text-xl font-bold uppercase tracking-wider text-accent"

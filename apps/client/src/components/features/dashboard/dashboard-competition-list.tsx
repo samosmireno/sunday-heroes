@@ -16,7 +16,7 @@ export default function DashboardCompetitionList({
 
   return (
     <div className="relative flex h-full flex-col">
-      <div className="flex flex-col gap-2 border-b-2 border-accent/70 bg-panel-bg px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0 sm:px-4 md:px-5 lg:px-6">
+      <div className="flex flex-col gap-2 rounded-t-xl border-b-2 border-accent/70 bg-panel-bg px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0 sm:px-4 md:px-5 lg:px-6">
         <h2
           className="flex items-center text-lg font-bold uppercase tracking-wider text-accent sm:text-xl"
           style={{ textShadow: "1px 1px 0 #000" }}
