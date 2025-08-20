@@ -107,18 +107,45 @@ const SidebarProvider = React.forwardRef<
       let startX = 0;
       let currentX = 0;
       let isDragging = false;
-      const EDGE_SIZE = 20; // Size of the edge area where drag can start
-      const DRAG_THRESHOLD = 100; // Distance needed to trigger sidebar open/close
+      const EDGE_SIZE = 30; // Increased for better accessibility
+      const DRAG_THRESHOLD = 80; // Slightly reduced for easier triggering
 
       const handleTouchStart = (e: TouchEvent) => {
         const touch = e.touches[0];
         startX = touch.clientX;
 
-        // Start drag if touch starts near the left edge and sidebar is closed
-        // OR if sidebar is open (can start drag anywhere on the sidebar)
-        if ((startX < EDGE_SIZE && !openMobile) || openMobile) {
-          isDragging = true;
-          currentX = startX;
+        if (!openMobile) {
+          // Sidebar is closed: only start drag from left edge
+          if (startX < EDGE_SIZE) {
+            isDragging = true;
+            currentX = startX;
+
+            // Add haptic feedback if available
+            if ("vibrate" in navigator) {
+              navigator.vibrate(10);
+            }
+          }
+        } else {
+          // Sidebar is open: allow drag from multiple areas
+          const touchTarget = e.target as Element;
+          const sidebarElement = document.querySelector(
+            '[data-sidebar="sidebar"]',
+          );
+          const overlayElement = document.querySelector(".fixed.inset-0"); // Sheet overlay
+
+          const isOnSidebar = sidebarElement?.contains(touchTarget);
+          const isOnOverlay = overlayElement?.contains(touchTarget);
+          const isOnMainContent = !isOnSidebar && !isOnOverlay;
+
+          // Allow drag from sidebar, overlay, or main content
+          if (isOnSidebar || isOnOverlay || isOnMainContent) {
+            isDragging = true;
+            currentX = startX;
+
+            if ("vibrate" in navigator) {
+              navigator.vibrate(10);
+            }
+          }
         }
       };
 
@@ -147,11 +174,21 @@ const SidebarProvider = React.forwardRef<
           // Sidebar is closed: open if dragged far enough to the right
           if (dragDistance > DRAG_THRESHOLD) {
             setOpenMobile(true);
+
+            // Success haptic feedback
+            if ("vibrate" in navigator) {
+              navigator.vibrate([10, 10, 20]);
+            }
           }
         } else {
           // Sidebar is open: close if dragged far enough to the left
           if (dragDistance < -DRAG_THRESHOLD) {
             setOpenMobile(false);
+
+            // Success haptic feedback
+            if ("vibrate" in navigator) {
+              navigator.vibrate([10, 10, 20]);
+            }
           }
         }
 
