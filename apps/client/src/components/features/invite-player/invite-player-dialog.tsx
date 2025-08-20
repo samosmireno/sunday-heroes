@@ -12,7 +12,6 @@ import {
 import { UserPlus, Copy, Check, Loader2 } from "lucide-react";
 import axiosInstance from "../../../config/axios-config";
 import { toast } from "sonner";
-import Loading from "../../ui/loading";
 
 interface InvitePlayerDialogProps {
   dashboardPlayerId: string;
@@ -24,12 +23,10 @@ export default function InvitePlayerDialog({
   playerNickname,
 }: InvitePlayerDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [inviteUrl, setInviteUrl] = useState("");
   const [copied, setCopied] = useState(false);
 
   const handleCreateInvitation = async () => {
-    setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/invitations", {
         dashboardPlayerId,
@@ -39,8 +36,6 @@ export default function InvitePlayerDialog({
       toast.success("Invitation link created!");
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to create invitation");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -66,10 +61,6 @@ export default function InvitePlayerDialog({
       handleCreateInvitation();
     }
   }, [isOpen, inviteUrl]);
-
-  if (isLoading) {
-    return <Loading text={"Loading invitation"} />;
-  }
 
   return (
     <Dialog
