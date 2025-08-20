@@ -44,7 +44,7 @@ export default function MatchList({
               ))}
             </div>
           ) : (
-            <div className="flex h-full items-center justify-center rounded-lg bg-bg/20 p-4 text-center text-gray-400">
+            <div className="flex h-full items-center justify-center rounded-lg bg-bg/20 p-4 text-center text-sm text-gray-400">
               No recent matches. Scheduled matches will appear here.
             </div>
           )}

@@ -100,6 +100,82 @@ const SidebarProvider = React.forwardRef<
         : setOpen((open) => !open);
     }, [isMobile, setOpen, setOpenMobile]);
 
+    // Add touch gesture handling for mobile sidebar
+    React.useEffect(() => {
+      if (!isMobile) return;
+
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+      const EDGE_SIZE = 20; // Size of the edge area where drag can start
+      const DRAG_THRESHOLD = 100; // Distance needed to trigger sidebar open/close
+
+      const handleTouchStart = (e: TouchEvent) => {
+        const touch = e.touches[0];
+        startX = touch.clientX;
+
+        // Start drag if touch starts near the left edge and sidebar is closed
+        // OR if sidebar is open (can start drag anywhere on the sidebar)
+        if ((startX < EDGE_SIZE && !openMobile) || openMobile) {
+          isDragging = true;
+          currentX = startX;
+        }
+      };
+
+      const handleTouchMove = (e: TouchEvent) => {
+        if (!isDragging) return;
+
+        const touch = e.touches[0];
+        currentX = touch.clientX;
+
+        // For opening: prevent default when dragging right
+        // For closing: prevent default when dragging left
+        if (
+          (!openMobile && currentX > startX) ||
+          (openMobile && currentX < startX)
+        ) {
+          e.preventDefault();
+        }
+      };
+
+      const handleTouchEnd = () => {
+        if (!isDragging) return;
+
+        const dragDistance = currentX - startX;
+
+        if (!openMobile) {
+          // Sidebar is closed: open if dragged far enough to the right
+          if (dragDistance > DRAG_THRESHOLD) {
+            setOpenMobile(true);
+          }
+        } else {
+          // Sidebar is open: close if dragged far enough to the left
+          if (dragDistance < -DRAG_THRESHOLD) {
+            setOpenMobile(false);
+          }
+        }
+
+        isDragging = false;
+        startX = 0;
+        currentX = 0;
+      };
+
+      // Add event listeners
+      document.addEventListener("touchstart", handleTouchStart, {
+        passive: false,
+      });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleTouchEnd);
+
+      return () => {
+        document.removeEventListener("touchstart", handleTouchStart);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+      };
+    }, [isMobile, openMobile, setOpenMobile]);
+
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
