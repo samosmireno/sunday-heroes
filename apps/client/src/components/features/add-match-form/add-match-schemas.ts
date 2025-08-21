@@ -2,6 +2,9 @@ import { z } from "zod";
 import { CompetitionType, MatchType } from "@repo/shared-types";
 import { createStepSchema } from "../multi-step-form/utils";
 
+const MIN_PLAYERS_PER_TEAM = 4;
+const MIN_NAME_LENGTH = 2;
+
 const baseMatchSchema = z.object({
   date: z.coerce.date().optional(),
   homeTeamScore: z.coerce
@@ -15,7 +18,7 @@ const baseMatchSchema = z.object({
     })
     .min(0),
   matchType: z.nativeEnum(MatchType),
-  hasPenalties: z.boolean(),
+  hasPenalties: z.boolean().default(false),
   penaltyHomeScore: z.coerce.number().min(0).optional(),
   penaltyAwayScore: z.coerce.number().min(0).optional(),
 });
@@ -23,14 +26,20 @@ const baseMatchSchema = z.object({
 const playersSchema = z.object({
   homePlayers: z
     .array(
-      z.string().min(2, { message: "Name must be longer than two characters" }),
+      z.string().min(MIN_NAME_LENGTH, {
+        message: "Name must be longer than two characters",
+      }),
     )
     .min(4, { message: "Minimum of four players is required" }),
   awayPlayers: z
     .array(
-      z.string().min(2, { message: "Name must be longer than two characters" }),
+      z.string().min(MIN_NAME_LENGTH, {
+        message: "Name must be longer than two characters",
+      }),
     )
-    .min(4, { message: "Minimum of four players is required" }),
+    .min(MIN_PLAYERS_PER_TEAM, {
+      message: "Minimum of four players is required",
+    }),
 });
 
 const matchPlayersSchema = z.object({
@@ -55,8 +64,8 @@ const matchPlayersSchema = z.object({
 });
 
 const teamsSchema = z.object({
-  homeTeam: z.string().min(1, "Home team name is required"),
-  awayTeam: z.string().min(1, "Away team name is required"),
+  homeTeam: z.string().min(MIN_NAME_LENGTH, "Home team name is required"),
+  awayTeam: z.string().min(MIN_NAME_LENGTH, "Away team name is required"),
 });
 
 export const AddDuelFormSchema = createStepSchema({
@@ -87,37 +96,39 @@ export type KnockoutFormData = z.infer<typeof AddKnockoutFormSchema>;
 
 export type MatchFormData = DuelFormData | LeagueFormData | KnockoutFormData;
 
-const createTeamStatsValidation = (schema: typeof AddDuelFormSchema) => {
+export type MatchSchema =
+  | typeof AddDuelFormSchema
+  | typeof AddLeagueFormSchema
+  | typeof AddKnockoutFormSchema;
+
+const createTeamStatsValidation = (schema: MatchSchema) => {
   return schema.refine(
-    (data: DuelFormData) => {
-      const match = data.match;
-      const players = data.matchPlayers?.players || [];
-      const homePlayers = data.players?.homePlayers || [];
+    (data: MatchFormData) => {
+      const { match, matchPlayers, players } = data;
+      const playerStats = matchPlayers?.players || [];
+      const homePlayersCount = players?.homePlayers?.length || 0;
 
-      const homePlayerGoals = players
-        .slice(0, homePlayers.length)
-        .reduce((sum: number, player: any) => sum + (player.goals || 0), 0);
+      const homeStats = playerStats.slice(0, homePlayersCount).reduce(
+        (acc, player) => ({
+          goals: acc.goals + (player.goals || 0),
+          assists: acc.assists + (player.assists || 0),
+        }),
+        { goals: 0, assists: 0 },
+      );
 
-      const homePlayerAssists = players
-        .slice(0, homePlayers.length)
-        .reduce((sum: number, player: any) => sum + (player.assists || 0), 0);
-
-      const awayPlayerGoals = players
-        .slice(homePlayers.length)
-        .reduce((sum: number, player: any) => sum + (player.goals || 0), 0);
-
-      const awayPlayerAssists = players
-        .slice(homePlayers.length)
-        .reduce((sum: number, player: any) => sum + (player.assists || 0), 0);
-
-      const homeGoalsValid = homePlayerGoals <= (match.homeTeamScore || 0);
-      const awayGoalsValid = awayPlayerGoals <= (match.awayTeamScore || 0);
-
-      const homeAssistsValid = homePlayerAssists <= (match.homeTeamScore || 0);
-      const awayAssistsValid = awayPlayerAssists <= (match.awayTeamScore || 0);
+      const awayStats = playerStats.slice(homePlayersCount).reduce(
+        (acc, player) => ({
+          goals: acc.goals + (player.goals || 0),
+          assists: acc.assists + (player.assists || 0),
+        }),
+        { goals: 0, assists: 0 },
+      );
 
       return (
-        homeGoalsValid && awayGoalsValid && homeAssistsValid && awayAssistsValid
+        homeStats.goals <= (match.homeTeamScore || 0) &&
+        awayStats.goals <= (match.awayTeamScore || 0) &&
+        homeStats.assists <= (match.homeTeamScore || 0) &&
+        awayStats.assists <= (match.awayTeamScore || 0)
       );
     },
     {
@@ -132,9 +143,9 @@ export const createMatchFormSchema = (competitionType: CompetitionType) => {
     case CompetitionType.DUEL:
       return createTeamStatsValidation(AddDuelFormSchema);
     case CompetitionType.LEAGUE:
-      return AddLeagueFormSchema;
+      return createTeamStatsValidation(AddLeagueFormSchema);
     case CompetitionType.KNOCKOUT:
-      return AddKnockoutFormSchema;
+      return createTeamStatsValidation(AddKnockoutFormSchema);
     default:
       throw new Error(`Unsupported competition type: ${competitionType}`);
   }

@@ -10,7 +10,7 @@ export default function StepNavigation({
   steps,
   currentStep,
 }: StepNavigationProps) {
-  const { goToStep, checkStepValid } = useMultiStepFormContext();
+  const { goToStep } = useMultiStepFormContext();
 
   useEffect(() => {}, []);
 
@@ -27,12 +27,10 @@ export default function StepNavigation({
               <span className="inline">{steps[index]}</span>
             </div>
             <div
-              className={`h-1.5 w-full rounded-xl transition-all duration-200 sm:h-2 ${
+              className={`h-1 w-full rounded-xl transition-all duration-200 sm:h-2 ${
                 currentStep === index
                   ? "border-accent bg-accent text-accent"
-                  : checkStepValid(index)
-                    ? "border-accent/50 bg-accent/20 text-gray-300 hover:bg-accent/40"
-                    : "border-accent/30 bg-bg/30 text-gray-400"
+                  : "border-accent/50 bg-accent/20 text-gray-300 hover:bg-accent/40"
               }`}
             ></div>
           </div>

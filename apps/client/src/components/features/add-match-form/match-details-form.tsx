@@ -9,7 +9,6 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { cn } from "../../../lib/utils";
 import { Calendar } from "../../ui/calendar";
@@ -46,7 +45,7 @@ const formatSafeDate = (date: any): string => {
 export default function MatchDetailsForm() {
   const { form, nextStep, isStepValid } = useMultiStepFormContext();
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const hasPenalties = form.watch("match.hasPenalties");
+  //const hasPenalties = form.watch("match.hasPenalties");
 
   return (
     <FormLayout title="Match Information">
@@ -180,7 +179,7 @@ export default function MatchDetailsForm() {
               />
             </div>
           </div>
-          <FormField
+          {/* <FormField
             name="match.hasPenalties"
             defaultValue={false}
             render={({ field }) => (
@@ -243,7 +242,7 @@ export default function MatchDetailsForm() {
                 />
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="mt-8 flex justify-end">
