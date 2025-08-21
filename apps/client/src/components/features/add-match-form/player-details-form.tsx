@@ -33,24 +33,21 @@ export default function PlayerDetailsForm({
             </FormMessage>
           )}
         </div>
-        <div
-          className={`mt-6 flex w-full flex-row ${isEdited ? "justify-end" : "justify-between"} px-4 py-4 sm:mt-8 sm:px-6`}
-        >
-          {!isEdited && (
-            <Button
-              type="button"
-              className="rounded-lg border-2 border-accent/50 bg-transparent px-3 py-2 text-accent hover:bg-accent/10 sm:px-5 sm:py-2.5"
-              onClick={prevStep}
-            >
-              Previous
-            </Button>
-          )}
+        <div className="mt-8 flex justify-between gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={prevStep}
+            className="rounded-lg border-2 border-accent/50 bg-transparent px-4 py-2 font-bold text-gray-300 transition-all hover:bg-accent/10"
+          >
+            Previous
+          </Button>
           <Button
             type={"submit"}
-            className="transform rounded-lg border-2 border-accent bg-accent/20 px-3 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30"
+            className="transform rounded-lg border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent shadow-md transition-all duration-200 hover:translate-y-1 hover:bg-accent/30"
             disabled={!isStepValid()}
           >
-            Save Changes
+            {isEdited ? "Save Changes" : "Submit"}
           </Button>
         </div>
       </Form>
