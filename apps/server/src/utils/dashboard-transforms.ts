@@ -28,7 +28,7 @@ export function transformDashboardToResponse(
   const totalPlayers = uniquePlayers.size;
 
   const completedMatches = matches.filter(
-    (match) => match.date !== undefined
+    (match) => match.date !== null
   ).length;
 
   const pendingVotes = matches

@@ -2,6 +2,28 @@ import { useCallback, useMemo, useState } from "react";
 import { Path, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
+const extractZodObjectSchema = (schema: z.ZodType): z.ZodObject<any> | null => {
+  // Handle ZodObject directly
+  if (schema instanceof z.ZodObject) {
+    return schema;
+  }
+
+  // Handle ZodEffects (refined schemas)
+  if (schema instanceof z.ZodEffects) {
+    return extractZodObjectSchema(schema._def.schema);
+  }
+
+  // Handle other wrapper types if needed
+  if ("_def" in schema && "innerType" in schema._def) {
+    const innerType = schema._def.innerType;
+    if (innerType instanceof z.ZodType) {
+      return extractZodObjectSchema(innerType);
+    }
+  }
+
+  return null;
+};
+
 export function useMultiStepForm<Schema extends z.ZodType>(
   schema: Schema,
   form: UseFormReturn<z.infer<Schema>>,
@@ -14,8 +36,10 @@ export function useMultiStepForm<Schema extends z.ZodType>(
     (stepIndex: number) => {
       const stepName = stepNames[stepIndex] as Path<z.TypeOf<Schema>>;
 
-      if (schema instanceof z.ZodObject) {
-        const stepSchema = schema.shape[stepName] as z.ZodType;
+      const objectSchema = extractZodObjectSchema(schema);
+
+      if (objectSchema) {
+        const stepSchema = objectSchema.shape[stepName] as z.ZodType;
 
         if (!stepSchema) {
           return true;
@@ -32,10 +56,22 @@ export function useMultiStepForm<Schema extends z.ZodType>(
     [schema, form, stepNames],
   );
 
-  const isStepValid = useCallback(
-    () => checkStepValid(currentStepIndex),
-    [checkStepValid, currentStepIndex],
-  );
+  const checkFinalValid = useCallback(() => {
+    const wholeSchemaResult = schema.safeParse(form.getValues());
+    return wholeSchemaResult.success;
+  }, [schema, form]);
+
+  const isStepValid = useCallback(() => {
+    const stepValid = checkStepValid(currentStepIndex);
+    const isLastStep = currentStepIndex === stepNames.length - 1;
+
+    // On last step, also check whole schema
+    if (isLastStep) {
+      return stepValid && checkFinalValid();
+    }
+
+    return stepValid;
+  }, [checkStepValid, checkFinalValid, currentStepIndex, stepNames.length]);
 
   const nextStep = useCallback(
     <Ev extends React.SyntheticEvent>(e: Ev) => {
@@ -114,6 +150,7 @@ export function useMultiStepForm<Schema extends z.ZodType>(
       isStepValid,
       isValid,
       checkStepValid,
+      checkFinalValid,
       errors,
     }),
     [
@@ -128,6 +165,7 @@ export function useMultiStepForm<Schema extends z.ZodType>(
       direction,
       isStepValid,
       checkStepValid,
+      checkFinalValid,
     ],
   );
 }

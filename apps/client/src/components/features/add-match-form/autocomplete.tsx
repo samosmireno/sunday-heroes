@@ -155,7 +155,7 @@ export function AutoComplete<T extends string>({
                       value={option.value}
                       onMouseDown={(e) => e.preventDefault()}
                       onSelect={onSelectItem}
-                      className="flex px-2 py-1.5 text-sm text-gray-200 hover:cursor-pointer hover:bg-accent/30 hover:text-gray-100 aria-selected:bg-accent/20 aria-selected:text-accent"
+                      className="flex px-2 py-1.5 text-sm text-gray-200 hover:cursor-pointer hover:bg-accent/30 hover:text-gray-100 focus:text-white aria-selected:bg-accent/20 aria-selected:text-accent"
                     >
                       <Check
                         className={cn(

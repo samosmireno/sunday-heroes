@@ -187,7 +187,7 @@ const CreateCompetitionForm = () => {
                                   <SelectItem
                                     key={type}
                                     value={type}
-                                    className="font-retro hover:bg-accent/20 focus:bg-accent/20"
+                                    className="font-retro hover:bg-accent/20 focus:bg-accent/20 focus:text-white"
                                   >
                                     {capitalizeFirstLetter(type.toString())}
                                   </SelectItem>
@@ -268,7 +268,7 @@ const CreateCompetitionForm = () => {
                                       <SelectItem
                                         key={type}
                                         value={type}
-                                        className="font-retro hover:bg-accent/20 focus:bg-accent/20"
+                                        className="font-retro hover:bg-accent/20 focus:bg-accent/20 focus:text-white"
                                       >
                                         {convertMatchType(type)}
                                       </SelectItem>

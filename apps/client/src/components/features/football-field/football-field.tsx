@@ -64,7 +64,11 @@ export default function FootballField({
               <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary font-retro text-gray-300 sm:translate-x-0">
                 {formations.map((formation, index) => {
                   return (
-                    <SelectItem key={index} value={formation.name}>
+                    <SelectItem
+                      key={index}
+                      value={formation.name}
+                      className="font-retro"
+                    >
                       {formation.name}
                     </SelectItem>
                   );

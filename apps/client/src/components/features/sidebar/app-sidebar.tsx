@@ -78,9 +78,9 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="z-10 flex h-[100dvh] flex-col border-r-2 border-accent/60 bg-sidebar-bg font-exo shadow-md transition-all duration-300 ease-in-out"
+      className="border-r-2 border-accent/60 bg-sidebar-bg font-exo shadow-md transition-all duration-300 ease-in-out"
     >
-      <SidebarContent className="flex flex-1 flex-col gap-3 overflow-y-auto">
+      <SidebarContent className="flex flex-1 flex-col overflow-y-auto">
         <SidebarGroup>
           <SidebarGroupLabel className="mb-4 flex items-center justify-center gap-2 rounded-none border-b-2 border-dashed border-accent/70 pb-3 text-center font-oswald text-xl font-bold tracking-wider text-accent">
             <span className="bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">
@@ -89,7 +89,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupContent className="px-2">
+          <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
@@ -115,14 +115,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="mt-auto border-t-2 border-dashed border-accent/30 pt-2">
-        <SidebarMenu className="px-2">
+        <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="group w-full rounded-md border-l-4 border-transparent px-3 py-2.5 text-gray-200 transition-all duration-200 hover:border-accent/70 hover:bg-accent/50">
+                <SidebarMenuButton className="group w-full rounded-md border-transparent py-2 text-gray-200 transition-all duration-200">
                   <div className="flex w-full items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/20">
-                      <User2 className="h-5 w-5 text-accent opacity-80 group-hover:opacity-100" />
+                      <User2 className="h-5 w-7 text-accent opacity-80 group-hover:opacity-100" />
                     </div>
                     <span className="flex-1 truncate font-retro text-sm font-medium">
                       {capitalizeFirstLetter(user?.name || "User")}

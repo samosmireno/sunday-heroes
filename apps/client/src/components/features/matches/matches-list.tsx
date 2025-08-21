@@ -6,6 +6,7 @@ import { MatchPageResponse } from "@repo/shared-types";
 import { formatDate } from "../../../utils/utils";
 import { convertMatchType } from "../../../types/types";
 import React from "react";
+import { Button } from "../../ui/button";
 
 interface MatchesListProps {
   matches: MatchPageResponse[];
@@ -24,6 +25,12 @@ export default function MatchesList({ matches }: MatchesListProps) {
       return (
         <span className="text-2xs inline-flex items-center rounded bg-blue-900/30 px-1.5 py-0.5 font-medium text-red-400 md:text-xs">
           Voting Disabled
+        </span>
+      );
+    } else if (match.date === undefined) {
+      return (
+        <span className="text-2xs inline-flex items-center rounded bg-amber-900/30 px-1.5 py-0.5 font-medium text-amber-400 md:text-xs">
+          Post-Match
         </span>
       );
     } else if (match.votingStatus === "CLOSED") {
@@ -153,7 +160,7 @@ export default function MatchesList({ matches }: MatchesListProps) {
                   <td className="whitespace-nowrap px-2 py-3 text-right text-sm md:px-4 md:py-4">
                     <div className="flex justify-end space-x-1 md:space-x-2">
                       {match.votingStatus === "OPEN" && match.votingEnabled && (
-                        <button
+                        <Button
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/pending/${match.id}`);
@@ -163,9 +170,9 @@ export default function MatchesList({ matches }: MatchesListProps) {
                           title="Vote on this match"
                         >
                           <CheckSquare size={16} />
-                        </button>
+                        </Button>
                       )}
-                      {/* <button
+                      {/* <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate(`/edit-match/${match.id}`);
@@ -175,9 +182,9 @@ export default function MatchesList({ matches }: MatchesListProps) {
                         title="Edit this match"
                       >
                         <i className="fa-solid fa-pen-to-square" />
-                      </button> */}
+                      </Button> */}
 
-                      <button
+                      <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleExpand(match.id);
@@ -199,7 +206,7 @@ export default function MatchesList({ matches }: MatchesListProps) {
                         ) : (
                           <ChevronDown size={16} />
                         )}
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>

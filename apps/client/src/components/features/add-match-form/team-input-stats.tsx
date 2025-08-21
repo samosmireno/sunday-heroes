@@ -69,6 +69,7 @@ export default function TeamInputStats({
                             {...field}
                             type="number"
                             min={0}
+                            defaultValue={0}
                             className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-2 text-center text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:w-20 sm:px-3 sm:py-1.5"
                           />
                         </FormControl>
@@ -93,6 +94,7 @@ export default function TeamInputStats({
                             {...field}
                             type="number"
                             min={0}
+                            defaultValue={0}
                             className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-2 text-center text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:w-20 sm:px-3 sm:py-1.5"
                           />
                         </FormControl>

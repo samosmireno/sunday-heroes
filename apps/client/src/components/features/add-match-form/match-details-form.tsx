@@ -127,7 +127,7 @@ export default function MatchDetailsForm() {
                         <SelectItem
                           key={matchType}
                           value={matchType}
-                          className="hover:bg-accent/20 focus:bg-accent/20"
+                          className="hover:bg-accent/20 focus:bg-accent/20 focus:text-white"
                         >
                           {convertMatchType(matchType)}
                         </SelectItem>
