@@ -3,6 +3,7 @@ import { Button } from "../components/ui/button";
 import Header from "../components/ui/header";
 import Background from "../components/ui/background";
 import { usePendingVotes } from "../hooks/use-pending-votes";
+import Loading from "../components/ui/loading";
 
 export default function AdminPendingVotes() {
   const { matchId } = useParams();
@@ -17,13 +18,8 @@ export default function AdminPendingVotes() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-accent border-t-transparent"></div>
-      </div>
-    );
+    return <Loading text="Loading pending votes..." />;
   }
-
   if (error) {
     return (
       <div className="flex h-screen flex-col items-center justify-center p-4">
@@ -51,7 +47,7 @@ export default function AdminPendingVotes() {
   }
 
   return (
-    <div className="h-screen flex-1 bg-bg p-6">
+    <div className="min-h-screen flex-1 bg-bg p-6">
       <Background />
       <Header
         title={`Pending Votes for ${votingData.competitionName}`}
