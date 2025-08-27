@@ -38,34 +38,49 @@ export default function StatsTable({
         <table className="w-full">
           <thead>
             <tr className="bg-primary">
-              <th className="border-b-2 border-accent p-2 text-left text-sm uppercase tracking-wider text-accent lg:p-3">
+              <th className="border-b-2 border-accent p-2 text-left text-xs uppercase tracking-wider text-accent md:text-sm lg:p-3">
                 Name
               </th>
               <th
-                className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
+                className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:p-3"
                 onClick={() => sortPlayers("matches")}
               >
-                Matches
+                <span className="inline md:hidden" title="Matches">
+                  🏟️
+                </span>
+                <span className="hidden md:inline">Matches</span>
                 {getSortArrow("totalMatches")}
               </th>
               <th
-                className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
+                className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:p-3"
                 onClick={() => sortPlayers("goals")}
               >
-                Goals{getSortArrow("totalGoals")}
+                <span className="inline md:hidden" title="Goals">
+                  ⚽
+                </span>
+                <span className="hidden md:inline">Goals</span>
+                {getSortArrow("totalGoals")}
               </th>
               <th
-                className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
+                className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:p-3"
                 onClick={() => sortPlayers("assists")}
               >
-                Assists{getSortArrow("totalAssists")}
+                <span className="inline md:hidden" title="Assists">
+                  🅰️
+                </span>
+                <span className="hidden md:inline">Assists</span>
+                {getSortArrow("totalAssists")}
               </th>
               {votingEnabled && (
                 <th
-                  className="border-b-2 border-accent p-2 text-center text-sm uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary lg:p-3"
+                  className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:p-3"
                   onClick={() => sortPlayers("rating")}
                 >
-                  Rating{getSortArrow("totalRating")}
+                  <span className="inline md:hidden" title="Rating">
+                    ⭐
+                  </span>
+                  <span className="hidden md:inline">Rating</span>
+                  {getSortArrow("totalRating")}
                 </th>
               )}
             </tr>

@@ -24,7 +24,7 @@ function DuelCompetitionPage({
 
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-      <div className="relative flex min-h-[80vh] flex-col gap-2 overflow-hidden rounded-lg border-2 border-accent bg-panel-bg p-6 text-center shadow-inner md:min-h-fit">
+      <div className="relative z-10 flex min-h-[80vh] flex-col gap-2 overflow-visible rounded-lg border-2 border-accent bg-panel-bg p-6 text-center shadow-inner md:min-h-fit">
         <div className="flex-shrink-0">
           <MatchList
             competitionId={competition.id}

@@ -172,11 +172,34 @@ export default function VotePage() {
   }
 
   return (
-    <div className="flex h-screen flex-1 flex-col bg-bg p-6">
+    <div className="flex min-h-screen flex-1 flex-col bg-bg p-6 pb-8">
       <Background />
       <Header title="Player Voting" hasSidebar={true} />
-      <div className="relative grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="flex flex-col space-y-6 lg:col-span-1">
+      <div className="relative flex flex-col gap-8 lg:flex-row lg:gap-6">
+        <div className="order-1 flex flex-col lg:order-1 lg:flex-[2]">
+          <div className="rounded-lg border-2 border-accent/70 bg-panel-bg p-5 shadow-lg">
+            <h2 className="mb-4 border-b border-accent/30 pb-2 text-xl font-bold text-accent">
+              Select Your Top 3 Players
+            </h2>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <VotePlayerList
+                teamName="Home Team"
+                players={votingStatus.players}
+                filterFn={(p) => p.isHome && p.canVoteFor}
+                selectedPlayers={selectedPlayers}
+                onPlayerSelect={handlePlayerSelect}
+              />
+              <VotePlayerList
+                teamName="Away Team"
+                players={votingStatus.players}
+                filterFn={(p) => !p.isHome && p.canVoteFor}
+                selectedPlayers={selectedPlayers}
+                onPlayerSelect={handlePlayerSelect}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="order-2 flex flex-col space-y-6 lg:order-2 lg:max-w-md lg:flex-[1]">
           <GuideBox title="How Voting Works">
             <div className="space-y-4 text-gray-300">
               <p className="flex items-start">
@@ -215,6 +238,7 @@ export default function VotePage() {
               )}
             </p>
           </InfoBox>
+
           <PlayerSelection
             selectedPlayers={selectedPlayers}
             players={votingStatus.players}
@@ -223,31 +247,6 @@ export default function VotePage() {
             maxSelections={3}
             showSubmitButton={selectedPlayers.length === 3}
           />
-        </div>
-
-        <div className="lg:col-span-2">
-          <div className="rounded-lg border-2 border-accent/70 bg-panel-bg p-5 shadow-lg">
-            <h2 className="mb-4 border-b border-accent/30 pb-2 text-xl font-bold text-accent">
-              Select Your Top 3 Players
-            </h2>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <VotePlayerList
-                teamName="Home Team"
-                players={votingStatus.players}
-                filterFn={(p) => p.isHome && p.canVoteFor}
-                selectedPlayers={selectedPlayers}
-                onPlayerSelect={handlePlayerSelect}
-              />
-              <VotePlayerList
-                teamName="Away Team"
-                players={votingStatus.players}
-                filterFn={(p) => !p.isHome && p.canVoteFor}
-                selectedPlayers={selectedPlayers}
-                onPlayerSelect={handlePlayerSelect}
-              />
-            </div>
-          </div>
         </div>
       </div>
     </div>
