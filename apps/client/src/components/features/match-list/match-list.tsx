@@ -38,7 +38,7 @@ export default function MatchList({
       if (!a.match.date) return 1;
       if (!b.match.date) return -1;
       return (
-        new Date(a.match.date).getTime() - new Date(b.match.date).getTime()
+        new Date(b.match.date).getTime() - new Date(a.match.date).getTime()
       );
     })
     .map(({ index }) => index);
@@ -97,7 +97,7 @@ export default function MatchList({
                 if (!a.date && !b.date) return 0;
                 if (!a.date) return 1;
                 if (!b.date) return -1;
-                return new Date(a.date).getTime() - new Date(b.date).getTime();
+                return new Date(b.date).getTime() - new Date(a.date).getTime();
               })
               .map((match) => {
                 if (!match) return null;

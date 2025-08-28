@@ -39,7 +39,9 @@ export class AuthService {
     });
 
     const { id_token } = response.data;
-    return JSON.parse(Buffer.from(id_token.split(".")[1], "base64").toString());
+    return JSON.parse(
+      Buffer.from(id_token.split(".")[1], "base64").toString("utf8")
+    );
   }
 
   static async findOrCreateUser(googleUser: any): Promise<User> {

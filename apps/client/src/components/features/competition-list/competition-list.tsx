@@ -2,6 +2,7 @@ import { DetailedCompetitionResponse, Role } from "@repo/shared-types";
 import { Calendar, CheckSquare, Settings, Shield, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../ui/button";
+import { useIsMobile } from "../../../hooks/use-mobile";
 
 interface CompetitionListProps {
   competitions: DetailedCompetitionResponse[];
@@ -11,6 +12,8 @@ export default function CompetitionList({
   competitions,
 }: CompetitionListProps) {
   const navigate = useNavigate();
+
+  const isMobile = useIsMobile();
 
   return (
     <div className="relative -mx-4 p-2 sm:-mx-0">
@@ -58,7 +61,26 @@ export default function CompetitionList({
           </thead>
           <tbody className="divide-y divide-accent/30">
             {competitions.map((competition) => (
-              <tr key={competition.id} className="hover:bg-bg/30">
+              <tr
+                key={competition.id}
+                className={`hover:bg-bg/30 ${isMobile ? "cursor-pointer" : ""}`}
+                onClick={
+                  isMobile
+                    ? () => navigate(`/competition/${competition.id}`)
+                    : undefined
+                }
+                role={isMobile ? "button" : undefined}
+                tabIndex={isMobile ? 0 : undefined}
+                onKeyDown={
+                  isMobile
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          navigate(`/competition/${competition.id}`);
+                        }
+                      }
+                    : undefined
+                }
+              >
                 <td className="whitespace-nowrap px-2 py-3 sm:px-4 sm:py-4">
                   <div className="flex items-center gap-2">
                     <div
@@ -127,13 +149,16 @@ export default function CompetitionList({
                   <div className="flex justify-end space-x-1 sm:space-x-2">
                     <Button
                       onClick={() => navigate(`/competition/${competition.id}`)}
-                      className="rounded-full bg-accent/20 p-1 text-accent hover:bg-accent/30 sm:p-1.5"
+                      className="hidden rounded-full bg-accent/20 p-1 text-accent hover:bg-accent/30 sm:inline-block sm:p-1.5"
                       title="View competition"
                     >
                       <Trophy size={14} className="sm:h-4 sm:w-4" />
                     </Button>
                     <Button
-                      onClick={() => navigate(`/matches/${competition.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/matches/${competition.id}`);
+                      }}
                       className="hidden rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:inline-block sm:p-1.5"
                       title="View matches"
                     >
@@ -147,9 +172,10 @@ export default function CompetitionList({
                     </Button> */}
                     {competition.userRole === Role.ADMIN && (
                       <Button
-                        onClick={() =>
-                          navigate(`/competition/${competition.id}/admin`)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/competition/${competition.id}/admin`);
+                        }}
                         className="rounded-full bg-bg/30 p-1 text-gray-400 hover:bg-accent/10 hover:text-gray-300 sm:p-1.5"
                         title="Settings"
                       >

@@ -14,7 +14,7 @@ export default function StatsTable({
   const { sortedPlayers, sortOrder, sortColumn, sortPlayers } = useSortPlayers(
     playerStats,
     "goals",
-    "asc",
+    "desc",
   );
 
   const getSortArrow = (key: keyof UserTotals) => {
