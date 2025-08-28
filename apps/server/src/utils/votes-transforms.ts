@@ -46,7 +46,7 @@ export function transformMatchServiceToPendingVotes(
       .includes(match.id),
   }));
 
-  const teams = match.matchPlayers.flatMap((mt) => mt.team.name);
+  const teams = match.matchTeams.flatMap((mt) => mt.team.name);
 
   return {
     matchId: match.id,
