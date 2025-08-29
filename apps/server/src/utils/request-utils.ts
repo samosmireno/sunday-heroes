@@ -9,3 +9,11 @@ export const extractUserId = (req: Request): string => {
   }
   return authenticatedReq.userId;
 };
+
+export const getRequiredQuery = (req: Request, param: string): string => {
+  const value = req.query[param]?.toString();
+  if (!value) {
+    throw new BadRequestError(`Missing required query parameter: ${param}`);
+  }
+  return value;
+};

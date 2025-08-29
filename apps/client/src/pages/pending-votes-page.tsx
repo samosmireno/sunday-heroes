@@ -4,14 +4,20 @@ import Header from "../components/ui/header";
 import Background from "../components/ui/background";
 import { usePendingVotes } from "../hooks/use-pending-votes";
 import Loading from "../components/ui/loading";
+import { useAuth } from "../context/auth-context";
+import { Role } from "@repo/shared-types";
 
 export default function AdminPendingVotes() {
   const { matchId } = useParams();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   if (!matchId) return null;
 
-  const { votingData, isLoading, error } = usePendingVotes(matchId);
+  const { votingData, isLoading, error } = usePendingVotes(
+    matchId,
+    user?.id || "",
+  );
 
   const handleVoteClick = (matchId: string, playerId: string) => {
     navigate(`/vote/${matchId}?voterId=${playerId}`);
@@ -104,16 +110,18 @@ export default function AdminPendingVotes() {
                     </td>
 
                     <td className="p-3 px-5 text-sm sm:text-base">
-                      {!vote.voted && (
-                        <Button
-                          onClick={() =>
-                            handleVoteClick(votingData.matchId, vote.playerId)
-                          }
-                          className="bg-accent/20 p-1 text-accent hover:bg-accent/30 sm:p-3"
-                        >
-                          Vote
-                        </Button>
-                      )}
+                      {!vote.voted &&
+                        (vote.isUser ||
+                          votingData.userRole !== Role.PLAYER) && (
+                          <Button
+                            onClick={() =>
+                              handleVoteClick(votingData.matchId, vote.playerId)
+                            }
+                            className="bg-accent/20 p-1 text-accent hover:bg-accent/30 sm:p-3"
+                          >
+                            Vote
+                          </Button>
+                        )}
                     </td>
                   </tr>
                 ))}

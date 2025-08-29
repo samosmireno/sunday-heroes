@@ -11,6 +11,7 @@ import {
   NotFoundError,
   VotingError,
 } from "../utils/errors";
+import { CompetitionRepo } from "../repositories/competition/competition-repo";
 
 export class VoteService {
   static async submitVotes(
@@ -135,13 +136,25 @@ export class VoteService {
 
   static async getMatchVotes(
     matchId: string,
+    userId: string,
     options?: { limit?: number; offset?: number }
   ) {
     const match = await MatchRepo.findByIdWithDetails(matchId);
     if (!match) {
       throw new NotFoundError("Match not found");
     }
-    const matchVoteResponse = transformMatchServiceToPendingVotes(match);
+
+    const competition = await CompetitionRepo.findByMatchId(matchId);
+
+    if (!competition) {
+      throw new NotFoundError("Competition");
+    }
+
+    const matchVoteResponse = transformMatchServiceToPendingVotes(
+      match,
+      competition,
+      userId
+    );
     return matchVoteResponse;
   }
 

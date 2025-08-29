@@ -11,7 +11,7 @@ import { authenticateToken } from "../../middleware/authentication-middleware";
 const router = Router();
 
 router.get("/status/:matchId", getVotingStatus);
-router.get("/pending-votes/:matchId", getPendingVotesForMatch);
+router.get("/pending-votes", getPendingVotesForMatch);
 
 router.post(
   "/",

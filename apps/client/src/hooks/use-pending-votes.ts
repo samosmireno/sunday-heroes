@@ -4,13 +4,20 @@ import { MatchVotes } from "@repo/shared-types";
 import { useQuery } from "@tanstack/react-query";
 import { useErrorHandler } from "./use-error-handler";
 
-export const usePendingVotes = (matchId: string) => {
+export const usePendingVotes = (matchId: string, userId: string) => {
   const { handleError } = useErrorHandler();
 
-  const fetchPendingVotes = async (matchId: string): Promise<MatchVotes> => {
+  const fetchPendingVotes = async (
+    matchId: string,
+    userId: string,
+  ): Promise<MatchVotes> => {
     try {
+      const params = new URLSearchParams({
+        matchId,
+        userId,
+      });
       const { data } = await axios.get(
-        `${config.server}/api/votes/pending-votes/${matchId}`,
+        `${config.server}/api/votes/pending-votes?${params.toString()}`,
       );
       return data;
     } catch (error) {
@@ -25,7 +32,7 @@ export const usePendingVotes = (matchId: string) => {
 
   const pendingVotesQuery = useQuery({
     queryKey: ["pending_votes"],
-    queryFn: () => fetchPendingVotes(matchId),
+    queryFn: () => fetchPendingVotes(matchId, userId),
   });
 
   return {

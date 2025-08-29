@@ -2,18 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { CompetitionService } from "../services/competition-service";
 import { CompetitionType } from "@repo/shared-types";
 import { sendSuccess } from "../utils/response-utils";
-import { extractUserId } from "../utils/request-utils";
+import { extractUserId, getRequiredQuery } from "../utils/request-utils";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 import { TeamService } from "../services/team-service";
 import { BadRequestError } from "../utils/errors";
-
-const getRequiredQuery = (req: Request, param: string): string => {
-  const value = req.query[param]?.toString();
-  if (!value) {
-    throw new BadRequestError(`Missing required query parameter: ${param}`);
-  }
-  return value;
-};
 
 export const getAllCompetitionsFromDashboard = async (
   req: Request,

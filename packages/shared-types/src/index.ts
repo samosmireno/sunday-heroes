@@ -125,8 +125,10 @@ export type PendingVote = {
   playerName: string;
   playerId: string;
   voted: boolean;
+  isUser: boolean;
 };
 export type MatchVotes = {
+  userRole: Role;
   matchId: string;
   matchDate?: string;
   competitionId: string;
