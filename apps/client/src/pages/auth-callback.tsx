@@ -18,7 +18,8 @@ const AuthCallback = () => {
     }
 
     if (userParam) {
-      const userData = processAuthSuccess(userParam);
+      const userDataBase64 = decodeURIComponent(userParam);
+      const userData = processAuthSuccess(userDataBase64);
       if (userData) {
         const redirectPath = sessionStorage.getItem("redirectAfterLogin");
         if (redirectPath) {

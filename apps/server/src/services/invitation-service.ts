@@ -168,9 +168,12 @@ export class InvitationService {
 
       await this.acceptInvitation(inviteToken, user.id);
       const userInfo = AuthService.createUserResponse(user);
+      const encodedUser = encodeURIComponent(
+        AuthService.encodeUserInfo(userInfo)
+      );
 
       return res.redirect(
-        `${config.google.redirectClientUrl}?user=${AuthService.encodeUserInfo(userInfo)}&invitation=accepted&dashboard=${invitation.dashboardPlayer.dashboard.id}`
+        `${config.google.redirectClientUrl}?user=${encodedUser}&invitation=accepted&dashboard=${invitation.dashboardPlayer.dashboard.id}`
       );
     } catch (error) {
       throw new InvitationError("Failed to handle invitation");

@@ -62,7 +62,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("No user data received");
       }
 
-      const userData = JSON.parse(atob(userDataBase64));
+      const binary = Uint8Array.from(atob(userDataBase64), (c) =>
+        c.charCodeAt(0),
+      );
+      const jsonStr = new TextDecoder("utf-8").decode(binary);
+      const userData = JSON.parse(jsonStr);
+      console.log(userData);
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));

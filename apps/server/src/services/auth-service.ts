@@ -39,9 +39,7 @@ export class AuthService {
     });
 
     const { id_token } = response.data;
-    return JSON.parse(
-      Buffer.from(id_token.split(".")[1], "base64").toString("utf8")
-    );
+    return JSON.parse(Buffer.from(id_token.split(".")[1], "base64").toString());
   }
 
   static async findOrCreateUser(googleUser: any): Promise<User> {
@@ -78,7 +76,7 @@ export class AuthService {
   }
 
   static encodeUserInfo(userInfo: UserResponse): string {
-    return Buffer.from(JSON.stringify(userInfo)).toString("base64");
+    return Buffer.from(JSON.stringify(userInfo), "utf8").toString("base64");
   }
 
   static async logout(refreshToken?: string) {

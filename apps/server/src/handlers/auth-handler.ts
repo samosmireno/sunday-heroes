@@ -112,9 +112,10 @@ export const handleGoogleCallback = async (
     }
 
     const userInfo = AuthService.createUserResponse(user);
-    res.redirect(
-      `${config.google.redirectClientUrl}?user=${AuthService.encodeUserInfo(userInfo)}`
+    const encodedUser = encodeURIComponent(
+      AuthService.encodeUserInfo(userInfo)
     );
+    res.redirect(`${config.google.redirectClientUrl}?user=${encodedUser}`);
   } catch (error) {
     if (error instanceof Error) {
       console.error("Google callback error:", error.message);
