@@ -7,7 +7,7 @@ import Loading from "../components/ui/loading";
 import ErrorPage from "./error-page";
 import Background from "../components/ui/background";
 import { Button } from "../components/ui/button";
-import { UserPlus, AlertTriangle } from "lucide-react";
+import { UserPlus, AlertTriangle, ArrowLeft } from "lucide-react";
 import ModeratorsList from "../components/features/competition-admin/moderators-list";
 import CompetitionSettings from "../components/features/competition-admin/competition-settings";
 import AddModeratorModal from "../components/features/competition-admin/add-moderator-modal";
@@ -77,21 +77,30 @@ export default function CompetitionAdminPage() {
       <Background />
       <Header title={`Admin: ${competition.name}`} hasSidebar={true} />
 
-      <div className="relative mb-4 sm:mb-6">
-        <div className="flex overflow-x-auto rounded-lg bg-bg/70 p-1">
-          {tabs.map(({ id, label }) => (
-            <Button
-              key={id}
-              onClick={() => setActiveTab(id as any)}
-              className={`flex min-w-0 flex-shrink-0 items-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all sm:px-4 sm:text-sm ${
-                activeTab === id
-                  ? "bg-accent/20 text-accent"
-                  : "text-gray-400 hover:bg-bg/50 hover:text-gray-300"
-              }`}
-            >
-              {label}
-            </Button>
-          ))}
+      <div className="relative mb-4 w-full sm:mb-6">
+        <div className="flex w-full items-center justify-between overflow-x-auto rounded-lg bg-bg/70 p-1">
+          <div className="flex">
+            {tabs.map(({ id, label }) => (
+              <Button
+                key={id}
+                onClick={() => setActiveTab(id as any)}
+                className={`flex min-w-0 flex-shrink-0 items-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all sm:px-4 sm:text-sm ${
+                  activeTab === id
+                    ? "bg-accent/20 text-accent"
+                    : "text-gray-400 hover:bg-bg/50 hover:text-gray-300"
+                }`}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+          <Button
+            onClick={() => navigate(`/competition/${competitionId}`)}
+            className="ml-2 rounded-md bg-accent/20 px-3 py-2 text-xs font-medium text-accent hover:bg-accent/30 sm:px-4 sm:text-sm"
+            title="Back to Competition"
+          >
+            <ArrowLeft />
+          </Button>
         </div>
       </div>
 

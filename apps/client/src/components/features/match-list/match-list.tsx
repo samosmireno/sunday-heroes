@@ -61,9 +61,9 @@ export default function MatchList({
 
   return (
     <div className="flex w-full flex-col">
-      <div className="mb-6 flex items-center justify-between border-b-2 border-dashed border-accent pb-3">
+      <div className="mb-6 flex items-center justify-between gap-2 border-b-2 border-dashed border-accent pb-3">
         <h2
-          className="text-xl uppercase text-accent"
+          className="text-md uppercase text-accent sm:text-xl"
           style={{ textShadow: "1px 1px 0 #000" }}
         >
           Match Results
