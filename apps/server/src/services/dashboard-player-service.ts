@@ -10,6 +10,7 @@ import {
   ConflictError,
   NotFoundError,
 } from "../utils/errors";
+import { CompetitionService } from "./competition-service";
 
 export class DashboardPlayerService {
   static async getDashboardPlayers(
@@ -48,14 +49,31 @@ export class DashboardPlayerService {
     };
   }
 
-  static async getDashboardPlayersByQuery(userId: string, query: string) {
-    const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
+  static async getDashboardPlayersByQuery(
+    userId: string,
+    competitionId: string,
+    query: string
+  ) {
+    const isModerator = await CompetitionService.isUserModerator(
+      competitionId,
+      userId
+    );
 
-    if (!dashboardId) {
-      throw new NotFoundError("Dashboard");
+    if (isModerator) {
+      return await DashboardPlayerRepo.findByNameSearchInCompetition(
+        query,
+        competitionId
+      );
+    } else {
+      const dashboardId =
+        await DashboardService.getDashboardIdFromUserId(userId);
+
+      if (!dashboardId) {
+        throw new NotFoundError("Dashboard");
+      }
+
+      return await DashboardPlayerRepo.findByNameSearch(query, dashboardId);
     }
-
-    return await DashboardPlayerRepo.findByNameSearch(query, dashboardId);
   }
 
   static async createDashboardPlayer(

@@ -240,6 +240,42 @@ export class DashboardPlayerRepo {
     }
   }
 
+  static async findByNameSearchInCompetition(
+    searchTerm: string,
+    competitionId: string,
+    options?: { limit?: number; offset?: number },
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+      const DashboardPlayers = await prismaClient.dashboardPlayer.findMany({
+        where: {
+          matchPlayers: {
+            some: {
+              match: {
+                competitionId: competitionId,
+              },
+            },
+          },
+          nickname: {
+            startsWith: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        include: DASHBOARD_PLAYER_DETAILED_INCLUDE,
+        orderBy: { nickname: "asc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+      return DashboardPlayers;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByNameSearchInCompetition"
+      );
+    }
+  }
+
   static async countByDashboardId(
     dashboardId: string,
     tx?: PrismaTransaction

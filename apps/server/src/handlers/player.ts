@@ -11,14 +11,21 @@ export const getAllDashboardPlayers = async (
 ) => {
   try {
     const userId = req.query.userId?.toString();
+    const competitionId = req.query.competitionId?.toString();
+
     if (!userId) {
       throw new BadRequestError("userId query parameter is required");
+    }
+
+    if (!competitionId) {
+      throw new BadRequestError("competitionId query parameter is required");
     }
 
     const query = req.query.query?.toString();
 
     const players = await DashboardPlayerService.getDashboardPlayersByQuery(
       userId,
+      competitionId,
       query || ""
     );
     sendSuccess(res, players);

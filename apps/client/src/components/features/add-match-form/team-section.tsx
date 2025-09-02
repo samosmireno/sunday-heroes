@@ -9,6 +9,7 @@ import { capitalizeFirstLetter } from "../../../utils/utils";
 import PlayerList from "./player-list";
 import { useAuth } from "../../../context/auth-context";
 import { MatchPlayersData } from "./add-match-schemas";
+import { useParams } from "react-router-dom";
 
 interface TeamSectionProps {
   team: Team;
@@ -36,13 +37,25 @@ export default function TeamSection({
   const [searchValue, setSearchValue] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<string>("");
   const { user } = useAuth();
+  const { competitionId } = useParams<{
+    matchId: string;
+    competitionId: string;
+  }>();
 
   const { players, addPlayer, removePlayer, fetchSuggestions, setPlayers } =
-    useTeamPlayers(user?.id ?? null);
+    useTeamPlayers(user?.id ?? null, competitionId ?? "");
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["data", searchValue],
-    queryFn: () => fetchSuggestions(team, searchValue, selectedPlayers),
+  const { data: suggestions = [], isLoading } = useQuery({
+    queryKey: [
+      "playerSuggestions",
+      team,
+      searchValue,
+      selectedPlayers,
+      competitionId,
+      user?.id,
+    ],
+    queryFn: () => fetchSuggestions(searchValue, selectedPlayers),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   function addPlayerToForm(player: string) {
@@ -103,17 +116,13 @@ export default function TeamSection({
   };
 
   useEffect(() => {
-    refetch();
-  }, [refetch, selectedPlayers]);
-
-  useEffect(() => {
     if (initialPlayers) {
       setPlayers((prev) => ({
         ...prev,
         [team]: initialPlayers,
       }));
     }
-  }, [initialPlayers]);
+  }, [initialPlayers, setPlayers, team]);
 
   return (
     <div className="flex flex-col px-3 sm:px-6 md:px-8 lg:px-12">
@@ -127,7 +136,7 @@ export default function TeamSection({
             onSelectedValueChange={setSelectedValue}
             searchValue={searchValue}
             onSearchValueChange={setSearchValue}
-            items={(data ?? []).map((item: string) => ({
+            items={suggestions.map((item: string) => ({
               value: item,
               label: item,
             }))}

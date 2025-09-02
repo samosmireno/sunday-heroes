@@ -116,7 +116,7 @@ export function transformAddMatchRequestToService(
   const matchForService: Omit<Match, "id"> = {
     competitionId: match.competitionId,
     matchType: match.matchType,
-    date: match.date ?? null,
+    date: match.date ? new Date(match.date) : null,
     homeTeamScore: match.homeTeamScore,
     awayTeamScore: match.awayTeamScore,
     penaltyHomeScore: match.penaltyHomeScore ?? null,

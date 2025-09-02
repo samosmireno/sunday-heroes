@@ -153,6 +153,15 @@ export class CompetitionService {
     return adminId === userId;
   }
 
+  static async isUserModerator(
+    competitionId: string,
+    userId: string
+  ): Promise<boolean> {
+    const moderatorIds = await CompetitionAuthRepo.getModerators(competitionId);
+
+    return moderatorIds.includes(userId);
+  }
+
   static async isUserAdminOrModerator(
     competitionId: string,
     userId: string
