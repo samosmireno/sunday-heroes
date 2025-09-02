@@ -1,6 +1,5 @@
 import {
   CompetitionResponse,
-  createMatchRequest,
   MatchPageResponse,
   MatchResponse,
   PlayerResponse,
@@ -8,6 +7,7 @@ import {
 import { MatchWithDetails } from "../repositories/match-repo";
 import { Match, VotingStatus } from "@prisma/client";
 import { calculatePendingVotes, calculatePlayerScore } from "./utils";
+import { createMatchRequest } from "../schemas/create-match-request-schema";
 
 function sortPlayersHomeAwayByPosition(
   players: PlayerResponse[]
@@ -39,7 +39,7 @@ export function transformMatchServiceToResponse(
 
   const transformedData: MatchResponse = {
     id: match.id,
-    date: match.date?.toLocaleDateString(),
+    date: match.date?.toISOString().split("T")[0],
     matchType: match.matchType as MatchResponse["matchType"],
     round: match.round,
     homeTeamScore: match.homeTeamScore,
@@ -85,9 +85,9 @@ export function transformMatchesToMatchesResponse(
 
     const teamNames = match.matchTeams.map((teamMatch) => teamMatch.team.name);
 
-    return {
+    const res = {
       id: match.id,
-      date: match.date?.toLocaleDateString(),
+      date: match.date?.toISOString().split("T")[0],
       teams: teamNames,
       scores: [match.homeTeamScore, match.awayTeamScore],
       penaltyScores:
@@ -106,6 +106,8 @@ export function transformMatchesToMatchesResponse(
       competitionType: match.competition.type as CompetitionResponse["type"],
       isAdmin: match.competition.dashboard.adminId === userId,
     };
+
+    return res;
   });
 }
 

@@ -16,7 +16,6 @@ import { createCompetitionRequest } from "../schemas/create-competition-request-
 import { TeamService } from "./team-service";
 import { AuthorizationError, NotFoundError } from "../utils/errors";
 import { DashboardPlayerService } from "./dashboard-player-service";
-import prisma from "../repositories/prisma-client";
 
 export class CompetitionService {
   static async getAllCompetitions() {

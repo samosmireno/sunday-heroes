@@ -1,5 +1,5 @@
 import { Match, Prisma, VotingStatus } from "@prisma/client";
-import { createMatchRequest } from "@repo/shared-types";
+import { createMatchRequest } from "../../schemas/create-match-request-schema";
 import { MatchRepo } from "../../repositories/match-repo";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";
 import { EmailService } from "../email-service";

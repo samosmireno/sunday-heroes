@@ -3,7 +3,12 @@ import { MatchType } from ".";
 
 export const createMatchRequestSchema = z.object({
   competitionId: z.string(),
-  date: z.coerce.date().optional(),
+  date: z
+    .string()
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    })
+    .optional(),
   homeTeamScore: z.coerce
     .number({
       invalid_type_error: "Required",

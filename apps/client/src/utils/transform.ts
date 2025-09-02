@@ -22,8 +22,13 @@ export const transformDuelFormToRequest = (
     isHome: isPlayerHome(player.nickname, data.players.homePlayers),
   }));
 
+  const safeDate = data.match.date ? new Date(data.match.date) : undefined;
+  if (safeDate) {
+    safeDate.setHours(12, 0, 0, 0);
+  }
+
   const reqData: createMatchRequest = {
-    date: data.match.date,
+    date: safeDate ? safeDate.toISOString() : undefined,
     homeTeamScore: data.match.homeTeamScore,
     awayTeamScore: data.match.awayTeamScore,
     matchType: data.match.matchType,
@@ -49,8 +54,13 @@ export const transformLeagueFormToRequest = (
     isHome: isPlayerHome(player.nickname, data.players.homePlayers),
   }));
 
+  const safeDate = data.match.date ? new Date(data.match.date) : undefined;
+  if (safeDate) {
+    safeDate.setHours(12, 0, 0, 0);
+  }
+
   const reqData: createMatchRequest = {
-    date: data.match.date,
+    date: safeDate ? safeDate.toISOString() : undefined,
     homeTeamScore: data.match.homeTeamScore,
     awayTeamScore: data.match.awayTeamScore,
     matchType: data.match.matchType,

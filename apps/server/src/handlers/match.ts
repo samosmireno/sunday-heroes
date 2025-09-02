@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createMatchRequest } from "@repo/shared-types";
+import { createMatchRequest } from "../schemas/create-match-request-schema";
 import { MatchService } from "../services/match/match-service";
 import { MatchAuthService } from "../services/match/match-auth-service";
 import { sendSuccess } from "../utils/response-utils";
