@@ -45,6 +45,8 @@ export default function TeamSection({
   const { players, addPlayer, removePlayer, fetchSuggestions, setPlayers } =
     useTeamPlayers(user?.id ?? null, competitionId ?? "");
 
+  console.log("Competition", competitionId);
+
   const { data: suggestions = [], isLoading } = useQuery({
     queryKey: [
       "playerSuggestions",

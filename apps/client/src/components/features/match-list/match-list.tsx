@@ -1,5 +1,5 @@
 import MatchResult from "./match-result";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Carousel,
   CarouselContent,
@@ -12,7 +12,6 @@ import { Button } from "../../ui/button";
 import { MatchResponse, Role } from "@repo/shared-types";
 
 interface MatchListProps {
-  competitionId: string;
   userRole: Role;
   matches: MatchResponse[];
   selectedMatch: number;
@@ -21,7 +20,6 @@ interface MatchListProps {
 }
 
 export default function MatchList({
-  competitionId,
   userRole,
   matches,
   selectedMatch,
@@ -30,6 +28,9 @@ export default function MatchList({
 }: MatchListProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(1);
+  const { competitionId } = useParams<{
+    competitionId: string;
+  }>();
 
   const sortedMatchIndexes = matches
     .map((match, index) => ({ match, index }))

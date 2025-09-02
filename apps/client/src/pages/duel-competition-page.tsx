@@ -27,7 +27,6 @@ function DuelCompetitionPage({
       <div className="relative z-10 flex min-h-[80vh] flex-col gap-2 overflow-visible rounded-lg border-2 border-accent bg-panel-bg p-6 text-center shadow-inner md:min-h-fit">
         <div className="flex-shrink-0">
           <MatchList
-            competitionId={competition.id}
             userRole={competition.userRole}
             matches={competition.matches}
             selectedMatch={currentMatch}
