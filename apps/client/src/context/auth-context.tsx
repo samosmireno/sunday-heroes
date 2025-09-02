@@ -67,7 +67,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       );
       const jsonStr = new TextDecoder("utf-8").decode(binary);
       const userData = JSON.parse(jsonStr);
-      console.log(userData);
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));

@@ -78,8 +78,8 @@ export default function CompetitionAdminPage() {
       <Header title={`Admin: ${competition.name}`} hasSidebar={true} />
 
       <div className="relative mb-4 w-full sm:mb-6">
-        <div className="flex w-full items-center justify-between overflow-x-auto rounded-lg bg-bg/70 p-1">
-          <div className="flex">
+        <div className="flex w-full items-center justify-between">
+          <div className="flex justify-between overflow-x-auto rounded-lg bg-bg/70 p-1">
             {tabs.map(({ id, label }) => (
               <Button
                 key={id}

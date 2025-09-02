@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import axiosInstance from "../config/axios-config";
 import { config } from "../config/config";
 import { CheckCircle2, Info } from "lucide-react";
@@ -12,6 +12,7 @@ import { InfoBox } from "../components/ui/info-box";
 import PlayerSelection from "../components/features/voting/player-selection";
 import VotePlayerList from "../components/features/voting/vote-player-list";
 import { useErrorHandler } from "../hooks/use-error-handler";
+import { Button } from "../components/ui/button";
 
 interface SelectedPlayer {
   id: string;
@@ -31,6 +32,7 @@ function findFirstRankMissing(arr: number[]) {
 export default function VotePage() {
   const { matchId } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const voterId = searchParams.get("voterId");
   const [selectedPlayers, setSelectedPlayers] = useState<SelectedPlayer[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,9 +97,15 @@ export default function VotePage() {
     return (
       <div className="h-screen flex-1 bg-bg p-6">
         <Header title="Voting Error" hasSidebar={true} />
-        <div className="srounded-lg relative border-2 border-red-500 bg-panel-bg p-6 shadow-lg">
+        <div className="relative flex flex-col items-center space-y-4 rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <h2 className="mb-4 text-xl font-bold text-red-500">Error</h2>
           <p className="text-gray-200">{error}</p>
+          <Button
+            onClick={() => navigate("/dashboard")}
+            className="w-fit transform rounded-lg border-2 border-accent/50 bg-accent/20 px-3 py-2 text-accent shadow-md hover:bg-accent/30 sm:px-4"
+          >
+            Back to Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -108,11 +116,17 @@ export default function VotePage() {
       <div className="h-screen flex-1 bg-bg p-6">
         <Header title="Match not found" hasSidebar={true} />
 
-        <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
+        <div className="relative flex flex-col items-center space-y-4 rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
             The requested match could not be found or you don't have permission
             to vote.
           </p>
+          <Button
+            onClick={() => navigate("/dashboard")}
+            className="w-fit transform rounded-lg border-2 border-accent/50 bg-accent/20 px-3 py-2 text-accent shadow-md hover:bg-accent/30 sm:px-4"
+          >
+            Back to Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -133,6 +147,12 @@ export default function VotePage() {
               Thank you for voting for the best players in this match. Your
               votes have been recorded.
             </p>
+            <Button
+              onClick={() => navigate("/dashboard")}
+              className="transform rounded-lg border-2 border-accent/50 bg-accent/20 px-3 py-2 text-accent shadow-md hover:bg-accent/30 sm:px-4"
+            >
+              Back to Dashboard
+            </Button>
           </div>
         </div>
       </div>
@@ -145,11 +165,17 @@ export default function VotePage() {
         <Background />
         <Header title="Already Voted" hasSidebar={true} />
 
-        <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
+        <div className="relative flex flex-col items-center space-y-4 rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
             You have already submitted your votes for this match. Thank you for
             participating!
           </p>
+          <Button
+            onClick={() => navigate("/dashboard")}
+            className="w-fit transform rounded-lg border-2 border-accent/50 bg-accent/20 px-3 py-2 text-accent shadow-md hover:bg-accent/30 sm:px-4"
+          >
+            Back to Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -161,12 +187,18 @@ export default function VotePage() {
         <Background />
         <Header title="Voting Closed" hasSidebar={true} />
 
-        <div className="relative rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
+        <div className="relative flex flex-col items-center space-y-4 rounded-lg border-2 border-accent/70 bg-panel-bg p-6 text-center shadow-lg">
           <p className="text-gray-200">
             Voting is no longer available for this match. The voting period has
             ended.
           </p>
         </div>
+        <Button
+          onClick={() => navigate("/dashboard")}
+          className="w-fit transform rounded-lg border-2 border-accent/50 bg-accent/20 px-3 py-2 text-accent shadow-md hover:bg-accent/30 sm:px-4"
+        >
+          Back to Dashboard
+        </Button>
       </div>
     );
   }
