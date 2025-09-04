@@ -145,7 +145,7 @@ export default function PlayersList({ players }: PlayersListProps) {
                         </span>
                       </span>
                       {player.isRegistered && player.email && (
-                        <div className="text-2xs pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform whitespace-nowrap rounded-lg border border-accent/30 bg-gray-900 px-2 py-1 text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100 sm:px-3 sm:py-2 sm:text-xs">
+                        <div className="text-2xs pointer-events-none absolute bottom-full left-1/4 z-10 mb-2 -translate-x-1/2 transform whitespace-nowrap rounded-lg border-2 border-accent/30 bg-gray-900 px-2 py-1 text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100 sm:px-3 sm:py-2 sm:text-xs">
                           <div className="flex items-center">
                             <span className="mr-1">📧</span>
                             {player.email}
