@@ -25,7 +25,7 @@ export const useDashboard = (id: string) => {
   };
 
   const { data, isLoading, refetch, error } = useQuery({
-    queryKey: ["dashboard"],
+    queryKey: ["dashboard", id],
     queryFn: () => fetchDashboard(id),
     enabled: !!id,
   });

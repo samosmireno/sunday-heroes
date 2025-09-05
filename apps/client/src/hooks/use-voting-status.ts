@@ -41,7 +41,7 @@ export const useVotingStatus = (matchId: string, voterId: string) => {
   };
 
   const votingStatusQuery = useQuery({
-    queryKey: ["voting_status"],
+    queryKey: ["voting_status", matchId, voterId],
     queryFn: () => fetchVotingStatus(matchId, voterId),
   });
 

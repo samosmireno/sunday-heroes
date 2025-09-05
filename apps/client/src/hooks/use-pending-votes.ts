@@ -31,7 +31,7 @@ export const usePendingVotes = (matchId: string, userId: string) => {
   };
 
   const pendingVotesQuery = useQuery({
-    queryKey: ["pending_votes"],
+    queryKey: ["pending_votes", matchId, userId],
     queryFn: () => fetchPendingVotes(matchId, userId),
   });
 

@@ -33,7 +33,7 @@ export const useCompetition = (compId: string, userId: string) => {
     }
   };
   const competitionQuery = useQuery({
-    queryKey: ["competition"],
+    queryKey: ["competition", compId, userId],
     queryFn: () => fetchCompetition(compId, userId),
     enabled: !!compId && !!userId,
   });
