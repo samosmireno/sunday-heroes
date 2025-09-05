@@ -4,7 +4,8 @@ import ConfirmationDialog from "../../ui/confirmation-dialog";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../config/axios-config";
 import { config } from "../../../config/config";
-import { useErrorHandler } from "../../../hooks/use-error-handler";
+import { useErrorHandler } from "../../../hooks/use-error-handler/use-error-handler";
+import { AppError } from "../../../hooks/use-error-handler/types";
 
 interface CompetitionSettingsProps {
   competition: CompetitionResponse;
@@ -26,7 +27,7 @@ export default function CompetitionSettings({
       );
       onUpdate?.();
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,
@@ -42,7 +43,7 @@ export default function CompetitionSettings({
       );
       navigate("/competitions");
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

@@ -13,7 +13,9 @@ import CompetitionSettings from "../components/features/competition-admin/compet
 import AddModeratorModal from "../components/features/competition-admin/add-moderator-modal";
 import { Role } from "@repo/shared-types";
 
-const tabs = [
+type TabType = "moderators" | "settings";
+
+const tabs: { id: TabType; label: string }[] = [
   { id: "moderators", label: "Moderators" },
   { id: "settings", label: "Settings" },
 ];
@@ -28,9 +30,7 @@ export default function CompetitionAdminPage() {
   );
 
   const [isAddModeratorModalOpen, setIsAddModeratorModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"moderators" | "settings">(
-    "moderators",
-  );
+  const [activeTab, setActiveTab] = useState<TabType>("moderators");
 
   if (isLoading) {
     return (
@@ -83,7 +83,7 @@ export default function CompetitionAdminPage() {
             {tabs.map(({ id, label }) => (
               <Button
                 key={id}
-                onClick={() => setActiveTab(id as any)}
+                onClick={() => setActiveTab(id)}
                 className={`flex min-w-0 flex-shrink-0 items-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all sm:px-4 sm:text-sm ${
                   activeTab === id
                     ? "bg-accent/20 text-accent"

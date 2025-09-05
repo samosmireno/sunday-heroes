@@ -34,7 +34,8 @@ import { GuideBox } from "../components/ui/guide-box";
 import { InfoBox } from "../components/ui/info-box";
 import Header from "../components/ui/header";
 import { convertMatchType } from "../types/types";
-import { useErrorHandler } from "../hooks/use-error-handler";
+import { useErrorHandler } from "../hooks/use-error-handler/use-error-handler";
+import { AppError } from "../hooks/use-error-handler/types";
 
 const CreateCompetitionForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -78,7 +79,7 @@ const CreateCompetitionForm = () => {
         navigate(`/league-setup/${response.data.competition.id}`);
       }
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

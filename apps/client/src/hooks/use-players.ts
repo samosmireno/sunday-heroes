@@ -2,7 +2,8 @@ import { PlayerListResponse } from "@repo/shared-types";
 import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
 import { config } from "../config/config";
 import axios, { AxiosError } from "axios";
-import { useErrorHandler } from "./use-error-handler";
+import { useErrorHandler } from "./use-error-handler/use-error-handler";
+import { AppError } from "./use-error-handler/types";
 
 interface PlayerListQueryParams {
   userId: string;
@@ -55,7 +56,7 @@ export const usePlayers = ({
         totalPages,
       };
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

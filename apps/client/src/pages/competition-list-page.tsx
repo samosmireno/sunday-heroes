@@ -45,14 +45,13 @@ export default function CompetitionListPage() {
 
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { competitions, isLoading, totalPages } = user
-    ? useCompetitions({
-        id: user.id,
-        page: currentPage - 1,
-        type: activeFilter,
-        searchTerm: debouncedQuery,
-      })
-    : { competitions: [], totalPages: 1 };
+
+  const { competitions, isLoading, totalPages } = useCompetitions({
+    id: user?.id || "",
+    page: currentPage - 1,
+    type: activeFilter,
+    searchTerm: debouncedQuery,
+  });
 
   if (isLoading) {
     return <Loading text="Loading competitions..." />;

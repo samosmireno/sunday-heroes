@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 import { config } from "./config";
 
@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-let refreshPromise: Promise<any> | null = null;
+let refreshPromise: Promise<AxiosResponse> | null = null;
 
 const refreshAuthLogic = async () => {
   try {

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Path, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
-const extractZodObjectSchema = (schema: z.ZodType): z.ZodObject<any> | null => {
+const extractZodObjectSchema = (schema: z.ZodType) => {
   // Handle ZodObject directly
   if (schema instanceof z.ZodObject) {
     return schema;

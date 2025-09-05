@@ -2,7 +2,8 @@ import axios from "axios";
 import { config } from "../config/config";
 import { DashboardResponse } from "@repo/shared-types";
 import { useQuery } from "@tanstack/react-query";
-import { useErrorHandler } from "./use-error-handler";
+import { useErrorHandler } from "./use-error-handler/use-error-handler";
+import { AppError } from "./use-error-handler/types";
 
 export const useDashboard = (id: string) => {
   const { handleError } = useErrorHandler();
@@ -15,7 +16,7 @@ export const useDashboard = (id: string) => {
       const { data } = await axios.get(`${config.server}/api/dashboard/${id}`);
       return data;
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

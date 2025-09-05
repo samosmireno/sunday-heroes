@@ -12,10 +12,8 @@ export default function AdminPendingVotes() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  if (!matchId) return null;
-
   const { votingData, isLoading, error } = usePendingVotes(
-    matchId,
+    matchId ?? "",
     user?.id || "",
   );
 

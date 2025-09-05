@@ -11,6 +11,7 @@ import {
 import { Search, Loader2 } from "lucide-react";
 import { InfoBox } from "../../ui/info-box";
 import axiosInstance from "../../../config/axios-config";
+import { isAxiosError } from "axios";
 import { config } from "../../../config/config";
 import { toast } from "sonner";
 import { useAuth } from "../../../context/auth-context";
@@ -69,10 +70,10 @@ export default function AddModeratorModal({
       if (response.data.length === 0) {
         toast.info("No users found with that search term");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error searching users:", error);
       const errorMessage =
-        error.response?.data?.message ||
+        (isAxiosError(error) && error.response?.data?.message) ||
         "Failed to search users. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
@@ -95,11 +96,12 @@ export default function AddModeratorModal({
       toast.success(`${userNickname} has been added as a moderator`);
       onSuccess();
       handleClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error adding moderator:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        "Failed to add moderator. Please try again.";
+      let errorMessage = "Failed to add moderator. Please try again.";
+      if (isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {

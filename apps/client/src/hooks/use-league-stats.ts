@@ -3,7 +3,8 @@ import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
 import { LeaguePlayerTotals } from "@repo/shared-types";
 import { useMemo } from "react";
-import { useErrorHandler } from "./use-error-handler";
+import { useErrorHandler } from "./use-error-handler/use-error-handler";
+import { AppError } from "./use-error-handler/types";
 
 export const useLeagueStats = (competitionId: string) => {
   const { handleError } = useErrorHandler();
@@ -16,7 +17,7 @@ export const useLeagueStats = (competitionId: string) => {
       );
       return data;
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

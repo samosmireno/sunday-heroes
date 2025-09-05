@@ -33,7 +33,8 @@ import { useCompetition } from "../hooks/use-competition";
 import PlayersListForm from "../components/features/add-match-form/player-list-form";
 import { useAuth } from "../context/auth-context";
 import LeagueMatchDetailsForm from "../components/features/add-match-form/league-match-details-form";
-import { useErrorHandler } from "../hooks/use-error-handler";
+import { useErrorHandler } from "../hooks/use-error-handler/use-error-handler";
+import { AppError } from "../hooks/use-error-handler/types";
 
 export default function AddMatchForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -115,7 +116,7 @@ export default function AddMatchForm() {
       });
       navigate(`/competition/${competitionId}`);
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

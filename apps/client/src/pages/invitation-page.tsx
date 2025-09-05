@@ -15,6 +15,7 @@ import { useAuth } from "../context/auth-context";
 import { toast } from "sonner";
 import { config } from "../config/config";
 import Background from "../components/ui/background";
+import { isAxiosError } from "axios";
 
 interface InvitationDetails {
   id: string;
@@ -44,23 +45,27 @@ export default function InvitationPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const validateInvitation = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/invitations/${token}/validate`,
+        );
+        setInvitation(response.data);
+      } catch (error) {
+        let errorMessage = "Invalid invitation";
+        if (isAxiosError(error)) {
+          errorMessage = error.response?.data?.error;
+        }
+        setError(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (token) {
       validateInvitation();
     }
   }, [token]);
-
-  const validateInvitation = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/api/invitations/${token}/validate`,
-      );
-      setInvitation(response.data);
-    } catch (error: any) {
-      setError(error.response?.data?.error || "Invalid invitation");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleAcceptInvitation = async () => {
     if (!user) {
@@ -74,8 +79,12 @@ export default function InvitationPage() {
       await axiosInstance.post(`/api/invitations/${token}/accept`);
       toast.success("Successfully connected to player profile!");
       navigate(`/dashboard`);
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to accept invitation");
+    } catch (error) {
+      let errorMessage = "Failed to accept invitation";
+      if (isAxiosError(error)) {
+        errorMessage = error.response?.data?.error;
+      }
+      toast.error(errorMessage);
     } finally {
       setIsAccepting(false);
     }

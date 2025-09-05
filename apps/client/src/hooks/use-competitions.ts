@@ -5,7 +5,8 @@ import {
 import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
 import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
-import { useErrorHandler } from "./use-error-handler";
+import { useErrorHandler } from "./use-error-handler/use-error-handler";
+import { AppError } from "./use-error-handler/types";
 
 interface CompetitionQueryParams {
   id: string;
@@ -63,7 +64,7 @@ export const useCompetitions = ({
         totalPages,
       };
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

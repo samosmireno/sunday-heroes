@@ -4,7 +4,7 @@ import Background from "../components/ui/background";
 import Loading from "../components/ui/loading";
 import { useLocation } from "react-router-dom";
 
-const constructFullPath = (location: any) => {
+const constructFullPath = (location?: Location | null) => {
   if (!location) return "/dashboard";
 
   let fullPath = location.pathname || "/dashboard";

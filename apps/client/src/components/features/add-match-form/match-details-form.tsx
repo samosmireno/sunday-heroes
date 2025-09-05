@@ -25,7 +25,7 @@ import {
 } from "../../ui/select";
 import { MatchType, convertMatchType } from "../../../types/types";
 
-const formatSafeDate = (date: any): string => {
+const formatSafeDate = (date: Date): string => {
   if (!date) return "Pick a date";
 
   try {

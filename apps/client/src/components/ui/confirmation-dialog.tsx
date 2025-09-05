@@ -96,7 +96,7 @@ export default function ConfirmationDialog({
     try {
       await onConfirm();
       handleClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error in confirmation dialog:", error);
     } finally {
       setIsProcessing(false);

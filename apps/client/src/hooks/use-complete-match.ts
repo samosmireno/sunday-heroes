@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../config/axios-config";
-import { useErrorHandler } from "./use-error-handler";
+import { useErrorHandler } from "./use-error-handler/use-error-handler";
 
 export const useCompleteMatch = (competitionId: string) => {
   const queryClient = useQueryClient();

@@ -11,8 +11,9 @@ import { GuideBox } from "../components/ui/guide-box";
 import { InfoBox } from "../components/ui/info-box";
 import PlayerSelection from "../components/features/voting/player-selection";
 import VotePlayerList from "../components/features/voting/vote-player-list";
-import { useErrorHandler } from "../hooks/use-error-handler";
+import { useErrorHandler } from "../hooks/use-error-handler/use-error-handler";
 import { Button } from "../components/ui/button";
+import { AppError } from "../hooks/use-error-handler/types";
 
 interface SelectedPlayer {
   id: string;
@@ -21,7 +22,7 @@ interface SelectedPlayer {
 
 function findFirstRankMissing(arr: number[]) {
   const allowedValues = [3, 2, 1];
-  for (let val of allowedValues) {
+  for (const val of allowedValues) {
     if (!arr.includes(val)) {
       return val;
     }
@@ -39,9 +40,10 @@ export default function VotePage() {
   const [success, setSuccess] = useState(false);
   const { handleError } = useErrorHandler();
 
-  if (!matchId || !voterId) return;
-
-  const { votingStatus, isLoading, error } = useVotingStatus(matchId, voterId);
+  const { votingStatus, isLoading, error } = useVotingStatus(
+    matchId || "",
+    voterId || "",
+  );
 
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayers((prev) => {
@@ -79,7 +81,7 @@ export default function VotePage() {
 
       setSuccess(true);
     } catch (err) {
-      handleError(err, {
+      handleError(err as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

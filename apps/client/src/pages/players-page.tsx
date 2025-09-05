@@ -16,13 +16,12 @@ export default function PlayersPage() {
   const debouncedQuery = useDebounce(searchQuery, 500);
 
   const { user } = useAuth();
-  const { players, isLoading, totalPages } = user
-    ? usePlayers({
-        userId: user.id,
-        page: currentPage - 1,
-        searchTerm: debouncedQuery,
-      })
-    : { players: [], totalPages: 1, isLoading: false };
+
+  const { players, isLoading, totalPages } = usePlayers({
+    userId: user?.id || "",
+    page: currentPage - 1,
+    searchTerm: debouncedQuery,
+  });
 
   if (isLoading) {
     return <Loading text="Loading players..." />;

@@ -2,7 +2,8 @@ import { CompetitionResponse } from "@repo/shared-types";
 import axios from "axios";
 import { config } from "../config/config";
 import { useQuery } from "@tanstack/react-query";
-import { useErrorHandler } from "./use-error-handler";
+import { useErrorHandler } from "./use-error-handler/use-error-handler";
+import { AppError } from "./use-error-handler/types";
 
 export const useCompetition = (compId: string, userId: string) => {
   const { handleError } = useErrorHandler();
@@ -24,7 +25,7 @@ export const useCompetition = (compId: string, userId: string) => {
       );
       return data;
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

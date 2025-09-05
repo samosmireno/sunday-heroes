@@ -37,7 +37,7 @@ export function formatErrorStack(stack?: string): string {
       cleanPath = cleanPath.replace(/^https?:\/\/localhost:\d+\//, "");
 
       if (cleanPath.includes("node_modules")) {
-        const nodeModulesMatch = cleanPath.match(/node_modules\/([^\/]+)/);
+        const nodeModulesMatch = cleanPath.match(/node_modules\/([^/]+)/);
         if (nodeModulesMatch) {
           cleanPath = `node_modules/${nodeModulesMatch[1]}`;
         }

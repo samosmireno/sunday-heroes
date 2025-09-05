@@ -2,7 +2,8 @@ import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
 import { MatchPageResponse } from "@repo/shared-types";
-import { useErrorHandler } from "./use-error-handler";
+import { useErrorHandler } from "./use-error-handler/use-error-handler";
+import { AppError } from "./use-error-handler/types";
 
 interface MatchQueryParams {
   userId: string;
@@ -51,7 +52,7 @@ export const useMatches = ({
         totalPages,
       };
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,

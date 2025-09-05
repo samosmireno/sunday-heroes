@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
-import { useAuth } from "../context/auth-context";
+import { useAuth } from "../../context/auth-context";
 import { useErrorBoundary } from "react-error-boundary";
+import { AppError } from "./types";
 
 interface ErrorHandlerOptions {
   showToast?: boolean;
@@ -15,7 +16,7 @@ export const useErrorHandler = () => {
   const { showBoundary } = useErrorBoundary();
 
   const handleError = useCallback(
-    (error: any, options: ErrorHandlerOptions = {}) => {
+    (error: AppError, options: ErrorHandlerOptions = {}) => {
       const {
         showToast = true,
         redirectOnAuth = true,
@@ -28,9 +29,10 @@ export const useErrorHandler = () => {
       }
 
       if (error.name === "ValidationError" && error.fields) {
-        const messages = error.response.data.fields.map(
-          (field: any) => `${field.field}: ${field.message}`,
-        );
+        const messages =
+          error.response?.data?.fields?.map(
+            (field) => `${field.field}: ${field.message}`,
+          ) ?? [];
         if (showToast) {
           toast.error(`Validation Error: ${messages.join(", ")}`);
         }
@@ -60,7 +62,7 @@ export const useErrorHandler = () => {
       if (error.name === "NotFoundError" || error.status === 404) {
         if (showToast) {
           toast.error(
-            `${error.response.data.resource || "Resource"} not found.`,
+            `${error.response?.data?.resource || "Resource"} not found.`,
           );
         }
         if (throwError) showBoundary(error);
@@ -70,7 +72,7 @@ export const useErrorHandler = () => {
       if (error.name === "ConflictError" || error.statusCode === 409) {
         if (showToast) {
           toast.error(
-            error.response.data.message ||
+            error.response?.data?.message ||
               "A conflict occurred with existing data.",
           );
         }

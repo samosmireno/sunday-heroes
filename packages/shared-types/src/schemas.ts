@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MatchType } from ".";
+import { MatchType } from "./enums";
 
 export const createMatchRequestSchema = z.object({
   competitionId: z.string(),

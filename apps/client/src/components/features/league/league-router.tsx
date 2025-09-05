@@ -15,7 +15,12 @@ export default function LeagueRouter() {
     user?.id || "",
   );
 
-  const hasCustomTeamNames = (teams: any[]) => {
+  const hasCustomTeamNames = (
+    teams: {
+      id: string;
+      name: string;
+    }[],
+  ) => {
     return (
       teams?.some(
         (team) =>

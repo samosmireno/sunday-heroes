@@ -12,6 +12,7 @@ import {
 import { UserPlus, Copy, Check, Loader2 } from "lucide-react";
 import axiosInstance from "../../../config/axios-config";
 import { toast } from "sonner";
+import { isAxiosError } from "axios";
 
 interface InvitePlayerDialogProps {
   dashboardPlayerId: string;
@@ -26,19 +27,6 @@ export default function InvitePlayerDialog({
   const [inviteUrl, setInviteUrl] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const handleCreateInvitation = async () => {
-    try {
-      const response = await axiosInstance.post("/api/invitations", {
-        dashboardPlayerId,
-      });
-
-      setInviteUrl(response.data.inviteUrl);
-      toast.success("Invitation link created!");
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to create invitation");
-    }
-  };
-
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(inviteUrl);
@@ -46,6 +34,7 @@ export default function InvitePlayerDialog({
       toast.success("Invitation link copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
+      console.error(error);
       toast.error("Failed to copy link");
     }
   };
@@ -56,11 +45,30 @@ export default function InvitePlayerDialog({
   };
 
   useEffect(() => {
+    const handleCreateInvitation = async () => {
+      try {
+        const response = await axiosInstance.post("/api/invitations", {
+          dashboardPlayerId,
+        });
+
+        setInviteUrl(response.data.inviteUrl);
+        toast.success("Invitation link created!");
+      } catch (error) {
+        if (isAxiosError(error)) {
+          toast.error(
+            error.response?.data?.error || "Failed to create invitation",
+          );
+        } else {
+          toast.error("Failed to create invitation");
+        }
+      }
+    };
+
     if (isOpen && !inviteUrl) {
       resetForm();
       handleCreateInvitation();
     }
-  }, [isOpen, inviteUrl]);
+  }, [isOpen, inviteUrl, dashboardPlayerId]);
 
   return (
     <Dialog

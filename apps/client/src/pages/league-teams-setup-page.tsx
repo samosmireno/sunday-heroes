@@ -20,7 +20,8 @@ import { Save } from "lucide-react";
 import axiosInstance from "../config/axios-config";
 import { useAuth } from "../context/auth-context";
 import { useCompetition } from "../hooks/use-competition";
-import { useErrorHandler } from "../hooks/use-error-handler";
+import { useErrorHandler } from "../hooks/use-error-handler/use-error-handler";
+import { AppError } from "../hooks/use-error-handler/types";
 
 const createTeamNamesSchema = (numberOfTeams: number = 0) => {
   const teamFields = Array.from({ length: numberOfTeams }, (_, i) => [
@@ -73,7 +74,7 @@ export default function LeagueTeamSetupPage() {
 
       navigate(`/competition/${competitionId}`);
     } catch (error) {
-      handleError(error, {
+      handleError(error as AppError, {
         showToast: true,
         logError: true,
         throwError: false,
