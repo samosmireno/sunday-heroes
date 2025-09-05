@@ -2,7 +2,6 @@ import { Router } from "express";
 import {
   createCompetition,
   deleteCompetition,
-  getAllCompetitionsFromDashboard,
   getCompetitionStats,
   getDetailedCompetitions,
   resetCompetition,
@@ -17,7 +16,6 @@ import { authenticateToken } from "../../middleware/authentication-middleware";
 
 const router = Router();
 
-router.get("/", getAllCompetitionsFromDashboard);
 router.get("/detailed", getDetailedCompetitions);
 router.get("/stats", getCompetitionStats);
 

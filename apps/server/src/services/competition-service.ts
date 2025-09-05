@@ -7,10 +7,7 @@ import {
   transformCompetitionToResponse,
   transformAddCompetitionRequestToService,
 } from "../utils/competition-transforms";
-import {
-  transformDashboardCompetitionsToResponse,
-  transformDashboardCompetitionsToDetailedResponse,
-} from "../utils/dashboard-transforms";
+import { transformDashboardCompetitionsToDetailedResponse } from "../utils/dashboard-transforms";
 import { DashboardService } from "./dashboard-service";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 import { TeamService } from "./team-service";
@@ -35,16 +32,6 @@ export class CompetitionService {
       throw new NotFoundError("Competition");
     }
     return transformCompetitionToResponse(competition, userId);
-  }
-
-  static async getDashboardCompetitions(userId: string) {
-    const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
-    if (!dashboardId) {
-      throw new NotFoundError("Dashboard");
-    }
-
-    const competitions = await CompetitionRepo.findByDashboardId(dashboardId);
-    return transformDashboardCompetitionsToResponse(competitions);
   }
 
   static async getDetailedCompetitions(

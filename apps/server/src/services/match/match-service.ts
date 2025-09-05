@@ -5,7 +5,6 @@ import {
   transformMatchServiceToResponse,
   transformMatchesToMatchesResponse,
 } from "../../utils/match-transforms";
-import { transformDashboardMatchesToResponse } from "../../utils/dashboard-transforms";
 import { createMatchRequest } from "../../schemas/create-match-request-schema";
 import { DashboardService } from "../dashboard-service";
 import { CompetitionType } from "@prisma/client";
@@ -21,16 +20,6 @@ export class MatchService {
   static async getMatchById(id: string) {
     const match = await MatchRepo.findByIdWithDetails(id);
     return match ? transformMatchServiceToResponse(match) : null;
-  }
-
-  static async getDashboardMatches(userId: string) {
-    const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
-    if (!dashboardId) {
-      throw new NotFoundError("Dashboard");
-    }
-
-    const matches = await MatchRepo.findByDashboardId(dashboardId);
-    return transformDashboardMatchesToResponse(matches);
   }
 
   static async getCompetitionMatches(competitionId: string) {

@@ -7,21 +7,6 @@ import { createCompetitionRequest } from "../schemas/create-competition-request-
 import { TeamService } from "../services/team-service";
 import { BadRequestError } from "../utils/errors";
 
-export const getAllCompetitionsFromDashboard = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId = getRequiredQuery(req, "userId");
-    const competitions =
-      await CompetitionService.getDashboardCompetitions(userId);
-    sendSuccess(res, competitions);
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const getDetailedCompetitions = async (
   req: Request,
   res: Response,

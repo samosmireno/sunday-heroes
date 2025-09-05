@@ -13,15 +13,6 @@ const DASHBOARD_DETAILED_INCLUDE = {
   dashboardPlayers: true,
   competitions: {
     include: {
-      moderators: {
-        include: {
-          dashboardPlayer: {
-            select: {
-              nickname: true,
-            },
-          },
-        },
-      },
       matches: {
         include: {
           matchPlayers: {
@@ -40,11 +31,20 @@ const DASHBOARD_DETAILED_INCLUDE = {
             },
           },
           playerVotes: true,
+          competition: true,
         },
       },
     },
   },
 } satisfies Prisma.DashboardInclude;
+
+export type DashboardCompetitionsType = Prisma.DashboardGetPayload<{
+  include: typeof DASHBOARD_DETAILED_INCLUDE;
+}>["competitions"];
+
+export type DashboardMatchesType = Prisma.DashboardGetPayload<{
+  include: typeof DASHBOARD_DETAILED_INCLUDE;
+}>["competitions"][number]["matches"];
 
 export type DashboardWithBasic = Prisma.DashboardGetPayload<{
   include: typeof DASHBOARD_BASIC_INCLUDE;
@@ -100,7 +100,7 @@ export class DashboardRepo {
     }
   }
 
-  static async findByAdminId(
+  static async findByAdminIdWithDetails(
     adminId: string,
     tx?: PrismaTransaction
   ): Promise<DashboardWithDetails | null> {
@@ -113,6 +113,17 @@ export class DashboardRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "DashboardRepo.findByAdminId");
     }
+  }
+
+  static async findByAdminId(
+    adminId: string,
+    tx?: PrismaTransaction
+  ): Promise<Dashboard | null> {
+    const prismaClient = tx || prisma;
+    const dashboard = await prismaClient.dashboard.findUnique({
+      where: { adminId },
+    });
+    return dashboard;
   }
 
   static async findByCompetitionId(

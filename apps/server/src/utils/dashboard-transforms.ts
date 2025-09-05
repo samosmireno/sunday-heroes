@@ -5,20 +5,36 @@ import {
   DetailedCompetitionResponse,
   VotingStatus,
 } from "@repo/shared-types";
-import {
-  CompetitionWithDetails,
-  CompetitionWithMatches,
-} from "../repositories/competition/competition-repo";
+import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
-import { MatchWithTeams } from "../repositories/match-repo";
-import { DashboardWithDetails } from "../repositories/dashboard-repo";
+import {
+  DashboardCompetitionsType,
+  DashboardMatchesType,
+  DashboardWithDetails,
+} from "../repositories/dashboard-repo";
 import { getUserRole } from "./competition-transforms";
 
 export function transformDashboardToResponse(
   dashboard: DashboardWithDetails
 ): DashboardResponse {
-  const activeCompetitions = dashboard.competitions.length;
-  const matches = dashboard.competitions.flatMap((comp) => comp.matches);
+  const dashboardOwnerData = extractDashboardOwnerData(dashboard.competitions);
+
+  return {
+    id: dashboard.id,
+    name: dashboard.name,
+    user: dashboard.admin.givenName,
+    activeCompetitions: dashboardOwnerData.activeCompetitions,
+    totalPlayers: dashboardOwnerData.totalPlayers,
+    pendingVotes: dashboardOwnerData.pendingVotes,
+    completedMatches: dashboardOwnerData.completedMatches,
+    matches: dashboardOwnerData.dashboardMatches,
+    competitions: dashboardOwnerData.dashboardCompetitions,
+  };
+}
+
+function extractDashboardOwnerData(competitions: DashboardCompetitionsType) {
+  const activeCompetitions = competitions.length;
+  const matches = competitions.flatMap((comp) => comp.matches);
 
   const uniquePlayers = new Set(
     matches.flatMap((match) =>
@@ -46,19 +62,22 @@ export function transformDashboardToResponse(
     })
     .reduce((total, count) => total + count, 0);
 
+  const dashboardMatches = transformDashboardMatchesToResponse(matches);
+  const dashboardCompetitions =
+    transformDashboardCompetitionsToResponse(competitions);
+
   return {
-    id: dashboard.id,
-    name: dashboard.name,
-    user: dashboard.admin.givenName,
     activeCompetitions,
     totalPlayers,
     pendingVotes,
     completedMatches,
+    dashboardMatches,
+    dashboardCompetitions,
   };
 }
 
-export function transformDashboardMatchesToResponse(
-  matches: MatchWithTeams[]
+function transformDashboardMatchesToResponse(
+  matches: DashboardMatchesType
 ): DashboardMatchResponse[] {
   const matchesResponse: DashboardMatchResponse[] = matches.map((match) => ({
     id: match.id,
@@ -80,8 +99,8 @@ export function transformDashboardMatchesToResponse(
   return matchesResponse;
 }
 
-export function transformDashboardCompetitionsToResponse(
-  comps: CompetitionWithMatches[]
+function transformDashboardCompetitionsToResponse(
+  comps: DashboardCompetitionsType
 ): DashboardCompetitionResponse[] {
   const competitions: DashboardCompetitionResponse[] = comps.map((comp) => ({
     id: comp.id,

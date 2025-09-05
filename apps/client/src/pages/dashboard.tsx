@@ -10,8 +10,7 @@ import Loading from "../components/ui/loading";
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { dashboardData, isLoading, dashboardMatches, dashboardCompetitions } =
-    useDashboard(user?.id || "");
+  const { dashboard, isLoading } = useDashboard(user?.id || "");
 
   const navigate = useNavigate();
 
@@ -35,28 +34,28 @@ export default function Dashboard() {
         <div className="mb-6 grid grid-cols-1 gap-3 sm:mb-8 sm:grid-cols-2 lg:gap-4 xl:grid-cols-4">
           <DashboardStatCard
             title="Active Competitions"
-            value={dashboardData?.activeCompetitions || 0}
+            value={dashboard?.activeCompetitions || 0}
             icon={Trophy}
             iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
             title="Total Players"
-            value={dashboardData?.totalPlayers || 0}
+            value={dashboard?.totalPlayers || 0}
             icon={Users}
             iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
             title="Pending Votes"
-            value={dashboardData?.pendingVotes || 0}
+            value={dashboard?.pendingVotes || 0}
             icon={CheckSquare}
             iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
           />
           <DashboardStatCard
             title="Completed Matches"
-            value={dashboardData?.completedMatches || 0}
+            value={dashboard?.completedMatches || 0}
             icon={Activity}
             iconClassName="bg-accent/20 text-accent"
             className="rounded-lg border-2 border-accent/60 bg-panel-bg p-4 shadow-md"
@@ -66,13 +65,13 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-6 pb-6 lg:grid-cols-2">
           <div className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
             <DashboardCompetitionList
-              competitions={dashboardCompetitions || []}
+              competitions={dashboard?.competitions || []}
             />
           </div>
           <div className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
             <DashboardMatchList
               title="Latest Matches"
-              matches={dashboardMatches || []}
+              matches={dashboard?.matches || []}
             />
           </div>
         </div>

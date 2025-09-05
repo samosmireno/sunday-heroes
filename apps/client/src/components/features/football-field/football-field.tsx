@@ -62,10 +62,10 @@ export default function FootballField({
                 <SelectValue placeholder="Formation" />
               </SelectTrigger>
               <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary font-retro text-gray-300 sm:translate-x-0">
-                {formations.map((formation, index) => {
+                {formations.map((formation) => {
                   return (
                     <SelectItem
-                      key={index}
+                      key={`select-left-${formation.name}`}
                       value={formation.name}
                       className="font-retro"
                     >
@@ -96,9 +96,12 @@ export default function FootballField({
                 <SelectValue placeholder="Formation" />
               </SelectTrigger>
               <SelectContent className="absolute top-full z-50 w-40 -translate-x-1/2 bg-secondary text-gray-300 sm:translate-x-0">
-                {formations.map((formation, index) => {
+                {formations.map((formation) => {
                   return (
-                    <SelectItem key={index} value={formation.name}>
+                    <SelectItem
+                      key={`select-right-${formation.name}`}
+                      value={formation.name}
+                    >
                       {formation.name}
                     </SelectItem>
                   );

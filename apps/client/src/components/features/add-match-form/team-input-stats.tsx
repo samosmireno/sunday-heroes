@@ -48,14 +48,14 @@ export default function TeamInputStats({
         {players.map((player, index) => (
           <div
             className="rounded-lg border-2 border-accent/30 bg-bg/30 p-3 shadow-md sm:p-4 md:p-5"
-            key={`${team}-${index}`}
+            key={`${team}-${player}`}
           >
             <h3 className="mb-3 border-b border-accent/30 pb-2 text-sm font-medium text-gray-200 sm:mb-4 sm:text-base">
               {player}
             </h3>
             <div className="space-y-3 sm:space-y-4">
               <FormField
-                key={`${team}-goals-${index}`}
+                key={`${team}-goals-${player}`}
                 name={`matchPlayers.players.${index + offset}.goals`}
                 render={({ field }) => (
                   <FormItem>
@@ -80,7 +80,7 @@ export default function TeamInputStats({
                 )}
               />
               <FormField
-                key={`${team}-assist-${index}`}
+                key={`${team}-assist-${player}`}
                 name={`matchPlayers.players.${index + offset}.assists`}
                 render={({ field }) => (
                   <FormItem>

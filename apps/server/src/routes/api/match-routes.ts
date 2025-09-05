@@ -4,7 +4,6 @@ import {
   deleteMatch,
   getAllMatches,
   getAllMatchesFromCompetition,
-  getAllMatchesFromDashboard,
   getMatchById,
   getMatchesWithStats,
   updateMatch,
@@ -17,7 +16,6 @@ const router = Router();
 
 router.get("/", getAllMatches);
 router.get("/stats", getMatchesWithStats);
-router.get("/dashboard", getAllMatchesFromDashboard);
 router.get("/competition/:competitionId", getAllMatchesFromCompetition);
 router.get("/:id", getMatchById);
 

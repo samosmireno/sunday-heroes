@@ -52,20 +52,6 @@ export const getMatchById = async (
   }
 };
 
-export const getAllMatchesFromDashboard = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const userId = getRequiredQuery(req, "userId");
-    const matches = await MatchService.getDashboardMatches(userId);
-    sendSuccess(res, matches);
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const getAllMatchesFromCompetition = async (
   req: Request,
   res: Response,

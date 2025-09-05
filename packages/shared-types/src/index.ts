@@ -77,6 +77,8 @@ export type DashboardResponse = {
   totalPlayers: number;
   pendingVotes: number;
   completedMatches: number;
+  matches: DashboardMatchResponse[];
+  competitions: DashboardCompetitionResponse[];
 };
 
 export type DashboardMatchResponse = {

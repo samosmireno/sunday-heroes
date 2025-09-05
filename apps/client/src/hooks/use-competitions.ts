@@ -4,12 +4,7 @@ import {
 } from "@repo/shared-types";
 import axios, { AxiosError } from "axios";
 import { config } from "../config/config";
-import {
-  useQuery,
-  useQueryClient,
-  QueryFunctionContext,
-} from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
 import { useErrorHandler } from "./use-error-handler";
 
 interface CompetitionQueryParams {
@@ -31,7 +26,6 @@ export const useCompetitions = ({
   type,
   searchTerm,
 }: CompetitionQueryParams) => {
-  const queryClient = useQueryClient();
   const { handleError } = useErrorHandler();
 
   const fetchCompetitions = async (
@@ -77,16 +71,6 @@ export const useCompetitions = ({
       throw error;
     }
   };
-
-  useEffect(() => {
-    queryClient.prefetchQuery({
-      queryKey: ["competitions", { id, page: page + 1, type, searchTerm }] as [
-        string,
-        CompetitionQueryParams,
-      ],
-      queryFn: fetchCompetitions,
-    });
-  }, [id, page, type, searchTerm, queryClient]);
 
   const { data, isLoading, refetch, isError, error } = useQuery<
     CompetitionResult,

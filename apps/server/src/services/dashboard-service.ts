@@ -8,7 +8,7 @@ import {
 
 export class DashboardService {
   static async getDashboardForUser(userId: string) {
-    const dashboard = await DashboardRepo.findByAdminId(userId);
+    const dashboard = await DashboardRepo.findByAdminIdWithDetails(userId);
 
     if (!dashboard) {
       throw new NotFoundError("Dashboard");
