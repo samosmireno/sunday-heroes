@@ -66,16 +66,14 @@ export default function LeagueMatchDetails({
               <Button
                 className="w-full border-2 border-accent/40 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:w-auto"
                 size="sm"
+                onClick={() =>
+                  window.open(match.videoUrl, "_blank", "noopener,noreferrer")
+                }
               >
-                <a
-                  href={match.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center"
-                >
+                <div className="flex items-center justify-center">
                   <Video className="mr-2 h-4 w-4" />
                   <span className="text-xs xl:text-sm">Watch</span>
-                </a>
+                </div>
               </Button>
             )}
             <Button

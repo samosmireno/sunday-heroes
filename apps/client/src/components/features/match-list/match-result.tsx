@@ -101,16 +101,16 @@ export default function MatchResult({
             <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">
               {videoUrl && (
                 <a href={videoUrl} target="_blank" rel="noopener noreferrer">
-                  <Video className="text-lg text-accent sm:text-xl" />
+                  <Video className="h-4 w-4 text-accent md:h-5 md:w-5" />
                 </a>
               )}
               {userRole !== Role.PLAYER && (
                 <>
                   <Link to={`/edit-match/${competition?.id}/${matchId}`}>
-                    <Pencil className="text-lg text-accent sm:text-xl" />
+                    <Pencil className="h-4 w-4 text-accent md:h-5 md:w-5" />
                   </Link>
                   <Trash
-                    className="text-lg text-accent hover:cursor-pointer sm:text-xl"
+                    className="h-4 w-4 text-accent hover:cursor-pointer md:h-5 md:w-5"
                     onClick={handleDeleteClick}
                   />
                 </>
