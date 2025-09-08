@@ -191,6 +191,7 @@ model Match {
   votingEndsAt    DateTime?
   createdAt        DateTime     @default(now())
   isCompleted      Boolean      @default(false)
+  videoUrl         String?
 
 
   competition    Competition  @relation(fields: [competitionId], references: [id], onDelete: Cascade)

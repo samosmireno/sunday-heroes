@@ -21,6 +21,7 @@ const baseMatchSchema = z.object({
   hasPenalties: z.boolean().default(false),
   penaltyHomeScore: z.coerce.number().min(0).optional(),
   penaltyAwayScore: z.coerce.number().min(0).optional(),
+  videoUrl: z.string().optional(),
 });
 
 const playersSchema = z.object({

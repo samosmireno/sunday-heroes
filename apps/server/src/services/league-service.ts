@@ -98,6 +98,7 @@ export class LeagueService {
           votingStatus: VotingStatus.CLOSED,
           votingEndsAt: null,
           isCompleted: false,
+          videoUrl: null,
         });
 
         await MatchTeamRepo.create(

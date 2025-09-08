@@ -36,6 +36,7 @@ export const transformDuelFormToRequest = (
     competitionId,
     round: round ? round : 1,
     teams: ["Home", "Away"],
+    videoUrl: data.match.videoUrl,
   };
 
   return reqData;
@@ -68,6 +69,7 @@ export const transformLeagueFormToRequest = (
     competitionId,
     round: round ? round : 1,
     teams: [data.match.homeTeam, data.match.awayTeam],
+    videoUrl: data.match.videoUrl,
   };
 
   return reqData;

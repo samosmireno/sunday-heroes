@@ -161,14 +161,16 @@ export default function AddMatchForm() {
     );
   }
 
+  if (isSubmitting) {
+    return (
+      <Loading text={matchId ? "Updating match..." : "Creating match..."} />
+    );
+  }
+
   return (
     <div className="relative flex-1 p-3 sm:p-4 md:p-6">
       <Background />
       <Header title={matchId ? "Edit Match" : "Add Match"} hasSidebar={true} />
-
-      {isSubmitting && (
-        <Loading text={matchId ? "Updating match..." : "Creating match..."} />
-      )}
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="xl:col-span-2">

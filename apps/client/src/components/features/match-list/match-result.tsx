@@ -1,4 +1,4 @@
-import { MdDelete, MdEdit } from "react-icons/md";
+import { Pencil, Trash, Video } from "lucide-react";
 import axiosInstance from "../../../config/axios-config";
 import { Link } from "react-router-dom";
 import Modal from "../../ui/modal";
@@ -18,6 +18,7 @@ interface MatchProps {
   isSelectedMatch: boolean;
   refetchMatches: () => void;
   userRole: Role;
+  videoUrl?: string;
 }
 
 export default function MatchResult({
@@ -29,6 +30,7 @@ export default function MatchResult({
   penaltyAwayScore,
   refetchMatches,
   userRole,
+  videoUrl,
 }: MatchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -95,17 +97,25 @@ export default function MatchResult({
                     .replace(/(\d+)(?=\s)/, (d) => `${d}th`)
                 : "Date TBD"}
             </div>
-            {userRole !== Role.PLAYER && (
-              <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">
-                <Link to={`/edit-match/${competition?.id}/${matchId}`}>
-                  <MdEdit className="text-lg text-accent sm:text-xl" />
-                </Link>
-                <MdDelete
-                  className="text-lg text-accent hover:cursor-pointer sm:text-xl"
-                  onClick={handleDeleteClick}
-                />
-              </div>
-            )}
+
+            <div className="mt-2 flex justify-center gap-4 sm:mt-3 sm:gap-6 md:mt-4">
+              {videoUrl && (
+                <a href={videoUrl} target="_blank" rel="noopener noreferrer">
+                  <Video className="text-lg text-accent sm:text-xl" />
+                </a>
+              )}
+              {userRole !== Role.PLAYER && (
+                <>
+                  <Link to={`/edit-match/${competition?.id}/${matchId}`}>
+                    <Pencil className="text-lg text-accent sm:text-xl" />
+                  </Link>
+                  <Trash
+                    className="text-lg text-accent hover:cursor-pointer sm:text-xl"
+                    onClick={handleDeleteClick}
+                  />
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

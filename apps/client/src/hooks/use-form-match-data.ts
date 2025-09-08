@@ -15,6 +15,7 @@ const transformResponseToForm = (data: MatchResponse): MatchFormData => {
       penaltyAwayScore: data.penaltyAwayScore,
       homeTeam: data.teams[0],
       awayTeam: data.teams[1],
+      videoUrl: data.videoUrl,
     },
     players: {
       homePlayers: data.players

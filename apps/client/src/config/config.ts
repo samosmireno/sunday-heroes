@@ -11,8 +11,6 @@ requiredEnvVars.forEach((varName) => {
   }
 });
 
-console.log("environment", import.meta.env.VITE_MODE);
-
 const isProd = import.meta.env.VITE_MODE === "production";
 
 export const config = {

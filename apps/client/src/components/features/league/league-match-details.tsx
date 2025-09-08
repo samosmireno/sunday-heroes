@@ -1,5 +1,5 @@
 import { Button } from "../../ui/button";
-import { Check, Edit } from "lucide-react";
+import { Check, Edit, Video } from "lucide-react";
 import ConfirmationDialog from "../../ui/confirmation-dialog";
 import FootballField from "../football-field/football-field";
 import Loading from "../../ui/loading";
@@ -62,17 +62,33 @@ export default function LeagueMatchDetails({
       {role !== Role.PLAYER && (
         <div className="border-b border-accent/10 p-3 sm:p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4">
+            {match?.videoUrl && (
+              <Button
+                className="w-full border-2 border-accent/40 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:w-auto"
+                size="sm"
+              >
+                <a
+                  href={match.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center"
+                >
+                  <Video className="mr-2 h-4 w-4" />
+                  <span className="text-xs xl:text-sm">Watch</span>
+                </a>
+              </Button>
+            )}
             <Button
               onClick={onEditMatch}
               className="w-full border-2 border-accent/40 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:w-auto"
               size="sm"
             >
               <Edit className="mr-2 h-4 w-4" />
-              <span className="text-sm sm:text-base">Edit Match</span>
+              <span className="text-xs xl:text-sm">Edit</span>
             </Button>
 
             {isMatchCompleted ? (
-              <div className="rounded-md border-2 border-green-500/30 bg-green-900/20 px-3 py-2 text-center text-xs text-green-400 sm:text-sm">
+              <div className="rounded-md border-2 border-green-500/30 bg-green-900/20 px-3 py-2 text-center text-xs text-green-400 lg:text-sm">
                 ✓ Match completed
               </div>
             ) : (
@@ -90,7 +106,7 @@ export default function LeagueMatchDetails({
                   triggerContent={
                     <div className="flex w-full items-center justify-center sm:w-auto">
                       <Check className="mr-2 h-4 w-4" />
-                      <span className="text-sm sm:text-base">
+                      <span className="text-xs xl:text-sm">
                         Mark as Completed
                       </span>
                     </div>

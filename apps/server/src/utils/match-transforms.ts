@@ -49,6 +49,7 @@ export function transformMatchServiceToResponse(
     teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
     players: sortedPlayers,
     isCompleted: match.isCompleted,
+    videoUrl: match.videoUrl ?? undefined,
   };
 
   return transformedData;
@@ -105,6 +106,7 @@ export function transformMatchesToMatchesResponse(
       competitionName: match.competition.name,
       competitionType: match.competition.type as CompetitionResponse["type"],
       isAdmin: match.competition.dashboard.adminId === userId,
+      videoUrl: match.videoUrl ?? undefined,
     };
 
     return res;
@@ -129,6 +131,7 @@ export function transformAddMatchRequestToService(
     votingStatus: competitionVoting ? competitionVoting : VotingStatus.CLOSED,
     votingEndsAt: new Date(Date.now() + 5 * 24 * 60 * 60),
     isCompleted: true,
+    videoUrl: match.videoUrl ?? null,
   };
 
   return matchForService;

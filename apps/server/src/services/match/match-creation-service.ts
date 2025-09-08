@@ -64,6 +64,7 @@ export class MatchCreationService {
       date: data.date ? new Date(data.date) : undefined,
       homeTeamScore: data.homeTeamScore,
       awayTeamScore: data.awayTeamScore,
+      videoUrl: data.videoUrl,
     };
 
     const competitionType =

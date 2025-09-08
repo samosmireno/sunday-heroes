@@ -40,6 +40,7 @@ export type MatchResponse = {
   isCompleted: boolean;
   teams: string[];
   players: PlayerResponse[];
+  videoUrl?: string;
 };
 
 export type DuelPlayerRequest = {
@@ -164,6 +165,7 @@ export type MatchPageResponse = {
   playerCount: number;
   pendingVotes: number;
   playerStats: PlayerResponse[];
+  videoUrl?: string;
 };
 
 export type CompetitionVotingData = {
@@ -270,4 +272,5 @@ export interface LeagueMatchResponse {
   round: number;
   votingStatus: string;
   isCompleted: boolean;
+  videoUrl?: string;
 }

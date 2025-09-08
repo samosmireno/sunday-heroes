@@ -44,6 +44,7 @@ export const createMatchRequestSchema = z.object({
       isHome: z.boolean(),
     })
   ),
+  videoUrl: z.string().optional(),
 });
 
 export type createMatchRequest = z.infer<typeof createMatchRequestSchema>;

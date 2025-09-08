@@ -55,6 +55,7 @@ export function transformCompetitionToResponse(
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
       };
     }),
+    videoUrl: match.videoUrl ?? undefined,
   }));
 
   const playerStats: PlayerTotals[] = calculatePlayerStats(matches);

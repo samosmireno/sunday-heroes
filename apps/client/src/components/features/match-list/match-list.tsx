@@ -118,6 +118,7 @@ export default function MatchList({
                       }
                       refetchMatches={refetchMatches}
                       userRole={userRole}
+                      videoUrl={match.videoUrl}
                     />
                   </CarouselItem>
                 );
