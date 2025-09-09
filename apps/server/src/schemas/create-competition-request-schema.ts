@@ -22,6 +22,16 @@ export const createCompetitionRequestSchema = z
       message: "Voting period and Reminder are required when voting is enabled",
       path: ["voting_period_days"],
     }
+  )
+  .refine(
+    (data) =>
+      data.reminderDays === undefined ||
+      data.votingPeriodDays === undefined ||
+      data.reminderDays < data.votingPeriodDays,
+    {
+      message: "Reminder days must be less than voting period days",
+      path: ["reminderDays", "votingPeriodDays"],
+    }
   );
 
 export type createCompetitionRequest = z.infer<

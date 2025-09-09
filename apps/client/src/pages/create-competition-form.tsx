@@ -42,6 +42,7 @@ const CreateCompetitionForm = () => {
   const { handleError } = useErrorHandler();
   const form = useForm<CreateCompetitionFormValues>({
     resolver: zodResolver(CreateCompetitionFormSchema),
+    mode: "onBlur",
     defaultValues: {
       name: "",
       type: undefined,
@@ -343,6 +344,7 @@ const CreateCompetitionForm = () => {
                         <FormField
                           name="votingPeriodDays"
                           control={form.control}
+                          shouldUnregister={true}
                           render={({ field }) => (
                             <FormItem className="flex flex-col">
                               <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
@@ -363,6 +365,7 @@ const CreateCompetitionForm = () => {
                         <FormField
                           name="reminderDays"
                           control={form.control}
+                          shouldUnregister={true}
                           render={({ field }) => (
                             <FormItem className="flex flex-col">
                               <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
@@ -384,6 +387,7 @@ const CreateCompetitionForm = () => {
                           <FormField
                             name="knockoutVotingPeriodDays"
                             control={form.control}
+                            shouldUnregister={true}
                             render={({ field }) => (
                               <FormItem className="flex flex-col">
                                 <FormLabel className="mb-1 block text-sm font-medium text-gray-300">

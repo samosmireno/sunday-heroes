@@ -2,9 +2,8 @@ import { MatchType } from "@prisma/client";
 import { createCompetitionRequestSchema } from "./create-competition-request-schema";
 import z from "zod";
 
-export const createLeagueRequestSchema = createCompetitionRequestSchema
-  .innerType()
-  .extend({
+export const createLeagueRequestSchema = createCompetitionRequestSchema.and(
+  z.object({
     matchType: z.nativeEnum(MatchType),
     numberOfTeams: z.coerce
       .number()
@@ -14,7 +13,8 @@ export const createLeagueRequestSchema = createCompetitionRequestSchema
       .min(2, "At least 2 team names are required")
       .optional(),
     isRoundRobin: z.boolean().optional(),
-  });
+  })
+);
 
 export const addTeamSchema = z.object({
   teamName: z.string().min(1, "Team name is required"),

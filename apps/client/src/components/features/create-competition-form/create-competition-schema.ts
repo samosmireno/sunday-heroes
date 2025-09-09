@@ -41,4 +41,14 @@ export const CreateCompetitionFormSchema = z
         "Number of teams and match type are required for League competitions",
       path: ["numberOfTeams"],
     },
+  )
+  .refine(
+    (data) =>
+      data.reminderDays === undefined ||
+      data.votingPeriodDays === undefined ||
+      data.reminderDays < data.votingPeriodDays,
+    {
+      message: "Reminder days must be less than voting period days",
+      path: ["reminderDays"],
+    },
   );
