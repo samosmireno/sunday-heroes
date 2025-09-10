@@ -21,12 +21,14 @@ export class EmailService {
     matchDetails: {
       competitionName: string;
       competitionVotingDays: number;
+      reminderDays: number;
       date: Date;
       homeTeam: string;
       awayTeam: string;
       homeScore: number;
       awayScore: number;
-    }
+    },
+    reminder: boolean = false
   ): Promise<boolean> {
     const votingUrl = `${config.client}/vote/${matchId}?voterId=${playerId}`;
 
@@ -37,7 +39,7 @@ export class EmailService {
       html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <div style="background-color: #1e293b; color: white; padding: 20px; text-align: center;">
-                <h1 style="margin: 0;">Time to vote!</h1>
+                <h1 style="margin: 0;">${`${reminder ? "Reminder" : "Time"}`} to vote!</h1>
               </div>
               
               <div style="padding: 20px; background-color: #f8fafc;">
@@ -71,7 +73,7 @@ export class EmailService {
                 </div>
                 
                 <p style="color: #64748b; font-size: 14px;">
-                  The voting link will expire in ${matchDetails.competitionVotingDays} days.
+                  The voting link will expire in ${reminder ? matchDetails.reminderDays : matchDetails.competitionVotingDays} days.
                 </p>
               </div>
               

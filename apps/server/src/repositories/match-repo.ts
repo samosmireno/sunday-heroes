@@ -2,6 +2,7 @@ import { Match, Prisma, VotingStatus } from "@prisma/client";
 import prisma from "./prisma-client";
 import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
+import { config } from "../config/config";
 
 const MATCH_DETAILED_INCLUDE = {
   matchPlayers: {
@@ -9,6 +10,7 @@ const MATCH_DETAILED_INCLUDE = {
       dashboardPlayer: {
         include: {
           votesGiven: true,
+          user: true,
         },
       },
       receivedVotes: true,
@@ -233,6 +235,46 @@ export class MatchRepo {
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchRepo.findWithExpiredVoting");
+    }
+  }
+
+  static async findMatchesExpiringSoon(
+    tx?: PrismaTransaction
+  ): Promise<MatchWithDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+      const now = new Date();
+
+      const matches = await prismaClient.match.findMany({
+        where: {
+          votingEndsAt: { not: null, gt: now },
+          competition: {
+            votingEnabled: { not: false },
+            reminderDays: { not: null },
+          },
+        },
+        include: MATCH_DETAILED_INCLUDE,
+      });
+
+      const expiringMatches = matches.filter((match) => {
+        const reminderMs =
+          (match.competition.reminderDays ?? 0) * 24 * 60 * 60 * 1000;
+        return (
+          match.votingEndsAt !== null &&
+          match.votingEndsAt.getTime() - now.getTime() < reminderMs
+        );
+      });
+
+      return expiringMatches.filter(
+        (match) =>
+          match.matchPlayers.length !==
+          match.playerVotes.length / config.votes.maxVotesPerPlayer
+      );
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "MatchRepo.findMatchesExpiringSoon"
+      );
     }
   }
 

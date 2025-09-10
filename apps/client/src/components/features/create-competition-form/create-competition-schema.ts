@@ -29,7 +29,7 @@ export const CreateCompetitionFormSchema = z
       (data.votingPeriodDays !== undefined && data.reminderDays !== undefined),
     {
       message: "Voting period and Reminder are required when voting is enabled",
-      path: ["votingPeriodDays"],
+      path: ["reminderDays"],
     },
   )
   .refine(

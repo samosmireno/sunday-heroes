@@ -9,6 +9,7 @@ import { AppError } from "../../utils/errors";
 interface MatchVotingEmailData {
   competitionName: string;
   competitionVotingDays: number;
+  reminderDays: number;
   date: Date;
   homeTeam: string;
   awayTeam: string;
@@ -50,6 +51,7 @@ export class MatchVotingService {
     if (!competition?.votingEnabled) return null;
 
     const votingDays = competition.votingPeriodDays ?? 7;
+    const reminderDays = competition.reminderDays ?? 3;
     const votingEndDate = new Date();
     votingEndDate.setDate(votingEndDate.getDate() + votingDays);
 
@@ -63,6 +65,7 @@ export class MatchVotingService {
     return {
       competitionName: competition.name,
       competitionVotingDays: votingDays,
+      reminderDays: reminderDays,
       date: match.date ? new Date(match.date) : new Date(),
       homeTeam: data.teams[0],
       awayTeam: data.teams[1],
@@ -94,6 +97,52 @@ export class MatchVotingService {
         );
 
         await Promise.all(emailPromises);
+      } catch (error) {
+        throw new AppError(
+          "Error sending match voting emails",
+          500,
+          error instanceof Error ? error.message : "Unknown error",
+          true
+        );
+      }
+    });
+  }
+
+  static async sendReminderEmails() {
+    setImmediate(async () => {
+      try {
+        const matches = await MatchRepo.findMatchesExpiringSoon();
+
+        for (const match of matches) {
+          const notVotedPlayers = match.matchPlayers.filter((mp) => {
+            const votesGiven = match.playerVotes.filter(
+              (v) => v.voterId === mp.dashboardPlayer.id
+            );
+            return !votesGiven.length && mp.dashboardPlayer.user?.email;
+          });
+
+          for (const mp of notVotedPlayers) {
+            await EmailService.sendVotingInvitation(
+              mp.dashboardPlayer.user!.email,
+              mp.dashboardPlayer.nickname,
+              match.id,
+              mp.dashboardPlayer.id,
+              {
+                competitionName: match.competition.name,
+                competitionVotingDays: match.competition.votingPeriodDays ?? 7,
+                reminderDays: match.competition.reminderDays ?? 3,
+                date: match.date ?? new Date(),
+                homeTeam:
+                  match.matchTeams.find((t) => t.isHome)?.team.name ?? "",
+                awayTeam:
+                  match.matchTeams.find((t) => !t.isHome)?.team.name ?? "",
+                homeScore: match.homeTeamScore,
+                awayScore: match.awayTeamScore,
+              },
+              true
+            );
+          }
+        }
       } catch (error) {
         throw new AppError(
           "Error sending match voting emails",
