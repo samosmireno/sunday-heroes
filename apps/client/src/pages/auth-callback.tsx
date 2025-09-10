@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
+import Loading from "../components/ui/loading";
 
 const AuthCallback = () => {
   const { processAuthSuccess } = useAuth();
@@ -38,7 +39,7 @@ const AuthCallback = () => {
     }
   }, [navigate, processAuthSuccess, searchParams]);
 
-  return <div>Completing authentication...</div>;
+  return <Loading text="Completing authentication..." />;
 };
 
 export default AuthCallback;

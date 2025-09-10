@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { useCompetition } from "../hooks/use-competition";
 import ErrorPage from "./error-page";
 import Header from "../components/ui/header";
-import Loading from "../components/ui/loading";
 import { CompetitionProvider } from "../context/competition-context";
 import DuelCompetitionPage from "./duel-competition-page";
 import { CompetitionType } from "@repo/shared-types";
@@ -36,10 +35,6 @@ function CompetitionPage() {
         return <p>Unknown status.</p>;
     }
   };
-
-  if (isLoading) {
-    return <Loading text="Loading competition..." />;
-  }
 
   if (!competition || !competitionId) {
     return <ErrorPage />;

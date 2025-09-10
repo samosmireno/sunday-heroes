@@ -1,11 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import Header from "../components/ui/header";
-import Background from "../components/ui/background";
-import { usePendingVotes } from "../hooks/use-pending-votes";
-import Loading from "../components/ui/loading";
-import { useAuth } from "../context/auth-context";
+import { Button } from "../../components/ui/button";
+import Header from "../../components/ui/header";
+import Background from "../../components/ui/background";
+import { usePendingVotes } from "../../hooks/use-pending-votes";
+import { useAuth } from "../../context/auth-context";
 import { Role } from "@repo/shared-types";
+import PendingVotesPageSkeleton from "./pending-votes-page-skeleton";
 
 export default function AdminPendingVotes() {
   const { matchId } = useParams();
@@ -22,7 +22,7 @@ export default function AdminPendingVotes() {
   };
 
   if (isLoading) {
-    return <Loading text="Loading pending votes..." />;
+    return <PendingVotesPageSkeleton />;
   }
   if (error) {
     return (

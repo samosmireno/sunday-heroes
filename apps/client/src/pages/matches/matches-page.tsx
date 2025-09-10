@@ -1,12 +1,12 @@
 import { useState } from "react";
-import Header from "../components/ui/header";
-import Background from "../components/ui/background";
-import CompactPagination from "../components/features/pagination/compact-pagination";
-import Loading from "../components/ui/loading";
-import MatchesList from "../components/features/matches/matches-list";
-import { useAuth } from "../context/auth-context";
-import { useMatches } from "../hooks/use-matches";
+import Header from "../../components/ui/header";
+import Background from "../../components/ui/background";
+import CompactPagination from "../../components/features/pagination/compact-pagination";
+import MatchesList from "../../components/features/matches/matches-list";
+import { useAuth } from "../../context/auth-context";
+import { useMatches } from "../../hooks/use-matches";
 import { useParams } from "react-router-dom";
+import MatchesPageSkeleton from "./matches-page-skeleton";
 
 export default function MatchesPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -20,7 +20,7 @@ export default function MatchesPage() {
   });
 
   if (isLoading) {
-    return <Loading text="Loading matches..." />;
+    return <MatchesPageSkeleton />;
   }
 
   return (

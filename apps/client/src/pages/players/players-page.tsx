@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { useAuth } from "../context/auth-context";
-import { ViewType } from "../types/types";
-import { SearchViewToggle } from "../components/features/match-list/search-view-toggle";
-import useDebounce from "../hooks/use-debounce";
-import CompactPagination from "../components/features/pagination/compact-pagination";
-import Header from "../components/ui/header";
-import Loading from "../components/ui/loading";
-import Background from "../components/ui/background";
-import { usePlayers } from "../hooks/use-players";
-import PlayersList from "../components/features/player-list/player-list";
+import { useAuth } from "../../context/auth-context";
+import { ViewType } from "../../types/types";
+import { SearchViewToggle } from "../../components/features/match-list/search-view-toggle";
+import useDebounce from "../../hooks/use-debounce";
+import CompactPagination from "../../components/features/pagination/compact-pagination";
+import Header from "../../components/ui/header";
+import Background from "../../components/ui/background";
+import { usePlayers } from "../../hooks/use-players";
+import PlayersList from "../../components/features/player-list/player-list";
+import PlayersPageSkeleton from "./players-page-skeleton";
 
 export default function PlayersPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -24,7 +24,7 @@ export default function PlayersPage() {
   });
 
   if (isLoading) {
-    return <Loading text="Loading players..." />;
+    return <PlayersPageSkeleton />;
   }
 
   return (

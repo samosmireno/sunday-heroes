@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import CompetitionGrid from "../components/features/competition-list/competition-grid";
-import CompetitionList from "../components/features/competition-list/competition-list";
-import { useAuth } from "../context/auth-context";
-import { useCompetitions } from "../hooks/use-competitions";
-import { ViewType } from "../types/types";
+import CompetitionGrid from "../../components/features/competition-list/competition-grid";
+import CompetitionList from "../../components/features/competition-list/competition-list";
+import { useAuth } from "../../context/auth-context";
+import { useCompetitions } from "../../hooks/use-competitions";
+import { ViewType } from "../../types/types";
 import { CompetitionType } from "@repo/shared-types";
-import { SearchViewToggle } from "../components/features/match-list/search-view-toggle";
-import useDebounce from "../hooks/use-debounce";
-import { Button } from "../components/ui/button";
+import { SearchViewToggle } from "../../components/features/match-list/search-view-toggle";
+import useDebounce from "../../hooks/use-debounce";
+import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
-import CompactPagination from "../components/features/pagination/compact-pagination";
-import FilterTabs from "../components/features/competition-list/filter-tabs";
-import Header from "../components/ui/header";
-import Loading from "../components/ui/loading";
+import CompactPagination from "../../components/features/pagination/compact-pagination";
+import FilterTabs from "../../components/features/competition-list/filter-tabs";
+import Header from "../../components/ui/header";
+import CompetitionListSkeleton from "./competition-list-skeleton";
 
 const filterOptions = [
   { value: null, label: "All" },
@@ -54,7 +54,7 @@ export default function CompetitionListPage() {
   });
 
   if (isLoading) {
-    return <Loading text="Loading competitions..." />;
+    return <CompetitionListSkeleton />;
   }
 
   return (

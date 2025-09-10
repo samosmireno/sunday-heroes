@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useCompetition } from "../hooks/use-competition";
-import { useAuth } from "../context/auth-context";
-import Header from "../components/ui/header";
-import Loading from "../components/ui/loading";
-import ErrorPage from "./error-page";
-import Background from "../components/ui/background";
-import { Button } from "../components/ui/button";
+import { useCompetition } from "../../hooks/use-competition";
+import { useAuth } from "../../context/auth-context";
+import Header from "../../components/ui/header";
+import ErrorPage from "../error-page";
+import Background from "../../components/ui/background";
+import { Button } from "../../components/ui/button";
 import { UserPlus, AlertTriangle, ArrowLeft } from "lucide-react";
-import ModeratorsList from "../components/features/competition-admin/moderators-list";
-import CompetitionSettings from "../components/features/competition-admin/competition-settings";
-import AddModeratorModal from "../components/features/competition-admin/add-moderator-modal";
+import ModeratorsList from "../../components/features/competition-admin/moderators-list";
+import CompetitionSettings from "../../components/features/competition-admin/competition-settings";
+import AddModeratorModal from "../../components/features/competition-admin/add-moderator-modal";
 import { Role } from "@repo/shared-types";
+import CompetitionAdminPageSkeleton from "./competition-admin-page-skeleton";
 
 type TabType = "moderators" | "settings";
 
@@ -33,13 +33,7 @@ export default function CompetitionAdminPage() {
   const [activeTab, setActiveTab] = useState<TabType>("moderators");
 
   if (isLoading) {
-    return (
-      <div className="relative flex-1 p-3 sm:p-4 md:p-5 lg:p-6">
-        <Background />
-        <Header title="Competition Admin" hasSidebar={true} />
-        <Loading text="Loading competition admin..." />
-      </div>
-    );
+    return <CompetitionAdminPageSkeleton />;
   }
 
   if (!competition || !competitionId) {

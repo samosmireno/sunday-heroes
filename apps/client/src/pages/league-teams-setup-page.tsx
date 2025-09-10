@@ -15,13 +15,13 @@ import {
 } from "../components/ui/form";
 import Header from "../components/ui/header";
 import Background from "../components/ui/background";
-import Loading from "../components/ui/loading";
 import { Save } from "lucide-react";
 import axiosInstance from "../config/axios-config";
 import { useAuth } from "../context/auth-context";
 import { useCompetition } from "../hooks/use-competition";
 import { useErrorHandler } from "../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../hooks/use-error-handler/types";
+import CompetitionListSkeleton from "./competition-list/competition-list-skeleton";
 
 const createTeamNamesSchema = (numberOfTeams: number = 0) => {
   const teamFields = Array.from({ length: numberOfTeams }, (_, i) => [
@@ -85,13 +85,7 @@ export default function LeagueTeamSetupPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="relative flex-1 p-3 sm:p-4 md:p-6">
-        <Background />
-        <Header title="League Setup" hasSidebar={true} />
-        <Loading text="Loading league details..." />
-      </div>
-    );
+    return <CompetitionListSkeleton />;
   }
 
   if (!competition || !formSchema) {
