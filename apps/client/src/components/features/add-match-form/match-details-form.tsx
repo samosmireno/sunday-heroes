@@ -23,7 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { MatchType, convertMatchType } from "../../../types/types";
+import { convertMatchType } from "../../../utils/utils";
+import { MatchType } from "@repo/shared-types";
 
 const formatSafeDate = (date: Date): string => {
   if (!date) return "Pick a date";
@@ -119,8 +120,8 @@ export default function MatchDetailsForm() {
                     {Object.values(MatchType)
                       .filter(
                         (matchType) =>
-                          matchType !== MatchType.ELEVEN_A &&
-                          matchType !== MatchType.SEVEN_A,
+                          matchType !== MatchType.ELEVEN_A_SIDE &&
+                          matchType !== MatchType.SEVEN_A_SIDE,
                       )
                       .map((matchType) => (
                         <SelectItem

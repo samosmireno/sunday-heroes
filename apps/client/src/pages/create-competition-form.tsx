@@ -33,7 +33,7 @@ import axiosInstance from "../config/axios-config";
 import { GuideBox } from "../components/ui/guide-box";
 import { InfoBox } from "../components/ui/info-box";
 import Header from "../components/ui/header";
-import { convertMatchType } from "../types/types";
+import { convertMatchType } from "../utils/utils";
 import { useErrorHandler } from "../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../hooks/use-error-handler/types";
 

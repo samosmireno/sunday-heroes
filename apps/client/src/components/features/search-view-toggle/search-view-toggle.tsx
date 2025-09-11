@@ -1,5 +1,5 @@
 import { LayoutGrid, List, Search, X } from "lucide-react";
-import { ViewType } from "../../../types/types";
+import { ViewType } from "./types";
 
 interface SearchViewToggleProps {
   placeholder?: string;

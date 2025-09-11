@@ -11,11 +11,10 @@ import { rectSwappingStrategy, SortableContext } from "@dnd-kit/sortable";
 import { useState, useEffect } from "react";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { UseFormReturn } from "react-hook-form";
-import { Team } from "../../../types/types";
 import SortableItem from "./sortable-item";
-import swapMatchPlayers from "./utils";
-import swapItems from "../../../utils/utils";
+import { swapMatchPlayers, swapItems } from "./utils";
 import { MatchPlayersData } from "./add-match-schemas";
+import { Team } from "@repo/shared-types";
 
 interface PlayerListProps {
   players: string[];

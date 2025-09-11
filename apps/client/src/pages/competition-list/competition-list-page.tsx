@@ -4,9 +4,9 @@ import CompetitionGrid from "../../components/features/competition-list/competit
 import CompetitionList from "../../components/features/competition-list/competition-list";
 import { useAuth } from "../../context/auth-context";
 import { useCompetitions } from "../../hooks/use-competitions";
-import { ViewType } from "../../types/types";
+import { ViewType } from "../../components/features/search-view-toggle/types";
 import { CompetitionType } from "@repo/shared-types";
-import { SearchViewToggle } from "../../components/features/match-list/search-view-toggle";
+import { SearchViewToggle } from "../../components/features/search-view-toggle/search-view-toggle";
 import useDebounce from "../../hooks/use-debounce";
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";

@@ -2,7 +2,7 @@ import { Button } from "../../ui/button";
 import { useMultiStepFormContext } from "../multi-step-form/multi-step-form-context";
 import { Form, FormItem, FormMessage } from "../../ui/form";
 import { useEffect, useState } from "react";
-import { Team } from "../../../types/types";
+import { Team } from "@repo/shared-types";
 import TeamSection from "./team-section";
 import FormLayout from "./form-layout";
 import { CompetitionPlayersData } from "./add-match-schemas";

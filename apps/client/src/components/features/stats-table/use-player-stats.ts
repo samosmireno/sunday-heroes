@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UserTotals } from "../../../types/types";
+import { UserTotals } from "./types";
 import { MatchResponse } from "@repo/shared-types";
 
 export const usePlayerStats = (matches: MatchResponse[]) => {

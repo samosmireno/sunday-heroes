@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import FormLayout from "./form-layout";
-import { convertMatchType } from "../../../types/types";
+import { convertMatchType } from "../../../utils/utils";
 
 const formatSafeDate = (date: Date): string => {
   if (!date) return "Pick a date";

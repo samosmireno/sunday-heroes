@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Team } from "../../../types/types";
+import { Team } from "@repo/shared-types";
 import { AutoComplete } from "./autocomplete";
 import { Button } from "../../ui/button";
 import { useQuery } from "@tanstack/react-query";

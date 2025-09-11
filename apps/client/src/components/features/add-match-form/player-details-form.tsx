@@ -2,7 +2,7 @@ import { useMultiStepFormContext } from "../multi-step-form/multi-step-form-cont
 import { Form, FormMessage } from "../../ui/form";
 import { Button } from "../../ui/button";
 import TeamInputStats from "./team-input-stats";
-import { Team } from "../../../types/types";
+import { Team } from "@repo/shared-types";
 import FormLayout from "./form-layout";
 import { DuelFormData } from "./add-match-schemas";
 

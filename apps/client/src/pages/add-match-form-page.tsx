@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../config/axios-config";
 import { useFormMatchData } from "../hooks/use-form-match-data";
-import { createFootballFieldMatch } from "../utils/utils";
+import { createFootballFieldMatch } from "../components/features/add-match-form/utils";
 import FootballField from "../components/features/football-field/football-field";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

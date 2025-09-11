@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
-import { User, Team } from "../../../types/types";
+import { User } from "./types";
 import { config } from "../../../config/config";
+import { Team } from "@repo/shared-types";
 
 export function useTeamPlayers(user_id: string | null, competitionId: string) {
   const [players, setPlayers] = useState<{ Home: string[]; Away: string[] }>({

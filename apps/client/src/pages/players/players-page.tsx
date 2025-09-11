@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../context/auth-context";
-import { ViewType } from "../../types/types";
-import { SearchViewToggle } from "../../components/features/match-list/search-view-toggle";
+import { ViewType } from "../../components/features/search-view-toggle/types";
+import { SearchViewToggle } from "../../components/features/search-view-toggle/search-view-toggle";
 import useDebounce from "../../hooks/use-debounce";
 import CompactPagination from "../../components/features/pagination/compact-pagination";
 import Header from "../../components/ui/header";

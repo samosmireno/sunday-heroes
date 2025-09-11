@@ -4,7 +4,7 @@ import { CheckSquare, ChevronDown, ChevronUp, Shield } from "lucide-react";
 import { MatchDetails } from "./match-details";
 import { MatchPageResponse } from "@repo/shared-types";
 import { formatDate } from "../../../utils/utils";
-import { convertMatchType } from "../../../types/types";
+import { convertMatchType } from "../../../utils/utils";
 import React from "react";
 import { Button } from "../../ui/button";
 

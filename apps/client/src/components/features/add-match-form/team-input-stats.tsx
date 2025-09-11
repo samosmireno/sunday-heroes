@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Team } from "../../../types/types";
 import {
   FormControl,
   FormField,
@@ -10,6 +9,7 @@ import {
 import { Input } from "../../ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { DuelFormData } from "./add-match-schemas";
+import { Team } from "@repo/shared-types";
 
 interface TeamInputStatsProps {
   team: Team;
