@@ -40,9 +40,10 @@ export default function PlayerInfo({
     >
       <PlayerIcon
         playerId={matchPlayer.id}
-        starPlayer={starPlayer}
-        isEdited={isEdited}
         playerPosition={matchPlayer.position}
+        size={isEdited ? "medium" : "large"}
+        showPosition={isEdited ? false : true}
+        starPlayer={starPlayer}
       />
       <div
         className="mt-1 hidden max-w-20 overflow-hidden truncate whitespace-nowrap rounded-sm bg-black/50 px-1 text-center text-xs text-white sm:inline"

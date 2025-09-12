@@ -263,8 +263,7 @@ const CreateCompetitionForm = () => {
                                   {Object.values(MatchType)
                                     .filter(
                                       (type) =>
-                                        type !== MatchType.ELEVEN_A_SIDE &&
-                                        type !== MatchType.SEVEN_A_SIDE,
+                                        type !== MatchType.ELEVEN_A_SIDE,
                                     )
                                     .map((type) => (
                                       <SelectItem

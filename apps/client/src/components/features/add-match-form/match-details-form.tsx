@@ -119,9 +119,7 @@ export default function MatchDetailsForm() {
                   <SelectContent className="border-accent/60 bg-panel-bg text-gray-200">
                     {Object.values(MatchType)
                       .filter(
-                        (matchType) =>
-                          matchType !== MatchType.ELEVEN_A_SIDE &&
-                          matchType !== MatchType.SEVEN_A_SIDE,
+                        (matchType) => matchType !== MatchType.ELEVEN_A_SIDE,
                       )
                       .map((matchType) => (
                         <SelectItem
