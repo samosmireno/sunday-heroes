@@ -117,19 +117,15 @@ export default function MatchDetailsForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="border-accent/60 bg-panel-bg text-gray-200">
-                    {Object.values(MatchType)
-                      .filter(
-                        (matchType) => matchType !== MatchType.ELEVEN_A_SIDE,
-                      )
-                      .map((matchType) => (
-                        <SelectItem
-                          key={matchType}
-                          value={matchType}
-                          className="hover:bg-accent/20 focus:bg-accent/20 focus:text-white"
-                        >
-                          {convertMatchType(matchType)}
-                        </SelectItem>
-                      ))}
+                    {Object.values(MatchType).map((matchType) => (
+                      <SelectItem
+                        key={matchType}
+                        value={matchType}
+                        className="hover:bg-accent/20 focus:bg-accent/20 focus:text-white"
+                      >
+                        {convertMatchType(matchType)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage className="text-red-400" />

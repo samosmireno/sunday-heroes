@@ -35,7 +35,10 @@ function DuelCompetitionPage({
           />
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <FootballField match={competition.matches[currentMatch]} />
+          <FootballField
+            match={competition.matches[currentMatch]}
+            hoverable={true}
+          />
         </div>
       </div>
       <div className="relative overflow-hidden rounded-lg border-2 border-accent bg-panel-bg p-5 shadow-lg">

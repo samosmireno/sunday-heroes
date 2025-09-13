@@ -212,7 +212,7 @@ export default function AddMatchForm() {
             <h2 className="mb-4 text-lg font-bold text-accent">
               Match Preview
             </h2>
-            <FootballField match={footballFieldMatch} isEdited={true} />
+            <FootballField match={footballFieldMatch} hoverable={false} />
           </div>
         </div>
       </div>

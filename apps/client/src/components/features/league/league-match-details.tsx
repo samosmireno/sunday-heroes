@@ -126,7 +126,7 @@ export default function LeagueMatchDetails({
       <div className="flex-1 overflow-hidden p-3 sm:p-4 md:p-5 lg:p-6">
         {match ? (
           <div className="h-full">
-            <FootballField match={match} isEdited={false} />
+            <FootballField match={match} hoverable={true} />
           </div>
         ) : (
           <div className="flex h-full min-h-[200px] items-center justify-center rounded-lg bg-bg/20 sm:min-h-[300px]">

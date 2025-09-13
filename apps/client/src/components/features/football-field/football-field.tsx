@@ -17,12 +17,12 @@ import { useEffect, useState } from "react";
 
 interface FootballFieldProps {
   match?: MatchResponse;
-  isEdited?: boolean;
+  hoverable?: boolean;
 }
 
 export default function FootballField({
   match,
-  isEdited = false,
+  hoverable = false,
 }: FootballFieldProps) {
   const [formations, setFormations] = useState<Formation[]>([]);
   const [selectedFormationHome, setSelectedFormationHome] = useState<{
@@ -81,7 +81,7 @@ export default function FootballField({
             homeTeam={true}
             playerFormation={selectedFormationHome}
             starPlayerId={starPlayerId}
-            isEdited={isEdited}
+            hoverable={hoverable}
           />
           <div className="absolute right-0 top-0">
             <Select
@@ -114,7 +114,7 @@ export default function FootballField({
             homeTeam={false}
             playerFormation={selectedFormationAway}
             starPlayerId={starPlayerId}
-            isEdited={isEdited}
+            hoverable={hoverable}
           />
         </>
       </FieldLayout>
@@ -123,13 +123,13 @@ export default function FootballField({
           match={match}
           homeTeam={true}
           starPlayerId={starPlayerId}
-          isEdited={isEdited}
+          hoverable={hoverable}
         />
         <OffFieldPlayers
           match={match}
           homeTeam={false}
           starPlayerId={starPlayerId}
-          isEdited={isEdited}
+          hoverable={hoverable}
         />
       </div>
     </div>

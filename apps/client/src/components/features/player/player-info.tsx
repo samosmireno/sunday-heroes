@@ -1,48 +1,52 @@
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { PlayerResponse } from "@repo/shared-types";
 import PlayerCard from "./player-card";
 import PlayerIcon from "./player-icon";
+import { playerIconSizeType } from "./styles";
 
 interface PlayerInfoProps {
   matchPlayer: PlayerResponse;
   position: [number, number] | undefined;
+  size: playerIconSizeType;
   isOnPitch: boolean;
   starPlayer?: string;
-  isEdited?: boolean;
+  hoverable?: boolean;
 }
 
 export default function PlayerInfo({
   matchPlayer,
   position,
+  size,
   isOnPitch,
   starPlayer,
-  isEdited = false,
+  hoverable = false,
 }: PlayerInfoProps) {
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const style: React.CSSProperties | undefined =
-    isOnPitch && position
-      ? {
-          top: `${position[1]}%`,
-          left: `${position[0]}%`,
-        }
+  const computedStyle = useMemo(() => {
+    return isOnPitch && position
+      ? { top: `${position[1]}%`, left: `${position[0]}%` }
       : undefined;
+  }, [isOnPitch, position]);
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
 
   return (
     <div
-      className={`z-10 mx-0 my-1 flex -rotate-90 flex-col items-center hover:z-20 hover:cursor-pointer sm:rotate-0 ${
+      className={`z-10 mx-0 my-1 flex -rotate-90 flex-col items-center hover:z-20 ${hoverable ? "hover:cursor-pointer" : ""} sm:rotate-0 ${
         isOnPitch &&
         "absolute -translate-x-[55%] -translate-y-1/2 sm:-translate-y-1/4"
       }`}
-      style={style}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      style={computedStyle}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <PlayerIcon
         playerId={matchPlayer.id}
         playerPosition={matchPlayer.position}
-        size={isEdited ? "medium" : "large"}
-        showPosition={isEdited ? false : true}
+        size={size}
+        showPosition={hoverable}
         starPlayer={starPlayer}
       />
       <div
@@ -51,7 +55,7 @@ export default function PlayerInfo({
       >
         {matchPlayer.nickname}
       </div>
-      {isHovered && !isEdited && <PlayerCard matchPlayer={matchPlayer} />}
+      {isHovered && hoverable && <PlayerCard matchPlayer={matchPlayer} />}
     </div>
   );
 }
