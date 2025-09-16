@@ -53,25 +53,33 @@ export class MatchService {
     const { competitionId, limit = 10, offset = 0 } = options;
 
     let matches: MatchWithDetails[];
+    let totalCount: number;
 
     if (competitionId) {
       matches = await MatchRepo.findByCompetitionId(competitionId, {
         limit,
         offset,
       });
+      totalCount = await MatchRepo.countByCompetitionId(competitionId);
     } else {
-      const [userMatches, dashboardMatches] = await Promise.all([
-        MatchRepo.findByPlayerId(userId, { limit, offset }),
-        MatchRepo.findByDashboardId(dashboardId, { limit, offset }),
-      ]);
-
-      matches = this.mergeAndDeduplicateMatches(userMatches, dashboardMatches);
+      matches = await MatchRepo.findByUserWithDeduplication(
+        userId,
+        dashboardId,
+        {
+          limit,
+          offset,
+        }
+      );
+      totalCount = await MatchRepo.countByUserWithDeduplication(
+        userId,
+        dashboardId
+      );
     }
 
     return {
       matches: transformMatchesToMatchesResponse(userId, matches),
-      totalCount: matches.length,
-      totalPages: Math.ceil(matches.length / limit),
+      totalCount: totalCount,
+      totalPages: Math.ceil(totalCount / limit),
     };
   }
 
@@ -100,24 +108,5 @@ export class MatchService {
 
   static async closeExpiredVoting() {
     return MatchVotingService.closeExpiredVoting();
-  }
-
-  private static mergeAndDeduplicateMatches(
-    userMatches: MatchWithDetails[],
-    dashboardMatches: MatchWithDetails[]
-  ): MatchWithDetails[] {
-    const matchMap = new Map<string, MatchWithDetails>();
-    userMatches.forEach((match) => matchMap.set(match.id, match));
-    dashboardMatches.forEach((match) => {
-      if (match.matchPlayers && Array.isArray(match.matchPlayers)) {
-        matchMap.set(match.id, match as MatchWithDetails);
-      }
-    });
-    return Array.from(matchMap.values()).sort((a, b) => {
-      if (!a.date && !b.date) return 0;
-      if (!a.date) return 1;
-      if (!b.date) return -1;
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    });
   }
 }

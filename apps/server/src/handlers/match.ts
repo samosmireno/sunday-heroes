@@ -74,7 +74,7 @@ export const getMatchesWithStats = async (
   try {
     const userId = getRequiredQuery(req, "userId");
     const page = getOptionalNumberParam(req, "page", 1);
-    const limit = getOptionalNumberParam(req, "limit", 8);
+    const limit = getOptionalNumberParam(req, "limit", 10);
     const competitionId = req.query.competitionId?.toString();
 
     const result = await MatchService.getMatchesForUser(userId, {

@@ -152,6 +152,20 @@ export class MatchRepo {
     }
   }
 
+  static async countByCompetitionId(
+    competitionId: string,
+    tx?: PrismaTransaction
+  ): Promise<number> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.count({
+        where: { competitionId },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByCompetitionId");
+    }
+  }
+
   static async findByCompetitionIds(
     competitionIds: string[]
   ): Promise<Match[]> {
@@ -218,6 +232,87 @@ export class MatchRepo {
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchRepo.findByPlayerId");
+    }
+  }
+
+  static async findByUserWithDeduplication(
+    userId: string,
+    dashboardId: string,
+    options?: { limit?: number; offset?: number },
+    tx?: PrismaTransaction
+  ): Promise<MatchWithDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        where: {
+          OR: [
+            {
+              matchPlayers: {
+                some: {
+                  dashboardPlayer: {
+                    userId,
+                  },
+                },
+              },
+            },
+            {
+              competition: {
+                dashboardId,
+              },
+              date: {
+                not: null,
+              },
+            },
+          ],
+        },
+        include: MATCH_DETAILED_INCLUDE,
+        orderBy: { date: "desc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "MatchRepo.findByUserWithDeduplication"
+      );
+    }
+  }
+
+  static async countByUserWithDeduplication(
+    userId: string,
+    dashboardId: string,
+    tx?: PrismaTransaction
+  ): Promise<number> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.count({
+        where: {
+          OR: [
+            {
+              matchPlayers: {
+                some: {
+                  dashboardPlayer: {
+                    userId,
+                  },
+                },
+              },
+            },
+            {
+              competition: {
+                dashboardId,
+              },
+              date: {
+                not: null,
+              },
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "MatchRepo.countByUserWithDeduplication"
+      );
     }
   }
 

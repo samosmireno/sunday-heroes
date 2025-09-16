@@ -19,6 +19,8 @@ export default function MatchesPage() {
     page: currentPage,
   });
 
+  console.log(currentPage, totalPages, totalCount);
+
   if (isLoading) {
     return <MatchesPageSkeleton />;
   }
