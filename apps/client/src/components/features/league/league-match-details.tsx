@@ -86,7 +86,7 @@ export default function LeagueMatchDetails({
             </Button>
 
             {isMatchCompleted ? (
-              <div className="rounded-md border-2 border-green-500/30 bg-green-900/20 px-3 py-2 text-center text-xs text-green-400 lg:text-sm">
+              <div className="rounded-md border-2 border-green-500/30 bg-green-900/20 px-3 py-1.5 text-center text-xs text-green-400 lg:py-1 lg:text-sm">
                 ✓ Match completed
               </div>
             ) : (

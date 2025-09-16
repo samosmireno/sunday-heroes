@@ -24,22 +24,30 @@ export const CreateCompetitionFormSchema = z
     matchType: z.nativeEnum(MatchType).optional(),
   })
   .refine(
-    (data) =>
-      !data.votingEnabled ||
-      (data.votingPeriodDays !== undefined && data.reminderDays !== undefined),
+    (data) => !data.votingEnabled || data.votingPeriodDays !== undefined,
     {
-      message: "Voting period and Reminder are required when voting is enabled",
-      path: ["reminderDays"],
+      message: "Voting period is required when voting is enabled",
+      path: ["votingPeriodDays"],
+    },
+  )
+  .refine((data) => !data.votingEnabled || data.reminderDays !== undefined, {
+    message: "Reminder days is required when voting is enabled",
+    path: ["reminderDays"],
+  })
+  .refine(
+    (data) =>
+      data.type !== CompetitionType.LEAGUE || data.numberOfTeams !== undefined,
+    {
+      message: "Number of teams is required for League competitions",
+      path: ["numberOfTeams"],
     },
   )
   .refine(
     (data) =>
-      data.type !== CompetitionType.LEAGUE ||
-      (data.numberOfTeams !== undefined && data.matchType !== undefined),
+      data.type !== CompetitionType.LEAGUE || data.matchType !== undefined,
     {
-      message:
-        "Number of teams and match type are required for League competitions",
-      path: ["numberOfTeams"],
+      message: "Match type is required for League competitions",
+      path: ["matchType"],
     },
   )
   .refine(

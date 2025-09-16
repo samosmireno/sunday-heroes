@@ -79,22 +79,30 @@ function extractDashboardOwnerData(competitions: DashboardCompetitionsType) {
 function transformDashboardMatchesToResponse(
   matches: DashboardMatchesType
 ): DashboardMatchResponse[] {
-  const matchesResponse: DashboardMatchResponse[] = matches.map((match) => ({
-    id: match.id,
-    competitionType: match.competition
-      .type as DashboardMatchResponse["competitionType"],
-    competitionName: match.competition.name,
-    date: match.date?.toLocaleDateString(),
-    matchType: match.matchType as DashboardMatchResponse["matchType"],
-    round: match.round,
-    homeTeamScore: match.homeTeamScore,
-    awayTeamScore: match.awayTeamScore,
-    penaltyHomeScore: match.penaltyHomeScore ?? undefined,
-    penaltyAwayScore: match.penaltyAwayScore ?? undefined,
-    teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
-    matchPlayers: match.matchPlayers.length,
-    votingStatus: match.votingStatus as DashboardMatchResponse["votingStatus"],
-  }));
+  const matchesResponse: DashboardMatchResponse[] = matches
+    .filter((match) => match.date !== null)
+    .sort((a, b) => {
+      const aTime = a.date instanceof Date ? a.date.getTime() : 0;
+      const bTime = b.date instanceof Date ? b.date.getTime() : 0;
+      return bTime - aTime;
+    })
+    .map((match) => ({
+      id: match.id,
+      competitionType: match.competition
+        .type as DashboardMatchResponse["competitionType"],
+      competitionName: match.competition.name,
+      date: match.date?.toLocaleDateString(),
+      matchType: match.matchType as DashboardMatchResponse["matchType"],
+      round: match.round,
+      homeTeamScore: match.homeTeamScore,
+      awayTeamScore: match.awayTeamScore,
+      penaltyHomeScore: match.penaltyHomeScore ?? undefined,
+      penaltyAwayScore: match.penaltyAwayScore ?? undefined,
+      teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
+      matchPlayers: match.matchPlayers.length,
+      votingStatus:
+        match.votingStatus as DashboardMatchResponse["votingStatus"],
+    }));
 
   return matchesResponse;
 }
