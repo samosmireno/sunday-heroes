@@ -93,13 +93,11 @@ export class TeamRepo {
         },
         include: {
           teamCompetitions: {
-            where: { competitionId },
             include: {
               competition: true,
             },
           },
           teamRosters: {
-            where: { competitionId },
             include: {
               dashboardPlayer: true,
             },

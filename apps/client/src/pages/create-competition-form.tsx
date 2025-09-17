@@ -42,7 +42,7 @@ const CreateCompetitionForm = () => {
   const { handleError } = useErrorHandler();
   const form = useForm<CreateCompetitionFormValues>({
     resolver: zodResolver(CreateCompetitionFormSchema),
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: {
       name: "",
       type: undefined,
