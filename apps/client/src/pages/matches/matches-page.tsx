@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import Header from "../../components/ui/header";
 import Background from "../../components/ui/background";
 import CompactPagination from "../../components/features/pagination/compact-pagination";
@@ -7,11 +7,12 @@ import { useAuth } from "../../context/auth-context";
 import { useMatches } from "../../hooks/use-matches";
 import { useParams } from "react-router-dom";
 import MatchesPageSkeleton from "./matches-page-skeleton";
+import { useUrlPagination } from "../../hooks/use-url-pagination";
 
 export default function MatchesPage() {
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const { user } = useAuth();
   const { competitionId } = useParams();
+  const { currentPage, setPage, resetPage } = useUrlPagination();
 
   const { matches, isLoading, totalCount, totalPages } = useMatches({
     userId: user?.id || "",
@@ -19,7 +20,15 @@ export default function MatchesPage() {
     page: currentPage,
   });
 
-  console.log(currentPage, totalPages, totalCount);
+  useEffect(() => {
+    resetPage();
+  }, [competitionId]);
+
+  useEffect(() => {
+    if (!isLoading && totalPages > 0 && currentPage > totalPages) {
+      setPage(totalPages);
+    }
+  }, [isLoading, currentPage, totalPages, setPage]);
 
   if (isLoading) {
     return <MatchesPageSkeleton />;
@@ -52,7 +61,7 @@ export default function MatchesPage() {
         <CompactPagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={setPage}
           className="self-center sm:self-auto"
         />
       </div>

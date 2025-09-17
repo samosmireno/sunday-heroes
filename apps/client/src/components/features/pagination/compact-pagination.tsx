@@ -63,16 +63,18 @@ export default function CompactPagination({
           </PaginationItem>
         )}
 
-        {currentPage !== totalPages && totalPages > 3 && (
-          <PaginationItem>
-            <PaginationLink
-              onClick={() => onPageChange(totalPages)}
-              className="h-8 w-8 cursor-pointer border-2 border-accent/50 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:h-9 sm:w-9"
-            >
-              {totalPages}
-            </PaginationLink>
-          </PaginationItem>
-        )}
+        {currentPage !== totalPages &&
+          currentPage !== totalPages - 1 &&
+          totalPages > 3 && (
+            <PaginationItem>
+              <PaginationLink
+                onClick={() => onPageChange(totalPages)}
+                className="h-8 w-8 cursor-pointer border-2 border-accent/50 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:h-9 sm:w-9"
+              >
+                {totalPages}
+              </PaginationLink>
+            </PaginationItem>
+          )}
 
         {currentPage !== totalPages && (
           <PaginationItem>

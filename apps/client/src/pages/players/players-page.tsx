@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/auth-context";
 import { ViewType } from "../../components/features/search-view-toggle/types";
 import { SearchViewToggle } from "../../components/features/search-view-toggle/search-view-toggle";
@@ -9,10 +9,11 @@ import Background from "../../components/ui/background";
 import { usePlayers } from "../../hooks/use-players";
 import PlayersList from "../../components/features/player-list/player-list";
 import PlayersPageSkeleton from "./players-page-skeleton";
+import { useUrlPagination } from "../../hooks/use-url-pagination";
 
 export default function PlayersPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const { currentPage, setPage } = useUrlPagination();
   const debouncedQuery = useDebounce(searchQuery, 500);
 
   const { user } = useAuth();
@@ -22,6 +23,12 @@ export default function PlayersPage() {
     page: currentPage - 1,
     searchTerm: debouncedQuery,
   });
+
+  useEffect(() => {
+    if (!isLoading && totalPages > 0 && currentPage > totalPages) {
+      setPage(totalPages);
+    }
+  }, [isLoading, currentPage, totalPages, setPage]);
 
   if (isLoading) {
     return <PlayersPageSkeleton />;
@@ -66,7 +73,7 @@ export default function PlayersPage() {
         <CompactPagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={setPage}
           className="self-center sm:self-auto"
         />
       </div>

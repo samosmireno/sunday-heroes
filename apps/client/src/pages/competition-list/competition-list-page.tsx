@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import CompetitionGrid from "../../components/features/competition-list/competition-grid";
 import CompetitionList from "../../components/features/competition-list/competition-list";
@@ -14,6 +14,7 @@ import CompactPagination from "../../components/features/pagination/compact-pagi
 import FilterTabs from "../../components/features/competition-list/filter-tabs";
 import Header from "../../components/ui/header";
 import CompetitionListSkeleton from "./competition-list-skeleton";
+import { useUrlPagination } from "../../hooks/use-url-pagination";
 
 const filterOptions = [
   { value: null, label: "All" },
@@ -39,7 +40,7 @@ export default function CompetitionListPage() {
     null,
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const { currentPage, setPage } = useUrlPagination();
   const [viewType, setViewType] = useState<ViewType>(ViewType.LIST);
   const debouncedQuery = useDebounce(searchQuery, 500);
 
@@ -52,6 +53,12 @@ export default function CompetitionListPage() {
     type: activeFilter,
     searchTerm: debouncedQuery,
   });
+
+  useEffect(() => {
+    if (!isLoading && totalPages > 0 && currentPage > totalPages) {
+      setPage(totalPages);
+    }
+  }, [isLoading, currentPage, totalPages, setPage]);
 
   if (isLoading) {
     return <CompetitionListSkeleton />;
@@ -121,7 +128,7 @@ export default function CompetitionListPage() {
         <CompactPagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={setPage}
           className="self-center sm:self-auto"
         />
       </div>
