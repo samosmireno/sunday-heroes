@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useMultiStepFormContext } from "../multi-step-form/multi-step-form-context";
 
 interface StepNavigationProps {
@@ -11,8 +10,6 @@ export default function StepNavigation({
   currentStep,
 }: StepNavigationProps) {
   const { goToStep } = useMultiStepFormContext();
-
-  useEffect(() => {}, []);
 
   return (
     <div className="relative mb-4 w-full sm:mb-6">

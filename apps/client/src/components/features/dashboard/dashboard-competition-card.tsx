@@ -6,24 +6,24 @@ interface DashboardCompetitionCardProps {
   competition: DashboardCompetitionResponse;
 }
 
+const typeColors = {
+  DUEL: {
+    bar: "bg-duel-600",
+    badge: "bg-duel-800/40 text-duel-300",
+  },
+  LEAGUE: {
+    bar: "bg-league-600",
+    badge: "bg-league-800/40 text-league-300",
+  },
+  KNOCKOUT: {
+    bar: "bg-knockout-600",
+    badge: "bg-knockout-800/40 text-knockout-300",
+  },
+};
+
 export default function DashboardCompetitionCard({
   competition,
 }: DashboardCompetitionCardProps) {
-  const typeColors = {
-    DUEL: {
-      bar: "bg-duel-600",
-      badge: "bg-duel-800/40 text-duel-300",
-    },
-    LEAGUE: {
-      bar: "bg-league-600",
-      badge: "bg-league-800/40 text-league-300",
-    },
-    KNOCKOUT: {
-      bar: "bg-knockout-600",
-      badge: "bg-knockout-800/40 text-knockout-300",
-    },
-  };
-
   const navigate = useNavigate();
 
   return (

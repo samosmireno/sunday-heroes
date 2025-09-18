@@ -6,6 +6,22 @@ interface PlayerDetailsProps {
 }
 
 export default function PlayerDetails({ player }: PlayerDetailsProps) {
+  const getPlayerStats = () => {
+    if (player.competitions.length === 0) {
+      return { bestPerformance: 0, mostGoals: 0, mostAssists: 0 };
+    }
+
+    return {
+      bestPerformance: Math.max(
+        ...player.competitions.map((c) => c.averageRating || 0),
+      ),
+      mostGoals: Math.max(...player.competitions.map((c) => c.goals)),
+      mostAssists: Math.max(...player.competitions.map((c) => c.assists)),
+    };
+  };
+
+  const playerStats = getPlayerStats();
+
   return (
     <tr>
       <td colSpan={8} className="border-b border-accent/20 p-0">
@@ -143,27 +159,19 @@ export default function PlayerDetails({ player }: PlayerDetailsProps) {
             <div className="text-center">
               <div className="text-xs text-gray-400">Best Performance</div>
               <div className="text-sm font-bold text-green-400 sm:text-lg">
-                {player.competitions.length !== 0
-                  ? Math.max(
-                      ...player.competitions.map((c) => c.averageRating || 0),
-                    ).toFixed(1)
-                  : 0}
+                {playerStats.bestPerformance.toFixed(1)}
               </div>
             </div>
             <div className="text-center">
               <div className="text-xs text-gray-400">Most Goals</div>
               <div className="text-sm font-bold text-green-400 sm:text-lg">
-                {player.competitions.length !== 0
-                  ? Math.max(...player.competitions.map((c) => c.goals))
-                  : 0}
+                {playerStats.mostGoals}
               </div>
             </div>
             <div className="text-center">
               <div className="text-xs text-gray-400">Most Assists</div>
               <div className="text-sm font-bold text-purple-400 sm:text-lg">
-                {player.competitions.length !== 0
-                  ? Math.max(...player.competitions.map((c) => c.assists))
-                  : 0}
+                {playerStats.mostAssists}
               </div>
             </div>
           </div>
