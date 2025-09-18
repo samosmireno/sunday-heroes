@@ -14,7 +14,7 @@ const AuthCallback = () => {
 
     if (errorParam) {
       console.error("Authentication error:", errorParam);
-      navigate("/login", { replace: true });
+      navigate("/landing", { replace: true });
       return;
     }
 
@@ -32,10 +32,10 @@ const AuthCallback = () => {
           navigate("/dashboard", { replace: true });
         }
       } else {
-        navigate("/login", { replace: true });
+        navigate("/landing", { replace: true });
       }
     } else {
-      navigate("/login", { replace: true });
+      navigate("/landing", { replace: true });
     }
   }, [navigate, processAuthSuccess, searchParams]);
 

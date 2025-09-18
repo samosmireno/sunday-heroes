@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     axiosInstance
       .get(`${config.server}/auth/logout`, { withCredentials: true })
       .then(() => {
-        navigate("/login");
+        navigate("/landing");
       })
       .catch((error) => {
         console.error("Logout error:", error);

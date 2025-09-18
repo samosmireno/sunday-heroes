@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import LoginPage from "./pages/login";
+import LandingPage from "./pages/landing-page.tsx";
 import ErrorPage from "./pages/error-page";
 import ProtectedRoute from "./pages/protected-route";
 import { AuthProvider } from "./context/auth-context.tsx";
@@ -25,7 +25,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/landing" element={<LandingPage />} />
 
             <Route path="/auth/callback" element={<AuthCallback />} />
 

@@ -24,7 +24,7 @@ const refreshAuthLogic = async () => {
   } catch (error) {
     refreshPromise = null;
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    window.location.href = "/landing";
     return Promise.reject(error);
   }
 };
