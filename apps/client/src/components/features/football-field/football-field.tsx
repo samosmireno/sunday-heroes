@@ -4,7 +4,7 @@ import findStarPlayer from "./utils";
 import FieldLayout from "./field-layout";
 import OnFieldPlayers from "./on-field-players.tsx";
 import OffFieldPlayers from "./off-field-players.tsx";
-import matchTypeFormations, { Formation } from "./formations.ts";
+import matchTypeFormations from "./formations.ts";
 import {
   Select,
   SelectItem,
@@ -12,8 +12,7 @@ import {
   SelectContent,
   SelectValue,
 } from "../../ui/select.tsx";
-
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 interface FootballFieldProps {
   match?: MatchResponse;
@@ -24,7 +23,9 @@ export default function FootballField({
   match,
   hoverable = false,
 }: FootballFieldProps) {
-  const [formations, setFormations] = useState<Formation[]>([]);
+  const formations = useMemo(() => {
+    return match ? matchTypeFormations[match.matchType] || [] : [];
+  }, [match?.matchType]);
   const [selectedFormationHome, setSelectedFormationHome] = useState<{
     [key: number]: [number, number];
   }>({});
@@ -32,18 +33,25 @@ export default function FootballField({
     [key: number]: [number, number];
   }>({});
 
-  useEffect(() => {
-    if (match) {
-      const matchFormations = matchTypeFormations[match.matchType];
-      setFormations(matchFormations);
-      if (matchFormations.length > 0) {
-        setSelectedFormationHome(matchFormations[0].formation);
-        setSelectedFormationAway(matchFormations[0].formation);
-      }
+  useMemo(() => {
+    if (formations.length > 0) {
+      setSelectedFormationHome(formations[0].formation);
+      setSelectedFormationAway(formations[0].formation);
     }
-  }, [match]);
+  }, [formations]);
 
   const starPlayerId = findStarPlayer(match);
+
+  const handleFormationChange = (value: string, isHome: boolean) => {
+    const formation = formations.find((f) => f.name === value);
+    if (formation) {
+      if (isHome) {
+        setSelectedFormationHome(formation.formation);
+      } else {
+        setSelectedFormationAway(formation.formation);
+      }
+    }
+  };
 
   return (
     <div className="flex w-full rotate-90 flex-col items-center py-16 sm:rotate-0 sm:py-8">
@@ -51,12 +59,7 @@ export default function FootballField({
         <>
           <div className="absolute left-0 top-0">
             <Select
-              onValueChange={(value) => {
-                const formation = formations.find((f) => f.name === value);
-                if (formation) {
-                  setSelectedFormationHome(formation.formation);
-                }
-              }}
+              onValueChange={(value) => handleFormationChange(value, true)}
             >
               <SelectTrigger className="h-8 w-8 -rotate-90 rounded-tr-none bg-secondary sm:w-40 sm:rotate-0 sm:rounded-tl-none">
                 <SelectValue placeholder="Formation" />
@@ -85,12 +88,7 @@ export default function FootballField({
           />
           <div className="absolute right-0 top-0">
             <Select
-              onValueChange={(value) => {
-                const formation = formations.find((f) => f.name === value);
-                if (formation) {
-                  setSelectedFormationAway(formation.formation);
-                }
-              }}
+              onValueChange={(value) => handleFormationChange(value, false)}
             >
               <SelectTrigger className="w-8 -translate-x-1 -translate-y-1 -rotate-90 rounded-br-none bg-secondary sm:w-40 sm:translate-x-0 sm:translate-y-0 sm:rotate-0 sm:rounded-tr-none">
                 <SelectValue placeholder="Formation" />

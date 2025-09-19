@@ -8,7 +8,6 @@ import {
   DragEndEvent,
 } from "@dnd-kit/core";
 import { rectSwappingStrategy, SortableContext } from "@dnd-kit/sortable";
-import { useState, useEffect } from "react";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { UseFormReturn } from "react-hook-form";
 import SortableItem from "./sortable-item";
@@ -29,15 +28,6 @@ export default function PlayerList({
   form,
   team,
 }: PlayerListProps) {
-  const [items, setItems] = useState<string[]>(players);
-  const [matchPlayers, setMatchPlayers] = useState<MatchPlayersData>(
-    form.getValues("matchPlayers") || null,
-  );
-
-  useEffect(() => {
-    setItems(players);
-  }, [players]);
-
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -46,30 +36,32 @@ export default function PlayerList({
     if (!over) return;
 
     if (active.id !== over.id) {
-      if (matchPlayers) {
+      const currentMatchPlayers = form.getValues(
+        "matchPlayers",
+      ) as MatchPlayersData;
+
+      if (currentMatchPlayers) {
         const activeId = active.id as string;
         const overId = over.id as string;
 
         const newMatchPlayers = swapMatchPlayers(
-          matchPlayers,
+          currentMatchPlayers,
           activeId,
           overId,
         );
 
         if (newMatchPlayers) {
           form.setValue(`matchPlayers.players`, newMatchPlayers.players);
-          setMatchPlayers(newMatchPlayers);
         }
       }
 
-      setItems((items) => {
-        const oldIndex = items.indexOf(active.id as string);
-        const newIndex = items.indexOf(over.id as string);
+      const oldIndex = players.indexOf(active.id as string);
+      const newIndex = players.indexOf(over.id as string);
 
-        const newItems = swapItems(items, oldIndex, newIndex);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newItems = swapItems(players, oldIndex, newIndex);
         form.setValue(`players.${team.toLocaleLowerCase()}Players`, newItems);
-        return newItems;
-      });
+      }
     }
   };
 
@@ -80,9 +72,9 @@ export default function PlayerList({
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={items} strategy={rectSwappingStrategy}>
+      <SortableContext items={players} strategy={rectSwappingStrategy}>
         <div className="flex flex-wrap justify-start space-x-2 py-4 empty:hidden">
-          {items.map((player) => (
+          {players.map((player) => (
             <SortableItem key={player} id={player} onSelect={onSelect} />
           ))}
         </div>
