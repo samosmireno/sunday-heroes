@@ -9,7 +9,6 @@ interface PlayerInfoProps {
   position: [number, number] | undefined;
   size: playerIconSizeType;
   isOnPitch: boolean;
-  starPlayer?: string;
   hoverable?: boolean;
 }
 
@@ -18,7 +17,6 @@ export default function PlayerInfo({
   position,
   size,
   isOnPitch,
-  starPlayer,
   hoverable = false,
 }: PlayerInfoProps) {
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -43,11 +41,10 @@ export default function PlayerInfo({
       onMouseLeave={handleMouseLeave}
     >
       <PlayerIcon
-        playerId={matchPlayer.id}
         playerPosition={matchPlayer.position}
         size={size}
         showPosition={hoverable}
-        starPlayer={starPlayer}
+        manOfTheMatch={matchPlayer.manOfTheMatch}
       />
       <div
         className="mt-1 hidden max-w-20 overflow-hidden truncate whitespace-nowrap rounded-sm bg-black/50 px-1 text-center text-xs text-white sm:inline"

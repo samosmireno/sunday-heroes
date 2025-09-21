@@ -5,7 +5,11 @@ import {
 } from "@repo/shared-types";
 import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { MatchWithDetails } from "../repositories/match-repo";
-import { calculateLeaguePlayerStats, calculatePlayerScore } from "./utils";
+import {
+  calculateLeaguePlayerStats,
+  calculatePlayerScore,
+  findManOfTheMatchId,
+} from "./utils";
 import { TeamCompetitionWithDetails } from "../repositories/team-competition-repo";
 
 interface LeagueMatch {
@@ -78,6 +82,7 @@ export function transformCompetitionToPlayerStatsResponse(
         position: player.position,
         penalty_scored: player.penaltyScored ?? undefined,
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+        manOfTheMatch: player.id === findManOfTheMatchId(match),
       };
     }),
   }));

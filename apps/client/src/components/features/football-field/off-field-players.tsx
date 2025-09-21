@@ -8,14 +8,12 @@ import { playerIconSizeType } from "../player/styles";
 interface OffFieldPlayersProps {
   match?: MatchResponse;
   homeTeam: boolean;
-  starPlayerId?: string;
   hoverable?: boolean;
 }
 
 export default function OffFieldPlayers({
   match,
   homeTeam,
-  starPlayerId,
   hoverable = false,
 }: OffFieldPlayersProps) {
   const { playersOffField, playerSize } = useMemo(() => {
@@ -48,7 +46,6 @@ export default function OffFieldPlayers({
             position={[0, 0]}
             size={playerSize}
             isOnPitch={false}
-            starPlayer={starPlayerId}
             hoverable={hoverable}
           />
         ))}

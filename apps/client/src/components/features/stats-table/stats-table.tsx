@@ -1,6 +1,5 @@
 import { useSortPlayers } from "./use-sort-players";
 import { PlayerTotals } from "@repo/shared-types";
-import { UserTotals } from "./types";
 
 interface StatsTableProps {
   playerStats: PlayerTotals[];
@@ -17,7 +16,7 @@ export default function StatsTable({
     "desc",
   );
 
-  const getSortArrow = (key: keyof UserTotals) => {
+  const getSortArrow = (key: keyof PlayerTotals) => {
     if (sortColumn === key) {
       return sortOrder === "asc" ? "↓" : "↑";
     }
@@ -49,7 +48,7 @@ export default function StatsTable({
                   🏟️
                 </span>
                 <span className="hidden md:inline">Matches</span>
-                {getSortArrow("totalMatches")}
+                {getSortArrow("matches")}
               </th>
               <th
                 className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:p-3"
@@ -59,7 +58,7 @@ export default function StatsTable({
                   ⚽
                 </span>
                 <span className="hidden md:inline">Goals</span>
-                {getSortArrow("totalGoals")}
+                {getSortArrow("goals")}
               </th>
               <th
                 className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:p-3"
@@ -69,19 +68,28 @@ export default function StatsTable({
                   🅰️
                 </span>
                 <span className="hidden md:inline">Assists</span>
-                {getSortArrow("totalAssists")}
+                {getSortArrow("assists")}
               </th>
               {votingEnabled && (
-                <th
-                  className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:p-3"
-                  onClick={() => sortPlayers("rating")}
-                >
-                  <span className="inline md:hidden" title="Rating">
-                    ⭐
-                  </span>
-                  <span className="hidden md:inline">Rating</span>
-                  {getSortArrow("totalRating")}
-                </th>
+                <>
+                  <th
+                    className="hidden border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:table-cell lg:p-3"
+                    onClick={() => sortPlayers("numManOfTheMatch")}
+                  >
+                    <span>MoM</span>
+                    {getSortArrow("numManOfTheMatch")}
+                  </th>
+                  <th
+                    className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:p-3"
+                    onClick={() => sortPlayers("rating")}
+                  >
+                    <span className="inline md:hidden" title="Rating">
+                      ⭐
+                    </span>
+                    <span className="hidden md:inline">Rating</span>
+                    {getSortArrow("rating")}
+                  </th>
+                </>
               )}
             </tr>
           </thead>
@@ -105,9 +113,14 @@ export default function StatsTable({
                     {player.assists}
                   </td>
                   {votingEnabled && (
-                    <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
-                      {player.rating}
-                    </td>
+                    <>
+                      <td className="hidden text-center text-sm font-medium md:text-base md:font-semibold lg:table-cell lg:p-2">
+                        {player.numManOfTheMatch}
+                      </td>
+                      <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
+                        {player.rating}
+                      </td>
+                    </>
                   )}
                 </tr>
               ))}

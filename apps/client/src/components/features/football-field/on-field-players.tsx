@@ -9,7 +9,6 @@ interface OnFieldPlayersProps {
   match?: MatchResponse;
   homeTeam: boolean;
   playerFormation: { [key: number]: [number, number] };
-  starPlayerId?: string;
   hoverable?: boolean;
 }
 
@@ -17,7 +16,6 @@ export default function OnFieldPlayers({
   match,
   homeTeam,
   playerFormation,
-  starPlayerId,
   hoverable = false,
 }: OnFieldPlayersProps) {
   const { playersOnField, playerSize } = useMemo(() => {
@@ -56,7 +54,6 @@ export default function OnFieldPlayers({
             }
             size={playerSize}
             isOnPitch={true}
-            starPlayer={starPlayerId}
             hoverable={hoverable}
           />
         ))}

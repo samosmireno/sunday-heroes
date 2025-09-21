@@ -1,6 +1,5 @@
 import "./football-field.css";
 import { MatchResponse } from "@repo/shared-types";
-import findStarPlayer from "./utils";
 import FieldLayout from "./field-layout";
 import OnFieldPlayers from "./on-field-players.tsx";
 import OffFieldPlayers from "./off-field-players.tsx";
@@ -39,8 +38,6 @@ export default function FootballField({
       setSelectedFormationAway(formations[0].formation);
     }
   }, [formations]);
-
-  const starPlayerId = findStarPlayer(match);
 
   const handleFormationChange = (value: string, isHome: boolean) => {
     const formation = formations.find((f) => f.name === value);
@@ -83,7 +80,6 @@ export default function FootballField({
             match={match}
             homeTeam={true}
             playerFormation={selectedFormationHome}
-            starPlayerId={starPlayerId}
             hoverable={hoverable}
           />
           <div className="absolute right-0 top-0">
@@ -111,24 +107,13 @@ export default function FootballField({
             match={match}
             homeTeam={false}
             playerFormation={selectedFormationAway}
-            starPlayerId={starPlayerId}
             hoverable={hoverable}
           />
         </>
       </FieldLayout>
       <div className="relative z-10 flex h-1/4 w-full justify-between bg-secondary">
-        <OffFieldPlayers
-          match={match}
-          homeTeam={true}
-          starPlayerId={starPlayerId}
-          hoverable={hoverable}
-        />
-        <OffFieldPlayers
-          match={match}
-          homeTeam={false}
-          starPlayerId={starPlayerId}
-          hoverable={hoverable}
-        />
+        <OffFieldPlayers match={match} homeTeam={true} hoverable={hoverable} />
+        <OffFieldPlayers match={match} homeTeam={false} hoverable={hoverable} />
       </div>
     </div>
   );

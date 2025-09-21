@@ -7,6 +7,7 @@ import {
 import { PlayerVote } from "@prisma/client";
 import { config } from "../config/config";
 import { VotingStatus } from "@prisma/client";
+import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 
 export function calculatePlayerScore(
   received_votes: PlayerVote[],
@@ -27,6 +28,31 @@ export function calculatePlayerScore(
   return 0;
 }
 
+export function findManOfTheMatchId(
+  match: CompetitionWithDetails["matches"][number]
+): string | null {
+  if (match.matchPlayers.length === 0) {
+    return null;
+  }
+
+  let manOfTheMatchId = null;
+  let highestScore = 0;
+
+  match.matchPlayers.forEach((player) => {
+    const playerScore = calculatePlayerScore(
+      player.receivedVotes,
+      match.playerVotes
+    );
+
+    if (playerScore > highestScore) {
+      highestScore = playerScore;
+      manOfTheMatchId = player.id;
+    }
+  });
+
+  return highestScore > 0 ? manOfTheMatchId : null;
+}
+
 export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
   const playerMap = new Map<string, PlayerTotals>();
 
@@ -40,6 +66,7 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
         assists: 0,
         penaltyScored: 0,
         rating: 0,
+        numManOfTheMatch: 0,
       };
 
       const updatedPlayer = {
@@ -50,6 +77,9 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
         penaltyScored:
           (existingPlayer.penaltyScored || 0) + (player.penaltyScored ? 1 : 0),
         rating: (existingPlayer.rating || 0) + (player.rating || 0),
+        numManOfTheMatch:
+          (existingPlayer.numManOfTheMatch || 0) +
+          (player.manOfTheMatch ? 1 : 0),
       };
 
       playerMap.set(player.nickname, updatedPlayer);

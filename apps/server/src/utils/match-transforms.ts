@@ -6,7 +6,11 @@ import {
 } from "@repo/shared-types";
 import { MatchWithDetails } from "../repositories/match-repo";
 import { Match, VotingStatus } from "@prisma/client";
-import { calculatePendingVotes, calculatePlayerScore } from "./utils";
+import {
+  calculatePendingVotes,
+  calculatePlayerScore,
+  findManOfTheMatchId,
+} from "./utils";
 import { createMatchRequest } from "../schemas/create-match-request-schema";
 
 function sortPlayersHomeAwayByPosition(
@@ -33,6 +37,7 @@ export function transformMatchServiceToResponse(
     assists: player.assists,
     position: player.position,
     rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+    manOfTheMatch: player.id === findManOfTheMatchId(match),
   }));
 
   const sortedPlayers = sortPlayersHomeAwayByPosition(mappedPlayers);
@@ -70,6 +75,7 @@ export function transformMatchesToMatchesResponse(
         assists: player.assists,
         isHome: player.isHome,
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+        manOfTheMatch: player.id === findManOfTheMatchId(match),
       }));
 
     const awayTeamPlayers: PlayerResponse[] = match.matchPlayers
@@ -82,6 +88,7 @@ export function transformMatchesToMatchesResponse(
         assists: player.assists,
         isHome: player.isHome,
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+        manOfTheMatch: player.id === findManOfTheMatchId(match),
       }));
 
     const teamNames = match.matchTeams.map((teamMatch) => teamMatch.team.name);

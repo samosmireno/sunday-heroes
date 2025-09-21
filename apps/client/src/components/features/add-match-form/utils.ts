@@ -99,6 +99,7 @@ export const createFootballFieldMatch = (
 
           isHome: true,
           team: Team.HOME,
+          manOfTheMatch: false,
         }),
       ) ?? []),
       ...((formData.players?.awayPlayers ?? []).map(
@@ -115,6 +116,7 @@ export const createFootballFieldMatch = (
               : getPositionByPlayerName(formData, player),
           isHome: false,
           team: Team.AWAY,
+          manOfTheMatch: false,
         }),
       ) ?? []),
     ],

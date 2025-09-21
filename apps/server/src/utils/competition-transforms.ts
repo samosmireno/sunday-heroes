@@ -6,7 +6,11 @@ import {
 } from "@repo/shared-types";
 import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { Competition } from "@prisma/client";
-import { calculatePlayerScore, calculatePlayerStats } from "./utils";
+import {
+  calculatePlayerScore,
+  calculatePlayerStats,
+  findManOfTheMatchId,
+} from "./utils";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 
 export function getUserRole(
@@ -53,6 +57,7 @@ export function transformCompetitionToResponse(
         position: player.position,
         penaltyScored: player.penaltyScored ?? undefined,
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+        manOfTheMatch: player.id === findManOfTheMatchId(match),
       };
     }),
     videoUrl: match.videoUrl ?? undefined,

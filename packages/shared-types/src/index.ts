@@ -11,6 +11,7 @@ export type PlayerResponse = {
   assists: number;
   position: number;
   rating: number;
+  manOfTheMatch: boolean;
   penaltyScored?: boolean;
 };
 
@@ -22,6 +23,7 @@ export type PlayerTotals = {
   assists: number;
   penaltyScored?: number;
   rating?: number;
+  numManOfTheMatch?: number;
 };
 
 export interface LeaguePlayerTotals extends PlayerTotals {
