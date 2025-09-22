@@ -1,5 +1,3 @@
-import { Trophy } from "lucide-react";
-
 interface LandingHeaderProps {
   onLogin: () => void;
 }
@@ -8,8 +6,12 @@ export default function LandingHeader({ onLogin }: LandingHeaderProps) {
   return (
     <header className="flex items-center justify-between p-6">
       <div className="flex items-center space-x-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20">
-          <Trophy className="h-8 w-8 text-accent" />
+        <div className="flex h-12 w-12 items-center justify-center">
+          <img
+            src="/assets/logo.webp"
+            alt="Sunday Heroes Logo"
+            className="h-12 w-12 object-contain"
+          />
         </div>
         <h1
           className="font-oswald text-2xl font-bold uppercase tracking-wider text-accent"
