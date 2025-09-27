@@ -38,10 +38,6 @@ const DASHBOARD_DETAILED_INCLUDE = {
   },
 } satisfies Prisma.DashboardInclude;
 
-export type DashboardCompetitionsType = Prisma.DashboardGetPayload<{
-  include: typeof DASHBOARD_DETAILED_INCLUDE;
-}>["competitions"];
-
 export type DashboardMatchesType = Prisma.DashboardGetPayload<{
   include: typeof DASHBOARD_DETAILED_INCLUDE;
 }>["competitions"][number]["matches"];

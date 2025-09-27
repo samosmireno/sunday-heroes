@@ -16,7 +16,7 @@ export const getDashboardDetails = async (
     }
 
     const dashboardResponse =
-      await DashboardService.getDashboardForUser(userId);
+      await DashboardService.getDashboardPlayerDetailsForUser(userId);
     sendSuccess(res, dashboardResponse);
   } catch (error) {
     next(error);

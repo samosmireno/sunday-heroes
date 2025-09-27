@@ -8,11 +8,36 @@ import {
 import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
 import {
-  DashboardCompetitionsType,
   DashboardMatchesType,
   DashboardWithDetails,
 } from "../repositories/dashboard-repo";
 import { getUserRole } from "./competition-transforms";
+import {
+  DashboardCompetitionsType,
+  DashboardPlayerWithDashboardData,
+} from "../repositories/dashboard-player-repo";
+
+export function extractDashboardData(
+  dashboardPlayers: DashboardPlayerWithDashboardData[]
+): DashboardResponse {
+  const competitions = dashboardPlayers.flatMap(
+    (dp) => dp.dashboard.competitions
+  );
+
+  const dashboardData = extractDashboardOwnerData(competitions);
+
+  return {
+    id: "id",
+    name: "name",
+    user: "given0",
+    activeCompetitions: dashboardData.activeCompetitions,
+    totalPlayers: dashboardData.totalPlayers,
+    pendingVotes: dashboardData.pendingVotes,
+    completedMatches: dashboardData.completedMatches,
+    matches: dashboardData.dashboardMatches,
+    competitions: dashboardData.dashboardCompetitions,
+  };
+}
 
 export function transformDashboardToResponse(
   dashboard: DashboardWithDetails
@@ -38,7 +63,7 @@ function extractDashboardOwnerData(competitions: DashboardCompetitionsType) {
 
   const uniquePlayers = new Set(
     matches.flatMap((match) =>
-      match.matchPlayers.map((player) => player.dashboardPlayer.nickname)
+      match.matchPlayers.map((player) => player.dashboardPlayer.id)
     )
   );
   const totalPlayers = uniquePlayers.size;

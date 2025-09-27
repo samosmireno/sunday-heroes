@@ -124,7 +124,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="group w-full rounded-md border-transparent py-2 text-gray-200 transition-all duration-200">
+                <SidebarMenuButton className="group w-full rounded-md border-transparent py-2 text-gray-200 transition-all duration-200 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">
                   <div className="flex w-full items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/20">
                       <User2 className="h-5 w-7 text-accent opacity-80 group-hover:opacity-100" />

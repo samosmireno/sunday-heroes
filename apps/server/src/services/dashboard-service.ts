@@ -1,5 +1,9 @@
+import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
 import { DashboardRepo } from "../repositories/dashboard-repo";
-import { transformDashboardToResponse } from "../utils/dashboard-transforms";
+import {
+  extractDashboardData,
+  transformDashboardToResponse,
+} from "../utils/dashboard-transforms";
 import {
   AuthorizationError,
   ConflictError,
@@ -15,6 +19,17 @@ export class DashboardService {
     }
 
     return transformDashboardToResponse(dashboard);
+  }
+
+  static async getDashboardPlayerDetailsForUser(userId: string) {
+    const dashboardPlayers =
+      await DashboardPlayerRepo.findByUserIdWithDashboardData(userId);
+
+    if (!dashboardPlayers) {
+      throw new NotFoundError("Dashboard");
+    }
+
+    return extractDashboardData(dashboardPlayers);
   }
 
   static async createDashboard(userId: string, name: string) {

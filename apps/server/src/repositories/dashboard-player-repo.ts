@@ -12,6 +12,38 @@ const DASHBOARD_PLAYER_BASIC_INCLUDE = {
   },
 } satisfies Prisma.DashboardPlayerInclude;
 
+const DASHBOARD_PLAYER_WITH_DASHBOARD_DATA = {
+  dashboard: {
+    include: {
+      competitions: {
+        include: {
+          matches: {
+            include: {
+              matchPlayers: {
+                include: {
+                  dashboardPlayer: {
+                    include: {
+                      votesGiven: true,
+                    },
+                  },
+                  receivedVotes: true,
+                },
+              },
+              matchTeams: {
+                include: {
+                  team: true,
+                },
+              },
+              playerVotes: true,
+              competition: true,
+            },
+          },
+        },
+      },
+    },
+  },
+} satisfies Prisma.DashboardPlayerInclude;
+
 const DASHBOARD_PLAYER_DETAILED_INCLUDE = {
   user: {
     select: {
@@ -53,6 +85,15 @@ export type DashboardPlayerWithUserDetails = Prisma.DashboardPlayerGetPayload<{
   include: typeof DASHBOARD_PLAYER_BASIC_INCLUDE;
 }>;
 
+export type DashboardPlayerWithDashboardData =
+  Prisma.DashboardPlayerGetPayload<{
+    include: typeof DASHBOARD_PLAYER_WITH_DASHBOARD_DATA;
+  }>;
+
+export type DashboardCompetitionsType = Prisma.DashboardPlayerGetPayload<{
+  include: typeof DASHBOARD_PLAYER_WITH_DASHBOARD_DATA;
+}>["dashboard"]["competitions"];
+
 export type DashboardPlayerWithAdmin = Prisma.DashboardPlayerGetPayload<{
   include: typeof DASHBOARD_PLAYER_WITH_ADMIN_INCLUDE;
 }>;
@@ -88,6 +129,67 @@ export class DashboardPlayerRepo {
       throw PrismaErrorHandler.handle(
         error,
         "DashboardPlayerRepo.findByIdWithUserDetails"
+      );
+    }
+  }
+
+  static async findByUserIdWithDashboardData(
+    userId: string,
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithDashboardData[] | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.dashboardPlayer.findMany({
+        where: { userId },
+        include: {
+          dashboard: {
+            include: {
+              competitions: {
+                where: {
+                  matches: {
+                    some: {
+                      matchPlayers: {
+                        some: {
+                          dashboardPlayer: {
+                            userId: userId,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                include: {
+                  matches: {
+                    include: {
+                      matchPlayers: {
+                        include: {
+                          dashboardPlayer: {
+                            include: {
+                              votesGiven: true,
+                            },
+                          },
+                          receivedVotes: true,
+                        },
+                      },
+                      matchTeams: {
+                        include: {
+                          team: true,
+                        },
+                      },
+                      playerVotes: true,
+                      competition: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByUserIdWithDashboardData"
       );
     }
   }
