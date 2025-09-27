@@ -73,9 +73,6 @@ export type CompetitionResponse = {
 };
 
 export type DashboardResponse = {
-  id: string;
-  name: string;
-  user: string;
   activeCompetitions: number;
   totalPlayers: number;
   pendingVotes: number;

@@ -27,9 +27,6 @@ export function extractDashboardData(
   const dashboardData = extractDashboardOwnerData(competitions);
 
   return {
-    id: "id",
-    name: "name",
-    user: "given0",
     activeCompetitions: dashboardData.activeCompetitions,
     totalPlayers: dashboardData.totalPlayers,
     pendingVotes: dashboardData.pendingVotes,
@@ -45,9 +42,6 @@ export function transformDashboardToResponse(
   const dashboardOwnerData = extractDashboardOwnerData(dashboard.competitions);
 
   return {
-    id: dashboard.id,
-    name: dashboard.name,
-    user: dashboard.admin.givenName,
     activeCompetitions: dashboardOwnerData.activeCompetitions,
     totalPlayers: dashboardOwnerData.totalPlayers,
     pendingVotes: dashboardOwnerData.pendingVotes,

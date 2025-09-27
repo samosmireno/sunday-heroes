@@ -43,7 +43,9 @@ export default function DashboardMatchCard({ match }: MatchCardProps) {
           {match.teams[0]} vs {match.teams[1]}
         </h3>
         <div className="mt-1 flex items-center justify-between">
-          <p className="text-xs uppercase text-gray-400">{match.matchType}</p>
+          <p className="text-xs uppercase text-gray-400">
+            {match.competitionName}
+          </p>
           <span className="font-bold text-accent">
             {match.homeTeamScore} : {match.awayTeamScore}
           </span>
