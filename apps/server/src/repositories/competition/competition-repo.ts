@@ -149,6 +149,40 @@ export class CompetitionRepo {
     }
   }
 
+  static async findCompetitionIdsForUser(
+    userId: string,
+    tx?: PrismaTransaction
+  ): Promise<string[]> {
+    try {
+      const prismaClient = tx || prisma;
+      const competitions = await prismaClient.competition.findMany({
+        where: {
+          matches: {
+            some: {
+              matchPlayers: {
+                some: {
+                  dashboardPlayer: {
+                    userId: userId,
+                  },
+                },
+              },
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      return competitions.map((comp) => comp.id);
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.findCompetitionIdsForUser"
+      );
+    }
+  }
+
   static async create(
     data: Omit<Competition, "id">,
     tx?: PrismaTransaction

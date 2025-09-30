@@ -10,8 +10,22 @@ import { usePlayers } from "../../hooks/use-players";
 import PlayersList from "../../components/features/player-list/player-list";
 import PlayersPageSkeleton from "./players-page-skeleton";
 import { useUrlPagination } from "../../hooks/use-url-pagination";
+import FilterTabs from "../../components/features/competition-list/filter-tabs";
+import { playerTabs, PlayerTabsType } from "./types";
+
+const filterOptions = [
+  {
+    value: playerTabs.ADMIN,
+    label: "Managed",
+  },
+  {
+    value: playerTabs.PLAYED_WITH,
+    label: "Played With",
+  },
+];
 
 export default function PlayersPage() {
+  const [activeFilter, setActiveFilter] = useState<PlayerTabsType>("admin");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const { currentPage, setPage } = useUrlPagination();
   const debouncedQuery = useDebounce(searchQuery, 500);
@@ -22,6 +36,7 @@ export default function PlayersPage() {
     userId: user?.id || "",
     page: currentPage - 1,
     searchTerm: debouncedQuery,
+    activeFilter,
   });
 
   useEffect(() => {
@@ -48,11 +63,18 @@ export default function PlayersPage() {
             viewType={ViewType.LIST}
           />
         </div>
+        <div className="overflow-x-auto p-2 sm:p-3">
+          <FilterTabs
+            options={filterOptions}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
+        </div>
       </div>
 
       <div className="relative min-h-[50vh] rounded-lg border-2 border-accent bg-panel-bg p-3 shadow-lg sm:p-4">
         {players && players.length > 0 ? (
-          <PlayersList players={players} />
+          <PlayersList players={players} activeFilter={activeFilter} />
         ) : (
           <div className="flex h-64 items-center justify-center">
             <p className="text-center text-sm text-gray-400 sm:text-base">

@@ -3,12 +3,17 @@ import PlayerDetails from "./player-details";
 import { PlayerListResponse } from "@repo/shared-types";
 import React from "react";
 import InvitePlayerDialog from "../invite-player/invite-player-dialog";
+import { playerTabs, PlayerTabsType } from "../../../pages/players/types";
 
 interface PlayersListProps {
   players: PlayerListResponse[];
+  activeFilter: PlayerTabsType;
 }
 
-export default function PlayersList({ players }: PlayersListProps) {
+export default function PlayersList({
+  players,
+  activeFilter,
+}: PlayersListProps) {
   const [expandedPlayerId, setExpandedPlayerId] = useState<string | null>(null);
 
   const toggleExpand = (playerId: string) => {
@@ -68,12 +73,14 @@ export default function PlayersList({ players }: PlayersListProps) {
               >
                 Status
               </th>
-              <th
-                scope="col"
-                className="whitespace-nowrap px-1 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-2 lg:px-3"
-              >
-                Actions
-              </th>
+              {activeFilter === playerTabs.ADMIN && (
+                <th
+                  scope="col"
+                  className="whitespace-nowrap px-1 py-2 text-center text-xs font-bold uppercase tracking-wider text-accent sm:px-2 lg:px-3"
+                >
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-accent/10">
@@ -155,16 +162,18 @@ export default function PlayersList({ players }: PlayersListProps) {
                       )}
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-1 py-2 text-center sm:px-2 sm:py-3 lg:px-3">
-                    <div className="flex items-center justify-center">
-                      {!player.isRegistered && (
-                        <InvitePlayerDialog
-                          dashboardPlayerId={player.id}
-                          playerNickname={player.nickname}
-                        />
-                      )}
-                    </div>
-                  </td>
+                  {activeFilter === playerTabs.ADMIN && (
+                    <td className="whitespace-nowrap px-1 py-2 text-center sm:px-2 sm:py-3 lg:px-3">
+                      <div className="flex items-center justify-center">
+                        {!player.isRegistered && (
+                          <InvitePlayerDialog
+                            dashboardPlayerId={player.id}
+                            playerNickname={player.nickname}
+                          />
+                        )}
+                      </div>
+                    </td>
+                  )}
                 </tr>
                 {expandedPlayerId === player.id && player.competitions && (
                   <PlayerDetails player={player} />

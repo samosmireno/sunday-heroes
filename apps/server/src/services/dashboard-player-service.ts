@@ -11,6 +11,7 @@ import {
   NotFoundError,
 } from "../utils/errors";
 import { CompetitionService } from "./competition-service";
+import { CompetitionRepo } from "../repositories/competition/competition-repo";
 
 export class DashboardPlayerService {
   static async getDashboardPlayers(
@@ -41,6 +42,35 @@ export class DashboardPlayerService {
         DashboardPlayerRepo.countByDashboardId(dashboardId),
       ]);
     }
+
+    return {
+      players: transformDashboardPlayersToResponse(players),
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+    };
+  }
+
+  static async getDashboardPlayersForUser(
+    userId: string,
+    options: {
+      page?: number;
+      limit?: number;
+      search?: string;
+    } = {}
+  ) {
+    const competitionIds =
+      await CompetitionRepo.findCompetitionIdsForUser(userId);
+    const { page = 0, limit = 10, search } = options;
+    const offset = page * limit;
+
+    const [players, totalCount] = await Promise.all([
+      DashboardPlayerRepo.findInCompetitions(competitionIds, {
+        search,
+        limit,
+        offset,
+      }),
+      DashboardPlayerRepo.countInCompetitions(competitionIds),
+    ]);
 
     return {
       players: transformDashboardPlayersToResponse(players),

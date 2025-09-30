@@ -342,6 +342,69 @@ export class DashboardPlayerRepo {
     }
   }
 
+  static async findInCompetitions(
+    competitionIds: string[],
+    options?: { search?: string; limit?: number; offset?: number },
+    tx?: PrismaTransaction
+  ): Promise<DashboardPlayerWithDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+      const dashboardPlayers = await prismaClient.dashboardPlayer.findMany({
+        where: {
+          matchPlayers: {
+            some: {
+              match: {
+                competitionId: { in: competitionIds },
+              },
+            },
+          },
+          nickname: {
+            startsWith: options?.search,
+            mode: "insensitive",
+          },
+        },
+        include: DASHBOARD_PLAYER_DETAILED_INCLUDE,
+        orderBy: { nickname: "asc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+
+      return dashboardPlayers;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findInCompetitions"
+      );
+    }
+  }
+
+  static async countInCompetitions(
+    competitionIds: string[],
+    tx?: PrismaTransaction
+  ): Promise<number> {
+    try {
+      const prismaClient = tx || prisma;
+      const dashboardPlayersCount = await prismaClient.dashboardPlayer.count({
+        where: {
+          matchPlayers: {
+            some: {
+              match: {
+                competitionId: { in: competitionIds },
+              },
+            },
+          },
+        },
+      });
+
+      return dashboardPlayersCount;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findInCompetitions"
+      );
+    }
+  }
+
   static async findByNameSearchInCompetition(
     searchTerm: string,
     competitionId: string,

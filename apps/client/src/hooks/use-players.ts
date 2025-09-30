@@ -4,12 +4,14 @@ import { config } from "../config/config";
 import axios, { AxiosError } from "axios";
 import { useErrorHandler } from "./use-error-handler/use-error-handler";
 import { AppError } from "./use-error-handler/types";
+import { playerTabs, PlayerTabsType } from "../pages/players/types";
 
 interface PlayerListQueryParams {
   userId: string;
   page: number;
   limit?: number;
   searchTerm?: string;
+  activeFilter: PlayerTabsType;
 }
 
 interface PlayersListResult {
@@ -22,6 +24,7 @@ export const usePlayers = ({
   userId,
   page,
   searchTerm,
+  activeFilter,
 }: PlayerListQueryParams) => {
   const { handleError } = useErrorHandler();
 
@@ -41,9 +44,18 @@ export const usePlayers = ({
         params.append("search", searchTerm);
       }
 
-      const res = await axios.get(
-        `${config.server}/api/players?${params.toString()}`,
-      );
+      let res;
+
+      if (activeFilter === playerTabs.ADMIN) {
+        res = await axios.get(
+          `${config.server}/api/players?${params.toString()}`,
+        );
+      } else {
+        res = await axios.get(
+          `${config.server}/api/players/teammates?${params.toString()}`,
+        );
+      }
+
       const totalCount = parseInt(res.headers["x-total-count"] || "0", 10);
 
       const totalPages = Math.ceil(
@@ -70,7 +82,7 @@ export const usePlayers = ({
     PlayersListResult,
     [string, PlayerListQueryParams]
   >({
-    queryKey: ["players", { userId, page, searchTerm }],
+    queryKey: ["players", { userId, page, searchTerm, activeFilter }],
     queryFn: fetchPlayers,
     placeholderData: (prevData) => prevData,
   });

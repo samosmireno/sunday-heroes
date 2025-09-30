@@ -64,6 +64,39 @@ export const getAllDashboardPlayersWithDetails = async (
   }
 };
 
+export const getMyDashboardTeammates = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.query.userId?.toString();
+    if (!userId) {
+      throw new BadRequestError("userId query parameter is required");
+    }
+
+    const page = parseInt(req.query.page?.toString() || "0", 10);
+    const limit = parseInt(req.query.limit?.toString() || "10", 10);
+    const search = req.query.search?.toString();
+
+    const result = await DashboardPlayerService.getDashboardPlayersForUser(
+      userId,
+      {
+        page,
+        limit,
+        search,
+      }
+    );
+    res.setHeader("X-Total-Count", result.totalCount.toString());
+    res.setHeader("X-Total-Pages", result.totalPages.toString());
+    res.setHeader("X-Current-Page", page.toString());
+
+    sendSuccess(res, result.players);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createDashboardPlayer = async (
   req: Request,
   res: Response,

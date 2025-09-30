@@ -1,15 +1,15 @@
 import { Button } from "../../ui/button";
 
 interface FilterOption<T> {
-  value: T | null;
+  value: T;
   label: string;
   color?: string;
 }
 
 interface FilterTabsProps<T> {
   options: FilterOption<T>[];
-  activeFilter: T | null;
-  onFilterChange: (filter: T | null) => void;
+  activeFilter: T;
+  onFilterChange: (filter: T) => void;
   className?: string;
 }
 
