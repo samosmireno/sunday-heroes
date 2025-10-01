@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectContent,
   SelectValue,
-} from "../../ui/select.tsx";
+} from "@/components/ui/select.tsx";
 import { useMemo, useState } from "react";
 
 interface FootballFieldProps {

@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useCompetition } from "../../hooks/use-competition";
-import { useAuth } from "../../context/auth-context";
-import Header from "../../components/ui/header";
+import { useCompetition } from "@/hooks/use-competition";
+import { useAuth } from "@/context/auth-context";
+import Header from "@/components/ui/header";
 import ErrorPage from "../error-page";
-import Background from "../../components/ui/background";
-import { Button } from "../../components/ui/button";
+import Background from "@/components/ui/background";
+import { Button } from "@/components/ui/button";
 import { UserPlus, AlertTriangle, ArrowLeft } from "lucide-react";
-import ModeratorsList from "../../components/features/competition-admin/moderators-list";
-import CompetitionSettings from "../../components/features/competition-admin/competition-settings";
-import AddModeratorModal from "../../components/features/competition-admin/add-moderator-modal";
+import ModeratorsList from "@/components/features/competition-admin/moderators-list";
+import CompetitionSettings from "@/components/features/competition-admin/competition-settings";
+import AddModeratorModal from "@/components/features/competition-admin/add-moderator-modal";
 import { Role } from "@repo/shared-types";
 import CompetitionAdminPageSkeleton from "./competition-admin-page-skeleton";
 

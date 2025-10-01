@@ -1,7 +1,7 @@
 import { DetailedCompetitionResponse, Role } from "@repo/shared-types";
 import { Calendar, CheckSquare, Shield, Trophy, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 
 interface CompetitionGridProps {
   competitions: DetailedCompetitionResponse[];

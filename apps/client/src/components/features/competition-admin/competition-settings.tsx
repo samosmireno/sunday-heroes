@@ -1,11 +1,11 @@
 import { CompetitionResponse } from "@repo/shared-types";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import ConfirmationDialog from "../../ui/confirmation-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ConfirmationDialog from "@/components/ui/confirmation-dialog";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../config/axios-config";
-import { config } from "../../../config/config";
-import { useErrorHandler } from "../../../hooks/use-error-handler/use-error-handler";
-import { AppError } from "../../../hooks/use-error-handler/types";
+import axiosInstance from "@/config/axios-config";
+import { config } from "@/config/config";
+import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
+import { AppError } from "@/hooks/use-error-handler/types";
 
 interface CompetitionSettingsProps {
   competition: CompetitionResponse;

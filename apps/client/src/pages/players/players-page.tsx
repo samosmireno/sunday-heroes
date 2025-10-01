@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/auth-context";
-import { ViewType } from "../../components/features/search-view-toggle/types";
-import { SearchViewToggle } from "../../components/features/search-view-toggle/search-view-toggle";
-import useDebounce from "../../hooks/use-debounce";
-import CompactPagination from "../../components/features/pagination/compact-pagination";
-import Header from "../../components/ui/header";
-import Background from "../../components/ui/background";
-import { usePlayers } from "../../hooks/use-players";
-import PlayersList from "../../components/features/player-list/player-list";
+import { useAuth } from "@/context/auth-context";
+import { ViewType } from "@/components/features/search-view-toggle/types";
+import { SearchViewToggle } from "@/components/features/search-view-toggle/search-view-toggle";
+import useDebounce from "@/hooks/use-debounce";
+import CompactPagination from "@/components/features/pagination/compact-pagination";
+import Header from "@/components/ui/header";
+import Background from "@/components/ui/background";
+import { usePlayers } from "@/hooks/use-players";
+import PlayersList from "@/components/features/player-list/player-list";
 import PlayersPageSkeleton from "./players-page-skeleton";
-import { useUrlPagination } from "../../hooks/use-url-pagination";
-import FilterTabs from "../../components/features/competition-list/filter-tabs";
+import { useUrlPagination } from "@/hooks/use-url-pagination";
+import FilterTabs from "@/components/features/competition-list/filter-tabs";
 import { playerTabs, PlayerTabsType } from "./types";
 
 const filterOptions = [

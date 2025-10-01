@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import CompetitionGrid from "../../components/features/competition-list/competition-grid";
-import CompetitionList from "../../components/features/competition-list/competition-list";
-import { useAuth } from "../../context/auth-context";
-import { useCompetitions } from "../../hooks/use-competitions";
-import { ViewType } from "../../components/features/search-view-toggle/types";
+import CompetitionGrid from "@/components/features/competition-list/competition-grid";
+import CompetitionList from "@/components/features/competition-list/competition-list";
+import { useAuth } from "@/context/auth-context";
+import { useCompetitions } from "@/hooks/use-competitions";
+import { ViewType } from "@/components/features/search-view-toggle/types";
 import { CompetitionType } from "@repo/shared-types";
-import { SearchViewToggle } from "../../components/features/search-view-toggle/search-view-toggle";
-import useDebounce from "../../hooks/use-debounce";
-import { Button } from "../../components/ui/button";
+import { SearchViewToggle } from "@/components/features/search-view-toggle/search-view-toggle";
+import useDebounce from "@/hooks/use-debounce";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import CompactPagination from "../../components/features/pagination/compact-pagination";
-import FilterTabs from "../../components/features/competition-list/filter-tabs";
-import Header from "../../components/ui/header";
+import CompactPagination from "@/components/features/pagination/compact-pagination";
+import FilterTabs from "@/components/features/competition-list/filter-tabs";
+import Header from "@/components/ui/header";
 import CompetitionListSkeleton from "./competition-list-skeleton";
-import { useUrlPagination } from "../../hooks/use-url-pagination";
+import { useUrlPagination } from "@/hooks/use-url-pagination";
 
 const filterOptions = [
   { value: null, label: "All" },

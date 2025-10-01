@@ -10,7 +10,7 @@ import {
   MultiStepFormContext,
   useMultiStepFormContext,
 } from "./multi-step-form-context";
-import { cn } from "../../../lib/utils";
+import { cn } from "@/lib/utils";
 import { AnimatedStep } from "./animated-step";
 
 interface MultiStepFormProps<T extends z.ZodType> {

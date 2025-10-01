@@ -1,8 +1,8 @@
 import { DetailedCompetitionResponse, Role } from "@repo/shared-types";
 import { Calendar, CheckSquare, Settings, Shield, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../ui/button";
-import { useIsMobile } from "../../../hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CompetitionListProps {
   competitions: DetailedCompetitionResponse[];

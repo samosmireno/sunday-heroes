@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Team } from "@repo/shared-types";
 import { AutoComplete } from "./autocomplete";
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useTeamPlayers } from "./use-team-players";
 import { UseFormReturn } from "react-hook-form";
-import { capitalizeFirstLetter } from "../../../utils/utils";
+import { capitalizeFirstLetter } from "@/utils/utils";
 import PlayerList from "./player-list";
-import { useAuth } from "../../../context/auth-context";
+import { useAuth } from "@/context/auth-context";
 import { MatchPlayersData } from "./add-match-schemas";
 import { useParams } from "react-router-dom";
 

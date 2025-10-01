@@ -1,10 +1,10 @@
 import { useParams, Navigate } from "react-router-dom";
-import { useAuth } from "../../../context/auth-context";
-import { useCompetition } from "../../../hooks/use-competition";
-import LeagueTeamSetupPage from "../../../pages/league-teams-setup-page";
-import CompetitionPage from "../../../pages/competition-page";
+import { useAuth } from "@/context/auth-context";
+import { useCompetition } from "@/hooks/use-competition";
+import LeagueTeamSetupPage from "@/pages/league-teams-setup-page";
+import CompetitionPage from "@/pages/competition-page";
 import { CompetitionType } from "@repo/shared-types";
-import CompetitionAdminPageSkeleton from "../../../pages/competition-admin/competition-admin-page-skeleton";
+import CompetitionAdminPageSkeleton from "@/pages/competition-admin/competition-admin-page-skeleton";
 
 export default function LeagueRouter() {
   const { competitionId } = useParams<{ competitionId: string }>();

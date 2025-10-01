@@ -1,6 +1,6 @@
-import useOutsideClick from "../../../hooks/use-outside-click";
+import useOutsideClick from "@/hooks/use-outside-click";
 import { AlertTriangle } from "lucide-react";
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 
 interface ConfirmDeleteModalProps {
   onConfirm: () => void;

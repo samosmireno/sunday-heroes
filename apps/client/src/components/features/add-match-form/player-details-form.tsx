@@ -1,6 +1,6 @@
 import { useMultiStepFormContext } from "../multi-step-form/multi-step-form-context";
-import { Form, FormMessage } from "../../ui/form";
-import { Button } from "../../ui/button";
+import { Form, FormMessage } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import TeamInputStats from "./team-input-stats";
 import { Team } from "@repo/shared-types";
 import FormLayout from "./form-layout";

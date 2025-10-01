@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Loading from "../../ui/loading";
+import Loading from "@/components/ui/loading";
 import { CompetitionResponse, LeagueMatchResponse } from "@repo/shared-types";
-import { useLeagueFixtures } from "../../../hooks/use-league-fixtures";
-import { useMatchDetails } from "../../../hooks/use-match-details";
+import { useLeagueFixtures } from "@/hooks/use-league-fixtures";
+import { useMatchDetails } from "@/hooks/use-match-details";
 import LeagueMatchCard from "./league-match-card";
 import LeagueMatchDetails from "./league-match-details";
-import { useCompleteMatch } from "../../../hooks/use-complete-match";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
+import { useCompleteMatch } from "@/hooks/use-complete-match";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface LeagueMatchListProps {
   competition: CompetitionResponse;

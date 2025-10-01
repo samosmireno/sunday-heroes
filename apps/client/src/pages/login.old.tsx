@@ -1,7 +1,7 @@
 import { Trophy } from "lucide-react";
-import { useAuth } from "../context/auth-context";
-import Background from "../components/ui/background";
-import Loading from "../components/ui/loading";
+import { useAuth } from "@/context/auth-context";
+import Background from "@/components/ui/background";
+import Loading from "@/components/ui/loading";
 import { useLocation } from "react-router-dom";
 
 const constructFullPath = (location?: Location | null) => {

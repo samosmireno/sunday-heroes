@@ -1,8 +1,8 @@
-import { Button } from "../../ui/button";
-import { cn } from "../../../lib/utils";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";
-import { SidebarTrigger } from "../../ui/sidebar";
-import { capitalizeFirstLetter } from "../../../utils/utils";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { capitalizeFirstLetter } from "@/utils/utils";
 
 interface DashboardBannerProps {
   name?: string;

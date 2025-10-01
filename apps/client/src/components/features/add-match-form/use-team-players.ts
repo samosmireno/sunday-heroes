@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { User } from "./types";
-import { config } from "../../../config/config";
+import { config } from "@/config/config";
 import { Team } from "@repo/shared-types";
 
 export function useTeamPlayers(user_id: string | null, competitionId: string) {

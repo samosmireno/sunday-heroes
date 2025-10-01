@@ -3,7 +3,7 @@ import PlayerDetails from "./player-details";
 import { PlayerListResponse } from "@repo/shared-types";
 import React from "react";
 import InvitePlayerDialog from "../invite-player/invite-player-dialog";
-import { playerTabs, PlayerTabsType } from "../../../pages/players/types";
+import { playerTabs, PlayerTabsType } from "@/pages/players/types";
 
 interface PlayersListProps {
   players: PlayerListResponse[];

@@ -1,11 +1,11 @@
 import { Pencil, Trash, Video } from "lucide-react";
-import axiosInstance from "../../../config/axios-config";
+import axiosInstance from "@/config/axios-config";
 import { Link } from "react-router-dom";
-import Modal from "../../ui/modal";
+import Modal from "@/components/ui/modal";
 import { useState } from "react";
 import ConfirmDeleteModal from "../modals/confirm-delete-modal";
-import { config } from "../../../config/config";
-import { useCompetitionContext } from "../../../context/competition-context";
+import { config } from "@/config/config";
+import { useCompetitionContext } from "@/context/competition-context";
 import { Role } from "@repo/shared-types";
 
 interface MatchProps {

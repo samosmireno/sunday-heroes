@@ -1,8 +1,8 @@
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 import { Check, Edit, Video } from "lucide-react";
-import ConfirmationDialog from "../../ui/confirmation-dialog";
+import ConfirmationDialog from "@/components/ui/confirmation-dialog";
 import FootballField from "../football-field/football-field";
-import Loading from "../../ui/loading";
+import Loading from "@/components/ui/loading";
 import { LeagueMatchResponse, MatchResponse, Role } from "@repo/shared-types";
 
 interface LeagueMatchDetailsProps {

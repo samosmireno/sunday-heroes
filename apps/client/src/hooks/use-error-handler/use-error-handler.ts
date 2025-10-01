@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
-import { useAuth } from "../../context/auth-context";
+import { useAuth } from "@/context/auth-context";
 import { useErrorBoundary } from "react-error-boundary";
 import { AppError } from "./types";
 

@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { Button } from "../../ui/button";
-import { Input } from "../../ui/input";
-import { Label } from "../../ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../ui/dialog";
+} from "@/components/ui/dialog";
 import { UserPlus, Copy, Check, Loader2 } from "lucide-react";
-import axiosInstance from "../../../config/axios-config";
+import axiosInstance from "@/config/axios-config";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 

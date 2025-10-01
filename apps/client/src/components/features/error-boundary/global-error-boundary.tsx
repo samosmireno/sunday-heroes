@@ -1,9 +1,9 @@
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
-import Background from "../../ui/background";
+import Background from "@/components/ui/background";
 import { ReactNode } from "react";
-import { Button } from "../../ui/button";
-import { formatErrorStack } from "../../../utils/utils";
+import { Button } from "@/components/ui/button";
+import { formatErrorStack } from "@/utils/utils";
 
 interface ErrorFallbackProps {
   error: Error;

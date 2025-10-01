@@ -1,6 +1,6 @@
 import React from "react";
 import { Info, LucideIcon } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 interface InfoBoxProps {
   title: string;

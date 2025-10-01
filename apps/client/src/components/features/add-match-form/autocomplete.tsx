@@ -1,4 +1,4 @@
-import { cn } from "../../../lib/utils";
+import { cn } from "@/lib/utils";
 import { Command as CommandPrimitive } from "cmdk";
 import { Check } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -8,11 +8,15 @@ import {
   CommandGroup,
   CommandItem,
   CommandList,
-} from "../../ui/command";
-import { Input } from "../../ui/input";
-import { Popover, PopoverAnchor, PopoverContent } from "../../ui/popover";
-import { Skeleton } from "../../ui/skeleton";
-import { capitalizeFirstLetter } from "../../../utils/utils";
+} from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
+import { capitalizeFirstLetter } from "@/utils/utils";
 
 type Props<T extends string> = {
   selectedValue: T;

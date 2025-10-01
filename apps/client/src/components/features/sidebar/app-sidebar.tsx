@@ -11,16 +11,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "../../ui/sidebar";
+} from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../../context/auth-context";
+import { useAuth } from "@/context/auth-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../ui/dropdown-menu";
-import { capitalizeFirstLetter } from "../../../utils/utils";
+} from "@/components/ui/dropdown-menu";
+import { capitalizeFirstLetter } from "@/utils/utils";
 
 const sidebarItems = [
   {

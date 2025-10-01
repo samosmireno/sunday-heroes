@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { Button } from "../../ui/button";
-import { Input } from "../../ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../ui/dialog";
+} from "@/components/ui/dialog";
 import { Search, Loader2 } from "lucide-react";
-import { InfoBox } from "../../ui/info-box";
-import axiosInstance from "../../../config/axios-config";
+import { InfoBox } from "@/components/ui/info-box";
+import axiosInstance from "@/config/axios-config";
 import { isAxiosError } from "axios";
-import { config } from "../../../config/config";
+import { config } from "@/config/config";
 import { toast } from "sonner";
-import { useAuth } from "../../../context/auth-context";
+import { useAuth } from "@/context/auth-context";
 
 interface AddModeratorModalProps {
   isOpen: boolean;

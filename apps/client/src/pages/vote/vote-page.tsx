@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import axiosInstance from "../../config/axios-config";
-import { config } from "../../config/config";
+import axiosInstance from "@/config/axios-config";
+import { config } from "@/config/config";
 import { CheckCircle2, Info } from "lucide-react";
-import Background from "../../components/ui/background";
-import Header from "../../components/ui/header";
-import { useVotingStatus } from "../../hooks/use-voting-status";
-import { GuideBox } from "../../components/ui/guide-box";
-import { InfoBox } from "../../components/ui/info-box";
-import PlayerSelection from "../../components/features/voting/player-selection";
-import VotePlayerList from "../../components/features/voting/vote-player-list";
-import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler";
-import { Button } from "../../components/ui/button";
-import { AppError } from "../../hooks/use-error-handler/types";
+import Background from "@/components/ui/background";
+import Header from "@/components/ui/header";
+import { useVotingStatus } from "@/hooks/use-voting-status";
+import { GuideBox } from "@/components/ui/guide-box";
+import { InfoBox } from "@/components/ui/info-box";
+import PlayerSelection from "@/components/features/voting/player-selection";
+import VotePlayerList from "@/components/features/voting/vote-player-list";
+import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
+import { Button } from "@/components/ui/button";
+import { AppError } from "@/hooks/use-error-handler/types";
 import VotePageSkeleton from "./vote-page-skeleton";
 
 interface SelectedPlayer {

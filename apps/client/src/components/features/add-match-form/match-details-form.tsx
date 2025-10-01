@@ -6,12 +6,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/form";
-import { Input } from "../../ui/input";
-import { Button } from "../../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { cn } from "../../../lib/utils";
-import { Calendar } from "../../ui/calendar";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
@@ -22,8 +26,8 @@ import {
   SelectContent,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select";
-import { convertMatchType } from "../../../utils/utils";
+} from "@/components/ui/select";
+import { convertMatchType } from "@/utils/utils";
 import { MatchType } from "@repo/shared-types";
 
 const formatSafeDate = (date: Date): string => {

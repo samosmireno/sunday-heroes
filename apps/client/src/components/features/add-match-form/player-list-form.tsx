@@ -1,6 +1,6 @@
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 import { useMultiStepFormContext } from "../multi-step-form/multi-step-form-context";
-import { Form, FormItem, FormMessage } from "../../ui/form";
+import { Form, FormItem, FormMessage } from "@/components/ui/form";
 import { useEffect, useState } from "react";
 import { Team } from "@repo/shared-types";
 import TeamSection from "./team-section";

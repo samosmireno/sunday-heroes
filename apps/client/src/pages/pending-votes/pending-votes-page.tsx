@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "../../components/ui/button";
-import Header from "../../components/ui/header";
-import Background from "../../components/ui/background";
-import { usePendingVotes } from "../../hooks/use-pending-votes";
-import { useAuth } from "../../context/auth-context";
+import { Button } from "@/components/ui/button";
+import Header from "@/components/ui/header";
+import Background from "@/components/ui/background";
+import { usePendingVotes } from "@/hooks/use-pending-votes";
+import { useAuth } from "@/context/auth-context";
 import { Role } from "@repo/shared-types";
 import PendingVotesPageSkeleton from "./pending-votes-page-skeleton";
 

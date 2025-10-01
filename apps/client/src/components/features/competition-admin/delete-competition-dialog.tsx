@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CompetitionResponse } from "@repo/shared-types";
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,10 +8,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../ui/dialog";
+} from "@/components/ui/dialog";
 import { AlertTriangle, Trash2 } from "lucide-react";
-import axiosInstance from "../../../config/axios-config";
-import { config } from "../../../config/config";
+import axiosInstance from "@/config/axios-config";
+import { config } from "@/config/config";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 
 interface DeleteCompetitionDialogProps {

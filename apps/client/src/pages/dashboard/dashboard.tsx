@@ -1,11 +1,11 @@
 import { Trophy, Users, CheckSquare, Activity } from "lucide-react";
-import DashboardBanner from "../../components/features/dashboard/dashboard-banner";
-import DashboardMatchList from "../../components/features/dashboard/dashboard-match-list";
-import DashboardStatCard from "../../components/features/dashboard/dashboard-stat-card";
-import DashboardCompetitionList from "../../components/features/dashboard/dashboard-competition-list";
-import { useDashboard } from "../../hooks/use-dashboard";
+import DashboardBanner from "@/components/features/dashboard/dashboard-banner";
+import DashboardMatchList from "@/components/features/dashboard/dashboard-match-list";
+import DashboardStatCard from "@/components/features/dashboard/dashboard-stat-card";
+import DashboardCompetitionList from "@/components/features/dashboard/dashboard-competition-list";
+import { useDashboard } from "@/hooks/use-dashboard";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/auth-context";
+import { useAuth } from "@/context/auth-context";
 import DashboardSkeleton from "./dashboard-skeleton";
 
 export default function Dashboard() {

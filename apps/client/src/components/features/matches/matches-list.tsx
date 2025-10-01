@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { CheckSquare, ChevronDown, ChevronUp, Shield } from "lucide-react";
 import { MatchDetails } from "./match-details";
 import { MatchPageResponse } from "@repo/shared-types";
-import { formatDate } from "../../../utils/utils";
-import { convertMatchType } from "../../../utils/utils";
+import { formatDate } from "@/utils/utils";
+import { convertMatchType } from "@/utils/utils";
 import React from "react";
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 
 interface MatchesListProps {
   matches: MatchPageResponse[];

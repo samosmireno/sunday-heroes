@@ -1,7 +1,7 @@
 import { CompetitionResponse } from "@repo/shared-types";
 import { AlertCircle } from "lucide-react";
-import Loading from "../../ui/loading";
-import { useLeagueStats } from "../../../hooks/use-league-stats";
+import Loading from "@/components/ui/loading";
+import { useLeagueStats } from "@/hooks/use-league-stats";
 import TopPerformers from "./top-performers";
 import PlayerStatsTable from "./player-stats-table";
 

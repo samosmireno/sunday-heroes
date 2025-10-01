@@ -1,5 +1,5 @@
 import { PlayerResponse } from "@repo/shared-types";
-import { useCompetitionContext } from "../../../context/competition-context";
+import { useCompetitionContext } from "@/context/competition-context";
 
 interface PlayerCardProps {
   matchPlayer: PlayerResponse;
