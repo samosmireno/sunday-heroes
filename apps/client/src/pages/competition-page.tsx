@@ -1,13 +1,12 @@
-import "../index.css";
 import { useParams } from "react-router-dom";
-import { useCompetition } from "../hooks/use-competition";
+import { useCompetition } from "../features/competition/use-competition";
 import ErrorPage from "./error-page";
-import Header from "../components/ui/header";
+import Header from "@/components/ui/header";
 import { CompetitionProvider } from "../context/competition-context";
 import DuelCompetitionPage from "./duel-competition-page";
 import { CompetitionType } from "@repo/shared-types";
-import { useAuth } from "../context/auth-context";
-import LeagueCompetitionPage from "./league-competition.page";
+import { useAuth } from "@/context/auth-context";
+import LeagueCompetitionPage from "./league-competition/league-competition-page";
 
 function CompetitionPage() {
   const { user } = useAuth();

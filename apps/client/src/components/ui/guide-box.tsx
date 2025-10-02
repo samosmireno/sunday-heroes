@@ -1,6 +1,6 @@
 import React from "react";
 import { HelpCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 interface GuideBoxProps {
   title: string;

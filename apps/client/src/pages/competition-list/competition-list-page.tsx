@@ -1,39 +1,21 @@
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import CompetitionGrid from "@/components/features/competition-list/competition-grid";
-import CompetitionList from "@/components/features/competition-list/competition-list";
+import CompetitionGrid from "@/features/competition-list/competition-grid";
+import CompetitionList from "@/features/competition-list/competition-list";
 import { useAuth } from "@/context/auth-context";
-import { useCompetitions } from "@/hooks/use-competitions";
-import { ViewType } from "@/components/features/search-view-toggle/types";
+import { useCompetitions } from "@/features/competition-list/use-competitions";
+import { ViewType } from "@/components/search-view-toggle/types";
 import { CompetitionType } from "@repo/shared-types";
-import { SearchViewToggle } from "@/components/features/search-view-toggle/search-view-toggle";
+import { SearchViewToggle } from "@/components/search-view-toggle/search-view-toggle";
 import useDebounce from "@/hooks/use-debounce";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import CompactPagination from "@/components/features/pagination/compact-pagination";
-import FilterTabs from "@/components/features/competition-list/filter-tabs";
+import CompactPagination from "@/components/pagination/compact-pagination";
+import FilterTabs from "@/components/filter-tabs/filter-tabs";
 import Header from "@/components/ui/header";
-import CompetitionListSkeleton from "./competition-list-skeleton";
+import CompetitionListSkeleton from "@/features/competition-list/competition-list-skeleton";
 import { useUrlPagination } from "@/hooks/use-url-pagination";
-
-const filterOptions = [
-  { value: null, label: "All" },
-  {
-    value: CompetitionType.LEAGUE,
-    label: "Leagues",
-    color: "border-league-500 bg-league-700/20 text-league-400",
-  },
-  {
-    value: CompetitionType.DUEL,
-    label: "Duels",
-    color: "border-duel-500 bg-duel-700/20 text-duel-400",
-  },
-  // {
-  //   value: CompetitionType.KNOCKOUT,
-  //   label: "Knockouts",
-  //   color: "border-knockout-500 bg-knockout-700/20 text-knockout-400",
-  // },
-];
+import { filterOptions } from "./constants";
 
 export default function CompetitionListPage() {
   const [activeFilter, setActiveFilter] = useState<CompetitionType | null>(

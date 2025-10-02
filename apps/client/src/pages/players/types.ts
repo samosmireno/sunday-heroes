@@ -1,6 +1,3 @@
-export const playerTabs = {
-  ADMIN: "admin",
-  PLAYED_WITH: "played-with",
-} as const;
+import { playerTabs } from "./constants";
 
 export type PlayerTabsType = (typeof playerTabs)[keyof typeof playerTabs];

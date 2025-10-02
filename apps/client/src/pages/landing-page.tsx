@@ -2,28 +2,13 @@ import { useAuth } from "../context/auth-context";
 import Background from "../components/ui/background";
 import Loading from "../components/ui/loading";
 import { useLocation } from "react-router-dom";
-import LandingHeader from "../components/landing/landing-header";
-import HeroSection from "../components/landing/hero-section";
-import FeaturesSection from "../components/landing/features-section";
-import HowItWorksSection from "../components/landing/how-it-works-section";
-import FinalCtaSection from "../components/landing/final-cta-section";
-import LandingFooter from "../components/landing/landing-footer";
-
-const constructFullPath = (location?: Location | null) => {
-  if (!location) return "/dashboard";
-
-  let fullPath = location.pathname || "/dashboard";
-
-  if (location.search) {
-    fullPath += location.search;
-  }
-
-  if (location.hash) {
-    fullPath += location.hash;
-  }
-
-  return fullPath;
-};
+import LandingHeader from "../features/landing/landing-header";
+import HeroSection from "../features/landing/hero-section";
+import FeaturesSection from "../features/landing/features-section";
+import HowItWorksSection from "../features/landing/how-it-works-section";
+import FinalCtaSection from "../features/landing/final-cta-section";
+import LandingFooter from "../features/landing/landing-footer";
+import { constructFullPath } from "@/features/landing/utils";
 
 export default function LandingPage() {
   const { login, isLoading } = useAuth();

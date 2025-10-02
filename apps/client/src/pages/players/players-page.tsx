@@ -1,28 +1,17 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/auth-context";
-import { ViewType } from "@/components/features/search-view-toggle/types";
-import { SearchViewToggle } from "@/components/features/search-view-toggle/search-view-toggle";
+import { ViewType } from "@/components/search-view-toggle/types";
+import { SearchViewToggle } from "@/components/search-view-toggle/search-view-toggle";
 import useDebounce from "@/hooks/use-debounce";
-import CompactPagination from "@/components/features/pagination/compact-pagination";
+import CompactPagination from "@/components/pagination/compact-pagination";
 import Header from "@/components/ui/header";
-import Background from "@/components/ui/background";
-import { usePlayers } from "@/hooks/use-players";
-import PlayersList from "@/components/features/player-list/player-list";
-import PlayersPageSkeleton from "./players-page-skeleton";
+import { usePlayers } from "@/features/players/use-players";
+import PlayersList from "@/features/players/player-list";
+import PlayersPageSkeleton from "@/features/players/players-page-skeleton";
 import { useUrlPagination } from "@/hooks/use-url-pagination";
-import FilterTabs from "@/components/features/competition-list/filter-tabs";
-import { playerTabs, PlayerTabsType } from "./types";
-
-const filterOptions = [
-  {
-    value: playerTabs.ADMIN,
-    label: "Managed",
-  },
-  {
-    value: playerTabs.PLAYED_WITH,
-    label: "Played With",
-  },
-];
+import FilterTabs from "@/components/filter-tabs/filter-tabs";
+import { PlayerTabsType } from "./types";
+import { filterOptions } from "./constants";
 
 export default function PlayersPage() {
   const [activeFilter, setActiveFilter] = useState<PlayerTabsType>("admin");
@@ -51,7 +40,6 @@ export default function PlayersPage() {
 
   return (
     <div className="relative flex-1 p-4 sm:p-5">
-      <Background />
       <Header title="Players" hasSidebar={true} />
 
       <div className="relative mb-5 rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg sm:mb-6">

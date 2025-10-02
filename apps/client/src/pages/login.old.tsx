@@ -3,22 +3,7 @@ import { useAuth } from "@/context/auth-context";
 import Background from "@/components/ui/background";
 import Loading from "@/components/ui/loading";
 import { useLocation } from "react-router-dom";
-
-const constructFullPath = (location?: Location | null) => {
-  if (!location) return "/dashboard";
-
-  let fullPath = location.pathname || "/dashboard";
-
-  if (location.search) {
-    fullPath += location.search;
-  }
-
-  if (location.hash) {
-    fullPath += location.hash;
-  }
-
-  return fullPath;
-};
+import { constructFullPath } from "@/features/landing/utils";
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();

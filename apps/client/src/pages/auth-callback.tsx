@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../context/auth-context";
-import Loading from "../components/ui/loading";
+import { useAuth } from "@/context/auth-context";
+import Loading from "@/components/ui/loading";
 
 const AuthCallback = () => {
   const { processAuthSuccess } = useAuth();
@@ -23,20 +23,18 @@ const AuthCallback = () => {
       const userData = processAuthSuccess(userDataBase64);
       if (userData) {
         const redirectPath = sessionStorage.getItem("redirectAfterLogin");
+        const destination = redirectPath || "/dashboard";
+
+        navigate(destination, { replace: true });
+
         if (redirectPath) {
-          navigate(redirectPath, { replace: true });
-          setTimeout(() => {
-            sessionStorage.removeItem("redirectAfterLogin");
-          }, 100);
-        } else {
-          navigate("/dashboard", { replace: true });
+          sessionStorage.removeItem("redirectAfterLogin");
         }
-      } else {
-        navigate("/landing", { replace: true });
+        return;
       }
-    } else {
-      navigate("/landing", { replace: true });
     }
+
+    navigate("/landing", { replace: true });
   }, [navigate, processAuthSuccess, searchParams]);
 
   return <Loading text="Completing authentication..." />;

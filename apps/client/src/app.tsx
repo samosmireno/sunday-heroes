@@ -1,21 +1,22 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import LandingPage from "./pages/landing-page.tsx";
-import ErrorPage from "./pages/error-page";
-import ProtectedRoute from "./pages/protected-route";
-import { AuthProvider } from "./context/auth-context.tsx";
-import AuthCallback from "./pages/auth-callback.tsx";
-import Dashboard from "./pages/dashboard/dashboard.tsx";
-import CreateCompetitionForm from "./pages/create-competition-form.tsx";
-import CompetitionListPage from "./pages/competition-list/competition-list-page.tsx";
-import VotePage from "./pages/vote/vote-page.tsx";
-import AdminPendingVotes from "./pages/pending-votes/pending-votes-page.tsx";
-import MatchesPage from "./pages/matches/matches-page.tsx";
-import AddMatchForm from "./pages/add-match-form-page.tsx";
-import PlayersPage from "./pages/players/players-page.tsx";
-import InvitationPage from "./pages/invitation-page.tsx";
-import CompetitionAdminPage from "./pages/competition-admin/competition-admin-page.tsx";
-import LeagueRouter from "./components/features/league/league-router.tsx";
-import { GlobalErrorBoundary } from "./components/features/error-boundary/global-error-boundary.tsx";
+import LandingPage from "@/pages/landing-page.tsx";
+import ErrorPage from "@/pages/error-page";
+import ProtectedRoute from "@/layouts/protected-route";
+import { AuthProvider } from "@/context/auth-context.tsx";
+import AuthCallback from "@/pages/auth-callback.tsx";
+import Dashboard from "@/pages/dashboard";
+import CreateCompetitionForm from "@/pages/create-competition-form.tsx";
+import CompetitionListPage from "@/pages/competition-list/competition-list-page.tsx";
+import VotePage from "@/pages/vote-page";
+import AdminPendingVotes from "@/pages/pending-votes-page";
+import MatchesPage from "@/pages/matches-page";
+import PlayersPage from "@/pages/players/players-page.tsx";
+import InvitationPage from "@/pages/invitation-page.tsx";
+import CompetitionAdminPage from "@/pages/competition-admin-page";
+import LeagueRouter from "@/features/league/league-router";
+import { GlobalErrorBoundary } from "@/components/error/global-error-boundary";
+import AddMatchPage from "./pages/add-match-page";
+import EditMatchPage from "./pages/edit-match-page";
 
 export default function App() {
   return (
@@ -87,7 +88,7 @@ export default function App() {
               path="/add-match/:competitionId"
               element={
                 <ProtectedRoute>
-                  <AddMatchForm />
+                  <AddMatchPage />
                 </ProtectedRoute>
               }
             />
@@ -96,7 +97,7 @@ export default function App() {
               path="/edit-match/:competitionId/:matchId"
               element={
                 <ProtectedRoute>
-                  <AddMatchForm />
+                  <EditMatchPage />
                 </ProtectedRoute>
               }
             />

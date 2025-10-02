@@ -29,4 +29,8 @@ export const config = {
     matches_per_page: 10,
     players_per_page: 10,
   },
+  voting: {
+    allowedValues: [3, 2, 1],
+    maxVotesPerPlayer: 3,
+  },
 };
