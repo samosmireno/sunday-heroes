@@ -1,4 +1,3 @@
-// hooks/use-edit-match.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -7,12 +6,10 @@ import { useEffect } from "react";
 import { matchService } from "../services/match-service";
 import { useFormMatchData } from "@/features/add-match-form/hooks/use-form-match-data";
 import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
-import {
-  MatchFormData,
-  createMatchFormSchema,
-} from "@/features/add-match-form/add-match-schemas";
 import { CompetitionResponse } from "@repo/shared-types";
 import { AppError } from "@/hooks/use-error-handler/types";
+import { createMatchFormSchema } from "../schemas/schema-factory";
+import { MatchFormData } from "../schemas/types";
 
 export function useEditMatch(
   competition: CompetitionResponse,

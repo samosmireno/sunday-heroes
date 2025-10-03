@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import TeamInputStats from "./team-input-stats";
 import { Team } from "@repo/shared-types";
 import FormLayout from "../form-layout";
-import { DuelFormData } from "../add-match-schemas";
+import { DuelFormData } from "../schemas/types";
 
 interface PlayerDetailsFormProps {
   isEdited: boolean;

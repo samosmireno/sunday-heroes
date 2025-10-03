@@ -4,12 +4,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { matchService } from "../services/match-service";
 import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
-import {
-  MatchFormData,
-  createMatchFormSchema,
-} from "@/features/add-match-form/add-match-schemas";
 import { CompetitionResponse } from "@repo/shared-types";
 import { AppError } from "@/hooks/use-error-handler/types";
+import { createMatchFormSchema } from "../schemas/schema-factory";
+import { MatchFormData } from "../schemas/types";
 
 export function useAddMatch(
   competition: CompetitionResponse,

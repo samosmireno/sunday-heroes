@@ -1,5 +1,5 @@
 import { MatchResponse } from "@repo/shared-types";
-import { MatchFormData } from "@/features/add-match-form/add-match-schemas";
+import { MatchFormData } from "../schemas/types";
 
 export const transformResponseToForm = (data: MatchResponse): MatchFormData => {
   return {

@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { DuelFormData } from "../add-match-schemas";
 import { Team } from "@repo/shared-types";
+import { DuelFormData } from "../schemas/types";
 
 interface TeamInputStatsProps {
   team: Team;

@@ -6,12 +6,12 @@ import Header from "@/components/ui/header";
 import ErrorPage from "./error-page";
 import { Button } from "@/components/ui/button";
 import { UserPlus, ArrowLeft } from "lucide-react";
-import ModeratorsList from "@/features/competition-admin/moderators-list";
-import CompetitionSettings from "@/features/competition-admin/competition-settings";
-import AddModeratorModal from "@/features/competition-admin/add-moderator-modal";
+import ModeratorsList from "@/features/competition-admin/moderators/moderators-list";
+import AddModeratorModal from "@/features/competition-admin/moderators/add-moderator-modal";
 import { Role } from "@repo/shared-types";
 import CompetitionAdminPageSkeleton from "@/features/competition-admin/competition-admin-page-skeleton";
 import { AccessDenied } from "@/features/competition-admin/access-denied";
+import CompetitionSettings from "@/features/competition-admin/settings/competition-settings";
 
 type TabType = "moderators" | "settings";
 
@@ -24,7 +24,7 @@ export default function CompetitionAdminPage() {
   const { user } = useAuth();
   const { competitionId } = useParams<{ competitionId: string }>();
   const navigate = useNavigate();
-  const { competition, isLoading, refetch } = useCompetition(
+  const { competition, isLoading } = useCompetition(
     competitionId ?? "",
     user?.id || "",
   );
@@ -96,7 +96,7 @@ export default function CompetitionAdminPage() {
             </div>
             <ModeratorsList
               moderators={competition.moderators || []}
-              onUpdate={refetch}
+              competitionId={competitionId}
             />
           </div>
         )}
@@ -119,7 +119,6 @@ export default function CompetitionAdminPage() {
         competitionId={competitionId}
         onSuccess={() => {
           setIsAddModeratorModalOpen(false);
-          refetch();
         }}
       />
     </div>

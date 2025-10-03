@@ -1,4 +1,4 @@
-import { MatchPlayersData } from "../add-match-schemas";
+import { MatchPlayersData } from "../schemas/types";
 
 export function swapMatchPlayers(
   matchPlayers: MatchPlayersData,

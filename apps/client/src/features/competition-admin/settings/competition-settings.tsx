@@ -1,54 +1,27 @@
 import { CompetitionResponse } from "@repo/shared-types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ConfirmationDialog from "@/components/ui/confirmation-dialog";
-import { useNavigate } from "react-router-dom";
-import axiosInstance from "@/config/axios-config";
-import { config } from "@/config/config";
-import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
-import { AppError } from "@/hooks/use-error-handler/types";
+import {
+  useDeleteCompetition,
+  useResetCompetition,
+} from "./use-competition-mutations";
 
 interface CompetitionSettingsProps {
   competition: CompetitionResponse;
-  onUpdate?: () => void;
 }
 
 export default function CompetitionSettings({
   competition,
-  onUpdate,
 }: CompetitionSettingsProps) {
-  const navigate = useNavigate();
-  const { handleError } = useErrorHandler();
+  const resetMutation = useResetCompetition(competition.id);
+  const deleteMutation = useDeleteCompetition(competition.id);
 
-  const handleResetCompetition = async () => {
-    try {
-      await axiosInstance.put(
-        `${config.server}/api/competitions/${competition.id}/reset`,
-        { withCredentials: true },
-      );
-      onUpdate?.();
-    } catch (error) {
-      handleError(error as AppError, {
-        showToast: true,
-        logError: true,
-        throwError: false,
-      });
-    }
+  const handleReset = async () => {
+    resetMutation.mutate();
   };
 
-  const handleDeleteCompetition = async () => {
-    try {
-      await axiosInstance.delete(
-        `${config.server}/api/competitions/${competition.id}`,
-        { withCredentials: true },
-      );
-      navigate("/competitions");
-    } catch (error) {
-      handleError(error as AppError, {
-        showToast: true,
-        logError: true,
-        throwError: false,
-      });
-    }
+  const handleDelete = async () => {
+    deleteMutation.mutate();
   };
 
   return (
@@ -75,7 +48,7 @@ export default function CompetitionSettings({
                 }
                 triggerContent="Reset Competition"
                 confirmText="Reset Competition"
-                onConfirm={handleResetCompetition}
+                onConfirm={handleReset}
                 variant="warning"
                 icon="reset"
                 loadingText="Resetting..."
@@ -113,7 +86,7 @@ export default function CompetitionSettings({
                 }
                 triggerContent="Delete Competition"
                 confirmText="Delete Competition"
-                onConfirm={handleDeleteCompetition}
+                onConfirm={handleDelete}
                 variant="destructive"
                 icon="trash"
                 loadingText="Deleting..."

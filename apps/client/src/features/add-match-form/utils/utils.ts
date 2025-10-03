@@ -1,5 +1,5 @@
 import { MatchResponse, MatchType, Team } from "@repo/shared-types";
-import { PartialDuelFormData } from "../add-match-schemas";
+import { PartialDuelFormData } from "../schemas/types";
 
 const generateRandomId = () => {
   const characters =

@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { Team } from "@repo/shared-types";
+import { Team, UserResponse } from "@repo/shared-types";
 import { AutoComplete } from "../../../components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { useTeamPlayers } from "./use-team-players";
+import { usePlayerManagement } from "./use-player-management";
 import { UseFormReturn } from "react-hook-form";
 import { capitalizeFirstLetter } from "@/utils/string";
 import PlayerList from "./player-list";
 import { useAuth } from "@/context/auth-context";
-import { MatchPlayersData } from "../add-match-schemas";
 import { useParams } from "react-router-dom";
+import { usePlayerSuggestions } from "./use-player-suggestions";
+import { useFormPlayer } from "./use-form-player";
 
 interface TeamSectionProps {
   team: Team;
@@ -36,93 +36,64 @@ export default function TeamSection({
 }: TeamSectionProps) {
   const [searchValue, setSearchValue] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<string>("");
-  const { user } = useAuth();
-  const { competitionId } = useParams<{
-    matchId: string;
-    competitionId: string;
-  }>();
+  const { user } = useAuth() as { user: UserResponse };
+  const { competitionId } = useParams() as { competitionId: string };
 
-  const { players, addPlayer, removePlayer, fetchSuggestions, setPlayers } =
-    useTeamPlayers(user?.id ?? null, competitionId ?? "");
+  const { players, addPlayer, removePlayer, initializePlayers } =
+    usePlayerManagement();
 
-  const { data: suggestions = [], isLoading } = useQuery({
-    queryKey: [
-      "playerSuggestions",
-      team,
-      searchValue,
-      selectedPlayers,
-      competitionId,
-      user?.id,
-    ],
-    queryFn: () => fetchSuggestions(searchValue, selectedPlayers),
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
+  const { data: suggestions = [], isLoading } = usePlayerSuggestions(
+    user.id,
+    competitionId,
+    team,
+    searchValue,
+    selectedPlayers,
+  );
 
-  function addPlayerToForm(player: string) {
-    if (!player || selectedPlayers.includes(player)) {
-      return;
-    }
-    addPlayer(team, player);
-    form.setValue(`players.${team.toLocaleLowerCase()}Players`, [
-      ...players[team],
-      player,
-    ]);
-    if (isEdited) {
-      const homePlayers = form.getValues("players.homePlayers");
-      const awayPlayers = form.getValues("players.awayPlayers");
-      const indexToStore =
-        team === Team.HOME
-          ? homePlayers.length - 1
-          : homePlayers.length + awayPlayers.length - 1;
-      const matchPlayers: MatchPlayersData["players"] = form.getValues(
-        "matchPlayers.players",
-      );
-      const newMatchPlayer = {
-        nickname: player,
-        goals: undefined,
-        assists: undefined,
-        position:
-          team === Team.HOME ? homePlayers.length - 1 : awayPlayers.length - 1,
-      };
-      const newMatchPlayers = [
-        ...matchPlayers.slice(0, indexToStore),
-        newMatchPlayer,
-        ...matchPlayers.slice(indexToStore),
-      ];
-      form.setValue("matchPlayers.players", newMatchPlayers);
-    }
-    setSelectedPlayers([...selectedPlayers, player]);
-  }
-
-  function removePlayerFromForm(player: string) {
-    removePlayer(team, player);
-    form.setValue(`players.${team.toLocaleLowerCase()}Players`, [
-      ...players[team].filter((p) => p !== player),
-    ]);
-    if (isEdited) {
-      const matchPlayers: MatchPlayersData["players"] =
-        form.getValues("matchPlayers.players") || [];
-      form.setValue(
-        "matchPlayers.players",
-        matchPlayers.filter((p) => p.nickname !== player),
-      );
-    }
-    setSelectedPlayers(selectedPlayers.filter((p) => p !== player));
-  }
+  const { addPlayerToForm, removePlayerFromForm } = useFormPlayer(
+    form,
+    isEdited,
+  );
 
   const reset = () => {
     setSelectedValue("");
     setSearchValue("");
   };
 
+  const handleAddPlayer = (player: string) => {
+    if (!player || selectedPlayers.includes(player)) {
+      return;
+    }
+
+    addPlayer(team, player);
+    addPlayerToForm(team, player, players[team]);
+    setSelectedPlayers([...selectedPlayers, player]);
+  };
+
+  const handleRemovePlayer = (player: string) => {
+    removePlayer(team, player);
+    removePlayerFromForm(team, player, players[team]);
+    setSelectedPlayers(selectedPlayers.filter((p) => p !== player));
+  };
+
+  const handleAddClick = () => {
+    handleAddPlayer(capitalizeFirstLetter(searchValue));
+    reset();
+  };
+
+  const handleAutocompleteOpenChange = (open: boolean) => {
+    if (open) {
+      onAutocompleteOpen();
+    } else {
+      onAutocompleteClose();
+    }
+  };
+
   useEffect(() => {
     if (initialPlayers) {
-      setPlayers((prev) => ({
-        ...prev,
-        [team]: initialPlayers,
-      }));
+      initializePlayers(team, initialPlayers);
     }
-  }, [initialPlayers, setPlayers, team]);
+  }, [initialPlayers, initializePlayers, team]);
 
   return (
     <div className="flex flex-col px-3 sm:px-6 md:px-8 lg:px-12">
@@ -141,24 +112,13 @@ export default function TeamSection({
               label: item,
             }))}
             isLoading={isLoading}
-            onItemSelect={(value) => {
-              addPlayerToForm(value);
-            }}
+            onItemSelect={handleAddPlayer}
             isOpen={isAutocompleteOpen}
-            onOpenChange={(open) => {
-              if (open) {
-                onAutocompleteOpen();
-              } else {
-                onAutocompleteClose();
-              }
-            }}
+            onOpenChange={handleAutocompleteOpenChange}
           />
         </div>
         <Button
-          onClick={() => {
-            addPlayerToForm(capitalizeFirstLetter(searchValue));
-            reset();
-          }}
+          onClick={handleAddClick}
           className="w-full border-2 border-accent bg-accent/20 px-4 py-2 font-bold text-accent transition-all hover:bg-accent/30 sm:w-auto sm:min-w-[80px]"
           disabled={!searchValue.trim()}
         >
@@ -167,9 +127,7 @@ export default function TeamSection({
       </div>
       <PlayerList
         players={players[team]}
-        onSelect={(player: string) => {
-          removePlayerFromForm(player);
-        }}
+        onSelect={handleRemovePlayer}
         form={form}
         team={team}
       />

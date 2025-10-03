@@ -75,10 +75,8 @@ export function GlobalErrorBoundary({ children }: GlobalErrorBoundaryProps) {
           error,
           errorInfo,
         );
-        // You could send to error reporting service here
       }}
       onReset={() => {
-        // Optionally clear any error state
         window.location.reload();
       }}
     >

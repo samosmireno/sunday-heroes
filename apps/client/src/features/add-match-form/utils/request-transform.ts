@@ -1,5 +1,5 @@
 import { createMatchRequest } from "@repo/shared-types";
-import { DuelFormData, LeagueFormData } from "../add-match-schemas";
+import { DuelFormData, LeagueFormData } from "../schemas/types";
 
 const isPlayerHome = (nickname: string, homePlayers: string[]): boolean => {
   return homePlayers.includes(nickname);

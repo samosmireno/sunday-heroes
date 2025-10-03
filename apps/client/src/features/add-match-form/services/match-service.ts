@@ -1,14 +1,11 @@
 import axiosInstance from "@/config/axios-config";
-import {
-  MatchFormData,
-  LeagueFormData,
-} from "@/features/add-match-form/add-match-schemas";
 import { CompetitionType } from "@repo/shared-types";
 import { config } from "@/config/config";
 import {
   transformDuelFormToRequest,
   transformLeagueFormToRequest,
 } from "../utils/request-transform";
+import { LeagueFormData, MatchFormData } from "../schemas/types";
 
 export const matchService = {
   createMatch: async (

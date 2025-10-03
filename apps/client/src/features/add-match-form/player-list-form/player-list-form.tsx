@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Team } from "@repo/shared-types";
 import TeamSection from "./team-section";
 import FormLayout from "../form-layout";
-import { CompetitionPlayersData } from "../add-match-schemas";
+import { CompetitionPlayersData } from "../schemas/types";
 
 interface PlayersListFormProps {
   isEdited: boolean;

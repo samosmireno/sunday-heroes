@@ -12,8 +12,8 @@ import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { UseFormReturn } from "react-hook-form";
 import SortableItem from "./sortable-item";
 import { swapMatchPlayers, swapItems } from "./utils";
-import { MatchPlayersData } from "../add-match-schemas";
 import { Team } from "@repo/shared-types";
+import { MatchPlayersData } from "../schemas/types";
 
 interface PlayerListProps {
   players: string[];

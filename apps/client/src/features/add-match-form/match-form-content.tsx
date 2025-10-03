@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useWatch } from "react-hook-form";
 import { CompetitionType, CompetitionResponse } from "@repo/shared-types";
-import { MatchFormData } from "./add-match-schemas";
 import { createFootballFieldMatch } from "./utils/utils";
 import FootballField from "../football-field/football-field";
 import {
@@ -17,6 +16,7 @@ import PlayersListForm from "./player-list-form/player-list-form";
 import LeagueMatchDetailsForm from "./match-details-form/league-match-details-form";
 import { UseFormReturn } from "react-hook-form";
 import { ZodSchema } from "zod";
+import { MatchFormData } from "./schemas/types";
 
 interface MatchFormContentProps {
   form: UseFormReturn<MatchFormData>;
