@@ -8,14 +8,12 @@ import { useUpdateTeamNames } from "@/features/league-teams-setup/use-update-tea
 import { TeamSetupError } from "@/features/league-teams-setup/team-setup-error";
 import { TeamNamesForm } from "@/features/league-teams-setup/team-names-form";
 import SubmitSpinner from "@/components/ui/submit-spinner";
+import { UserResponse } from "@repo/shared-types";
 
 export default function LeagueTeamSetupPage() {
-  const { competitionId } = useParams<{ competitionId: string }>();
-  const { user } = useAuth();
-  const { competition, isLoading } = useCompetition(
-    competitionId ?? "",
-    user?.id || "",
-  );
+  const { competitionId } = useParams() as { competitionId: string };
+  const { user } = useAuth() as { user: UserResponse };
+  const { competition, isLoading } = useCompetition(competitionId, user.id);
   const updateTeamNames = useUpdateTeamNames();
 
   const handleSubmit = (data: TeamNamesFormData) => {

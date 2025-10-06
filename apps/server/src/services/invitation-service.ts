@@ -19,30 +19,13 @@ import {
   InvitationError,
   NotFoundError,
 } from "../utils/errors";
+import { InvitationResponse } from "@repo/shared-types";
 
 export interface CreateInvitationData {
   invitedById: string;
   dashboardPlayerId: string;
   email?: string;
   expirationHours?: number;
-}
-
-export interface InvitationDetails {
-  id: string;
-  token: string;
-  dashboardPlayer: {
-    id: string;
-    nickname: string;
-    dashboard: {
-      id: string;
-      name: string;
-    };
-  };
-  invitedBy: {
-    name: string;
-    email: string;
-  };
-  expiresAt: Date;
 }
 
 export class InvitationService {
@@ -82,14 +65,14 @@ export class InvitationService {
 
   static async validateInvitation(
     token: string
-  ): Promise<InvitationDetails | null> {
+  ): Promise<InvitationResponse | null> {
     const invitation = await InvitationRepo.findByToken(token);
 
     if (!invitation || invitation.usedAt || invitation.expiresAt < new Date()) {
       return null;
     }
 
-    return this.mapToInvitationDetails(invitation);
+    return this.mapToInvitationResponse(invitation);
   }
 
   static async acceptInvitation(token: string, userId: string): Promise<void> {
@@ -278,7 +261,7 @@ export class InvitationService {
 
   private static async validateUserEligibility(
     userId: string,
-    invitation: InvitationDetails
+    invitation: InvitationResponse
   ) {
     const existingPlayer = await DashboardPlayerService.getPlayerInDashboard(
       invitation.dashboardPlayer.dashboard.id,
@@ -328,9 +311,9 @@ export class InvitationService {
     );
   }
 
-  private static mapToInvitationDetails(
+  private static mapToInvitationResponse(
     invitation: InvitationWithDetails
-  ): InvitationDetails {
+  ): InvitationResponse {
     return {
       id: invitation.id,
       token: invitation.inviteToken,

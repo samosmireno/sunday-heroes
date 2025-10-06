@@ -5,7 +5,7 @@ import CompetitionList from "@/features/competition-list/competition-list";
 import { useAuth } from "@/context/auth-context";
 import { useCompetitions } from "@/features/competition-list/use-competitions";
 import { ViewType } from "@/components/search-view-toggle/types";
-import { CompetitionType } from "@repo/shared-types";
+import { CompetitionType, UserResponse } from "@repo/shared-types";
 import { SearchViewToggle } from "@/components/search-view-toggle/search-view-toggle";
 import useDebounce from "@/hooks/use-debounce";
 import { Button } from "@/components/ui/button";
@@ -26,11 +26,11 @@ export default function CompetitionListPage() {
   const [viewType, setViewType] = useState<ViewType>(ViewType.LIST);
   const debouncedQuery = useDebounce(searchQuery, 500);
 
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: UserResponse };
   const navigate = useNavigate();
 
   const { competitions, isLoading, totalPages } = useCompetitions({
-    id: user?.id || "",
+    id: user.id,
     page: currentPage - 1,
     type: activeFilter,
     searchTerm: debouncedQuery,

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { UserPlus, ArrowLeft } from "lucide-react";
 import ModeratorsList from "@/features/competition-admin/moderators/moderators-list";
 import AddModeratorModal from "@/features/competition-admin/moderators/add-moderator-modal";
-import { Role } from "@repo/shared-types";
+import { Role, UserResponse } from "@repo/shared-types";
 import CompetitionAdminPageSkeleton from "@/features/competition-admin/competition-admin-page-skeleton";
 import { AccessDenied } from "@/features/competition-admin/access-denied";
 import CompetitionSettings from "@/features/competition-admin/settings/competition-settings";
@@ -21,13 +21,10 @@ const tabs: { id: TabType; label: string }[] = [
 ];
 
 export default function CompetitionAdminPage() {
-  const { user } = useAuth();
-  const { competitionId } = useParams<{ competitionId: string }>();
+  const { user } = useAuth() as { user: UserResponse };
+  const { competitionId } = useParams() as { competitionId: string };
   const navigate = useNavigate();
-  const { competition, isLoading } = useCompetition(
-    competitionId ?? "",
-    user?.id || "",
-  );
+  const { competition, isLoading } = useCompetition(competitionId, user.id);
 
   const [isAddModeratorModalOpen, setIsAddModeratorModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("moderators");

@@ -3,6 +3,7 @@ export * from "./enums";
 export * from "./player";
 export * from "./match";
 export * from "./competition";
+export * from "./invitation";
 export * from "./voting";
 export * from "./user";
 export * from "./dashboard";

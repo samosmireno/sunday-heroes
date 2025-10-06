@@ -12,6 +12,7 @@ import { useUrlPagination } from "@/hooks/use-url-pagination";
 import FilterTabs from "@/components/filter-tabs/filter-tabs";
 import { PlayerTabsType } from "./types";
 import { filterOptions } from "./constants";
+import { UserResponse } from "@repo/shared-types";
 
 export default function PlayersPage() {
   const [activeFilter, setActiveFilter] = useState<PlayerTabsType>("admin");
@@ -19,10 +20,10 @@ export default function PlayersPage() {
   const { currentPage, setPage } = useUrlPagination();
   const debouncedQuery = useDebounce(searchQuery, 500);
 
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: UserResponse };
 
   const { players, isLoading, totalPages } = usePlayers({
-    userId: user?.id || "",
+    userId: user.id,
     page: currentPage - 1,
     searchTerm: debouncedQuery,
     activeFilter,

@@ -1,92 +1,34 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import { Trophy, User, Calendar, ExternalLink } from "lucide-react";
-import Loading from "../components/ui/loading";
+import { useParams } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Trophy } from "lucide-react";
+import Loading from "@/components/ui/loading";
 import ErrorPage from "./error-page";
-import axiosInstance from "../config/axios-config";
-import { useAuth } from "../context/auth-context";
-import { toast } from "sonner";
-import { config } from "../config/config";
-import Background from "../components/ui/background";
-import { isAxiosError } from "axios";
-
-interface InvitationDetails {
-  id: string;
-  token: string;
-  dashboardPlayer: {
-    id: string;
-    nickname: string;
-    dashboard: {
-      id: string;
-      name: string;
-    };
-  };
-  invitedBy: {
-    name: string;
-    email: string;
-  };
-  expiresAt: string;
-}
+import Background from "@/components/ui/background";
+import { useAuth } from "@/context/auth-context";
+import { useInvitation } from "@/features/invitation/hooks/use-invitation";
+import { useAcceptInvitation } from "@/features/invitation/hooks/use-accept-invitation";
+import { config } from "@/config/config";
+import InvitationDetails from "@/features/invitation/invitation-details";
+import InvitationActions from "@/features/invitation/invitation-actions";
+import { UserResponse } from "@repo/shared-types";
 
 export default function InvitationPage() {
   const { token } = useParams<{ token: string }>();
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [invitation, setInvitation] = useState<InvitationDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAccepting, setIsAccepting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth() as { user: UserResponse };
 
-  useEffect(() => {
-    const validateInvitation = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `/api/invitations/${token}/validate`,
-        );
-        setInvitation(response.data);
-      } catch (error) {
-        let errorMessage = "Invalid invitation";
-        if (isAxiosError(error)) {
-          errorMessage = error.response?.data?.error;
-        }
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { data: invitation, isLoading, error } = useInvitation(token);
+  const acceptMutation = useAcceptInvitation();
 
+  const handleAccept = () => {
     if (token) {
-      validateInvitation();
+      acceptMutation.mutate(token);
     }
-  }, [token]);
+  };
 
-  const handleAcceptInvitation = async () => {
-    if (!user) {
+  const handleGoogleAuth = () => {
+    if (token) {
       const googleAuthUrl = `${config.google.authEndpoint}?client_id=${config.google.clientId}&redirect_uri=${config.redirect_uri}&response_type=code&scope=email profile&state=${token}`;
       window.location.href = googleAuthUrl;
-      return;
-    }
-
-    setIsAccepting(true);
-    try {
-      await axiosInstance.post(`/api/invitations/${token}/accept`);
-      toast.success("Successfully connected to player profile!");
-      navigate(`/dashboard`);
-    } catch (error) {
-      let errorMessage = "Failed to accept invitation";
-      if (isAxiosError(error)) {
-        errorMessage = error.response?.data?.error;
-      }
-      toast.error(errorMessage);
-    } finally {
-      setIsAccepting(false);
     }
   };
 
@@ -110,63 +52,13 @@ export default function InvitationPage() {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <div className="rounded-lg bg-bg/40 p-4">
-              <h3 className="font-semibold text-gray-200">
-                {invitation.dashboardPlayer.dashboard.name}
-              </h3>
-              <p className="text-sm text-gray-400">Dashboard</p>
-            </div>
-
-            <div className="flex items-center gap-3 text-sm text-gray-300">
-              <User className="h-4 w-4" />
-              <span>
-                Connect to player:{" "}
-                <strong>{invitation.dashboardPlayer.nickname}</strong>
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 text-sm text-gray-300">
-              <Trophy className="h-4 w-4" />
-              <span>Invited by {invitation.invitedBy.name}</span>
-            </div>
-
-            <div className="flex items-center gap-3 text-sm text-gray-400">
-              <Calendar className="h-4 w-4" />
-              <span>
-                Expires: {new Date(invitation.expiresAt).toLocaleDateString()}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <Button
-              onClick={handleAcceptInvitation}
-              disabled={isAccepting}
-              className="w-full bg-accent text-bg hover:bg-accent/90"
-            >
-              {isAccepting ? (
-                "Connecting..."
-              ) : user ? (
-                "Accept Invitation"
-              ) : (
-                <>
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Sign in with Google to Accept
-                </>
-              )}
-            </Button>
-
-            {user && (
-              <Button
-                variant="outline"
-                onClick={() => navigate("/dashboard")}
-                className="w-full"
-              >
-                Cancel
-              </Button>
-            )}
-          </div>
+          <InvitationDetails invitation={invitation} />
+          <InvitationActions
+            user={user}
+            isAccepting={acceptMutation.isPending}
+            onAccept={handleAccept}
+            onGoogleAuth={handleGoogleAuth}
+          />
         </CardContent>
       </Card>
     </div>

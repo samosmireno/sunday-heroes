@@ -7,10 +7,11 @@ import { useDashboard } from "@/features/dashboard/use-dashboard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth-context";
 import DashboardSkeleton from "@/features/dashboard/dashboard-skeleton";
+import { UserResponse } from "@repo/shared-types";
 
 export default function Dashboard() {
-  const { user } = useAuth();
-  const { dashboard, isLoading } = useDashboard(user?.id || "");
+  const { user } = useAuth() as { user: UserResponse };
+  const { dashboard, isLoading } = useDashboard(user.id);
 
   const navigate = useNavigate();
 

@@ -8,16 +8,14 @@ import {
   NotFoundState,
 } from "@/features/pending-votes/error-state";
 import { PendingVotesTable } from "@/features/pending-votes/pending-votes-table";
+import { UserResponse } from "@repo/shared-types";
 
 export default function AdminPendingVotes() {
-  const { matchId } = useParams();
-  const { user } = useAuth();
+  const { matchId } = useParams() as { matchId: string };
+  const { user } = useAuth() as { user: UserResponse };
   const navigate = useNavigate();
 
-  const { votingData, isLoading, error } = usePendingVotes(
-    matchId ?? "",
-    user?.id || "",
-  );
+  const { votingData, isLoading, error } = usePendingVotes(matchId, user.id);
 
   const handleVoteClick = (matchId: string, playerId: string) => {
     navigate(`/vote/${matchId}?voterId=${playerId}`);

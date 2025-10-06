@@ -7,15 +7,16 @@ import { useMatches } from "@/features/matches/use-matches";
 import { useParams } from "react-router-dom";
 import MatchesPageSkeleton from "@/features/matches/matches-page-skeleton";
 import { useUrlPagination } from "@/hooks/use-url-pagination";
+import { UserResponse } from "@repo/shared-types";
 
 export default function MatchesPage() {
-  const { user } = useAuth();
-  const { competitionId } = useParams();
+  const { user } = useAuth() as { user: UserResponse };
+  const { competitionId } = useParams() as { competitionId: string };
   const { currentPage, setPage, resetPage } = useUrlPagination();
 
   const { matches, isLoading, totalCount, totalPages } = useMatches({
-    userId: user?.id || "",
-    competitionId: competitionId || "",
+    userId: user.id,
+    competitionId,
     page: currentPage,
   });
 
