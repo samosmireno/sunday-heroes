@@ -14,17 +14,14 @@ export default function AddMatchPage() {
     competitionId: string;
   };
 
-  const { competition, isLoading: isLoadingCompetition } = useCompetition(
-    competitionId,
-    user.id,
-  );
+  const { competition, isLoading } = useCompetition(competitionId, user.id);
 
   const { form, formSchema, isSubmitting, handleSubmit } = useAddMatch(
     competition!,
     competitionId,
   );
 
-  if (isLoadingCompetition) {
+  if (isLoading) {
     return (
       <div className="relative flex-1 p-3 sm:p-4 md:p-6">
         <Header title="Add Match" hasSidebar={true} />

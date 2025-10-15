@@ -42,7 +42,7 @@ export default function MatchesList({ matches }: MatchesListProps) {
     } else if (match.votingStatus === "OPEN") {
       return (
         <span className="text-2xs inline-flex items-center rounded bg-amber-900/30 px-1.5 py-0.5 font-medium text-amber-400 md:text-xs">
-          {match.pendingVotes} pending votes
+          {match.pendingVotes} pending vote{match.pendingVotes === 1 ? "" : "s"}
         </span>
       );
     } else {

@@ -12,7 +12,6 @@ export const useDashboard = (id: string) => {
     id: string,
   ): Promise<DashboardResponse | undefined> => {
     try {
-      if (!id) return {} as DashboardResponse;
       const { data } = await axios.get(`${config.server}/api/dashboard/${id}`);
       return data;
     } catch (error) {
