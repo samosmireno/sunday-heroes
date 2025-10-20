@@ -22,14 +22,36 @@ export class DashboardService {
   }
 
   static async getDashboardPlayerDetailsForUser(userId: string) {
+    //const start = Date.now();
+
     const dashboardPlayers =
       await DashboardPlayerRepo.findByUserIdWithDashboardData(userId);
 
-    if (!dashboardPlayers) {
+    //const end = Date.now();
+    //console.log(`Query took ${end - start} ms`);
+
+    if (!dashboardPlayers || dashboardPlayers.length === 0) {
       throw new NotFoundError("Dashboard");
     }
 
-    return extractDashboardData(dashboardPlayers);
+    // Filter competitions to only include those where the user participated
+    const filteredDashboardPlayers = dashboardPlayers.map((dp) => {
+      const filteredCompetitions = dp.dashboard.competitions.filter((comp) =>
+        comp.matches.some((match) =>
+          match.matchPlayers.some((mp) => mp.dashboardPlayer.id === dp.id)
+        )
+      );
+
+      return {
+        ...dp,
+        dashboard: {
+          ...dp.dashboard,
+          competitions: filteredCompetitions,
+        },
+      };
+    });
+
+    return extractDashboardData(filteredDashboardPlayers);
   }
 
   static async createDashboard(userId: string, name: string) {

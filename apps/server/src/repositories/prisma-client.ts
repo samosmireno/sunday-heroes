@@ -5,6 +5,7 @@ const prisma = new PrismaClient({
     maxWait: 30000,
     timeout: 30000,
   },
+  //log: ["query", "info", "warn", "error"],
 });
 
 export default prisma;
