@@ -1,6 +1,5 @@
 import { User, Role, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
-import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const USER_WITH_DASHBOARD_INCLUDE = {
@@ -14,7 +13,7 @@ export type UserWithDashboard = Prisma.UserGetPayload<{
 export class UserRepo {
   static async findById(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<User | null> {
     try {
       const prismaClient = tx || prisma;
@@ -26,7 +25,7 @@ export class UserRepo {
 
   static async findByIdWithDashboard(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<UserWithDashboard | null> {
     try {
       const prismaClient = tx || prisma;
@@ -41,7 +40,7 @@ export class UserRepo {
 
   static async findByEmail(
     email: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<User | null> {
     try {
       const prismaClient = tx || prisma;
@@ -51,7 +50,7 @@ export class UserRepo {
     }
   }
 
-  static async findAll(tx?: PrismaTransaction): Promise<User[]> {
+  static async findAll(tx?: Prisma.TransactionClient): Promise<User[]> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.user.findMany({
@@ -62,7 +61,10 @@ export class UserRepo {
     }
   }
 
-  static async findByRole(role: Role, tx?: PrismaTransaction): Promise<User[]> {
+  static async findByRole(
+    role: Role,
+    tx?: Prisma.TransactionClient
+  ): Promise<User[]> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.user.findMany({
@@ -76,7 +78,7 @@ export class UserRepo {
 
   static async getUserRole(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Role | null> {
     try {
       const prismaClient = tx || prisma;
@@ -92,7 +94,7 @@ export class UserRepo {
 
   static async getDashboardId(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<string | null> {
     try {
       const prismaClient = tx || prisma;
@@ -112,7 +114,7 @@ export class UserRepo {
 
   static async create(
     data: Omit<User, "id">,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<User> {
     try {
       const prismaClient = tx || prisma;
@@ -125,7 +127,7 @@ export class UserRepo {
   static async update(
     id: string,
     data: Partial<User>,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<User> {
     try {
       const prismaClient = tx || prisma;
@@ -135,7 +137,10 @@ export class UserRepo {
     }
   }
 
-  static async delete(id: string, tx?: PrismaTransaction): Promise<User> {
+  static async delete(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<User> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.user.delete({ where: { id } });

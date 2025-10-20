@@ -1,6 +1,5 @@
 import { CompetitionType, Prisma } from "@prisma/client";
 import prisma from "../prisma-client";
-import { PrismaTransaction } from "../../types";
 import {
   CompetitionWithDetails,
   COMPETITION_DETAILED_INCLUDE,
@@ -11,7 +10,7 @@ export class CompetitionQueryRepo {
   static async findByType(
     type: CompetitionType,
     options?: { limit?: number; offset?: number },
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -30,7 +29,7 @@ export class CompetitionQueryRepo {
   static async findByNameSearch(
     searchTerm: string,
     options?: { limit?: number; offset?: number },
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -57,7 +56,7 @@ export class CompetitionQueryRepo {
   static async findByPlayerId(
     playerId: string,
     options?: { limit?: number; offset?: number },
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -95,7 +94,7 @@ export class CompetitionQueryRepo {
       limit?: number;
       offset?: number;
     } = {},
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<{ competitions: CompetitionWithDetails[]; totalCount: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -149,7 +148,7 @@ export class CompetitionQueryRepo {
 
   static async countByDashboardId(
     dashboardId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;

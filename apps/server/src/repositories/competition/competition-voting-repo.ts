@@ -1,6 +1,5 @@
 import { Prisma, VotingStatus } from "@prisma/client";
 import prisma from "../prisma-client";
-import { PrismaTransaction } from "../../types";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
 const COMPETITION_PENDING_VOTES_SELECT = {
@@ -52,7 +51,7 @@ export type CompetitionWithPendingVotes = Prisma.CompetitionGetPayload<{
 export class CompetitionVotingRepo {
   static async findByIdWithPendingVotes(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithPendingVotes | null> {
     try {
       const prismaClient = tx || prisma;
@@ -73,7 +72,7 @@ export class CompetitionVotingRepo {
 
   static async getVotingSettings(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<{
     votingEnabled: boolean;
     votingPeriodDays: number | null;
@@ -98,7 +97,7 @@ export class CompetitionVotingRepo {
 
   static async getVotingStatus(
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<VotingStatus | undefined> {
     try {
       const prismaClient = tx || prisma;

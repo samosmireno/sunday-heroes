@@ -1,6 +1,5 @@
 import { DashboardPlayer, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
-import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const DASHBOARD_PLAYER_BASIC_INCLUDE = {
@@ -105,7 +104,7 @@ export type DashboardPlayerWithDetails = Prisma.DashboardPlayerGetPayload<{
 export class DashboardPlayerRepo {
   static async findById(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayer | null> {
     try {
       const prismaClient = tx || prisma;
@@ -117,7 +116,7 @@ export class DashboardPlayerRepo {
 
   static async findByIdWithUserDetails(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithUserDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -135,7 +134,7 @@ export class DashboardPlayerRepo {
 
   static async findByUserIdWithDashboardData(
     userId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithDashboardData[] | null> {
     try {
       const prismaClient = tx || prisma;
@@ -196,7 +195,7 @@ export class DashboardPlayerRepo {
 
   static async findByIdWithAdmin(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithAdmin | null> {
     try {
       const prismaClient = tx || prisma;
@@ -212,7 +211,9 @@ export class DashboardPlayerRepo {
     }
   }
 
-  static async findAll(tx?: PrismaTransaction): Promise<DashboardPlayer[]> {
+  static async findAll(
+    tx?: Prisma.TransactionClient
+  ): Promise<DashboardPlayer[]> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findMany({
@@ -226,7 +227,7 @@ export class DashboardPlayerRepo {
   static async findByDashboardId(
     dashboardId: string,
     options?: { limit?: number; offset?: number },
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -248,7 +249,7 @@ export class DashboardPlayerRepo {
   static async findByNickname(
     nickname: string,
     dashboardId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithUserDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -272,7 +273,7 @@ export class DashboardPlayerRepo {
   static async findByNicknames(
     nicknames: string[],
     dashboardId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithUserDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -294,7 +295,7 @@ export class DashboardPlayerRepo {
   static async findByUserId(
     userId: string,
     dashboardId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayer | null> {
     try {
       const prismaClient = tx || prisma;
@@ -316,7 +317,7 @@ export class DashboardPlayerRepo {
     searchTerm: string,
     dashboardId: string,
     options?: { limit?: number; offset?: number },
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -345,7 +346,7 @@ export class DashboardPlayerRepo {
   static async findInCompetitions(
     competitionIds: string[],
     options?: { search?: string; limit?: number; offset?: number },
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -380,7 +381,7 @@ export class DashboardPlayerRepo {
 
   static async countInCompetitions(
     competitionIds: string[],
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -409,7 +410,7 @@ export class DashboardPlayerRepo {
     searchTerm: string,
     competitionId: string,
     options?: { limit?: number; offset?: number },
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -443,7 +444,7 @@ export class DashboardPlayerRepo {
 
   static async countByDashboardId(
     dashboardId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -461,7 +462,7 @@ export class DashboardPlayerRepo {
   static async countByNameSearch(
     searchTerm: string,
     dashboardId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -484,7 +485,7 @@ export class DashboardPlayerRepo {
 
   static async create(
     data: Omit<DashboardPlayer, "id">,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -496,7 +497,7 @@ export class DashboardPlayerRepo {
 
   static async createMany(
     data: Omit<DashboardPlayer, "id">[],
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -509,7 +510,7 @@ export class DashboardPlayerRepo {
   static async update(
     id: string,
     data: Partial<DashboardPlayer>,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -521,7 +522,7 @@ export class DashboardPlayerRepo {
 
   static async delete(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -533,7 +534,7 @@ export class DashboardPlayerRepo {
 
   static async deleteMany(
     ids: string[],
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;

@@ -1,4 +1,4 @@
-import { PrismaTransaction } from "../../types";
+import { Prisma } from "@prisma/client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 import prisma from "../prisma-client";
 
@@ -6,7 +6,7 @@ export class CompetitionModeratorRepo {
   static async addModeratorToCompetition(
     competitionId: string,
     userId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -26,7 +26,7 @@ export class CompetitionModeratorRepo {
 
   static async removeModeratorFromCompetition(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -45,7 +45,7 @@ export class CompetitionModeratorRepo {
 
   static async getModeratorsByCompetitionId(
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
@@ -64,7 +64,7 @@ export class CompetitionModeratorRepo {
 
   static async getCompetitionIdByModeratorId(
     moderatorId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<string | null> {
     try {
       const prismaClient = tx || prisma;
@@ -84,7 +84,7 @@ export class CompetitionModeratorRepo {
   static async isUserModerator(
     competitionId: string,
     userId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;

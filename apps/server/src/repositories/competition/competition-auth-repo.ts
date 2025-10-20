@@ -1,12 +1,11 @@
-import { CompetitionType } from "@prisma/client";
+import { CompetitionType, Prisma } from "@prisma/client";
 import prisma from "../prisma-client";
-import { PrismaTransaction } from "../../types";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
 export class CompetitionAuthRepo {
   static async getCompetitionType(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionType | null> {
     try {
       const prismaClient = tx || prisma;
@@ -25,7 +24,7 @@ export class CompetitionAuthRepo {
 
   static async getDashboardAdmin(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<string | null> {
     try {
       const prismaClient = tx || prisma;
@@ -50,7 +49,7 @@ export class CompetitionAuthRepo {
 
   static async getModerators(
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
@@ -78,7 +77,7 @@ export class CompetitionAuthRepo {
   static async isUserAdmin(
     competitionId: string,
     userId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<boolean> {
     const adminId = await this.getDashboardAdmin(competitionId, tx);
     return adminId === userId;
@@ -87,7 +86,7 @@ export class CompetitionAuthRepo {
   static async isUserAdminOrModerator(
     competitionId: string,
     userId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<boolean> {
     const [adminId, moderatorIds] = await Promise.all([
       this.getDashboardAdmin(competitionId, tx),

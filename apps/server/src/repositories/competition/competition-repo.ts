@@ -1,6 +1,5 @@
 import { Competition, Prisma } from "@prisma/client";
 import prisma from "../prisma-client";
-import { PrismaTransaction } from "../../types";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
 const COMPETITION_BASIC_INCLUDE = {
@@ -64,7 +63,7 @@ export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
 export class CompetitionRepo {
   static async findById(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Competition | null> {
     try {
       const prismaClient = tx || prisma;
@@ -76,7 +75,7 @@ export class CompetitionRepo {
 
   static async findByIdWithDetails(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -92,7 +91,7 @@ export class CompetitionRepo {
     }
   }
 
-  static async findAll(tx?: PrismaTransaction): Promise<Competition[]> {
+  static async findAll(tx?: Prisma.TransactionClient): Promise<Competition[]> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.findMany({
@@ -108,7 +107,7 @@ export class CompetitionRepo {
     options?: {
       votingEnabled?: boolean;
     },
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithMatches[]> {
     try {
       const prismaClient = tx || prisma;
@@ -130,7 +129,7 @@ export class CompetitionRepo {
 
   static async findByMatchId(
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -151,7 +150,7 @@ export class CompetitionRepo {
 
   static async findCompetitionIdsForUser(
     userId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
@@ -185,7 +184,7 @@ export class CompetitionRepo {
 
   static async create(
     data: Omit<Competition, "id">,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Competition> {
     try {
       const prismaClient = tx || prisma;
@@ -198,7 +197,7 @@ export class CompetitionRepo {
   static async update(
     id: string,
     data: Partial<Competition>,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Competition> {
     try {
       const prismaClient = tx || prisma;
@@ -210,7 +209,7 @@ export class CompetitionRepo {
 
   static async delete(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Competition> {
     try {
       const prismaClient = tx || prisma;
@@ -222,7 +221,7 @@ export class CompetitionRepo {
 
   static async resetCompetition(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithDetails> {
     try {
       const prismaClient = tx || prisma;
@@ -244,7 +243,7 @@ export class CompetitionRepo {
 
   static async resetCompetitionWithoutTeams(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithDetails> {
     try {
       const prismaClient = tx || prisma;

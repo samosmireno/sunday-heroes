@@ -1,14 +1,13 @@
-import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 import prisma from "./prisma-client";
-import { TeamRoster } from "@prisma/client";
+import { Prisma, TeamRoster } from "@prisma/client";
 
 export class TeamRosterRepo {
   static async addPlayerToTeam(
     teamId: string,
     dashboardPlayerId: string,
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<TeamRoster> {
     try {
       const prismaClient = tx || prisma;
@@ -28,7 +27,7 @@ export class TeamRosterRepo {
     teamId: string,
     dashboardPlayerId: string,
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -52,7 +51,7 @@ export class TeamRosterRepo {
   static async getTeamRoster(
     teamId: string,
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -73,7 +72,7 @@ export class TeamRosterRepo {
   static async getPlayerTeamInCompetition(
     dashboardPlayerId: string,
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -97,7 +96,7 @@ export class TeamRosterRepo {
   static async getTeamPlayerCount(
     teamId: string,
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -119,7 +118,7 @@ export class TeamRosterRepo {
     dashboardPlayerId: string,
     teamId: string,
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;

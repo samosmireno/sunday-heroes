@@ -3,7 +3,6 @@ import { MatchRepo } from "../repositories/match-repo";
 import { MatchPlayerRepo } from "../repositories/match-player-repo";
 import prisma from "../repositories/prisma-client";
 import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
-import { PrismaTransaction } from "../types";
 import { transformMatchServiceToPendingVotes } from "../utils/votes-transforms";
 import {
   AuthorizationError,
@@ -12,6 +11,7 @@ import {
   VotingError,
 } from "../utils/errors";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
+import { Prisma } from "@prisma/client";
 
 export class VoteService {
   static async submitVotes(
@@ -234,7 +234,7 @@ export class VoteService {
 
   private static async checkAndCloseVoting(
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<void> {
     const pendingVoters = await this.getPendingVoters(matchId);
 

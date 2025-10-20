@@ -10,7 +10,6 @@ import {
   ConflictError,
   NotFoundError,
 } from "../utils/errors";
-import { PrismaTransaction } from "../types";
 
 export class TeamService {
   static async createTeamInCompetition(

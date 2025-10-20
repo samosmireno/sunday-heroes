@@ -1,12 +1,11 @@
 import { MatchTeam, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
-import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 export class MatchTeamRepo {
   static async createMatchTeams(
     data: Omit<MatchTeam, "id">[],
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -20,7 +19,7 @@ export class MatchTeamRepo {
     matchId: string,
     teamId: string,
     isHome: boolean,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchTeam> {
     try {
       const prismaClient = tx || prisma;
@@ -38,7 +37,7 @@ export class MatchTeamRepo {
 
   static async findByMatchId(
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchTeam[]> {
     try {
       const prismaClient = tx || prisma;
@@ -55,7 +54,7 @@ export class MatchTeamRepo {
 
   static async findByTeamId(
     teamId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchTeam[]> {
     try {
       const prismaClient = tx || prisma;
@@ -74,7 +73,7 @@ export class MatchTeamRepo {
   static async findByMatchAndTeam(
     matchId: string,
     teamId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchTeam | null> {
     try {
       const prismaClient = tx || prisma;
@@ -97,7 +96,7 @@ export class MatchTeamRepo {
 
   static async getHomeTeam(
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchTeam | null> {
     try {
       const prismaClient = tx || prisma;
@@ -117,7 +116,7 @@ export class MatchTeamRepo {
 
   static async getAwayTeam(
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchTeam | null> {
     try {
       const prismaClient = tx || prisma;
@@ -137,7 +136,7 @@ export class MatchTeamRepo {
 
   static async deleteByMatchId(
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -151,7 +150,7 @@ export class MatchTeamRepo {
 
   static async deleteByTeamId(
     teamId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -166,7 +165,7 @@ export class MatchTeamRepo {
   static async update(
     id: string,
     data: Partial<MatchTeam>,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchTeam> {
     try {
       const prismaClient = tx || prisma;
@@ -179,7 +178,10 @@ export class MatchTeamRepo {
     }
   }
 
-  static async delete(id: string, tx?: PrismaTransaction): Promise<MatchTeam> {
+  static async delete(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<MatchTeam> {
     try {
       const prismaClient = tx || prisma;
       return prismaClient.matchTeam.delete({
@@ -193,7 +195,7 @@ export class MatchTeamRepo {
   static async findTeamMatches(
     teamId: string,
     competitionId?: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchTeam[]> {
     try {
       const prismaClient = tx || prisma;
@@ -232,7 +234,7 @@ export class MatchTeamRepo {
   static async updateTeamReferences(
     oldTeamId: string,
     newTeamId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;

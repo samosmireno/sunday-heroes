@@ -1,6 +1,5 @@
 import { MatchPlayer, Prisma, Team } from "@prisma/client";
 import prisma from "./prisma-client";
-import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 export type MatchPlayerWithDetails = Prisma.MatchPlayerGetPayload<{
@@ -21,7 +20,7 @@ export type MatchPlayerWithUserDetails = Prisma.MatchPlayerGetPayload<{
 
 export class MatchPlayerRepo {
   static async getAllMatchPlayers(
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -40,7 +39,7 @@ export class MatchPlayerRepo {
 
   static async getMatchPlayerById(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchPlayerWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -60,7 +59,7 @@ export class MatchPlayerRepo {
 
   static async getMatchPlayersFromMatch(
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchPlayerWithUserDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -82,7 +81,7 @@ export class MatchPlayerRepo {
 
   static async createMatchPlayer(
     matchPlayer: Omit<MatchPlayer, "id">,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -99,7 +98,7 @@ export class MatchPlayerRepo {
 
   static async createMatchPlayers(
     matchPlayers: Omit<MatchPlayer, "id">[],
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -117,7 +116,7 @@ export class MatchPlayerRepo {
   static async updateMatchPlayer(
     id: string,
     data: Partial<MatchPlayer>,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -132,7 +131,7 @@ export class MatchPlayerRepo {
 
   static async updateMatchPlayersStats(
     updates: Array<{ id: string; updates: Partial<any> }>,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -155,7 +154,7 @@ export class MatchPlayerRepo {
 
   static async deleteMatchPlayer(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<MatchPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -168,7 +167,10 @@ export class MatchPlayerRepo {
     }
   }
 
-  static async deleteMatchPlayersByIds(ids: string[], tx?: PrismaTransaction) {
+  static async deleteMatchPlayersByIds(
+    ids: string[],
+    tx?: Prisma.TransactionClient
+  ) {
     try {
       const prismaClient = tx || prisma;
       return prismaClient.matchPlayer.deleteMany({
@@ -184,7 +186,7 @@ export class MatchPlayerRepo {
 
   static async deleteMatchPlayersFromMatch(
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -200,7 +202,7 @@ export class MatchPlayerRepo {
   static async isPlayerInMatch(
     playerId: string,
     matchId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;

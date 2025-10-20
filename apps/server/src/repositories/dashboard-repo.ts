@@ -1,6 +1,5 @@
 import { Dashboard, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
-import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const DASHBOARD_BASIC_INCLUDE = {
@@ -53,7 +52,7 @@ export type DashboardWithDetails = Prisma.DashboardGetPayload<{
 export class DashboardRepo {
   static async findById(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Dashboard | null> {
     try {
       const prismaClient = tx || prisma;
@@ -65,7 +64,7 @@ export class DashboardRepo {
 
   static async findByIdWithBasic(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardWithBasic | null> {
     try {
       const prismaClient = tx || prisma;
@@ -80,7 +79,7 @@ export class DashboardRepo {
 
   static async findByIdWithDetails(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -98,7 +97,7 @@ export class DashboardRepo {
 
   static async findByAdminIdWithDetails(
     adminId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<DashboardWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -113,7 +112,7 @@ export class DashboardRepo {
 
   static async findByAdminId(
     adminId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Dashboard | null> {
     const prismaClient = tx || prisma;
     const dashboard = await prismaClient.dashboard.findUnique({
@@ -124,7 +123,7 @@ export class DashboardRepo {
 
   static async findByCompetitionId(
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Dashboard | null> {
     try {
       const prismaClient = tx || prisma;
@@ -143,7 +142,7 @@ export class DashboardRepo {
     }
   }
 
-  static async findAll(tx?: PrismaTransaction): Promise<Dashboard[]> {
+  static async findAll(tx?: Prisma.TransactionClient): Promise<Dashboard[]> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.findMany({
@@ -156,7 +155,7 @@ export class DashboardRepo {
 
   static async create(
     data: Omit<Dashboard, "id">,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Dashboard> {
     try {
       const prismaClient = tx || prisma;
@@ -169,7 +168,7 @@ export class DashboardRepo {
   static async update(
     id: string,
     data: Partial<Dashboard>,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Dashboard> {
     try {
       const prismaClient = tx || prisma;
@@ -179,7 +178,10 @@ export class DashboardRepo {
     }
   }
 
-  static async delete(id: string, tx?: PrismaTransaction): Promise<Dashboard> {
+  static async delete(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<Dashboard> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboard.delete({ where: { id } });

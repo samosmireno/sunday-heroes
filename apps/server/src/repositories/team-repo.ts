@@ -1,6 +1,5 @@
 import { Team, Prisma } from "@prisma/client";
 import prisma from "./prisma-client";
-import { PrismaTransaction } from "../types";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
 
 const TEAM_WITH_COMPETITIONS_INCLUDE = {
@@ -36,7 +35,7 @@ export type TeamInCompetition = Prisma.TeamGetPayload<{
 export class TeamRepo {
   static async findById(
     id: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Team | null> {
     try {
       const prismaClient = tx || prisma;
@@ -49,7 +48,7 @@ export class TeamRepo {
   static async findByName(
     name: string,
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Team | null> {
     try {
       const prismaClient = tx || prisma;
@@ -68,7 +67,7 @@ export class TeamRepo {
     }
   }
 
-  static async findAll(tx?: PrismaTransaction): Promise<Team[]> {
+  static async findAll(tx?: Prisma.TransactionClient): Promise<Team[]> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.team.findMany({
@@ -81,7 +80,7 @@ export class TeamRepo {
 
   static async findByCompetitionId(
     competitionId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<TeamInCompetition[]> {
     try {
       const prismaClient = tx || prisma;
@@ -112,7 +111,7 @@ export class TeamRepo {
 
   static async create(
     data: Omit<Team, "id">,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Team> {
     try {
       const prismaClient = tx || prisma;
@@ -125,7 +124,7 @@ export class TeamRepo {
   static async update(
     id: string,
     data: Partial<Team>,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Team> {
     try {
       const prismaClient = tx || prisma;
@@ -135,7 +134,10 @@ export class TeamRepo {
     }
   }
 
-  static async delete(id: string, tx?: PrismaTransaction): Promise<Team> {
+  static async delete(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<Team> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.team.delete({ where: { id } });
@@ -146,7 +148,7 @@ export class TeamRepo {
 
   static async deleteMany(
     ids: string[],
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -163,7 +165,7 @@ export class TeamRepo {
   static async checkNameUnique(
     name: string,
     excludeId?: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
@@ -183,7 +185,7 @@ export class TeamRepo {
     name: string,
     competitionId: string,
     excludeTeamId?: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
@@ -232,7 +234,7 @@ export class TeamRepo {
   static async findByNameInDashboard(
     name: string,
     dashboardId: string,
-    tx?: PrismaTransaction
+    tx?: Prisma.TransactionClient
   ): Promise<Team | null> {
     try {
       const prismaClient = tx || prisma;
