@@ -70,6 +70,13 @@ export default function StatsTable({
                 <span className="hidden md:inline">Assists</span>
                 {getSortArrow("assists")}
               </th>
+              <th
+                className="hidden border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm lg:table-cell lg:p-3"
+                onClick={() => sortPlayers("winRate")}
+              >
+                <span>Win Rate</span>
+                {getSortArrow("winRate")}
+              </th>
               {votingEnabled && (
                 <>
                   <th
@@ -111,6 +118,9 @@ export default function StatsTable({
                   </td>
                   <td className="text-center text-sm font-medium md:text-base md:font-semibold lg:p-2">
                     {player.assists}
+                  </td>
+                  <td className="hidden text-center text-sm font-medium md:text-base md:font-semibold lg:table-cell lg:p-2">
+                    {player.winRate}
                   </td>
                   {votingEnabled && (
                     <>

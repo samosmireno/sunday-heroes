@@ -14,6 +14,8 @@ export type PlayerTotals = {
   id: string;
   nickname: string;
   matches: number;
+  wins: number;
+  winRate: number;
   goals: number;
   assists: number;
   penaltyScored?: number;

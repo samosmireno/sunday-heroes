@@ -53,15 +53,44 @@ export function findManOfTheMatchId(
   return highestScore > 0 ? manOfTheMatchId : null;
 }
 
+function determineMatchWinner(match: MatchResponse): "home" | "away" | "draw" {
+  // Regular time result
+  if (match.homeTeamScore > match.awayTeamScore) {
+    return "home";
+  }
+  if (match.awayTeamScore > match.homeTeamScore) {
+    return "away";
+  }
+
+  // Check penalties if it's a draw
+  if (
+    match.penaltyHomeScore !== undefined &&
+    match.penaltyAwayScore !== undefined
+  ) {
+    if (match.penaltyHomeScore > match.penaltyAwayScore) {
+      return "home";
+    }
+    if (match.penaltyAwayScore > match.penaltyHomeScore) {
+      return "away";
+    }
+  }
+
+  return "draw";
+}
+
 export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
   const playerMap = new Map<string, PlayerTotals>();
 
   matches.forEach((match) => {
+    const matchWinner = determineMatchWinner(match);
+
     match.players.forEach((player) => {
       const existingPlayer = playerMap.get(player.nickname) || {
         id: player.id,
         nickname: player.nickname,
         matches: 0,
+        wins: 0,
+        winRate: 0,
         goals: 0,
         assists: 0,
         penaltyScored: 0,
@@ -69,9 +98,14 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
         numManOfTheMatch: 0,
       };
 
+      const hasWon =
+        (player.isHome && matchWinner === "home") ||
+        (!player.isHome && matchWinner === "away");
+
       const updatedPlayer = {
         ...existingPlayer,
         matches: existingPlayer.matches + 1,
+        wins: existingPlayer.wins + (hasWon ? 1 : 0),
         goals: existingPlayer.goals + player.goals,
         assists: existingPlayer.assists + player.assists,
         penaltyScored:
@@ -92,6 +126,10 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
       player.matches > 0
         ? Math.round((player.rating! / player.matches) * 100) / 100
         : undefined,
+    winRate:
+      player.matches > 0
+        ? Number(((player.wins / player.matches) * 100).toFixed(2))
+        : 0,
   }));
 
   return playerStats;
@@ -103,11 +141,14 @@ export function calculateLeaguePlayerStats(
   const playerMap = new Map<string, LeaguePlayerTotals>();
 
   matches.forEach((match) => {
+    const matchWinner = determineMatchWinner(match);
     match.players.forEach((player) => {
       const existingPlayer = playerMap.get(player.nickname) || {
         id: player.id,
         nickname: player.nickname,
         matches: 0,
+        wins: 0,
+        winRate: 0,
         goals: 0,
         assists: 0,
         penaltyScored: 0,
@@ -115,9 +156,14 @@ export function calculateLeaguePlayerStats(
         teamName: match.teams[player.isHome ? 0 : 1],
       };
 
+      const hasWon =
+        (player.isHome && matchWinner === "home") ||
+        (!player.isHome && matchWinner === "away");
+
       const updatedPlayer = {
         ...existingPlayer,
         matches: existingPlayer.matches + 1,
+        wins: existingPlayer.wins + (hasWon ? 1 : 0),
         goals: existingPlayer.goals + player.goals,
         assists: existingPlayer.assists + player.assists,
         penaltyScored:
@@ -135,6 +181,10 @@ export function calculateLeaguePlayerStats(
       player.matches > 0
         ? Math.round((player.rating! / player.matches) * 100) / 100
         : undefined,
+    winRate:
+      player.matches > 0
+        ? Number(((player.wins / player.matches) * 100).toFixed(2))
+        : 0,
   }));
 
   return playerStats;
