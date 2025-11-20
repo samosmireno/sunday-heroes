@@ -4,6 +4,7 @@ import {
   playerIconSizeType,
   playerIconNumberSize,
 } from "./styles";
+import { Star } from "lucide-react";
 
 interface PlayerIconProps {
   playerPosition: number;
@@ -31,9 +32,7 @@ export default function PlayerIcon({
         </p>
       )}
       {manOfTheMatch && (
-        <div className="md:scale-70 absolute -translate-y-1/2 md:translate-x-[80%] lg:translate-x-[60%]">
-          <i className="fa-solid fa-star text-yellow-600" role="img"></i>
-        </div>
+        <Star className="md:scale-70 absolute -translate-y-4 translate-x-2 fill-yellow-600 text-gray-900 md:-translate-y-1/2 md:translate-x-[80%] lg:translate-x-[60%]"></Star>
       )}
     </div>
   );
