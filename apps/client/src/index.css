@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "Exo";
-  src: url("./fonts/Exo-VariableFont_wght.woff2") format("woff2");
+  src: url("/fonts/Exo-VariableFont_wght.woff2") format("woff2");
   font-weight: 100 900; /* variable range */
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: "Oswald";
-  src: url("./fonts/Oswald-VariableFont_wght.woff2") format("woff2");
+  src: url("/fonts/Oswald-VariableFont_wght.woff2") format("woff2");
   font-weight: 200 700;
   font-style: normal;
   font-display: swap;
