@@ -82,7 +82,7 @@ export function AppSidebar() {
     >
       <SidebarContent className="flex flex-1 flex-col overflow-y-auto">
         <SidebarGroup>
-          <SidebarGroupLabel className="mb-4 flex items-center justify-center gap-1 rounded-none border-b-2 border-dashed border-accent/70 pb-3 text-center font-oswald text-xl font-bold tracking-wider text-accent">
+          <SidebarGroupLabel className="mb-4 mt-2 flex items-center justify-center gap-1 rounded-none border-b-2 border-dashed border-accent/70 pb-3 text-center font-oswald text-xl font-bold tracking-wider text-accent">
             <img
               src="/assets/logo.webp"
               alt="Sunday Heroes Logo"
