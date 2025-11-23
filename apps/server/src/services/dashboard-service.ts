@@ -1,9 +1,8 @@
+import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
 import { DashboardRepo } from "../repositories/dashboard-repo";
-import {
-  extractDashboardData,
-  transformDashboardToResponse,
-} from "../utils/dashboard-transforms";
+import { MatchRepo } from "../repositories/match-repo";
+import { extractDashboardData } from "../utils/dashboard-transforms";
 import {
   AuthorizationError,
   ConflictError,
@@ -11,47 +10,19 @@ import {
 } from "../utils/errors";
 
 export class DashboardService {
-  static async getDashboardForUser(userId: string) {
-    const dashboard = await DashboardRepo.findByAdminIdWithDetails(userId);
-
-    if (!dashboard) {
-      throw new NotFoundError("Dashboard");
-    }
-
-    return transformDashboardToResponse(dashboard);
-  }
-
   static async getDashboardPlayerDetailsForUser(userId: string) {
-    //const start = Date.now();
+    const dashboardIds =
+      await DashboardPlayerRepo.findDashboardIdsByUser(userId);
+    if (!dashboardIds) throw new NotFoundError("DashboardPlayer");
 
-    const dashboardPlayers =
-      await DashboardPlayerRepo.findByUserIdWithDashboardData(userId);
+    const competitions =
+      await CompetitionRepo.findCompetitionsByDashboardIds(dashboardIds);
 
-    //const end = Date.now();
-    //console.log(`Query took ${end - start} ms`);
+    const competitionIds = competitions.map((c) => c.id);
 
-    if (!dashboardPlayers || dashboardPlayers.length === 0) {
-      throw new NotFoundError("Dashboard");
-    }
+    const matches = await MatchRepo.findMatchesForCompetitions(competitionIds);
 
-    // Filter competitions to only include those where the user participated
-    const filteredDashboardPlayers = dashboardPlayers.map((dp) => {
-      const filteredCompetitions = dp.dashboard.competitions.filter((comp) =>
-        comp.matches.some((match) =>
-          match.matchPlayers.some((mp) => mp.dashboardPlayer.id === dp.id)
-        )
-      );
-
-      return {
-        ...dp,
-        dashboard: {
-          ...dp.dashboard,
-          competitions: filteredCompetitions,
-        },
-      };
-    });
-
-    return extractDashboardData(filteredDashboardPlayers);
+    return extractDashboardData(competitions, matches);
   }
 
   static async createDashboard(userId: string, name: string) {

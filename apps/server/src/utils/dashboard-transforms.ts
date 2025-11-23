@@ -3,141 +3,14 @@ import {
   DashboardMatchResponse,
   DashboardResponse,
   DetailedCompetitionResponse,
-  VotingStatus,
 } from "@repo/shared-types";
-import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
+import {
+  CompetitionBasic,
+  CompetitionWithDetails,
+} from "../repositories/competition/competition-repo";
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
-import {
-  DashboardMatchesType,
-  DashboardWithDetails,
-} from "../repositories/dashboard-repo";
 import { getUserRole } from "./competition-transforms";
-import {
-  DashboardCompetitionsType,
-  DashboardPlayerWithDashboardData,
-} from "../repositories/dashboard-player-repo";
-
-export function extractDashboardData(
-  dashboardPlayers: DashboardPlayerWithDashboardData[]
-): DashboardResponse {
-  const competitions = dashboardPlayers.flatMap(
-    (dp) => dp.dashboard.competitions
-  );
-
-  const dashboardData = extractDashboardOwnerData(competitions);
-
-  return {
-    activeCompetitions: dashboardData.activeCompetitions,
-    totalPlayers: dashboardData.totalPlayers,
-    pendingVotes: dashboardData.pendingVotes,
-    completedMatches: dashboardData.completedMatches,
-    matches: dashboardData.dashboardMatches,
-    competitions: dashboardData.dashboardCompetitions,
-  };
-}
-
-export function transformDashboardToResponse(
-  dashboard: DashboardWithDetails
-): DashboardResponse {
-  const dashboardOwnerData = extractDashboardOwnerData(dashboard.competitions);
-
-  return {
-    activeCompetitions: dashboardOwnerData.activeCompetitions,
-    totalPlayers: dashboardOwnerData.totalPlayers,
-    pendingVotes: dashboardOwnerData.pendingVotes,
-    completedMatches: dashboardOwnerData.completedMatches,
-    matches: dashboardOwnerData.dashboardMatches,
-    competitions: dashboardOwnerData.dashboardCompetitions,
-  };
-}
-
-function extractDashboardOwnerData(competitions: DashboardCompetitionsType) {
-  const activeCompetitions = competitions.length;
-  const matches = competitions.flatMap((comp) => comp.matches);
-
-  const uniquePlayers = new Set(
-    matches.flatMap((match) =>
-      match.matchPlayers.map((player) => player.dashboardPlayer.id)
-    )
-  );
-  const totalPlayers = uniquePlayers.size;
-
-  const completedMatches = matches.filter(
-    (match) => match.date !== null
-  ).length;
-
-  const pendingVotes = matches
-    .map((match) => {
-      if (match.votingStatus !== VotingStatus.OPEN) return 0;
-
-      const playerIds = match.matchPlayers.map(
-        (player) => player.dashboardPlayerId
-      );
-      const votedPlayerIds = new Set(
-        match.playerVotes.map((vote) => vote.voterId)
-      );
-
-      return playerIds.filter((id) => !votedPlayerIds.has(id)).length;
-    })
-    .reduce((total, count) => total + count, 0);
-
-  const dashboardMatches = transformDashboardMatchesToResponse(matches);
-  const dashboardCompetitions =
-    transformDashboardCompetitionsToResponse(competitions);
-
-  return {
-    activeCompetitions,
-    totalPlayers,
-    pendingVotes,
-    completedMatches,
-    dashboardMatches,
-    dashboardCompetitions,
-  };
-}
-
-function transformDashboardMatchesToResponse(
-  matches: DashboardMatchesType
-): DashboardMatchResponse[] {
-  const matchesResponse: DashboardMatchResponse[] = matches
-    .filter((match) => match.date !== null)
-    .sort((a, b) => {
-      const aTime = a.date instanceof Date ? a.date.getTime() : 0;
-      const bTime = b.date instanceof Date ? b.date.getTime() : 0;
-      return bTime - aTime;
-    })
-    .map((match) => ({
-      id: match.id,
-      competitionType: match.competition
-        .type as DashboardMatchResponse["competitionType"],
-      competitionName: match.competition.name,
-      date: match.date?.toLocaleDateString(),
-      matchType: match.matchType as DashboardMatchResponse["matchType"],
-      round: match.round,
-      homeTeamScore: match.homeTeamScore,
-      awayTeamScore: match.awayTeamScore,
-      penaltyHomeScore: match.penaltyHomeScore ?? undefined,
-      penaltyAwayScore: match.penaltyAwayScore ?? undefined,
-      teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
-      matchPlayers: match.matchPlayers.length,
-      votingStatus:
-        match.votingStatus as DashboardMatchResponse["votingStatus"],
-    }));
-
-  return matchesResponse;
-}
-
-function transformDashboardCompetitionsToResponse(
-  comps: DashboardCompetitionsType
-): DashboardCompetitionResponse[] {
-  const competitions: DashboardCompetitionResponse[] = comps.map((comp) => ({
-    id: comp.id,
-    name: comp.name,
-    type: comp.type as DashboardCompetitionResponse["type"],
-    matches: comp.matches.length,
-  }));
-
-  return competitions;
-}
+import { CompetitionMatch } from "../repositories/match-repo";
 
 const getNumUniquePlayers = (
   matchPlayers: MatchPlayerWithDetails[]
@@ -167,4 +40,91 @@ export function transformDashboardCompetitionsToDetailedResponse(
   }));
 
   return competitions;
+}
+
+export function extractDashboardData(
+  competitions: CompetitionBasic[],
+  matches: CompetitionMatch[]
+): DashboardResponse {
+  const activeCompetitions = competitions.length;
+
+  const completedMatches = matches.filter((m) => m.date !== null).length;
+
+  const uniquePlayers = new Set(
+    matches.flatMap((m) => m.matchPlayers.map((mp) => mp.dashboardPlayerId))
+  );
+
+  const totalPlayers = uniquePlayers.size;
+
+  const pendingVotes = matches.reduce((sum, match) => {
+    if (match.votingStatus !== "OPEN") return sum;
+
+    const playerIds = match.matchPlayers.map((mp) => mp.dashboardPlayerId);
+    const votedIds = new Set(match.playerVotes.map((v) => v.voterId));
+
+    const pending = playerIds.filter((id) => !votedIds.has(id)).length;
+
+    return sum + pending;
+  }, 0);
+
+  const dashboardMatches = transformDashboardMatchesToResponse(matches);
+  const dashboardCompetitions = transformDashboardCompetitionsToResponse(
+    competitions,
+    matches
+  );
+
+  return {
+    activeCompetitions,
+    totalPlayers,
+    pendingVotes,
+    completedMatches,
+    matches: dashboardMatches,
+    competitions: dashboardCompetitions,
+  };
+}
+
+function transformDashboardMatchesToResponse(
+  matches: CompetitionMatch[]
+): DashboardMatchResponse[] {
+  return matches
+    .filter((m) => m.date !== null)
+    .sort((a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime())
+    .map((match) => ({
+      id: match.id,
+      competitionType: match.competition
+        .type as DashboardMatchResponse["competitionType"],
+      competitionName: match.competition.name,
+      date: match.date?.toLocaleDateString(),
+      matchType: match.matchType as DashboardMatchResponse["matchType"],
+      round: match.round,
+      homeTeamScore: match.homeTeamScore,
+      awayTeamScore: match.awayTeamScore,
+      penaltyHomeScore: match.penaltyHomeScore ?? undefined,
+      penaltyAwayScore: match.penaltyAwayScore ?? undefined,
+      teams: match.matchTeams.map((mt) => mt.team.name),
+      matchPlayers: match.matchPlayers.length,
+      votingStatus:
+        match.votingStatus as DashboardMatchResponse["votingStatus"],
+    }));
+}
+
+function transformDashboardCompetitionsToResponse(
+  comps: CompetitionBasic[],
+  matches: CompetitionMatch[]
+): DashboardCompetitionResponse[] {
+  const grouped = new Map<string, number>();
+
+  for (const match of matches) {
+    grouped.set(
+      match.competition.id,
+      (grouped.get(match.competition.id) ?? 0) + 1
+    );
+  }
+
+  return comps.map((c) => ({
+    id: c.id,
+    name: c.name,
+    type: c.type as DashboardCompetitionResponse["type"],
+    matches: grouped.get(c.id) ?? 0,
+  }));
 }

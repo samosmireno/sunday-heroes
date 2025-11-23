@@ -7,6 +7,12 @@ const COMPETITION_BASIC_INCLUDE = {
   teamCompetitions: true,
 } satisfies Prisma.CompetitionInclude;
 
+const COMPETITION_BASIC_SELECT = {
+  id: true,
+  name: true,
+  type: true,
+} satisfies Prisma.CompetitionSelect;
+
 export const COMPETITION_DETAILED_INCLUDE = {
   dashboard: {
     select: {
@@ -54,6 +60,10 @@ export const COMPETITION_DETAILED_INCLUDE = {
 
 export type CompetitionWithMatches = Prisma.CompetitionGetPayload<{
   include: typeof COMPETITION_BASIC_INCLUDE;
+}>;
+
+export type CompetitionBasic = Prisma.CompetitionGetPayload<{
+  select: typeof COMPETITION_BASIC_SELECT;
 }>;
 
 export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
@@ -125,6 +135,15 @@ export class CompetitionRepo {
         "CompetitionRepo.findByDashboardId"
       );
     }
+  }
+
+  static async findCompetitionsByDashboardIds(dashboardIds: string[]) {
+    return prisma.competition.findMany({
+      where: {
+        dashboardId: { in: dashboardIds },
+      },
+      select: COMPETITION_BASIC_SELECT,
+    });
   }
 
   static async findByMatchId(

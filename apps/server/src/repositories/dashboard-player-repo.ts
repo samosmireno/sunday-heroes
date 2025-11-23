@@ -132,96 +132,25 @@ export class DashboardPlayerRepo {
     }
   }
 
-  // static async findByUserIdWithDashboardData(
-  //   userId: string,
-  //   tx?: Prisma.TransactionClient
-  // ): Promise<DashboardPlayerWithDashboardData[] | null> {
-  //   try {
-  //     const prismaClient = tx || prisma;
-  //     return await prismaClient.dashboardPlayer.findMany({
-  //       where: { userId },
-  //       include: {
-  //         dashboard: {
-  //           include: {
-  //             competitions: {
-  //               where: {
-  //                 matches: {
-  //                   some: {
-  //                     matchPlayers: {
-  //                       some: {
-  //                         dashboardPlayer: {
-  //                           userId: userId,
-  //                         },
-  //                       },
-  //                     },
-  //                   },
-  //                 },
-  //               },
-  //               include: {
-  //                 matches: {
-  //                   include: {
-  //                     matchPlayers: {
-  //                       include: {
-  //                         dashboardPlayer: {
-  //                           include: {
-  //                             votesGiven: true,
-  //                           },
-  //                         },
-  //                         receivedVotes: true,
-  //                       },
-  //                     },
-  //                     matchTeams: {
-  //                       include: {
-  //                         team: true,
-  //                       },
-  //                     },
-  //                     playerVotes: true,
-  //                     competition: true,
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  //   } catch (error) {
-  //     throw PrismaErrorHandler.handle(
-  //       error,
-  //       "DashboardPlayerRepo.findByUserIdWithDashboardData"
-  //     );
-  //   }
-  // }
-
-  static async findByUserIdWithDashboardData(
+  static async findDashboardIdsByUser(
     userId: string,
     tx?: Prisma.TransactionClient
   ) {
     const prismaClient = tx || prisma;
 
-    return prismaClient.dashboardPlayer.findMany({
+    const dashboardPlayers = await prismaClient.dashboardPlayer.findMany({
       where: { userId },
-      include: {
-        dashboard: {
-          include: {
-            competitions: {
-              include: {
-                matches: {
-                  include: {
-                    matchPlayers: {
-                      include: { dashboardPlayer: true, receivedVotes: true },
-                    },
-                    matchTeams: { include: { team: true } },
-                    playerVotes: true,
-                    competition: true,
-                  },
-                },
-              },
-            },
-          },
-        },
+      select: {
+        id: true,
+        dashboardId: true,
       },
     });
+
+    if (dashboardPlayers.length === 0) return null;
+
+    const dashboardIds = dashboardPlayers.map((dp) => dp.dashboardId);
+
+    return dashboardIds;
   }
 
   static async findByIdWithAdmin(

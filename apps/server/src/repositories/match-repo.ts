@@ -56,12 +56,54 @@ const MATCH_BASIC_INCLUDE = {
   },
 } satisfies Prisma.MatchInclude;
 
+const COMPETITION_MATCH_SELECT = {
+  id: true,
+  date: true,
+  matchType: true,
+  round: true,
+  homeTeamScore: true,
+  awayTeamScore: true,
+  penaltyHomeScore: true,
+  penaltyAwayScore: true,
+  votingStatus: true,
+
+  competition: {
+    select: {
+      id: true,
+      name: true,
+      type: true,
+    },
+  },
+
+  matchTeams: {
+    select: {
+      team: { select: { name: true } },
+    },
+  },
+
+  matchPlayers: {
+    select: {
+      dashboardPlayerId: true,
+    },
+  },
+
+  playerVotes: {
+    select: {
+      voterId: true,
+    },
+  },
+} satisfies Prisma.MatchSelect;
+
 export type MatchWithDetails = Prisma.MatchGetPayload<{
   include: typeof MATCH_DETAILED_INCLUDE;
 }>;
 
 export type MatchWithTeams = Prisma.MatchGetPayload<{
   include: typeof MATCH_BASIC_INCLUDE;
+}>;
+
+export type CompetitionMatch = Prisma.MatchGetPayload<{
+  select: typeof COMPETITION_MATCH_SELECT;
 }>;
 
 export class MatchRepo {
@@ -232,6 +274,15 @@ export class MatchRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchRepo.findByPlayerId");
     }
+  }
+
+  static async findMatchesForCompetitions(
+    competitionIds: string[]
+  ): Promise<CompetitionMatch[]> {
+    return prisma.match.findMany({
+      where: { competitionId: { in: competitionIds } },
+      select: COMPETITION_MATCH_SELECT,
+    });
   }
 
   static async findByUserWithDeduplication(
