@@ -257,6 +257,7 @@ model PlayerVote {
   @@index([matchId])
   @@index([voterId])
   @@index([matchPlayerId])
+  @@index([matchId, voterId])
 }
 
 model DashboardInvitation {
