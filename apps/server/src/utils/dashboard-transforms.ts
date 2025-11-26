@@ -11,30 +11,37 @@ import {
 import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
 import { getUserRole } from "./competition-transforms";
 import { CompetitionMatch } from "../repositories/match-repo";
+import { CompetitionListSelect } from "../repositories/competition/competition-query-repo";
+import { Role } from "@prisma/client";
 
-const getNumUniquePlayers = (
-  matchPlayers: MatchPlayerWithDetails[]
-): number => {
-  const uniqueNicknames = new Set(
-    matchPlayers.map((player) => player.dashboardPlayer.nickname)
-  );
-  return uniqueNicknames.size;
-};
+// const getNumUniquePlayers = (
+//   matchPlayers: MatchPlayerWithDetails[]
+// ): number => {
+//   const uniqueNicknames = new Set(
+//     matchPlayers.map((player) => player.dashboardPlayer.nickname)
+//   );
+//   return uniqueNicknames.size;
+// };
 
 export function transformDashboardCompetitionsToDetailedResponse(
-  userId: string,
-  comps: CompetitionWithDetails[]
+  matchCounts: {
+    [k: string]: number;
+  },
+  teamCounts: {
+    [k: string]: number;
+  },
+  playerCounts: Record<string, number>,
+  userRoles: Record<string, Role>,
+  comps: CompetitionListSelect[]
 ): DetailedCompetitionResponse[] {
-  const competitions: DetailedCompetitionResponse[] = comps.map((comp) => ({
+  const competitions = comps.map((comp) => ({
     id: comp.id,
-    userRole: getUserRole(comp, userId),
     name: comp.name,
     type: comp.type as DetailedCompetitionResponse["type"],
-    teams: comp.teamCompetitions.length,
-    players: getNumUniquePlayers(
-      comp.matches.flatMap((match) => match.matchPlayers)
-    ),
-    matches: comp.matches.length,
+    userRole: userRoles[comp.id] as DetailedCompetitionResponse["userRole"],
+    matches: matchCounts[comp.id] ?? 0,
+    teams: teamCounts[comp.id] ?? 0,
+    players: playerCounts[comp.id] ?? 0,
     votingEnabled: comp.votingEnabled,
     pendingVotes: comp.votingEnabled ? 0 : undefined,
   }));

@@ -59,11 +59,26 @@ export class CompetitionService {
         offset,
       });
 
+    const competitionIds = competitions.map((c) => c.id);
+
+    const { matchCounts, teamCounts, playerCounts } =
+      await CompetitionQueryRepo.getAggregates(competitionIds);
+
+    const userRoles = await CompetitionRepo.getUserRolesForCompetitions(
+      userId,
+      competitionIds
+    );
+
+    const response = transformDashboardCompetitionsToDetailedResponse(
+      matchCounts,
+      teamCounts,
+      playerCounts,
+      userRoles,
+      competitions
+    );
+
     return {
-      competitions: transformDashboardCompetitionsToDetailedResponse(
-        userId,
-        competitions
-      ),
+      competitions: response,
       totalCount,
       totalPages: Math.ceil(totalCount / limit),
     };

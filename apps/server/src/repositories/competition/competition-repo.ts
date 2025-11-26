@@ -1,4 +1,4 @@
-import { Competition, Prisma } from "@prisma/client";
+import { Competition, Prisma, Role } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 
@@ -199,6 +199,44 @@ export class CompetitionRepo {
         "CompetitionRepo.findCompetitionIdsForUser"
       );
     }
+  }
+
+  static async getUserRolesForCompetitions(
+    userId: string,
+    competitionIds: string[],
+    tx?: Prisma.TransactionClient
+  ): Promise<Record<string, Role>> {
+    const prismaClient = tx || prisma;
+
+    const competitions = await prismaClient.competition.findMany({
+      where: { id: { in: competitionIds } },
+      include: {
+        dashboard: { select: { adminId: true } },
+        moderators: {
+          select: {
+            dashboardPlayer: { select: { userId: true } },
+          },
+        },
+      },
+    });
+
+    const rolesMap: Record<string, Role> = {};
+
+    competitions.forEach((competition) => {
+      if (competition.dashboard?.adminId === userId) {
+        rolesMap[competition.id] = Role.ADMIN;
+      } else if (
+        competition.moderators.some(
+          (mod) => mod.dashboardPlayer?.userId === userId
+        )
+      ) {
+        rolesMap[competition.id] = Role.MODERATOR;
+      } else {
+        rolesMap[competition.id] = Role.PLAYER;
+      }
+    });
+
+    return rolesMap;
   }
 
   static async create(
