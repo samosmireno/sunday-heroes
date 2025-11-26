@@ -4,24 +4,10 @@ import {
   DashboardResponse,
   DetailedCompetitionResponse,
 } from "@repo/shared-types";
-import {
-  CompetitionBasic,
-  CompetitionWithDetails,
-} from "../repositories/competition/competition-repo";
-import { MatchPlayerWithDetails } from "../repositories/match-player-repo";
-import { getUserRole } from "./competition-transforms";
+import { CompetitionBasic } from "../repositories/competition/competition-repo";
 import { CompetitionMatch } from "../repositories/match-repo";
 import { CompetitionListSelect } from "../repositories/competition/competition-query-repo";
 import { Role } from "@prisma/client";
-
-// const getNumUniquePlayers = (
-//   matchPlayers: MatchPlayerWithDetails[]
-// ): number => {
-//   const uniqueNicknames = new Set(
-//     matchPlayers.map((player) => player.dashboardPlayer.nickname)
-//   );
-//   return uniqueNicknames.size;
-// };
 
 export function transformDashboardCompetitionsToDetailedResponse(
   matchCounts: {

@@ -127,6 +127,7 @@ model Competition {
   teamRosters  TeamRoster[]
 
   @@index([dashboardId])
+  @@index([name])
 }
 
 model CompetitionModerator {
@@ -235,10 +236,10 @@ model MatchPlayer {
   receivedVotes PlayerVote[] 
 
   @@unique([matchId, dashboardPlayerId])
-  @@index([matchId])
   @@index([dashboardPlayerId])
   @@index([teamId])
   @@index([isHome])
+  @@index([dashboardPlayerId, matchId])
 }
 
 model PlayerVote {
