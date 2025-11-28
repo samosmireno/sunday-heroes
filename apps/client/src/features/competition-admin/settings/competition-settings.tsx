@@ -1,4 +1,4 @@
-import { CompetitionResponse } from "@repo/shared-types";
+import { CompetitionSettings } from "@repo/shared-types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ConfirmationDialog from "@/components/ui/confirmation-dialog";
 import {
@@ -6,13 +6,13 @@ import {
   useResetCompetition,
 } from "./use-competition-mutations";
 
-interface CompetitionSettingsProps {
-  competition: CompetitionResponse;
+interface CompetitionSettingsListProps {
+  competition: CompetitionSettings;
 }
 
-export default function CompetitionSettings({
+export default function CompetitionSettingsList({
   competition,
-}: CompetitionSettingsProps) {
+}: CompetitionSettingsListProps) {
   const resetMutation = useResetCompetition(competition.id);
   const deleteMutation = useDeleteCompetition(competition.id);
 

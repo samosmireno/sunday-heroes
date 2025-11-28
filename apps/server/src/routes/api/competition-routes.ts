@@ -4,6 +4,7 @@ import {
   deleteCompetition,
   getCompetitionInfo,
   getCompetitionStats,
+  getCompetitionSettings,
   getDetailedCompetitions,
   resetCompetition,
 } from "../../handlers/competition";
@@ -19,6 +20,7 @@ const router = Router();
 
 router.get("/detailed", getDetailedCompetitions);
 router.get("/info", getCompetitionInfo);
+router.get("/settings", getCompetitionSettings);
 router.get("/stats", getCompetitionStats);
 
 router.post(

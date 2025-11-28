@@ -1,10 +1,14 @@
 import {
   CompetitionResponse,
+  CompetitionSettings,
   MatchResponse,
   PlayerTotals,
   Role,
 } from "@repo/shared-types";
-import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
+import {
+  CompetitionWithDetails,
+  CompetitionWithSettings,
+} from "../repositories/competition/competition-repo";
 import { Competition } from "@prisma/client";
 import {
   calculatePlayerScore,
@@ -14,7 +18,7 @@ import {
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 
 export function getUserRole(
-  competition: CompetitionWithDetails,
+  competition: CompetitionWithSettings,
   userId: string
 ): Role {
   if (competition.dashboard.adminId === userId) {
@@ -79,6 +83,23 @@ export function transformCompetitionToResponse(
     teams: teams.length > 0 ? teams : undefined,
     matches: matches,
     playerStats: playerStats,
+    moderators: competition.moderators.map((moderator) => ({
+      id: moderator.id,
+      nickname: moderator.dashboardPlayer.nickname,
+    })),
+  };
+}
+
+export function transformCompetitionToSettingsResponse(
+  competition: CompetitionWithSettings,
+  userId: string
+): CompetitionSettings {
+  return {
+    id: competition.id,
+    name: competition.name,
+    type: competition.type as CompetitionResponse["type"],
+    userRole: getUserRole(competition, userId),
+    votingEnabled: competition.votingEnabled,
     moderators: competition.moderators.map((moderator) => ({
       id: moderator.id,
       nickname: moderator.dashboardPlayer.nickname,

@@ -16,7 +16,7 @@ export function useAddModerator(competitionId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["competition", competitionId],
+        queryKey: ["competitionSettings", competitionId],
       });
     },
   });

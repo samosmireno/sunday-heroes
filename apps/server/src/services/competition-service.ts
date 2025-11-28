@@ -6,6 +6,7 @@ import { CompetitionVotingRepo } from "../repositories/competition/competition-v
 import {
   transformCompetitionToResponse,
   transformAddCompetitionRequestToService,
+  transformCompetitionToSettingsResponse,
 } from "../utils/competition-transforms";
 import { transformDashboardCompetitionsToDetailedResponse } from "../utils/dashboard-transforms";
 import { DashboardService } from "./dashboard-service";
@@ -40,6 +41,15 @@ export class CompetitionService {
       throw new NotFoundError("Competition");
     }
     return competition;
+  }
+
+  static async getCompetitionSettings(competitionId: string, userId: string) {
+    const competition =
+      await CompetitionRepo.findByIdWithSettings(competitionId);
+    if (!competition) {
+      throw new NotFoundError("Competition");
+    }
+    return transformCompetitionToSettingsResponse(competition, userId);
   }
 
   static async getDetailedCompetitions(

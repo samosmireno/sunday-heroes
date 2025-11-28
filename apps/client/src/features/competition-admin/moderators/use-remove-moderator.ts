@@ -16,7 +16,7 @@ export function useRemoveModerator(competitionId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["competition", competitionId],
+        queryKey: ["competitionSettings", competitionId],
       });
 
       toast.success("Moderator removed successfully");

@@ -1,24 +1,24 @@
-import { CompetitionInfo } from "@repo/shared-types";
+import { CompetitionSettings } from "@repo/shared-types";
 import axios from "axios";
 import { config } from "../../config/config";
 import { useQuery } from "@tanstack/react-query";
 import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../hooks/use-error-handler/types";
 
-export const useCompetitionInfo = (compId: string, userId: string) => {
+export const useCompetitionSettings = (compId: string, userId: string) => {
   const { handleError } = useErrorHandler();
 
-  const fetchCompetitionInfo = async (
+  const fetchCompetitionSettings = async (
     compId: string,
     userId: string,
-  ): Promise<CompetitionInfo> => {
+  ): Promise<CompetitionSettings> => {
     try {
       const params = new URLSearchParams({
         compId,
         userId,
       });
       const { data } = await axios.get(
-        `${config.server}/api/competitions/info?${params.toString()}`,
+        `${config.server}/api/competitions/settings?${params.toString()}`,
         {
           withCredentials: true,
         },
@@ -34,8 +34,8 @@ export const useCompetitionInfo = (compId: string, userId: string) => {
     }
   };
   const competitionQuery = useQuery({
-    queryKey: ["competitionInfo", compId, userId],
-    queryFn: () => fetchCompetitionInfo(compId, userId),
+    queryKey: ["competitionSettings", compId, userId],
+    queryFn: () => fetchCompetitionSettings(compId, userId),
     enabled: !!compId && !!userId,
   });
 

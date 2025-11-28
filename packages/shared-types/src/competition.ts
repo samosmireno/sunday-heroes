@@ -9,6 +9,18 @@ export type CompetitionInfo = {
   votingEnabled: boolean;
 };
 
+export type CompetitionSettings = {
+  id: string;
+  name: string;
+  type: CompetitionType;
+  votingEnabled: boolean;
+  userRole: Role;
+  moderators: {
+    id: string;
+    nickname: string;
+  }[];
+};
+
 export type CompetitionResponse = {
   id: string;
   name: string;

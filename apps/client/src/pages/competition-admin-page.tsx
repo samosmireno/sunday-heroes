@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useCompetition } from "@/features/competition/use-competition";
 import { useAuth } from "@/context/auth-context";
 import Header from "@/components/ui/header";
 import ErrorPage from "./error-page";
@@ -11,7 +10,8 @@ import AddModeratorModal from "@/features/competition-admin/moderators/add-moder
 import { Role, UserResponse } from "@repo/shared-types";
 import CompetitionAdminPageSkeleton from "@/features/competition-admin/competition-admin-page-skeleton";
 import { AccessDenied } from "@/features/competition-admin/access-denied";
-import CompetitionSettings from "@/features/competition-admin/settings/competition-settings";
+import { useCompetitionSettings } from "@/features/competition/use-competition-settings";
+import CompetitionSettingsList from "@/features/competition-admin/settings/competition-settings";
 
 type TabType = "moderators" | "settings";
 
@@ -24,7 +24,10 @@ export default function CompetitionAdminPage() {
   const { user } = useAuth() as { user: UserResponse };
   const { competitionId } = useParams() as { competitionId: string };
   const navigate = useNavigate();
-  const { competition, isLoading } = useCompetition(competitionId, user.id);
+  const { competition, isLoading } = useCompetitionSettings(
+    competitionId,
+    user.id,
+  );
 
   const [isAddModeratorModalOpen, setIsAddModeratorModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("moderators");
@@ -103,7 +106,7 @@ export default function CompetitionAdminPage() {
             <h3 className="text-base font-semibold text-accent sm:text-lg">
               Competition Settings
             </h3>
-            <CompetitionSettings competition={competition} />
+            <CompetitionSettingsList competition={competition} />
           </div>
         )}
       </div>

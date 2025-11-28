@@ -15,6 +15,27 @@ const COMPETITION_BASIC_SELECT = {
   votingEnabled: true,
 } satisfies Prisma.CompetitionSelect;
 
+export const COMPETITION_SETTINGS_INCLUDE = {
+  dashboard: {
+    select: {
+      id: true,
+      adminId: true,
+    },
+  },
+  moderators: {
+    select: {
+      id: true,
+      dashboardPlayer: {
+        select: {
+          nickname: true,
+          id: true,
+          userId: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.CompetitionInclude;
+
 export const COMPETITION_DETAILED_INCLUDE = {
   dashboard: {
     select: {
@@ -68,6 +89,10 @@ export type CompetitionBasic = Prisma.CompetitionGetPayload<{
   select: typeof COMPETITION_BASIC_SELECT;
 }>;
 
+export type CompetitionWithSettings = Prisma.CompetitionGetPayload<{
+  include: typeof COMPETITION_SETTINGS_INCLUDE;
+}>;
+
 export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
   include: typeof COMPETITION_DETAILED_INCLUDE;
 }>;
@@ -115,6 +140,26 @@ export class CompetitionRepo {
       });
 
       return comp as CompetitionInfo | null;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.findByIdWithDetails"
+      );
+    }
+  }
+
+  static async findByIdWithSettings(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<CompetitionWithSettings | null> {
+    try {
+      const prismaClient = tx || prisma;
+      const comp = await prismaClient.competition.findUnique({
+        where: { id },
+        include: COMPETITION_SETTINGS_INCLUDE,
+      });
+
+      return comp;
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
