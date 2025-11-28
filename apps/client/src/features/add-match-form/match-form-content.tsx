@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useWatch } from "react-hook-form";
-import { CompetitionType, CompetitionResponse } from "@repo/shared-types";
+import { CompetitionType } from "@repo/shared-types";
 import { createFootballFieldMatch } from "./utils/utils";
 import FootballField from "../football-field/football-field";
 import {
@@ -21,7 +21,7 @@ import { MatchFormData } from "./schemas/types";
 interface MatchFormContentProps {
   form: UseFormReturn<MatchFormData>;
   formSchema: ZodSchema;
-  competition: CompetitionResponse;
+  competitionType: CompetitionType;
   isEditing: boolean;
   onSubmit: (data: MatchFormData) => void;
 }
@@ -29,7 +29,7 @@ interface MatchFormContentProps {
 export function MatchFormContent({
   form,
   formSchema,
-  competition,
+  competitionType,
   isEditing,
   onSubmit,
 }: MatchFormContentProps) {
@@ -59,7 +59,7 @@ export function MatchFormContent({
             </MultiStepFormHeader>
 
             <MultiStepFormStep name="match">
-              {competition.type !== CompetitionType.DUEL ? (
+              {competitionType !== CompetitionType.DUEL ? (
                 <LeagueMatchDetailsForm />
               ) : (
                 <MatchDetailsForm />

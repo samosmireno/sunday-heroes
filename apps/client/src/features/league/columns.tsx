@@ -1,10 +1,10 @@
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
-import { LeaguePlayerTotals, CompetitionResponse } from "@repo/shared-types";
+import { LeaguePlayerTotals } from "@repo/shared-types";
 
 const columnHelper = createColumnHelper<LeaguePlayerTotals>();
 
 export const createPlayerColumns = (
-  competition: CompetitionResponse,
+  votingEnabled: boolean,
 ): ColumnDef<LeaguePlayerTotals, any>[] => [
   columnHelper.accessor("nickname", {
     header: "Player",
@@ -158,7 +158,7 @@ export const createPlayerColumns = (
     size: 70,
   }),
 
-  ...(competition.votingEnabled
+  ...(votingEnabled
     ? [
         columnHelper.accessor("rating", {
           header: () => (

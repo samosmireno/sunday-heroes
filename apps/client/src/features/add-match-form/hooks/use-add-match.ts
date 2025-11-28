@@ -4,20 +4,20 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { matchService } from "../services/match-service";
 import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
-import { CompetitionResponse } from "@repo/shared-types";
+import { CompetitionType } from "@repo/shared-types";
 import { AppError } from "@/hooks/use-error-handler/types";
 import { createMatchFormSchema } from "../schemas/schema-factory";
 import { MatchFormData } from "../schemas/types";
 
 export function useAddMatch(
-  competition: CompetitionResponse,
+  competitionType: CompetitionType = CompetitionType.DUEL,
   competitionId: string,
 ) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { handleError } = useErrorHandler();
 
-  const formSchema = createMatchFormSchema(competition.type);
+  const formSchema = createMatchFormSchema(competitionType);
 
   const form = useForm<MatchFormData>({
     resolver: zodResolver(formSchema),
@@ -47,7 +47,7 @@ export function useAddMatch(
 
   const addMatchMutation = useMutation({
     mutationFn: (data: MatchFormData) =>
-      matchService.createMatch(data, competitionId, competition.type),
+      matchService.createMatch(data, competitionId, competitionType),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["competition", competitionId],

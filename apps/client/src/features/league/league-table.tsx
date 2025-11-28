@@ -1,13 +1,12 @@
 import Loading from "@/components/ui/loading";
-import { CompetitionResponse } from "@repo/shared-types";
 import { useLeagueStandings } from "@/features/league/hooks/use-league-standings";
 
 interface LeagueTableProps {
-  competition: CompetitionResponse;
+  competitionId: string;
 }
 
-export default function LeagueTable({ competition }: LeagueTableProps) {
-  const { leagueStandings, isLoading } = useLeagueStandings(competition.id);
+export default function LeagueTable({ competitionId }: LeagueTableProps) {
+  const { leagueStandings, isLoading } = useLeagueStandings(competitionId);
 
   if (isLoading) {
     return <Loading text="Loading league table..." />;

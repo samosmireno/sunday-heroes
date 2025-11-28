@@ -6,13 +6,13 @@ import { useEffect } from "react";
 import { matchService } from "../services/match-service";
 import { useFormMatchData } from "@/features/add-match-form/hooks/use-form-match-data";
 import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
-import { CompetitionResponse } from "@repo/shared-types";
+import { CompetitionType } from "@repo/shared-types";
 import { AppError } from "@/hooks/use-error-handler/types";
 import { createMatchFormSchema } from "../schemas/schema-factory";
 import { MatchFormData } from "../schemas/types";
 
 export function useEditMatch(
-  competition: CompetitionResponse,
+  competitionType: CompetitionType,
   competitionId: string,
   matchId: string,
 ) {
@@ -21,7 +21,7 @@ export function useEditMatch(
   const { handleError } = useErrorHandler();
 
   const { formData, isLoading: isLoadingMatch } = useFormMatchData(matchId);
-  const formSchema = createMatchFormSchema(competition.type);
+  const formSchema = createMatchFormSchema(competitionType);
 
   const form = useForm<MatchFormData>({
     resolver: zodResolver(formSchema),
@@ -51,7 +51,7 @@ export function useEditMatch(
 
   const editMatchMutation = useMutation({
     mutationFn: (data: MatchFormData) =>
-      matchService.updateMatch(matchId, data, competitionId, competition.type),
+      matchService.updateMatch(matchId, data, competitionId, competitionType),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["match", matchId] });
       queryClient.invalidateQueries({

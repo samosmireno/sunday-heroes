@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
-import { useCompetition } from "../features/competition/use-competition";
 import { useAddMatch } from "@/features/add-match-form/hooks/use-add-match";
 import Header from "../components/ui/header";
 import Loading from "../components/ui/loading";
 import SubmitSpinner from "../components/ui/submit-spinner";
 import { MatchFormContent } from "@/features/add-match-form/match-form-content";
 import { UserResponse } from "@repo/shared-types";
+import { useCompetitionInfo } from "@/features/competition/use-competition-info";
 
 export default function AddMatchPage() {
   const { user } = useAuth() as { user: UserResponse };
@@ -14,10 +14,10 @@ export default function AddMatchPage() {
     competitionId: string;
   };
 
-  const { competition, isLoading } = useCompetition(competitionId, user.id);
+  const { competition, isLoading } = useCompetitionInfo(competitionId, user.id);
 
   const { form, formSchema, isSubmitting, handleSubmit } = useAddMatch(
-    competition!,
+    competition?.type,
     competitionId,
   );
 
@@ -51,7 +51,7 @@ export default function AddMatchPage() {
       <MatchFormContent
         form={form}
         formSchema={formSchema}
-        competition={competition}
+        competitionType={competition.type}
         isEditing={false}
         onSubmit={handleSubmit}
       />

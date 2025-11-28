@@ -1,20 +1,20 @@
 import { Target, Users, Star } from "lucide-react";
-import { LeaguePlayerTotals, CompetitionResponse } from "@repo/shared-types";
+import { LeaguePlayerTotals } from "@repo/shared-types";
 
 interface TopPerformersProps {
   topScorer: LeaguePlayerTotals | null;
   topAssister: LeaguePlayerTotals | null;
   topRated: LeaguePlayerTotals | null;
-  competition: CompetitionResponse;
+  votingEnabled: boolean;
 }
 
 export default function TopPerformers({
   topScorer,
   topAssister,
   topRated,
-  competition,
+  votingEnabled,
 }: TopPerformersProps) {
-  const hasTopRated = competition.votingEnabled && topRated && topRated.rating;
+  const hasTopRated = votingEnabled && topRated && topRated.rating;
   const performersCount = [topScorer, topAssister, hasTopRated].filter(
     Boolean,
   ).length;

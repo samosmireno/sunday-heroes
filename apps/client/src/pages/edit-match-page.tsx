@@ -1,13 +1,13 @@
 // pages/edit-match-page.tsx
 import { useParams } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
-import { useCompetition } from "../features/competition/use-competition";
 import { useEditMatch } from "@/features/add-match-form/hooks/use-edit-match";
 import Header from "../components/ui/header";
 import Loading from "../components/ui/loading";
 import SubmitSpinner from "../components/ui/submit-spinner";
 import { MatchFormContent } from "../features/add-match-form/match-form-content";
 import { UserResponse } from "@repo/shared-types";
+import { useCompetitionInfo } from "@/features/competition/use-competition-info";
 
 export default function EditMatchPage() {
   const { user } = useAuth() as { user: UserResponse };
@@ -16,7 +16,7 @@ export default function EditMatchPage() {
     matchId: string;
   }>() as { competitionId: string; matchId: string };
 
-  const { competition, isLoading: isLoadingCompetition } = useCompetition(
+  const { competition, isLoading: isLoadingCompetition } = useCompetitionInfo(
     competitionId,
     user.id,
   );
@@ -27,7 +27,7 @@ export default function EditMatchPage() {
     isLoading: isLoadingMatch,
     isSubmitting,
     handleSubmit,
-  } = useEditMatch(competition!, competitionId!, matchId!);
+  } = useEditMatch(competition?.type!, competitionId!, matchId!);
 
   if (isLoadingCompetition || isLoadingMatch) {
     return (
@@ -59,7 +59,7 @@ export default function EditMatchPage() {
       <MatchFormContent
         form={form}
         formSchema={formSchema}
-        competition={competition}
+        competitionType={competition.type}
         isEditing={true}
         onSubmit={handleSubmit}
       />

@@ -1,17 +1,17 @@
-import { LeaguePlayerTotals, CompetitionResponse } from "@repo/shared-types";
+import { LeaguePlayerTotals } from "@repo/shared-types";
 import { DataTable } from "@/components/ui/data-table";
 import { createPlayerColumns } from "./columns";
 
 interface PlayerStatsTableProps {
   players: LeaguePlayerTotals[];
-  competition: CompetitionResponse;
+  votingEnabled: boolean;
 }
 
 export default function PlayerStatsTable({
   players,
-  competition,
+  votingEnabled,
 }: PlayerStatsTableProps) {
-  const columns = createPlayerColumns(competition);
+  const columns = createPlayerColumns(votingEnabled);
 
   return (
     <DataTable

@@ -2,6 +2,13 @@ import { CompetitionType, Role } from "./enums";
 import { MatchResponse } from "./match";
 import { PlayerTotals } from "./player";
 
+export type CompetitionInfo = {
+  id: string;
+  name: string;
+  type: CompetitionType;
+  votingEnabled: boolean;
+};
+
 export type CompetitionResponse = {
   id: string;
   name: string;

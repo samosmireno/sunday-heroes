@@ -97,7 +97,11 @@ export default function LeagueCompetitionPage({
                 </CardTitle>
               </CardHeader>
               <CardContent className="max-w-full overflow-hidden p-3 sm:p-6">
-                <tab.component competition={competition} />
+                <tab.component
+                  competitionId={competition.id}
+                  userRole={competition.userRole}
+                  votingEnabled={competition.votingEnabled}
+                />
               </CardContent>
             </Card>
           </TabsContent>

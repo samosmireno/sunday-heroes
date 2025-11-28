@@ -1,4 +1,3 @@
-import { CompetitionResponse } from "@repo/shared-types";
 import { AlertCircle } from "lucide-react";
 import Loading from "@/components/ui/loading";
 import { useLeagueStats } from "@/features/league/hooks/use-league-stats";
@@ -6,12 +5,16 @@ import TopPerformers from "./top-performers";
 import PlayerStatsTable from "./player-stats-table";
 
 interface LeagueStatsProps {
-  competition: CompetitionResponse;
+  competitionId: string;
+  votingEnabled: boolean;
 }
 
-export default function LeagueStats({ competition }: LeagueStatsProps) {
+export default function LeagueStats({
+  competitionId,
+  votingEnabled,
+}: LeagueStatsProps) {
   const { players, topScorer, topAssister, topRated, isLoading, error } =
-    useLeagueStats(competition.id);
+    useLeagueStats(competitionId);
 
   if (isLoading) {
     return (
@@ -63,12 +66,12 @@ export default function LeagueStats({ competition }: LeagueStatsProps) {
           topScorer={topScorer}
           topAssister={topAssister}
           topRated={topRated}
-          competition={competition}
+          votingEnabled={votingEnabled}
         />
       </div>
 
       <div className="overflow-hidden">
-        <PlayerStatsTable players={players} competition={competition} />
+        <PlayerStatsTable players={players} votingEnabled={votingEnabled} />
       </div>
     </div>
   );

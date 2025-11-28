@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Loading from "@/components/ui/loading";
-import { CompetitionResponse, LeagueMatchResponse } from "@repo/shared-types";
+import { LeagueMatchResponse, Role } from "@repo/shared-types";
 import { useLeagueFixtures } from "@/features/league/hooks/use-league-fixtures";
 import { useMatchDetails } from "./hooks/use-match-details";
 import LeagueMatchCard from "./league-match-card";
@@ -10,21 +10,24 @@ import { useCompleteMatch } from "@/features/league/hooks/use-complete-match";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface LeagueMatchListProps {
-  competition: CompetitionResponse;
+  competitionId: string;
+  userRole: Role;
 }
 
-export default function LeagueMatchList({ competition }: LeagueMatchListProps) {
+export default function LeagueMatchList({
+  competitionId,
+  userRole,
+}: LeagueMatchListProps) {
   const [selectedMatch, setSelectedMatch] =
     useState<LeagueMatchResponse | null>(null);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { leagueFixtures, isFixturesLoading } = useLeagueFixtures(
-    competition.id,
-  );
+  const { leagueFixtures, isFixturesLoading } =
+    useLeagueFixtures(competitionId);
   const { match, isMatchLoading, isMatchCompleted, isMatchUnfinished } =
     useMatchDetails(selectedMatch?.id || "");
-  const completeMatchMutation = useCompleteMatch(competition.id);
+  const completeMatchMutation = useCompleteMatch(competitionId);
 
   const rounds = Object.keys(leagueFixtures)
     .map(Number)
@@ -47,7 +50,7 @@ export default function LeagueMatchList({ competition }: LeagueMatchListProps) {
 
   const handleEditMatch = () => {
     if (selectedMatch) {
-      navigate(`/edit-match/${competition.id}/${selectedMatch.id}`);
+      navigate(`/edit-match/${competitionId}/${selectedMatch.id}`);
     }
   };
 
@@ -118,7 +121,7 @@ export default function LeagueMatchList({ competition }: LeagueMatchListProps) {
         <div className="flex h-full min-h-[400px] flex-col rounded-lg border-2 border-accent/30 bg-panel-bg">
           {selectedMatch ? (
             <LeagueMatchDetails
-              role={competition.userRole}
+              role={userRole}
               selectedMatch={selectedMatch}
               match={match || null}
               isMatchCompleted={isMatchCompleted || false}

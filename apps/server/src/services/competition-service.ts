@@ -34,6 +34,14 @@ export class CompetitionService {
     return transformCompetitionToResponse(competition, userId);
   }
 
+  static async getCompetitionInfo(competitionId: string, userId: string) {
+    const competition = await CompetitionRepo.findByIdWithInfo(competitionId);
+    if (!competition) {
+      throw new NotFoundError("Competition");
+    }
+    return competition;
+  }
+
   static async getDetailedCompetitions(
     userId: string,
     options: {

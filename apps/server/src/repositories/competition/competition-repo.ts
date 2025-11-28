@@ -1,6 +1,7 @@
 import { Competition, Prisma, Role } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
+import { CompetitionInfo } from "@repo/shared-types";
 
 const COMPETITION_BASIC_INCLUDE = {
   matches: true,
@@ -11,6 +12,7 @@ const COMPETITION_BASIC_SELECT = {
   id: true,
   name: true,
   type: true,
+  votingEnabled: true,
 } satisfies Prisma.CompetitionSelect;
 
 export const COMPETITION_DETAILED_INCLUDE = {
@@ -93,6 +95,26 @@ export class CompetitionRepo {
         where: { id },
         include: COMPETITION_DETAILED_INCLUDE,
       });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.findByIdWithDetails"
+      );
+    }
+  }
+
+  static async findByIdWithInfo(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<CompetitionInfo | null> {
+    try {
+      const prismaClient = tx || prisma;
+      const comp = await prismaClient.competition.findUnique({
+        where: { id },
+        select: COMPETITION_BASIC_SELECT,
+      });
+
+      return comp as CompetitionInfo | null;
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,

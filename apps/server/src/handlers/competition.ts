@@ -55,6 +55,25 @@ export const getCompetitionStats = async (
   }
 };
 
+export const getCompetitionInfo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const competitionId = getRequiredQuery(req, "compId");
+    const userId = getRequiredQuery(req, "userId");
+
+    const competition = await CompetitionService.getCompetitionInfo(
+      competitionId,
+      userId
+    );
+    sendSuccess(res, competition);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createCompetition = async (
   req: Request,
   res: Response,
