@@ -7,6 +7,7 @@ import {
   transformCompetitionToResponse,
   transformAddCompetitionRequestToService,
   transformCompetitionToSettingsResponse,
+  transformCompetitionToTeamsResponse,
 } from "../utils/competition-transforms";
 import { transformDashboardCompetitionsToDetailedResponse } from "../utils/dashboard-transforms";
 import { DashboardService } from "./dashboard-service";
@@ -50,6 +51,14 @@ export class CompetitionService {
       throw new NotFoundError("Competition");
     }
     return transformCompetitionToSettingsResponse(competition, userId);
+  }
+
+  static async getCompetitionTeams(competitionId: string, userId: string) {
+    const competition = await CompetitionRepo.findByIdWithTeams(competitionId);
+    if (!competition) {
+      throw new NotFoundError("Competition");
+    }
+    return transformCompetitionToTeamsResponse(competition, userId);
   }
 
   static async getDetailedCompetitions(

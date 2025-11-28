@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/form";
 import { Save } from "lucide-react";
 import { createTeamNamesSchema, TeamNamesFormData } from "./schemas";
-import { CompetitionResponse } from "@repo/shared-types";
+import { CompetitionWithTeams } from "@repo/shared-types";
 import { useMemo } from "react";
 
 interface TeamNamesFormProps {
-  competition: CompetitionResponse;
+  competition: CompetitionWithTeams;
   onSubmit: (data: TeamNamesFormData) => void;
   isSubmitting: boolean;
 }

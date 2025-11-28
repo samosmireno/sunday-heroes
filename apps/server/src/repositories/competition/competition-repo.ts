@@ -36,6 +36,19 @@ export const COMPETITION_SETTINGS_INCLUDE = {
   },
 } satisfies Prisma.CompetitionInclude;
 
+export const COMPETITION_TEAMS_INCLUDE = {
+  teamCompetitions: {
+    include: {
+      team: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.CompetitionInclude;
+
 export const COMPETITION_DETAILED_INCLUDE = {
   dashboard: {
     select: {
@@ -91,6 +104,10 @@ export type CompetitionBasic = Prisma.CompetitionGetPayload<{
 
 export type CompetitionWithSettings = Prisma.CompetitionGetPayload<{
   include: typeof COMPETITION_SETTINGS_INCLUDE;
+}>;
+
+export type CompetitionWithTeamCompetitions = Prisma.CompetitionGetPayload<{
+  include: typeof COMPETITION_TEAMS_INCLUDE;
 }>;
 
 export type CompetitionWithDetails = Prisma.CompetitionGetPayload<{
@@ -157,6 +174,26 @@ export class CompetitionRepo {
       const comp = await prismaClient.competition.findUnique({
         where: { id },
         include: COMPETITION_SETTINGS_INCLUDE,
+      });
+
+      return comp;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.findByIdWithDetails"
+      );
+    }
+  }
+
+  static async findByIdWithTeams(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<CompetitionWithTeamCompetitions | null> {
+    try {
+      const prismaClient = tx || prisma;
+      const comp = await prismaClient.competition.findUnique({
+        where: { id },
+        include: COMPETITION_TEAMS_INCLUDE,
       });
 
       return comp;

@@ -1,6 +1,7 @@
 import {
   CompetitionResponse,
   CompetitionSettings,
+  CompetitionWithTeams,
   MatchResponse,
   PlayerTotals,
   Role,
@@ -8,6 +9,7 @@ import {
 import {
   CompetitionWithDetails,
   CompetitionWithSettings,
+  CompetitionWithTeamCompetitions,
 } from "../repositories/competition/competition-repo";
 import { Competition } from "@prisma/client";
 import {
@@ -103,6 +105,22 @@ export function transformCompetitionToSettingsResponse(
     moderators: competition.moderators.map((moderator) => ({
       id: moderator.id,
       nickname: moderator.dashboardPlayer.nickname,
+    })),
+  };
+}
+
+export function transformCompetitionToTeamsResponse(
+  competition: CompetitionWithTeamCompetitions,
+  userId: string
+): CompetitionWithTeams {
+  return {
+    id: competition.id,
+    name: competition.name,
+    type: competition.type as CompetitionResponse["type"],
+    votingEnabled: competition.votingEnabled,
+    teams: competition.teamCompetitions.map((tc) => ({
+      id: tc.team.id,
+      name: tc.team.name,
     })),
   };
 }

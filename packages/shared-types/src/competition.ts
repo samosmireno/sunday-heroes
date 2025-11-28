@@ -21,6 +21,17 @@ export type CompetitionSettings = {
   }[];
 };
 
+export type CompetitionWithTeams = {
+  id: string;
+  name: string;
+  type: CompetitionType;
+  votingEnabled: boolean;
+  teams: {
+    id: string;
+    name: string;
+  }[];
+};
+
 export type CompetitionResponse = {
   id: string;
   name: string;
