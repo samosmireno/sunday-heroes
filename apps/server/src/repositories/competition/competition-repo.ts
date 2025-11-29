@@ -68,11 +68,6 @@ export const COMPETITION_DETAILED_INCLUDE = {
       },
     },
   },
-  teamCompetitions: {
-    include: {
-      team: true,
-    },
-  },
   matches: {
     include: {
       matchPlayers: {
@@ -383,7 +378,7 @@ export class CompetitionRepo {
   static async resetCompetition(
     id: string,
     tx?: Prisma.TransactionClient
-  ): Promise<CompetitionWithDetails> {
+  ): Promise<Competition> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.update({
@@ -392,7 +387,6 @@ export class CompetitionRepo {
           matches: { deleteMany: {} },
           teamCompetitions: { deleteMany: {} },
         },
-        include: COMPETITION_DETAILED_INCLUDE,
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(
@@ -405,7 +399,7 @@ export class CompetitionRepo {
   static async resetCompetitionWithoutTeams(
     id: string,
     tx?: Prisma.TransactionClient
-  ): Promise<CompetitionWithDetails> {
+  ): Promise<Competition> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.update({
@@ -413,7 +407,6 @@ export class CompetitionRepo {
         data: {
           matches: { deleteMany: {} },
         },
-        include: COMPETITION_DETAILED_INCLUDE,
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(

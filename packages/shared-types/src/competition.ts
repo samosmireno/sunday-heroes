@@ -38,16 +38,8 @@ export type CompetitionResponse = {
   type: CompetitionType;
   userRole: Role;
   votingEnabled: boolean;
-  teams?: {
-    id: string;
-    name: string;
-  }[];
   matches: MatchResponse[];
   playerStats: PlayerTotals[];
-  moderators: {
-    id: string;
-    nickname: string;
-  }[];
 };
 
 export type DashboardCompetitionResponse = {

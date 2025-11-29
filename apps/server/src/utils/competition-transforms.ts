@@ -71,24 +71,14 @@ export function transformCompetitionToResponse(
 
   const playerStats: PlayerTotals[] = calculatePlayerStats(matches);
 
-  const teams = competition.teamCompetitions.map((teamComp) => ({
-    id: teamComp.team.id,
-    name: teamComp.team.name,
-  }));
-
   return {
     id: competition.id,
     name: competition.name,
     type: competition.type as CompetitionResponse["type"],
     userRole: getUserRole(competition, userId),
     votingEnabled: competition.votingEnabled,
-    teams: teams.length > 0 ? teams : undefined,
     matches: matches,
     playerStats: playerStats,
-    moderators: competition.moderators.map((moderator) => ({
-      id: moderator.id,
-      nickname: moderator.dashboardPlayer.nickname,
-    })),
   };
 }
 
