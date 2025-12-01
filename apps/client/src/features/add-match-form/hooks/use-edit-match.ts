@@ -12,7 +12,7 @@ import { createMatchFormSchema } from "../schemas/schema-factory";
 import { MatchFormData } from "../schemas/types";
 
 export function useEditMatch(
-  competitionType: CompetitionType,
+  competitionType: CompetitionType = CompetitionType.DUEL,
   competitionId: string,
   matchId: string,
 ) {
