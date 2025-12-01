@@ -12,6 +12,7 @@ import {
 } from "../utils/errors";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { Prisma } from "@prisma/client";
+import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 
 export class VoteService {
   static async submitVotes(
@@ -144,7 +145,15 @@ export class VoteService {
       throw new NotFoundError("Match not found");
     }
 
-    const competition = await CompetitionRepo.findByMatchId(matchId);
+    const competitionInfo = await CompetitionRepo.findByMatchId(matchId);
+
+    if (!competitionInfo) {
+      throw new NotFoundError("CompetitionInfo");
+    }
+
+    const competition = await CompetitionRepo.findByIdWithSettings(
+      competitionInfo.id
+    );
 
     if (!competition) {
       throw new NotFoundError("Competition");
@@ -196,17 +205,13 @@ export class VoteService {
     matchId: string,
     userId: string
   ): Promise<boolean> {
-    const match = await MatchRepo.findByIdWithDetails(matchId);
-    if (!match) return false;
+    const competition = await CompetitionRepo.findByMatchId(matchId);
+    if (!competition) return false;
 
-    const isDashboardAdmin = match.competition.dashboard.adminId === userId;
-    if (isDashboardAdmin) return true;
+    const isUserAdminOrModerator =
+      await CompetitionAuthRepo.isUserAdminOrModerator(competition.id, userId);
 
-    const isCompetitionModerator = match.competition.moderators.some(
-      (mod) => mod.dashboardPlayer.userId === userId
-    );
-
-    return isCompetitionModerator;
+    return isUserAdminOrModerator;
   }
 
   private static validateVoteData(

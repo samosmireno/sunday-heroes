@@ -207,22 +207,6 @@ export class MatchRepo {
     }
   }
 
-  static async findByCompetitionIds(
-    competitionIds: string[]
-  ): Promise<Match[]> {
-    try {
-      return await prisma.match.findMany({
-        where: {
-          competitionId: { in: competitionIds },
-        },
-        include: MATCH_DETAILED_INCLUDE,
-        orderBy: { date: "desc" },
-      });
-    } catch (error) {
-      throw PrismaErrorHandler.handle(error, "MatchRepo.findByCompetitionIds");
-    }
-  }
-
   static async findByDashboardId(
     dashboardId: string,
     options?: { limit?: number; offset?: number },

@@ -34,7 +34,7 @@ function DuelCompetitionPage({
             refetchMatches={refetch}
           />
         </div>
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex items-center justify-center">
           <FootballField
             match={competition.matches[currentMatch]}
             hoverable={true}

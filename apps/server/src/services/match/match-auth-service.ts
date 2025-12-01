@@ -1,4 +1,5 @@
 import { CompetitionAuthRepo } from "../../repositories/competition/competition-auth-repo";
+import { CompetitionRepo } from "../../repositories/competition/competition-repo";
 import { MatchRepo } from "../../repositories/match-repo";
 
 export class MatchAuthService {
@@ -16,11 +17,11 @@ export class MatchAuthService {
     matchId: string,
     userId: string
   ): Promise<boolean> {
-    const match = await MatchRepo.findByIdWithDetails(matchId);
-    if (!match) return false;
+    const competition = await CompetitionRepo.findByMatchId(matchId);
+    if (!competition) return false;
 
     return await CompetitionAuthRepo.isUserAdminOrModerator(
-      match.competitionId,
+      competition.id,
       userId
     );
   }

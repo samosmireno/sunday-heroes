@@ -1,11 +1,11 @@
-import { CompetitionVotes, MatchVotes, PendingVote } from "@repo/shared-types";
+import { MatchVotes } from "@repo/shared-types";
 import { MatchWithDetails } from "../repositories/match-repo";
 import { getUserRole } from "./competition-transforms";
-import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
+import { CompetitionWithSettings } from "../repositories/competition/competition-repo";
 
 export function transformMatchServiceToPendingVotes(
   match: MatchWithDetails,
-  competition: CompetitionWithDetails,
+  competition: CompetitionWithSettings,
   userId: string
 ): MatchVotes {
   const players = match.matchPlayers.flatMap((player) => ({

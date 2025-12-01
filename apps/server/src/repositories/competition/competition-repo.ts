@@ -248,7 +248,7 @@ export class CompetitionRepo {
   static async findByMatchId(
     matchId: string,
     tx?: Prisma.TransactionClient
-  ): Promise<CompetitionWithDetails | null> {
+  ): Promise<Competition | null> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.findFirst({
@@ -259,10 +259,9 @@ export class CompetitionRepo {
             },
           },
         },
-        include: COMPETITION_DETAILED_INCLUDE,
       });
     } catch (error) {
-      throw PrismaErrorHandler.handle(error, "CompetitionRepo.findByMatchId");
+      throw PrismaErrorHandler.handle(error, "CompetitionRepo.findIdByMatchId");
     }
   }
 

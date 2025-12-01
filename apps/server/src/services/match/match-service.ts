@@ -30,11 +30,11 @@ export class MatchService {
   static async getCompetitionTypeFromMatchId(
     matchId: string
   ): Promise<CompetitionType> {
-    const match = await MatchRepo.findByIdWithDetails(matchId);
-    if (!match) {
+    const competition = await CompetitionRepo.findByMatchId(matchId);
+    if (!competition) {
       throw new NotFoundError("Match");
     }
-    return match.competition?.type || null;
+    return competition?.type || null;
   }
 
   static async getMatchesForUser(
