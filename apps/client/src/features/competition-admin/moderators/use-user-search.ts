@@ -3,12 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/config/axios-config";
 import { config } from "@/config/config";
 import { useAuth } from "@/context/auth-context";
-
-interface SearchResult {
-  id: string;
-  nickname: string;
-  email: string;
-}
+import { SearchResult } from "../types";
 
 export function useUserSearch(competitionId: string) {
   const [searchQuery, setSearchQuery] = useState("");

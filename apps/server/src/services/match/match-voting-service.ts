@@ -3,7 +3,7 @@ import { createMatchRequest } from "../../schemas/create-match-request-schema";
 import { MatchRepo } from "../../repositories/match-repo";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";
 import { EmailService } from "../email-service";
-import { DashboardPlayerWithUserDetails } from "../../repositories/dashboard-player-repo";
+import { DashboardPlayerBasic } from "../../repositories/dashboard-player-repo";
 import { AppError } from "../../utils/errors";
 
 interface MatchVotingEmailData {
@@ -31,7 +31,7 @@ export class MatchVotingService {
   static async handleMatchVoting(
     match: Match,
     data: createMatchRequest,
-    dashboardPlayers: DashboardPlayerWithUserDetails[],
+    dashboardPlayers: DashboardPlayerBasic[],
     tx?: Prisma.TransactionClient
   ): Promise<void> {
     const emailData = await this.setupVoting(match, data, tx);
@@ -77,7 +77,7 @@ export class MatchVotingService {
   private static sendVotingEmails(
     matchDetails: MatchVotingEmailData,
     matchId: string,
-    dashboardPlayers: DashboardPlayerWithUserDetails[]
+    dashboardPlayers: DashboardPlayerBasic[]
   ) {
     setImmediate(async () => {
       try {

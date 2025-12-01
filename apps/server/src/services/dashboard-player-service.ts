@@ -30,7 +30,7 @@ export class DashboardPlayerService {
     let totalCount: number;
     if (search) {
       [players, totalCount] = await Promise.all([
-        DashboardPlayerRepo.findByNameSearch(search, dashboardId, {
+        DashboardPlayerRepo.findByNameSearchWithDetails(search, dashboardId, {
           limit,
           offset,
         }),
@@ -83,17 +83,25 @@ export class DashboardPlayerService {
     userId: string,
     competitionId: string,
     query: string
-  ) {
+  ): Promise<{ id: string; nickname: string }[]> {
     const isModerator = await CompetitionService.isUserModerator(
       competitionId,
       userId
     );
 
     if (isModerator) {
-      return await DashboardPlayerRepo.findByNameSearchInCompetition(
-        query,
-        competitionId
-      );
+      const dashPlayers =
+        await DashboardPlayerRepo.findByNameSearchInCompetition(
+          query,
+          competitionId
+        );
+
+      return dashPlayers
+        .filter((dp) => dp.user?.id !== undefined)
+        .map((dp) => ({
+          id: dp.id,
+          nickname: dp.nickname,
+        }));
     } else {
       const dashboardId =
         await DashboardService.getDashboardIdFromUserId(userId);
@@ -102,7 +110,17 @@ export class DashboardPlayerService {
         throw new NotFoundError("Dashboard");
       }
 
-      return await DashboardPlayerRepo.findByNameSearch(query, dashboardId);
+      const dashPlayers = await DashboardPlayerRepo.findByNameSearchWithBasic(
+        query,
+        dashboardId
+      );
+
+      return dashPlayers
+        .filter((dp) => dp.user?.id !== undefined)
+        .map((dp) => ({
+          id: dp.id,
+          nickname: dp.nickname,
+        }));
     }
   }
 

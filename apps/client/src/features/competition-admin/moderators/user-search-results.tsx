@@ -1,11 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-
-interface SearchResult {
-  id: string;
-  nickname: string;
-  email: string;
-}
+import { SearchResult } from "../types";
 
 interface UserSearchResultsProps {
   results: SearchResult[];
@@ -38,23 +33,20 @@ export default function UserSearchResults({
               Search Results ({results.length})
             </p>
             <div className="space-y-2">
-              {results.map((user) => (
+              {results.map((res) => (
                 <div
-                  key={user.id}
+                  key={res.id}
                   className="flex items-center justify-between rounded-md border-2 border-accent/20 bg-bg/30 p-3 transition-colors hover:bg-bg/40"
                 >
                   <div className="flex items-center gap-3">
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-medium text-gray-200">
-                        {user.nickname}
-                      </p>
-                      <p className="truncate text-xs text-gray-400">
-                        {user.email}
+                        {res.nickname}
                       </p>
                     </div>
                   </div>
                   <Button
-                    onClick={() => onAddModerator(user.id, user.nickname)}
+                    onClick={() => onAddModerator(res.id, res.nickname)}
                     disabled={isAdding}
                     size="sm"
                     className="ml-3 rounded-lg border-2 border-green-500/50 bg-green-500/20 px-3 py-1.5 text-green-400 hover:bg-green-500/30 disabled:opacity-50"

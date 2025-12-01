@@ -80,7 +80,7 @@ const DASHBOARD_PLAYER_WITH_ADMIN_INCLUDE = {
   },
 } satisfies Prisma.DashboardPlayerInclude;
 
-export type DashboardPlayerWithUserDetails = Prisma.DashboardPlayerGetPayload<{
+export type DashboardPlayerBasic = Prisma.DashboardPlayerGetPayload<{
   include: typeof DASHBOARD_PLAYER_BASIC_INCLUDE;
 }>;
 
@@ -117,7 +117,7 @@ export class DashboardPlayerRepo {
   static async findByIdWithUserDetails(
     id: string,
     tx?: Prisma.TransactionClient
-  ): Promise<DashboardPlayerWithUserDetails | null> {
+  ): Promise<DashboardPlayerBasic | null> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findUnique({
@@ -210,7 +210,7 @@ export class DashboardPlayerRepo {
     nickname: string,
     dashboardId: string,
     tx?: Prisma.TransactionClient
-  ): Promise<DashboardPlayerWithUserDetails | null> {
+  ): Promise<DashboardPlayerBasic | null> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findUnique({
@@ -234,7 +234,7 @@ export class DashboardPlayerRepo {
     nicknames: string[],
     dashboardId: string,
     tx?: Prisma.TransactionClient
-  ): Promise<DashboardPlayerWithUserDetails[]> {
+  ): Promise<DashboardPlayerBasic[]> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.dashboardPlayer.findMany({
@@ -273,7 +273,37 @@ export class DashboardPlayerRepo {
     }
   }
 
-  static async findByNameSearch(
+  static async findByNameSearchWithBasic(
+    searchTerm: string,
+    dashboardId: string,
+    options?: { limit?: number; offset?: number },
+    tx?: Prisma.TransactionClient
+  ): Promise<DashboardPlayerBasic[]> {
+    try {
+      const prismaClient = tx || prisma;
+      const DashboardPlayers = await prismaClient.dashboardPlayer.findMany({
+        where: {
+          dashboardId,
+          nickname: {
+            startsWith: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        include: DASHBOARD_PLAYER_BASIC_INCLUDE,
+        orderBy: { nickname: "asc" },
+        take: options?.limit,
+        skip: options?.offset,
+      });
+      return DashboardPlayers;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerRepo.findByNameSearch"
+      );
+    }
+  }
+
+  static async findByNameSearchWithDetails(
     searchTerm: string,
     dashboardId: string,
     options?: { limit?: number; offset?: number },
@@ -371,7 +401,7 @@ export class DashboardPlayerRepo {
     competitionId: string,
     options?: { limit?: number; offset?: number },
     tx?: Prisma.TransactionClient
-  ): Promise<DashboardPlayerWithDetails[]> {
+  ): Promise<DashboardPlayerBasic[]> {
     try {
       const prismaClient = tx || prisma;
       const DashboardPlayers = await prismaClient.dashboardPlayer.findMany({
@@ -388,7 +418,7 @@ export class DashboardPlayerRepo {
             mode: "insensitive",
           },
         },
-        include: DASHBOARD_PLAYER_DETAILED_INCLUDE,
+        include: DASHBOARD_PLAYER_BASIC_INCLUDE,
         orderBy: { nickname: "asc" },
         take: options?.limit,
         skip: options?.offset,
