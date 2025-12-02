@@ -1,10 +1,10 @@
 import { MatchVotes } from "@repo/shared-types";
-import { MatchWithDetails } from "../repositories/match-repo";
+import { MatchWithVotes } from "../repositories/match-repo";
 import { getUserRole } from "./competition-transforms";
 import { CompetitionWithSettings } from "../repositories/competition/competition-repo";
 
 export function transformMatchServiceToPendingVotes(
-  match: MatchWithDetails,
+  match: MatchWithVotes,
   competition: CompetitionWithSettings,
   userId: string
 ): MatchVotes {
@@ -23,8 +23,8 @@ export function transformMatchServiceToPendingVotes(
     userRole: getUserRole(competition, userId),
     matchId: match.id,
     matchDate: match.date?.toDateString(),
-    competitionId: match.competition.id,
-    competitionName: match.competition.name,
+    competitionId: competition.id,
+    competitionName: competition.name,
     players: players.map((p) => ({
       playerName: p.name,
       playerId: p.playerId,

@@ -42,6 +42,24 @@ const MATCH_DETAILED_INCLUDE = {
   },
 } satisfies Prisma.MatchInclude;
 
+const MATCH_VOTES_INCLUDE = {
+  matchPlayers: {
+    include: {
+      dashboardPlayer: {
+        include: {
+          votesGiven: true,
+          user: true,
+        },
+      },
+    },
+  },
+  matchTeams: {
+    include: {
+      team: true,
+    },
+  },
+} satisfies Prisma.MatchInclude;
+
 const MATCH_BASIC_INCLUDE = {
   matchTeams: {
     include: {
@@ -98,6 +116,10 @@ export type MatchWithDetails = Prisma.MatchGetPayload<{
   include: typeof MATCH_DETAILED_INCLUDE;
 }>;
 
+export type MatchWithVotes = Prisma.MatchGetPayload<{
+  include: typeof MATCH_VOTES_INCLUDE;
+}>;
+
 export type MatchWithTeams = Prisma.MatchGetPayload<{
   include: typeof MATCH_BASIC_INCLUDE;
 }>;
@@ -134,6 +156,21 @@ export class MatchRepo {
     }
   }
 
+  static async findByIdWithVotes(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<MatchWithVotes | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findUnique({
+        where: { id },
+        include: MATCH_VOTES_INCLUDE,
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByIdWithDetails");
+    }
+  }
+
   static async findByIdWithTeams(
     id: string,
     tx?: Prisma.TransactionClient
@@ -157,20 +194,6 @@ export class MatchRepo {
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchRepo.findAll");
-    }
-  }
-
-  static async findAllWithDetails(
-    tx?: Prisma.TransactionClient
-  ): Promise<MatchWithDetails[]> {
-    try {
-      const prismaClient = tx || prisma;
-      return await prismaClient.match.findMany({
-        include: MATCH_DETAILED_INCLUDE,
-        orderBy: { date: "desc" },
-      });
-    } catch (error) {
-      throw PrismaErrorHandler.handle(error, "MatchRepo.findAllWithDetails");
     }
   }
 

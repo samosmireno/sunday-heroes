@@ -12,19 +12,9 @@ import { ConflictError, NotFoundError } from "../../utils/errors";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";
 
 export class MatchService {
-  static async getAllMatches() {
-    const matches = await MatchRepo.findAllWithDetails();
-    return matches.map(transformMatchServiceToResponse);
-  }
-
   static async getMatchById(id: string) {
     const match = await MatchRepo.findByIdWithDetails(id);
     return match ? transformMatchServiceToResponse(match) : null;
-  }
-
-  static async getCompetitionMatches(competitionId: string) {
-    const matches = await MatchRepo.findByCompetitionId(competitionId);
-    return matches.map(transformMatchServiceToResponse);
   }
 
   static async getCompetitionTypeFromMatchId(

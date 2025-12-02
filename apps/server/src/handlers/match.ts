@@ -23,19 +23,6 @@ const getOptionalNumberParam = (
   return value ? parseInt(value, 10) : defaultValue;
 };
 
-export const getAllMatches = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const matches = await MatchService.getAllMatches();
-    sendSuccess(res, matches);
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const getMatchById = async (
   req: Request,
   res: Response,
@@ -47,20 +34,6 @@ export const getMatchById = async (
     const match = await MatchService.getMatchById(matchId);
 
     sendSuccess(res, match);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getAllMatchesFromCompetition = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const competitionId = getRequiredQuery(req, "competitionId");
-    const matches = await MatchService.getCompetitionMatches(competitionId);
-    sendSuccess(res, matches);
   } catch (error) {
     next(error);
   }

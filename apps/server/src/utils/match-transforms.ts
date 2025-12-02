@@ -65,6 +65,7 @@ export function transformMatchesToMatchesResponse(
   matches: MatchWithDetails[]
 ): MatchPageResponse[] {
   return matches.map((match) => {
+    const motmId = findManOfTheMatchId(match);
     const homeTeamPlayers: PlayerResponse[] = match.matchPlayers
       .filter((player) => player.isHome)
       .map((player) => ({
@@ -75,7 +76,7 @@ export function transformMatchesToMatchesResponse(
         assists: player.assists,
         isHome: player.isHome,
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
-        manOfTheMatch: player.id === findManOfTheMatchId(match),
+        manOfTheMatch: player.id === motmId,
       }));
 
     const awayTeamPlayers: PlayerResponse[] = match.matchPlayers
@@ -88,7 +89,7 @@ export function transformMatchesToMatchesResponse(
         assists: player.assists,
         isHome: player.isHome,
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
-        manOfTheMatch: player.id === findManOfTheMatchId(match),
+        manOfTheMatch: player.id === motmId,
       }));
 
     const teamNames = match.matchTeams.map((teamMatch) => teamMatch.team.name);

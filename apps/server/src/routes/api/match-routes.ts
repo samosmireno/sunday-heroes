@@ -2,8 +2,6 @@ import { Router } from "express";
 import {
   createMatch,
   deleteMatch,
-  getAllMatches,
-  getAllMatchesFromCompetition,
   getMatchById,
   getMatchesWithStats,
   updateMatch,
@@ -14,9 +12,7 @@ import { authenticateToken } from "../../middleware/authentication-middleware";
 
 const router = Router();
 
-router.get("/", getAllMatches);
 router.get("/stats", getMatchesWithStats);
-router.get("/competition/:competitionId", getAllMatchesFromCompetition);
 router.get("/:id", getMatchById);
 
 router.post(

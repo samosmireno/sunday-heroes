@@ -42,32 +42,35 @@ export function transformCompetitionToResponse(
   competition: CompetitionWithDetails,
   userId: string
 ): CompetitionResponse {
-  const matches: MatchResponse[] = competition.matches.map((match) => ({
-    id: match.id,
-    date: match.date?.toLocaleDateString(),
-    matchType: match.matchType as MatchResponse["matchType"],
-    round: match.round,
-    homeTeamScore: match.homeTeamScore,
-    awayTeamScore: match.awayTeamScore,
-    penaltyHomeScore: match.penaltyHomeScore ?? undefined,
-    penaltyAwayScore: match.penaltyAwayScore ?? undefined,
-    teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
-    isCompleted: match.isCompleted,
-    players: match.matchPlayers.map((player) => {
-      return {
-        id: player.id,
-        nickname: player.dashboardPlayer.nickname,
-        isHome: player.isHome,
-        goals: player.goals,
-        assists: player.assists,
-        position: player.position,
-        penaltyScored: player.penaltyScored ?? undefined,
-        rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
-        manOfTheMatch: player.id === findManOfTheMatchId(match),
-      };
-    }),
-    videoUrl: match.videoUrl ?? undefined,
-  }));
+  const matches: MatchResponse[] = competition.matches.map((match) => {
+    const motmId = findManOfTheMatchId(match);
+    return {
+      id: match.id,
+      date: match.date?.toLocaleDateString(),
+      matchType: match.matchType as MatchResponse["matchType"],
+      round: match.round,
+      homeTeamScore: match.homeTeamScore,
+      awayTeamScore: match.awayTeamScore,
+      penaltyHomeScore: match.penaltyHomeScore ?? undefined,
+      penaltyAwayScore: match.penaltyAwayScore ?? undefined,
+      teams: match.matchTeams.map((matchTeam) => matchTeam.team.name),
+      isCompleted: match.isCompleted,
+      players: match.matchPlayers.map((player) => {
+        return {
+          id: player.id,
+          nickname: player.dashboardPlayer.nickname,
+          isHome: player.isHome,
+          goals: player.goals,
+          assists: player.assists,
+          position: player.position,
+          penaltyScored: player.penaltyScored ?? undefined,
+          rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+          manOfTheMatch: player.id === motmId,
+        };
+      }),
+      videoUrl: match.videoUrl ?? undefined,
+    };
+  });
 
   const playerStats: PlayerTotals[] = calculatePlayerStats(matches);
 
