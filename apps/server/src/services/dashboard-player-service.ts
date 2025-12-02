@@ -81,7 +81,7 @@ export class DashboardPlayerService {
     userId: string,
     competitionId: string,
     query: string
-  ): Promise<{ id: string; nickname: string }[]> {
+  ): Promise<{ id: string; nickname: string; isRegistered: boolean }[]> {
     const isModerator = await CompetitionService.isUserModerator(
       competitionId,
       userId
@@ -94,12 +94,11 @@ export class DashboardPlayerService {
           competitionId
         );
 
-      return dashPlayers
-        .filter((dp) => dp.user?.id !== undefined)
-        .map((dp) => ({
-          id: dp.id,
-          nickname: dp.nickname,
-        }));
+      return dashPlayers.map((dp) => ({
+        id: dp.id,
+        nickname: dp.nickname,
+        isRegistered: !!dp.user,
+      }));
     } else {
       const dashboardId =
         await DashboardService.getDashboardIdFromUserId(userId);
@@ -113,12 +112,11 @@ export class DashboardPlayerService {
         dashboardId
       );
 
-      return dashPlayers
-        .filter((dp) => dp.user?.id !== undefined)
-        .map((dp) => ({
-          id: dp.id,
-          nickname: dp.nickname,
-        }));
+      return dashPlayers.map((dp) => ({
+        id: dp.id,
+        nickname: dp.nickname,
+        isRegistered: !!dp.user,
+      }));
     }
   }
 

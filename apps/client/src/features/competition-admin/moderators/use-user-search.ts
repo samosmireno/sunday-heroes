@@ -24,9 +24,11 @@ export function useUserSearch(competitionId: string) {
           withCredentials: true,
         },
       );
+
       return response.data as SearchResult[];
     },
     enabled: !!searchTerm.trim(),
+    select: (data) => data.filter((user) => user.isRegistered),
   });
 
   const triggerSearch = () => {
