@@ -28,15 +28,13 @@ export function calculatePlayerScore(
   return 0;
 }
 
-export function findManOfTheMatchId(
+export function findManOfTheMatchIds(
   match: CompetitionWithDetails["matches"][number]
-): string | null {
-  if (match.matchPlayers.length === 0) {
-    return null;
-  }
+): string[] {
+  if (match.matchPlayers.length === 0) return [];
 
-  let manOfTheMatchId = null;
   let highestScore = 0;
+  const topIds: string[] = [];
 
   match.matchPlayers.forEach((player) => {
     const playerScore = calculatePlayerScore(
@@ -46,11 +44,14 @@ export function findManOfTheMatchId(
 
     if (playerScore > highestScore) {
       highestScore = playerScore;
-      manOfTheMatchId = player.id;
+      topIds.length = 0;
+      if (playerScore > 0) topIds.push(player.id);
+    } else if (playerScore === highestScore && playerScore > 0) {
+      topIds.push(player.id);
     }
   });
 
-  return highestScore > 0 ? manOfTheMatchId : null;
+  return topIds;
 }
 
 function determineMatchWinner(match: MatchResponse): "home" | "away" | "draw" {

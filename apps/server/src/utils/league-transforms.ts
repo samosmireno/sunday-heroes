@@ -8,7 +8,7 @@ import { MatchWithDetails } from "../repositories/match/types";
 import {
   calculateLeaguePlayerStats,
   calculatePlayerScore,
-  findManOfTheMatchId,
+  findManOfTheMatchIds,
 } from "./utils";
 import { TeamCompetitionWithDetails } from "../repositories/team-competition-repo";
 
@@ -62,7 +62,7 @@ export function transformCompetitionToPlayerStatsResponse(
   competition: CompetitionWithDetails
 ): LeaguePlayerTotals[] {
   const matches: MatchResponse[] = competition.matches.map((match) => {
-    const motmId = findManOfTheMatchId(match);
+    const motmIds = findManOfTheMatchIds(match);
     return {
       id: match.id,
       date: match.date?.toLocaleDateString(),
@@ -84,7 +84,7 @@ export function transformCompetitionToPlayerStatsResponse(
           position: player.position,
           penalty_scored: player.penaltyScored ?? undefined,
           rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
-          manOfTheMatch: player.id === motmId,
+          manOfTheMatch: motmIds.includes(player.id),
         };
       }),
     };

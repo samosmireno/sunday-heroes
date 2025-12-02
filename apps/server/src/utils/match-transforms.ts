@@ -9,7 +9,7 @@ import { Match, VotingStatus } from "@prisma/client";
 import {
   calculatePendingVotes,
   calculatePlayerScore,
-  findManOfTheMatchId,
+  findManOfTheMatchIds,
 } from "./utils";
 import { createMatchRequest } from "../schemas/create-match-request-schema";
 
@@ -29,6 +29,8 @@ function sortPlayersHomeAwayByPosition(
 export function transformMatchServiceToResponse(
   match: MatchWithDetails
 ): MatchResponse {
+  const motmIds = findManOfTheMatchIds(match);
+
   const mappedPlayers = match.matchPlayers.map((player) => ({
     id: player.id,
     nickname: player.dashboardPlayer.nickname,
@@ -37,7 +39,7 @@ export function transformMatchServiceToResponse(
     assists: player.assists,
     position: player.position,
     rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
-    manOfTheMatch: player.id === findManOfTheMatchId(match),
+    manOfTheMatch: motmIds.includes(player.id),
   }));
 
   const sortedPlayers = sortPlayersHomeAwayByPosition(mappedPlayers);
@@ -65,7 +67,7 @@ export function transformMatchesToMatchesResponse(
   matches: MatchWithDetails[]
 ): MatchPageResponse[] {
   return matches.map((match) => {
-    const motmId = findManOfTheMatchId(match);
+    const motmIds = findManOfTheMatchIds(match);
     const homeTeamPlayers: PlayerResponse[] = match.matchPlayers
       .filter((player) => player.isHome)
       .map((player) => ({
@@ -76,7 +78,7 @@ export function transformMatchesToMatchesResponse(
         assists: player.assists,
         isHome: player.isHome,
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
-        manOfTheMatch: player.id === motmId,
+        manOfTheMatch: motmIds.includes(player.id),
       }));
 
     const awayTeamPlayers: PlayerResponse[] = match.matchPlayers
@@ -89,7 +91,7 @@ export function transformMatchesToMatchesResponse(
         assists: player.assists,
         isHome: player.isHome,
         rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
-        manOfTheMatch: player.id === motmId,
+        manOfTheMatch: motmIds.includes(player.id),
       }));
 
     const teamNames = match.matchTeams.map((teamMatch) => teamMatch.team.name);

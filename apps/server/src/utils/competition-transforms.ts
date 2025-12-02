@@ -15,7 +15,7 @@ import { Competition } from "@prisma/client";
 import {
   calculatePlayerScore,
   calculatePlayerStats,
-  findManOfTheMatchId,
+  findManOfTheMatchIds,
 } from "./utils";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 
@@ -43,7 +43,7 @@ export function transformCompetitionToResponse(
   userId: string
 ): CompetitionResponse {
   const matches: MatchResponse[] = competition.matches.map((match) => {
-    const motmId = findManOfTheMatchId(match);
+    const motmIds = findManOfTheMatchIds(match);
     return {
       id: match.id,
       date: match.date?.toLocaleDateString(),
@@ -65,7 +65,7 @@ export function transformCompetitionToResponse(
           position: player.position,
           penaltyScored: player.penaltyScored ?? undefined,
           rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
-          manOfTheMatch: player.id === motmId,
+          manOfTheMatch: motmIds.includes(player.id),
         };
       }),
       videoUrl: match.videoUrl ?? undefined,
