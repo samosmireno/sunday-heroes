@@ -1,14 +1,7 @@
 import { User, Role, Prisma } from "@prisma/client";
-import prisma from "./prisma-client";
-import { PrismaErrorHandler } from "../utils/prisma-error-handler";
-
-const USER_WITH_DASHBOARD_INCLUDE = {
-  dashboard: true,
-} satisfies Prisma.UserInclude;
-
-export type UserWithDashboard = Prisma.UserGetPayload<{
-  include: typeof USER_WITH_DASHBOARD_INCLUDE;
-}>;
+import prisma from "../prisma-client";
+import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
+import { USER_WITH_DASHBOARD_INCLUDE, UserWithDashboard } from "./types";
 
 export class UserRepo {
   static async findById(

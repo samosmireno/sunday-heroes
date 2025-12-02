@@ -4,10 +4,12 @@ import {
   DashboardResponse,
   DetailedCompetitionResponse,
 } from "@repo/shared-types";
-import { CompetitionBasic } from "../repositories/competition/competition-repo";
-import { CompetitionMatch } from "../repositories/match-repo";
-import { CompetitionListSelect } from "../repositories/competition/competition-query-repo";
 import { Role } from "@prisma/client";
+import {
+  CompetitionBasic,
+  CompetitionListSelect,
+} from "../repositories/competition/types";
+import { CompetitionMatch } from "../repositories/match/types";
 
 export function transformDashboardCompetitionsToDetailedResponse(
   matchCounts: {

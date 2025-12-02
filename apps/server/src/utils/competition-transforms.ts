@@ -10,7 +10,7 @@ import {
   CompetitionWithDetails,
   CompetitionWithSettings,
   CompetitionWithTeamCompetitions,
-} from "../repositories/competition/competition-repo";
+} from "../repositories/competition/types";
 import { Competition } from "@prisma/client";
 import {
   calculatePlayerScore,

@@ -1,5 +1,5 @@
 import { PlayerListResponse } from "@repo/shared-types";
-import { DashboardPlayerWithDetails } from "../repositories/dashboard-player-repo";
+import { DashboardPlayerWithDetails } from "../repositories/dashboard-player/types";
 import { calculatePlayerScore } from "./utils";
 
 export function transformDashboardPlayersToResponse(

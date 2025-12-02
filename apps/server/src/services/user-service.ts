@@ -1,5 +1,5 @@
 import { Role, User } from "@prisma/client";
-import { UserRepo, UserWithDashboard } from "../repositories/user-repo";
+import { UserRepo } from "../repositories/user/user-repo";
 import {
   AuthorizationError,
   ConflictError,

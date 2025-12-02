@@ -1,12 +1,11 @@
-import { VoteRepo } from "../repositories/vote-repo";
-import { MatchRepo } from "../repositories/match-repo";
-import { MatchPlayerRepo } from "../repositories/match-player-repo";
+import { VoteRepo } from "../repositories/vote/vote-repo";
+import { MatchRepo } from "../repositories/match/match-repo";
+import { MatchPlayerRepo } from "../repositories/match-player/match-player-repo";
 import prisma from "../repositories/prisma-client";
-import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
+import { DashboardPlayerRepo } from "../repositories/dashboard-player/dashboard-player-repo";
 import { transformMatchServiceToPendingVotes } from "../utils/votes-transforms";
 import {
   AuthorizationError,
-  ConflictError,
   NotFoundError,
   VotingError,
 } from "../utils/errors";

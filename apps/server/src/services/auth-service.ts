@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import axios from "axios";
-import { UserRepo } from "../repositories/user-repo";
-import { DashboardRepo } from "../repositories/dashboard-repo";
+import { UserRepo } from "../repositories/user/user-repo";
+import { DashboardRepo } from "../repositories/dashboard/dashboard-repo";
 import { config } from "../config/config";
 import { Role, User } from "@prisma/client";
 import { UserResponse } from "@repo/shared-types";

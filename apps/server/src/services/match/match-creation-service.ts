@@ -1,7 +1,7 @@
 import { CompetitionType, Match, Prisma } from "@prisma/client";
 import { createMatchRequest } from "../../schemas/create-match-request-schema";
-import { MatchRepo } from "../../repositories/match-repo";
-import { TeamRepo } from "../../repositories/team-repo";
+import { MatchRepo } from "../../repositories/match/match-repo";
+import { TeamRepo } from "../../repositories/team/team-repo";
 import { MatchTeamRepo } from "../../repositories/match-team-repo";
 import { MatchVotingService } from "./match-voting-service";
 import { MatchPlayerService } from "../match-player-service";

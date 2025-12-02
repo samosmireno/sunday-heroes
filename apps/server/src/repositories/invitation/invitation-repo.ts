@@ -1,68 +1,14 @@
 import { DashboardInvitation, Prisma } from "@prisma/client";
-import prisma from "./prisma-client";
-import { PrismaErrorHandler } from "../utils/prisma-error-handler";
-
-const INVITATION_WITH_DETAILS_INCLUDE = {
-  invitedBy: true,
-  dashboardPlayer: {
-    include: {
-      dashboard: true,
-    },
-  },
-} satisfies Prisma.DashboardInvitationInclude;
-
-const INVITATION_WITH_BASIC_INCLUDE = {
-  invitedBy: {
-    select: {
-      givenName: true,
-      familyName: true,
-      email: true,
-    },
-  },
-  dashboardPlayer: {
-    select: {
-      nickname: true,
-    },
-  },
-  usedByUser: {
-    select: {
-      givenName: true,
-      familyName: true,
-      email: true,
-    },
-  },
-} satisfies Prisma.DashboardInvitationInclude;
-
-const INVITATION_WITH_DASHBOARD_INCLUDE = {
-  dashboardPlayer: {
-    include: {
-      dashboard: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  },
-  usedByUser: {
-    select: {
-      givenName: true,
-      familyName: true,
-      email: true,
-    },
-  },
-} satisfies Prisma.DashboardInvitationInclude;
-
-export type InvitationWithDetails = Prisma.DashboardInvitationGetPayload<{
-  include: typeof INVITATION_WITH_DETAILS_INCLUDE;
-}>;
-
-export type InvitationWithBasic = Prisma.DashboardInvitationGetPayload<{
-  include: typeof INVITATION_WITH_BASIC_INCLUDE;
-}>;
-
-export type InvitationWithDashboard = Prisma.DashboardInvitationGetPayload<{
-  include: typeof INVITATION_WITH_DASHBOARD_INCLUDE;
-}>;
+import prisma from "../prisma-client";
+import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
+import {
+  INVITATION_WITH_BASIC_INCLUDE,
+  INVITATION_WITH_DASHBOARD_INCLUDE,
+  INVITATION_WITH_DETAILS_INCLUDE,
+  InvitationWithBasic,
+  InvitationWithDashboard,
+  InvitationWithDetails,
+} from "./types";
 
 export class InvitationRepo {
   static async findById(

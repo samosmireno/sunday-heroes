@@ -1,7 +1,7 @@
 import { MatchVotes } from "@repo/shared-types";
-import { MatchWithVotes } from "../repositories/match-repo";
+import { MatchWithVotes } from "../repositories/match/types";
 import { getUserRole } from "./competition-transforms";
-import { CompetitionWithSettings } from "../repositories/competition/competition-repo";
+import { CompetitionWithSettings } from "../repositories/competition/types";
 
 export function transformMatchServiceToPendingVotes(
   match: MatchWithVotes,

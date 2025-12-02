@@ -1,7 +1,7 @@
-import { TeamRepo } from "../repositories/team-repo";
+import { TeamRepo } from "../repositories/team/team-repo";
 import { TeamRosterRepo } from "../repositories/team-roster-repo";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
-import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
+import { DashboardPlayerRepo } from "../repositories/dashboard-player/dashboard-player-repo";
 import { DashboardService } from "./dashboard-service";
 import { DashboardPlayerService } from "./dashboard-player-service";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";

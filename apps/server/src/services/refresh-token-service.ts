@@ -1,5 +1,5 @@
 import { RefreshToken } from "@prisma/client";
-import { RefreshTokenRepo } from "../repositories/refresh-token-repo";
+import { RefreshTokenRepo } from "../repositories/refresh-token/refresh-token-repo";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 import { config } from "../config/config";
 import { AuthService } from "./auth-service";

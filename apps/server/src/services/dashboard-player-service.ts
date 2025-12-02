@@ -1,7 +1,4 @@
-import {
-  DashboardPlayerRepo,
-  DashboardPlayerWithDetails,
-} from "../repositories/dashboard-player-repo";
+import { DashboardPlayerWithDetails } from "../repositories/dashboard-player/types";
 import { DashboardService } from "./dashboard-service";
 import { transformDashboardPlayersToResponse } from "../utils/players-transforms";
 import prisma from "../repositories/prisma-client";
@@ -12,6 +9,7 @@ import {
 } from "../utils/errors";
 import { CompetitionService } from "./competition-service";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
+import { DashboardPlayerRepo } from "../repositories/dashboard-player/dashboard-player-repo";
 
 export class DashboardPlayerService {
   static async getDashboardPlayers(

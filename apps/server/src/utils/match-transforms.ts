@@ -4,7 +4,7 @@ import {
   MatchResponse,
   PlayerResponse,
 } from "@repo/shared-types";
-import { MatchWithDetails } from "../repositories/match-repo";
+import { MatchWithDetails } from "../repositories/match/types";
 import { Match, VotingStatus } from "@prisma/client";
 import {
   calculatePendingVotes,

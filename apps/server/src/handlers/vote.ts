@@ -95,26 +95,3 @@ export const getPendingVotesForMatch = async (
     next(error);
   }
 };
-
-export const getPendingVotesForCompetition = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const competitionId = req.params.competitionId;
-    if (!competitionId) {
-      throw new BadRequestError("competitionId parameter is required");
-    }
-
-    const competition =
-      await CompetitionService.getCompetitionWithPendingVotes(competitionId);
-    if (!competition) {
-      throw new NotFoundError("Competition");
-    }
-
-    sendSuccess(res, competition);
-  } catch (error) {
-    next(error);
-  }
-};

@@ -1,4 +1,4 @@
-import { MatchRepo, MatchWithDetails } from "../../repositories/match-repo";
+import { MatchWithDetails } from "../../repositories/match/types";
 import { MatchCreationService } from "./match-creation-service";
 import { MatchVotingService } from "./match-voting-service";
 import {
@@ -10,6 +10,7 @@ import { DashboardService } from "../dashboard-service";
 import { CompetitionType } from "@prisma/client";
 import { ConflictError, NotFoundError } from "../../utils/errors";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";
+import { MatchRepo } from "../../repositories/match/match-repo";
 
 export class MatchService {
   static async getMatchById(id: string) {

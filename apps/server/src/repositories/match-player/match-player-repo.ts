@@ -1,22 +1,7 @@
 import { MatchPlayer, Prisma, Team } from "@prisma/client";
-import prisma from "./prisma-client";
-import { PrismaErrorHandler } from "../utils/prisma-error-handler";
-
-export type MatchPlayerWithDetails = Prisma.MatchPlayerGetPayload<{
-  include: {
-    dashboardPlayer: true;
-  };
-}>;
-
-export type MatchPlayerWithUserDetails = Prisma.MatchPlayerGetPayload<{
-  include: {
-    dashboardPlayer: {
-      include: {
-        user: true;
-      };
-    };
-  };
-}>;
+import prisma from "../prisma-client";
+import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
+import { MatchPlayerWithDetails, MatchPlayerWithUserDetails } from "./types";
 
 export class MatchPlayerRepo {
   static async getAllMatchPlayers(

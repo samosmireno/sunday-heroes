@@ -1,22 +1,12 @@
-import { Competition, CompetitionType, Prisma } from "@prisma/client";
+import { CompetitionType, Prisma } from "@prisma/client";
 import prisma from "../prisma-client";
 import {
   CompetitionWithDetails,
+  COMPETITION_LIST_SELECT,
   COMPETITION_DETAILED_INCLUDE,
-} from "./competition-repo";
+  CompetitionListSelect,
+} from "./types";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
-
-const COMPETITION_LIST_SELECT = {
-  id: true,
-  name: true,
-  type: true,
-  votingEnabled: true,
-  dashboardId: true,
-} satisfies Prisma.CompetitionSelect;
-
-export type CompetitionListSelect = Prisma.CompetitionGetPayload<{
-  select: typeof COMPETITION_LIST_SELECT;
-}>;
 
 export class CompetitionQueryRepo {
   static async findByType(

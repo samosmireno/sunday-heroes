@@ -1,9 +1,9 @@
 import { Match, Prisma, VotingStatus } from "@prisma/client";
 import { createMatchRequest } from "../../schemas/create-match-request-schema";
-import { MatchRepo } from "../../repositories/match-repo";
+import { MatchRepo } from "../../repositories/match/match-repo";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";
 import { EmailService } from "../email-service";
-import { DashboardPlayerBasic } from "../../repositories/dashboard-player-repo";
+import { DashboardPlayerBasic } from "../../repositories/dashboard-player/types";
 import { AppError } from "../../utils/errors";
 
 interface MatchVotingEmailData {

@@ -1,7 +1,7 @@
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
-import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
-import { DashboardRepo } from "../repositories/dashboard-repo";
-import { MatchRepo } from "../repositories/match-repo";
+import { DashboardPlayerRepo } from "../repositories/dashboard-player/dashboard-player-repo";
+import { DashboardRepo } from "../repositories/dashboard/dashboard-repo";
+import { MatchRepo } from "../repositories/match/match-repo";
 import { extractDashboardData } from "../utils/dashboard-transforms";
 import {
   AuthorizationError,

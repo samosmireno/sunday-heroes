@@ -1,17 +1,13 @@
 import { CompetitionService } from "./competition-service";
 import { TeamService } from "./team-service";
-import {
-  MatchRepo,
-  MatchWithDetails,
-  MatchWithTeams,
-} from "../repositories/match-repo";
+import { MatchWithDetails, MatchWithTeams } from "../repositories/match/types";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import { MatchType, Prisma, VotingStatus } from "@prisma/client";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
 import prisma from "../repositories/prisma-client";
 import { MatchTeamRepo } from "../repositories/match-team-repo";
 import { CreateLeagueRequest } from "../schemas/league-schemas";
-import { TeamRepo } from "../repositories/team-repo";
+import { TeamRepo } from "../repositories/team/team-repo";
 import { DashboardService } from "./dashboard-service";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import {
@@ -23,6 +19,7 @@ import {
   ConflictError,
   NotFoundError,
 } from "../utils/errors";
+import { MatchRepo } from "../repositories/match/match-repo";
 
 interface MatchStats {
   points: number;

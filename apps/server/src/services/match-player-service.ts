@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
-import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
-import { MatchPlayerRepo } from "../repositories/match-player-repo";
+import { DashboardPlayerRepo } from "../repositories/dashboard-player/dashboard-player-repo";
+import { MatchPlayerRepo } from "../repositories/match-player/match-player-repo";
 import { transformAddMatchRequestToMatchPlayer } from "../utils/match-player-transforms";
 import { matchPlayersMatchRequest } from "@repo/shared-types";
 import { DashboardPlayerService } from "./dashboard-player-service";

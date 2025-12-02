@@ -111,10 +111,6 @@ export class CompetitionService {
     };
   }
 
-  static async getCompetitionWithPendingVotes(competitionId: string) {
-    return await CompetitionVotingRepo.findByIdWithPendingVotes(competitionId);
-  }
-
   static async createCompetition(data: createCompetitionRequest) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(
       data.userId

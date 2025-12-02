@@ -1,4 +1,4 @@
-import { MatchWithDetails } from "../repositories/match-repo";
+import { MatchWithDetails } from "../repositories/match/types";
 import {
   LeaguePlayerTotals,
   MatchResponse,
@@ -7,7 +7,7 @@ import {
 import { PlayerVote } from "@prisma/client";
 import { config } from "../config/config";
 import { VotingStatus } from "@prisma/client";
-import { CompetitionWithDetails } from "../repositories/competition/competition-repo";
+import { CompetitionWithDetails } from "../repositories/competition/types";
 
 export function calculatePlayerScore(
   received_votes: PlayerVote[],

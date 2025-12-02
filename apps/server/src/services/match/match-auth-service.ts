@@ -1,6 +1,5 @@
 import { CompetitionAuthRepo } from "../../repositories/competition/competition-auth-repo";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";
-import { MatchRepo } from "../../repositories/match-repo";
 
 export class MatchAuthService {
   static async canUserCreateMatch(

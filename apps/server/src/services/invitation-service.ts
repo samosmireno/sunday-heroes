@@ -1,9 +1,4 @@
-import {
-  InvitationRepo,
-  InvitationWithDetails,
-  InvitationWithDashboard,
-} from "../repositories/invitation-repo";
-import { DashboardPlayerRepo } from "../repositories/dashboard-player-repo";
+import { DashboardPlayerRepo } from "../repositories/dashboard-player/dashboard-player-repo";
 import { DashboardPlayerService } from "./dashboard-player-service";
 import { EmailService } from "./email-service";
 import { AuthService } from "./auth-service";
@@ -12,7 +7,7 @@ import prisma from "../repositories/prisma-client";
 import { Response } from "express";
 import { config } from "../config/config";
 import { User } from "@prisma/client";
-import { DashboardRepo } from "../repositories/dashboard-repo";
+import { DashboardRepo } from "../repositories/dashboard/dashboard-repo";
 import {
   AuthorizationError,
   ConflictError,
@@ -20,6 +15,11 @@ import {
   NotFoundError,
 } from "../utils/errors";
 import { InvitationResponse } from "@repo/shared-types";
+import { InvitationRepo } from "../repositories/invitation/invitation-repo";
+import {
+  InvitationWithDashboard,
+  InvitationWithDetails,
+} from "../repositories/invitation/types";
 
 export interface CreateInvitationData {
   invitedById: string;
