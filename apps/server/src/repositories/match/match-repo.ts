@@ -41,6 +41,22 @@ export class MatchRepo {
     }
   }
 
+  static async findByIdsWithDetails(
+    ids: string[],
+    tx?: Prisma.TransactionClient
+  ): Promise<MatchWithDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        where: { id: { in: ids } },
+        include: MATCH_DETAILED_INCLUDE,
+        orderBy: { date: "desc" },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findByIdWithDetails");
+    }
+  }
+
   static async findByIdWithVotes(
     id: string,
     tx?: Prisma.TransactionClient
@@ -182,10 +198,10 @@ export class MatchRepo {
     dashboardId: string,
     options?: { limit?: number; offset?: number },
     tx?: Prisma.TransactionClient
-  ): Promise<MatchWithDetails[]> {
+  ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
-      return await prismaClient.match.findMany({
+      const matches = await prismaClient.match.findMany({
         where: {
           OR: [
             {
@@ -207,11 +223,12 @@ export class MatchRepo {
             },
           ],
         },
-        include: MATCH_DETAILED_INCLUDE,
         orderBy: { date: "desc" },
         take: options?.limit,
         skip: options?.offset,
       });
+
+      return matches.map((match) => match.id);
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,

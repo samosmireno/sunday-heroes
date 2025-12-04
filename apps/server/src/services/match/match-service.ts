@@ -43,8 +43,8 @@ export class MatchService {
 
     const { competitionId, limit = 10, offset = 0 } = options;
 
-    let matches: MatchWithDetails[];
     let totalCount: number;
+    let matches: MatchWithDetails[];
 
     if (competitionId) {
       matches = await MatchRepo.findByCompetitionId(competitionId, {
@@ -53,7 +53,7 @@ export class MatchService {
       });
       totalCount = await MatchRepo.countByCompetitionId(competitionId);
     } else {
-      matches = await MatchRepo.findByUserWithDeduplication(
+      const matchIds = await MatchRepo.findByUserWithDeduplication(
         userId,
         dashboardId,
         {
@@ -61,6 +61,9 @@ export class MatchService {
           offset,
         }
       );
+
+      matches = await MatchRepo.findByIdsWithDetails(matchIds);
+
       totalCount = await MatchRepo.countByUserWithDeduplication(
         userId,
         dashboardId
