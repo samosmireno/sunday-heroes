@@ -65,6 +65,9 @@ COPY --from=builder --chown=sundayheroes:nodejs /app/apps/server/package*.json .
 # Copy built application
 COPY --from=builder --chown=sundayheroes:nodejs /app/apps/server/dist ./
 
+# Copy Prisma schema and migrations for runtime
+COPY --from=builder --chown=sundayheroes:nodejs /app/apps/server/prisma ./prisma
+
 # Copy node_modules for runtime dependencies
 COPY --from=builder --chown=sundayheroes:nodejs /app/node_modules ./node_modules
 
