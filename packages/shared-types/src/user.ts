@@ -6,3 +6,16 @@ export type UserResponse = {
   name: string;
   role: Role;
 };
+
+export type RegisterRequest = {
+  email: string;
+  name: string;
+  password: string;
+};
+
+export type RegisterResponse = {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+};
