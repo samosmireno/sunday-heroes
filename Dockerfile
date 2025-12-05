@@ -44,9 +44,6 @@ RUN npm run build -w apps/client
 # Generate Prisma client
 RUN cd /app/apps/server && npx prisma generate
 
-# Apply migrations (only if you want migrations during build)
-RUN cd /app/apps/server && npx prisma migrate deploy
-
 # Build server
 RUN npm run build -w apps/server
 
@@ -84,4 +81,4 @@ EXPOSE 5000
 
 ENV PORT=5000
 
-CMD ["node", "src/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node src/index.js"]
