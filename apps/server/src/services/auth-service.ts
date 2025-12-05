@@ -50,6 +50,7 @@ export class AuthService {
         email: googleUser.email,
         givenName: googleUser.given_name,
         familyName: googleUser.family_name,
+        password: null,
         role: Role.ADMIN,
         isRegistered: true,
         createdAt: new Date(),

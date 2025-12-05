@@ -58,6 +58,7 @@ export class UserService {
     return await UserRepo.create({
       ...data,
       role: data.role || "PLAYER",
+      password: null,
       isRegistered: false,
       createdAt: new Date(),
       lastLogin: null,
