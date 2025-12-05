@@ -11,12 +11,16 @@ import {
 
 export class DashboardService {
   static async getDashboardPlayerDetailsForUser(userId: string) {
-    const dashboardIds =
-      await DashboardPlayerRepo.findDashboardIdsByUser(userId);
-    if (!dashboardIds) throw new NotFoundError("DashboardPlayer");
+    // const dashboardIds =
+    //   await DashboardPlayerRepo.findDashboardIdsByUser(userId);
+    // if (!dashboardIds) throw new NotFoundError("DashboardPlayer");
 
-    const competitions =
-      await CompetitionRepo.findCompetitionsByDashboardIds(dashboardIds);
+    const competitionIdsForUser =
+      await CompetitionRepo.findCompetitionIdsForUserIncludingAdmin(userId);
+
+    const competitions = await CompetitionRepo.findCompetitionsByIds(
+      competitionIdsForUser
+    );
 
     const competitionIds = competitions.map((c) => c.id);
 

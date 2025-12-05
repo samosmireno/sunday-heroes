@@ -16,6 +16,29 @@ export class UserRepo {
     }
   }
 
+  static async findDashboardIdById(
+    id: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<string | null> {
+    try {
+      const prismaClient = tx || prisma;
+      const user = await prismaClient.user.findUnique({
+        where: { id },
+        include: {
+          dashboard: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      return user?.dashboard?.id || null;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "UserRepo.findById");
+    }
+  }
+
   static async findByIdWithDashboard(
     id: string,
     tx?: Prisma.TransactionClient

@@ -9,6 +9,7 @@ import {
   DashboardPlayerWithAdmin,
   DashboardPlayerWithDetails,
 } from "./types";
+import { UserRepo } from "../user/user-repo";
 
 export class DashboardPlayerRepo {
   static async findById(
@@ -58,6 +59,12 @@ export class DashboardPlayerRepo {
     if (dashboardPlayers.length === 0) return null;
 
     const dashboardIds = dashboardPlayers.map((dp) => dp.dashboardId);
+
+    const userDashboardId = await UserRepo.findDashboardIdById(userId);
+
+    if (userDashboardId && !dashboardIds.includes(userDashboardId)) {
+      dashboardIds.push(userDashboardId);
+    }
 
     return dashboardIds;
   }

@@ -105,6 +105,15 @@ export class CompetitionRepo {
     }
   }
 
+  static async findCompetitionsByIds(ids: string[]) {
+    return prisma.competition.findMany({
+      where: {
+        id: { in: ids },
+      },
+      select: COMPETITION_BASIC_SELECT,
+    });
+  }
+
   static async findAll(tx?: Prisma.TransactionClient): Promise<Competition[]> {
     try {
       const prismaClient = tx || prisma;
@@ -196,6 +205,59 @@ export class CompetitionRepo {
       });
 
       return competitions.map((comp) => comp.id);
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.findCompetitionIdsForUser"
+      );
+    }
+  }
+
+  static async findCompetitionIdsForUserIncludingAdmin(
+    userId: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<string[]> {
+    try {
+      const prismaClient = tx || prisma;
+      const competitions = await prismaClient.competition.findMany({
+        where: {
+          matches: {
+            some: {
+              matchPlayers: {
+                some: {
+                  dashboardPlayer: {
+                    userId: userId,
+                  },
+                },
+              },
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const competitionIds = competitions.map((comp) => comp.id);
+
+      const adminCompetitions = await prismaClient.competition.findMany({
+        where: {
+          dashboard: {
+            adminId: userId,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const adminCompetitionIds = adminCompetitions.map((comp) => comp.id);
+
+      const allCompetitionIds = [
+        ...new Set([...competitionIds, ...adminCompetitionIds]),
+      ];
+
+      return allCompetitionIds;
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,

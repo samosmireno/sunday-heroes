@@ -35,9 +35,9 @@ export default function DashboardCompetitionList({
       </div>
 
       <div className="flex-1 overflow-hidden bg-bg/40">
-        <div className="h-full overflow-y-auto p-3 sm:p-4 md:p-5 lg:p-6">
+        <div className="h-full overflow-y-auto p-3 sm:p-4">
           {competitions.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:gap-6">
               {displayedCompetitions.map((competition) => (
                 <DashboardCompetitionCard
                   key={competition.id}
