@@ -22,7 +22,7 @@ export default function PlayersPage() {
 
   const { user } = useAuth() as { user: UserResponse };
 
-  const { players, isLoading, totalPages } = usePlayers({
+  const { players, isLoading, totalCount, totalPages } = usePlayers({
     userId: user.id,
     page: currentPage - 1,
     searchTerm: debouncedQuery,
@@ -78,7 +78,8 @@ export default function PlayersPage() {
       <div className="relative mt-5 flex flex-col space-y-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <div className="text-sm text-gray-400 sm:text-sm">
           Showing{" "}
-          <span className="font-medium text-accent">{players.length}</span>{" "}
+          <span className="font-medium text-accent">{players.length}</span> of{" "}
+          <span className="font-medium text-accent"> {totalCount}</span>{" "}
           {players.length !== 1 ? "players" : "player"}
         </div>
         <CompactPagination

@@ -17,6 +17,8 @@ import LeagueRouter from "@/features/league/league-router";
 import { GlobalErrorBoundary } from "@/components/error/global-error-boundary";
 import AddMatchPage from "./pages/add-match-page";
 import EditMatchPage from "./pages/edit-match-page";
+import LoginPage from "./pages/login";
+import RegisterPage from "./pages/register";
 
 export default function App() {
   return (
@@ -25,6 +27,9 @@ export default function App() {
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
             <Route path="/landing" element={<LandingPage />} />
 
