@@ -2,20 +2,25 @@ import z from "zod";
 
 export const registerSchema = z
   .object({
-    username: z
+    name: z
       .string()
-      .min(3, "Username must be at least 3 characters")
-      .max(32, "Username must be at most 32 characters"),
-    email: z.string().email("Please enter a valid email"),
+      .min(2, "Name must be at least 2 characters")
+      .max(50, "Name must be less than 50 characters"),
+    email: z
+      .string()
+      .email("Invalid email address")
+      .min(1, "Email is required"),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
-      .max(128, "Password must be at most 128 characters"),
-    confirmPassword: z.string(),
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
     path: ["confirmPassword"],
-    message: "Passwords do not match",
   });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;

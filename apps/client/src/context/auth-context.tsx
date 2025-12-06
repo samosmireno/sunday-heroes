@@ -17,6 +17,7 @@ interface AuthContextType {
   user: UserResponse | undefined;
   isAuthenticated: boolean;
   processAuthSuccess: (arg0: string) => UserResponse;
+  setUserData: (user: UserResponse) => void;
   error: string;
 }
 
@@ -56,6 +57,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("user");
   };
 
+  const setUserData = (userData: UserResponse) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
+
   const processAuthSuccess = (userDataBase64: string) => {
     try {
       if (!userDataBase64) {
@@ -68,8 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const jsonStr = new TextDecoder("utf-8").decode(binary);
       const userData = JSON.parse(jsonStr);
 
-      setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData));
+      setUserData(userData);
 
       return userData;
     } catch (err) {
@@ -109,6 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user,
         isAuthenticated: !!user,
         processAuthSuccess,
+        setUserData,
         error,
       }}
     >

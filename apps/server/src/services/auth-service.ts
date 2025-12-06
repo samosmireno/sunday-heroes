@@ -4,8 +4,9 @@ import { UserRepo } from "../repositories/user/user-repo";
 import { DashboardRepo } from "../repositories/dashboard/dashboard-repo";
 import { config } from "../config/config";
 import { Role, User } from "@prisma/client";
-import { UserResponse } from "@repo/shared-types";
+import { RegisterRequest, UserResponse } from "@repo/shared-types";
 import { RefreshTokenService } from "./refresh-token-service";
+import { PasswordUtils } from "../utils/password-utils";
 
 export class AuthService {
   static readonly ACCESS_TOKEN_EXPIRY = "30m";
@@ -63,6 +64,44 @@ export class AuthService {
         createdAt: new Date(),
       });
     }
+
+    return user;
+  }
+
+  static async registerUser(data: RegisterRequest): Promise<User> {
+    // Check if user already exists
+    const existingUser = await UserRepo.findByEmail(data.email);
+    if (existingUser) {
+      throw new Error("User with this email already exists");
+    }
+
+    // Validate password
+    const passwordValidation = PasswordUtils.validate(data.password);
+    if (!passwordValidation.valid) {
+      throw new Error(passwordValidation.message);
+    }
+
+    // Hash password
+    const hashedPassword = await PasswordUtils.hash(data.password);
+
+    // Create user
+    const user = await UserRepo.create({
+      email: data.email,
+      givenName: data.name,
+      familyName: null,
+      password: hashedPassword,
+      role: Role.ADMIN,
+      isRegistered: true,
+      createdAt: new Date(),
+      lastLogin: new Date(),
+    });
+
+    // Create dashboard for user
+    await DashboardRepo.create({
+      adminId: user.id,
+      name: `${data.name}'s Dashboard`,
+      createdAt: new Date(),
+    });
 
     return user;
   }

@@ -12,15 +12,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useRegister } from "./use-register";
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { register: registerUser, isLoading } = useRegister();
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -29,10 +31,11 @@ export default function RegisterForm() {
   });
 
   const onSubmit = (values: RegisterFormValues) => {
-    // TODO: Wire up to your auth/registration flow or API
-    // For now, just log. Replace with actual registration action.
-    // e.g., await register(values).then(...).catch(...)
-    console.log("Register submit:", values);
+    registerUser({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    });
   };
 
   return (
@@ -47,14 +50,14 @@ export default function RegisterForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="username"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-accent">Username</FormLabel>
+                <FormLabel className="text-accent">Name</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="yourusername"
+                    placeholder="John"
                     className="border-accent/40 bg-panel-bg/60 text-white focus-visible:ring-accent/50"
                   />
                 </FormControl>
@@ -148,9 +151,17 @@ export default function RegisterForm() {
           />
           <Button
             type="submit"
-            className="w-full border-2 border-accent bg-accent/20 text-accent hover:bg-accent/30"
+            disabled={isLoading}
+            className="w-full border-2 border-accent bg-accent/20 text-accent hover:bg-accent/30 disabled:opacity-50"
           >
-            Register
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating Account...
+              </>
+            ) : (
+              "Register"
+            )}
           </Button>
         </form>
       </Form>
