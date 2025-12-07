@@ -19,3 +19,15 @@ export type RegisterResponse = {
   name: string;
   role: Role;
 };
+
+export type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+export type LoginResponse = {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+};

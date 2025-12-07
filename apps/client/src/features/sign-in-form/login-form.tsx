@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { SignInFormValues, signInSchema } from "./schema";
+import { loginFormValues, loginSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -11,25 +11,27 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useLogin } from "./use-login";
 
-export default function SignInForm() {
+export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const form = useForm<SignInFormValues>({
-    resolver: zodResolver(signInSchema),
+  const { login, isLoading } = useLogin();
+  const form = useForm<loginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
     mode: "onSubmit",
   });
 
-  const onSubmit = (values: SignInFormValues) => {
-    // TODO: Wire up to your auth/registration flow or API
-    // For now, just log. Replace with actual registration action.
-    // e.g., await register(values).then(...).catch(...)
-    console.log("Register submit:", values);
+  const onSubmit = (values: loginFormValues) => {
+    login({
+      email: values.email,
+      password: values.password,
+    });
   };
 
   return (
@@ -44,14 +46,15 @@ export default function SignInForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-accent">Username</FormLabel>
+                <FormLabel className="text-accent">Email</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="yourusername"
+                    type="email"
+                    placeholder="you@example.com"
                     className="border-accent/40 bg-panel-bg/60 text-white focus-visible:ring-accent/50"
                   />
                 </FormControl>
@@ -94,9 +97,17 @@ export default function SignInForm() {
           />
           <Button
             type="submit"
-            className="w-full border-2 border-accent bg-accent/20 text-accent hover:bg-accent/30"
+            disabled={isLoading}
+            className="w-full border-2 border-accent bg-accent/20 text-accent hover:bg-accent/30 disabled:opacity-50"
           >
-            Sign In
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </Button>
         </form>
       </Form>

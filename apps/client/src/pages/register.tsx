@@ -5,6 +5,7 @@ import Loading from "@/components/ui/loading";
 import { Navigate, useLocation } from "react-router-dom";
 import { constructFullPath } from "@/features/landing/utils";
 import RegisterForm from "@/features/register-form/register-form";
+import { Toaster } from "sonner";
 
 export default function RegisterPage() {
   const { user, login, isLoading } = useAuth();
@@ -25,6 +26,25 @@ export default function RegisterPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-secondary">
       <Background />
+      <Toaster
+        position="top-right"
+        closeButton
+        duration={4000}
+        theme="dark"
+        toastOptions={{
+          classNames: {
+            toast:
+              "group toast font-retro group-[.toaster]:bg-panel-bg group-[.toaster]:text-gray-200 group-[.toaster]:border-2 group-[.toaster]:border-tellow-500/40 group-[.toaster]:shadow-lg group-[.toaster]:rounded-lg group-[.toaster]:p-4 group-[.toaster]:backdrop-blur-sm",
+            description: "group-[.toast]:text-gray-300 group-[.toast]:text-sm",
+            cancelButton:
+              "group-[.toast]:bg-bg/30 group-[.toast]:text-gray-300 group-[.toast]:hover:bg-bg/50 group-[.toast]:border-accent/30 group-[.toast]:rounded group-[.toast]:px-3 group-[.toast]:py-1.5 group-[.toast]:text-sm",
+            closeButton:
+              "group-[.toast]:bg-red-500/20 group-[.toast]:text-red-400 group-[.toast]:border-red-500/30 group-[.toast]:hover:bg-red-500/30 group-[.toast]:rounded group-[.toast]:p-1",
+            error:
+              "group-[.toaster]:bg-panel-bg group-[.toaster]:border-red-500/60 group-[.toaster]:text-red-200",
+          },
+        }}
+      />
       <div className="relative flex flex-1 items-center justify-center p-6">
         <div className="w-full max-w-md space-y-8">
           <div className="">

@@ -28,12 +28,12 @@ export default function LandingPage() {
     <div className="relative min-h-screen bg-secondary">
       <Background />
       <div className="relative">
-        <LandingHeader onLogin={handleLogin} />
-        <HeroSection onLogin={handleLogin} />
+        <LandingHeader />
+        <HeroSection onGoogleLogin={handleLogin} />
         <FeaturesSection />
         <HowItWorksSection />
         {/* <SocialProofSection /> */}
-        <FinalCtaSection onLogin={handleLogin} />
+        <FinalCtaSection onGoogleLogin={handleLogin} />
         <LandingFooter />
       </div>
     </div>

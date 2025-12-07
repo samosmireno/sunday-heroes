@@ -15,32 +15,26 @@ export const handleRegister = async (
 ) => {
   try {
     const { email, password, name } = req.body as RegisterRequest;
-    console.log(email, password, name);
 
-    // Validate required fields
     if (!email || !password || !name) {
       return res.status(400).json({
         message: "All fields are required",
       });
     }
 
-    // Register user
     const user = await AuthService.registerUser({
       email,
       password,
       name,
     });
 
-    // Generate tokens
     const { accessToken, refreshToken } = await AuthService.refreshUserTokens(
       user.id,
       user.email
     );
 
-    // Set cookies
     CookieUtils.setAuthCookies(res, accessToken, refreshToken);
 
-    // Send response
     const userResponse = {
       id: user.id,
       email: user.email,
@@ -52,6 +46,47 @@ export const handleRegister = async (
   } catch (error) {
     if (error instanceof Error) {
       return res.status(400).json({
+        message: error.message,
+      });
+    }
+    next(error);
+  }
+};
+
+export const handleLogin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
+
+    const user = await AuthService.loginUser(email, password);
+
+    const { accessToken, refreshToken } = await AuthService.refreshUserTokens(
+      user.id,
+      user.email
+    );
+
+    CookieUtils.setAuthCookies(res, accessToken, refreshToken);
+
+    const userResponse = {
+      id: user.id,
+      email: user.email,
+      name: user.givenName,
+      role: user.role as UserResponse["role"],
+    };
+
+    return res.status(200).json(userResponse);
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(401).json({
         message: error.message,
       });
     }

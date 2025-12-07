@@ -69,24 +69,22 @@ export class AuthService {
   }
 
   static async registerUser(data: RegisterRequest): Promise<User> {
-    // Check if user already exists
-    const existingUser = await UserRepo.findByEmail(data.email);
+    const normalizedEmail = data.email.trim().toLowerCase();
+
+    const existingUser = await UserRepo.findByEmail(normalizedEmail);
     if (existingUser) {
       throw new Error("User with this email already exists");
     }
 
-    // Validate password
     const passwordValidation = PasswordUtils.validate(data.password);
     if (!passwordValidation.valid) {
       throw new Error(passwordValidation.message);
     }
 
-    // Hash password
     const hashedPassword = await PasswordUtils.hash(data.password);
 
-    // Create user
     const user = await UserRepo.create({
-      email: data.email,
+      email: normalizedEmail,
       givenName: data.name,
       familyName: null,
       password: hashedPassword,
@@ -96,12 +94,34 @@ export class AuthService {
       lastLogin: new Date(),
     });
 
-    // Create dashboard for user
     await DashboardRepo.create({
       adminId: user.id,
       name: `${data.name}'s Dashboard`,
       createdAt: new Date(),
     });
+
+    return user;
+  }
+
+  static async loginUser(email: string, password: string): Promise<User> {
+    const user = await UserRepo.findByEmail(email.trim().toLowerCase());
+    if (!user) {
+      throw new Error("Invalid email or password");
+    }
+
+    if (!user.password) {
+      throw new Error("Please login with Google");
+    }
+
+    const isPasswordValid = await PasswordUtils.compare(
+      password,
+      user.password
+    );
+    if (!isPasswordValid) {
+      throw new Error("Invalid email or password");
+    }
+
+    await UserRepo.update(user.id, { lastLogin: new Date() });
 
     return user;
   }
