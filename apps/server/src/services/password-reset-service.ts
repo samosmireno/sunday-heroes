@@ -12,7 +12,6 @@ export class PasswordResetService {
   static async createPasswordResetToken(email: string): Promise<string> {
     const normalizedEmail = email.trim().toLowerCase();
     const user = await UserRepo.findByEmail(normalizedEmail);
-    console.log(user);
 
     if (!user) {
       throw new Error("If an account exists, you will receive a reset email");

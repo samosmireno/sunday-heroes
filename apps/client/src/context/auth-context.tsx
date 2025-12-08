@@ -9,6 +9,7 @@ import axiosInstance from "../config/axios-config";
 import { config } from "../config/config";
 import { useNavigate } from "react-router-dom";
 import { UserResponse } from "@repo/shared-types";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthContextType {
   isLoading: boolean;
@@ -36,6 +37,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserResponse>();
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const login = (redirectPath?: string) => {
     if (redirectPath && redirectPath !== "/dashboard") {
       sessionStorage.setItem("redirectAfterLogin", redirectPath);
@@ -49,12 +52,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     axiosInstance
       .get(`${config.server}/auth/logout`, { withCredentials: true })
       .then(() => {
+        queryClient.clear();
+        setUser(undefined);
+        localStorage.removeItem("user");
         navigate("/landing");
       })
       .catch((error) => {
         console.error("Logout error:", error);
       });
-    localStorage.removeItem("user");
   };
 
   const setUserData = (userData: UserResponse) => {
