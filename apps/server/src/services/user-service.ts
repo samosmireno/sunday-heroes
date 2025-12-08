@@ -62,6 +62,8 @@ export class UserService {
       isRegistered: false,
       createdAt: new Date(),
       lastLogin: null,
+      resetToken: null,
+      resetTokenExpiresAt: null,
     });
   }
 

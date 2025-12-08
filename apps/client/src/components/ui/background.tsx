@@ -2,7 +2,7 @@ export default function Background() {
   return (
     <>
       <div
-        className="pointer-events-none fixed inset-0 z-50 bg-repeat"
+        className="pointer-events-none fixed inset-0 bg-repeat"
         style={{
           backgroundImage:
             "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px)",

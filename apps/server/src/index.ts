@@ -10,6 +10,10 @@ import path from "path";
 
 const app = express();
 
+if (config.env === "production") {
+  app.set("trust proxy", 1);
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

@@ -56,6 +56,8 @@ export class AuthService {
         isRegistered: true,
         createdAt: new Date(),
         lastLogin: new Date(),
+        resetToken: null,
+        resetTokenExpiresAt: null,
       });
 
       await DashboardRepo.create({
@@ -92,6 +94,8 @@ export class AuthService {
       isRegistered: true,
       createdAt: new Date(),
       lastLogin: new Date(),
+      resetToken: null,
+      resetTokenExpiresAt: null,
     });
 
     await DashboardRepo.create({

@@ -19,6 +19,8 @@ import AddMatchPage from "./pages/add-match-page";
 import EditMatchPage from "./pages/edit-match-page";
 import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
+import ForgotPasswordPage from "./pages/forgot-password-page";
+import ResetPasswordPage from "./pages/reset-password-page";
 
 export default function App() {
   return (
@@ -30,6 +32,8 @@ export default function App() {
 
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
             <Route path="/landing" element={<LandingPage />} />
 

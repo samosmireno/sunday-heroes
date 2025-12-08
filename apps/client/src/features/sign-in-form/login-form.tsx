@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useLogin } from "./use-login";
+import { Link } from "react-router-dom";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -95,6 +96,14 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
+          <div className="flex justify-end">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-accent/80 hover:text-accent hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <Button
             type="submit"
             disabled={isLoading}

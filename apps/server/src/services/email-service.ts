@@ -165,6 +165,69 @@ export class EmailService {
     }
   }
 
+  static async sendPasswordResetEmail(
+    email: string,
+    resetToken: string
+  ): Promise<boolean> {
+    const resetUrl = `${config.client}/reset-password?token=${resetToken}`;
+
+    const mailOptions = {
+      from: `Sunday Heroes <${config.smtp.user}>`,
+      to: email,
+      subject: "Reset Your Password - Sunday Heroes",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background-color: #1e293b; color: white; padding: 20px; text-align: center;">
+            <h1 style="margin: 0;">Password Reset</h1>
+          </div>
+          
+          <div style="padding: 20px; background-color: #f8fafc;">
+            <p>Hi there,</p>
+            
+            <p>We received a request to reset your password for your Sunday Heroes account.</p>
+            
+            <p>Click the button below to create a new password:</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+              <a href="${resetUrl}" 
+                 style="background-color: #2563eb; color: white; padding: 12px 25px; 
+                        text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                Reset Password
+              </a>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px;">
+              This link will expire in 1 hour for security reasons.
+            </p>
+            
+            <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+              <p style="margin: 0; color: #92400e; font-size: 14px;">
+                <strong>⚠️ Security Notice:</strong> If you didn't request a password reset, please ignore this email. Your password will remain unchanged.
+              </p>
+            </div>
+          </div>
+          
+          <div style="background-color: #1e293b; color: #94a3b8; padding: 15px; text-align: center; font-size: 12px;">
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>© ${new Date().getFullYear()} Sunday Heroes</p>
+          </div>
+        </div>
+      `,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      return true;
+    } catch (error) {
+      throw new AppError(
+        "Failed to send password reset email",
+        500,
+        error instanceof Error ? error.message : "Unknown error",
+        true
+      );
+    }
+  }
+
   static async verifyConnection(): Promise<boolean> {
     try {
       await transporter.verify();

@@ -7,6 +7,8 @@ import { AuthenticatedRequest } from "../types";
 import { UserService } from "../services/user-service";
 import { RefreshTokenService } from "../services/refresh-token-service";
 import { RegisterRequest, UserResponse } from "@repo/shared-types";
+import { PasswordResetService } from "../services/password-reset-service";
+import { EmailService } from "../services/email-service";
 
 export const handleRegister = async (
   req: Request,
@@ -232,6 +234,74 @@ export const getCurrentUser = async (
     res.status(200).json(userResponse);
   } catch (error) {
     console.error("Error fetching user:", error);
+    next(error);
+  }
+};
+
+export const handleForgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    const resetToken =
+      await PasswordResetService.createPasswordResetToken(email);
+    await EmailService.sendPasswordResetEmail(email, resetToken);
+
+    return res.status(200).json({
+      message:
+        "If an account exists with this email, you will receive password reset instructions",
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(200).json({
+        message:
+          "If an account exists with this email, you will receive password reset instructions",
+      });
+    }
+    next(error);
+  }
+};
+
+export const handleResetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({
+        message: "Token and password are required",
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long",
+      });
+    }
+
+    await PasswordResetService.resetPassword(token, password);
+
+    return res.status(200).json({
+      message: "Password has been reset successfully",
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(400).json({
+        message: error.message,
+      });
+    }
     next(error);
   }
 };

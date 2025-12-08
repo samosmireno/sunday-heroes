@@ -47,6 +47,8 @@ model User {
   isRegistered  Boolean    @default(false)
   lastLogin     DateTime?
   createdAt     DateTime   @default(now())
+  resetToken    String?
+  resetTokenExpiresAt DateTime?
 
   refreshTokens         RefreshToken[]
   dashboard             Dashboard?

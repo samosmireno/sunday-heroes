@@ -92,6 +92,12 @@ export class UserRepo {
     }
   }
 
+  static async findByResetToken(token: string) {
+    return await prisma.user.findFirst({
+      where: { resetToken: token },
+    });
+  }
+
   static async getUserRole(
     id: string,
     tx?: Prisma.TransactionClient
