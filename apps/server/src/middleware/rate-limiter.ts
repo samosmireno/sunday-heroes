@@ -7,7 +7,7 @@ export const loginRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true,
-  handler: (req: Request, res: Response) => {
+  handler: (_req: Request, res: Response) => {
     return res.status(429).json({
       message: "Too many login attempts, please try again after 15 minutes",
     });

@@ -1,4 +1,4 @@
-import { MatchPlayer, Prisma, Team } from "@prisma/client";
+import { MatchPlayer, Prisma } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 import { MatchPlayerWithDetails, MatchPlayerWithUserDetails } from "./types";
@@ -143,7 +143,7 @@ export class MatchPlayerRepo {
   ): Promise<MatchPlayer> {
     try {
       const prismaClient = tx || prisma;
-      return prisma.matchPlayer.delete({ where: { id } });
+      return prismaClient.matchPlayer.delete({ where: { id } });
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,

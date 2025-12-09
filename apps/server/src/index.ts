@@ -37,7 +37,7 @@ if (config.env === "production") {
   app.use(express.static(clientBuildPath));
 
   // Catch-all handler: send back React's index.html file for client-side routing
-  app.get("*", (req, res) => {
+  app.get("*", (_req, res) => {
     res.sendFile(path.join(clientBuildPath, "index.html"));
   });
 }

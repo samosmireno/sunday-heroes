@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { AuthenticatedRequest } from "../types";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import { sendSuccess } from "../utils/response-utils";
 import { AuthorizationError, BadRequestError } from "../utils/errors";

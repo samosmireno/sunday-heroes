@@ -134,11 +134,7 @@ export class VoteService {
     return count > 0;
   }
 
-  static async getMatchVotes(
-    matchId: string,
-    userId: string,
-    options?: { limit?: number; offset?: number }
-  ) {
+  static async getMatchVotes(matchId: string, userId: string) {
     const match = await MatchRepo.findByIdWithVotes(matchId);
     if (!match) {
       throw new NotFoundError("Match not found");

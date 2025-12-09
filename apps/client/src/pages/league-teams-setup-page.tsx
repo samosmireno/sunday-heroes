@@ -1,13 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "@/components/ui/header";
-import { useAuth } from "@/context/auth-context";
 import CompetitionListSkeleton from "../features/competition-list/competition-list-skeleton";
 import { TeamNamesFormData } from "@/features/league-teams-setup/schemas";
 import { useUpdateTeamNames } from "@/features/league-teams-setup/use-update-team-names";
 import { TeamSetupError } from "@/features/league-teams-setup/team-setup-error";
 import { TeamNamesForm } from "@/features/league-teams-setup/team-names-form";
 import SubmitSpinner from "@/components/ui/submit-spinner";
-import { UserResponse } from "@repo/shared-types";
 import { useCompetitionTeams } from "@/features/competition/use-competition-teams";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -15,11 +13,7 @@ export default function LeagueTeamSetupPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { competitionId } = useParams() as { competitionId: string };
-  const { user } = useAuth() as { user: UserResponse };
-  const { competition, isLoading } = useCompetitionTeams(
-    competitionId,
-    user.id,
-  );
+  const { competition, isLoading } = useCompetitionTeams(competitionId);
   const updateTeamNames = useUpdateTeamNames();
 
   const handleSubmit = (data: TeamNamesFormData) => {

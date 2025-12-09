@@ -241,23 +241,23 @@ export class DashboardPlayerService {
   }
 
   static async cleanupUnusedPlayers(tx?: any): Promise<void> {
-    return await prisma.$transaction(async (transaction) => {
-      const unusedPlayers = await transaction.dashboardPlayer.findMany({
-        where: {
-          matchPlayers: { none: {} },
-          userId: null,
-        },
-        select: { id: true },
-      });
+    const transaction = tx || prisma;
 
-      if (unusedPlayers.length > 0) {
-        const ids = unusedPlayers.map((p) => p.id);
-        await DashboardPlayerRepo.deleteMany(ids, transaction);
-        console.log(
-          `Cleaned up ${unusedPlayers.length} unused dashboard players`
-        );
-      }
+    const unusedPlayers = await transaction.dashboardPlayer.findMany({
+      where: {
+        matchPlayers: { none: {} },
+        userId: null,
+      },
+      select: { id: true },
     });
+
+    if (unusedPlayers.length > 0) {
+      const ids = unusedPlayers.map((p: { id: string }) => p.id);
+      await DashboardPlayerRepo.deleteMany(ids, transaction);
+      console.log(
+        `Cleaned up ${unusedPlayers.length} unused dashboard players`
+      );
+    }
   }
 
   static async getPlayerInDashboard(dashboardId: string, userId: string) {

@@ -99,19 +99,19 @@ export class PrismaErrorHandler {
   }
 
   private static handleUnknownRequestError(
-    error: Prisma.PrismaClientUnknownRequestError
+    _error: Prisma.PrismaClientUnknownRequestError
   ): AppError {
     return new DatabaseError("Database connection error");
   }
 
   private static handleRustPanicError(
-    error: Prisma.PrismaClientRustPanicError
+    _error: Prisma.PrismaClientRustPanicError
   ): AppError {
     return new DatabaseError("Database engine error");
   }
 
   private static handleInitializationError(
-    error: Prisma.PrismaClientInitializationError
+    _error: Prisma.PrismaClientInitializationError
   ): AppError {
     return new DatabaseError("Database initialization failed");
   }
@@ -142,7 +142,7 @@ export class PrismaErrorHandler {
   }
 
   private static parseValidationErrorMessage(
-    message: string
+    _message: string
   ): Array<{ field: string; message: string; code: string }> {
     // Parse Prisma validation error messages
     // This is a simplified version - you might want to make it more sophisticated

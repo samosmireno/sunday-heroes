@@ -180,7 +180,6 @@ export class LeagueService {
 
       fixtures.push(roundMatches);
 
-      const fixed = shuffledTeams[0];
       const rotating = shuffledTeams.slice(1);
       rotating.unshift(rotating.pop()!);
       shuffledTeams.splice(1, shuffledTeams.length - 1, ...rotating);

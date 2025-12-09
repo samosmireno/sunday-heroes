@@ -1,14 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { VoteService } from "../services/vote-service";
 import { z } from "zod";
-import { CompetitionService } from "../services/competition-service";
 import { sendSuccess } from "../utils/response-utils";
 import { extractUserId, getRequiredQuery } from "../utils/request-utils";
-import {
-  BadRequestError,
-  NotFoundError,
-  ValidationError,
-} from "../utils/errors";
+import { BadRequestError, ValidationError } from "../utils/errors";
 
 export const submitVotesSchema = z.object({
   matchId: z.string(),

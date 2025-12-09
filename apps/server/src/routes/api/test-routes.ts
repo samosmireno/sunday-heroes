@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 const router = Router();
 
 // Test validation error
-router.post("/validation-error", (req: Request, res: Response) => {
+router.post("/validation-error", (_req: Request, res: Response) => {
   res.status(400).json({
     message: "Validation failed",
     code: "ValidationError",
@@ -15,7 +15,7 @@ router.post("/validation-error", (req: Request, res: Response) => {
 });
 
 // Test auth error
-router.get("/auth-error", (req: Request, res: Response) => {
+router.get("/auth-error", (_req: Request, res: Response) => {
   res.status(401).json({
     message: "Authentication required",
     code: "AuthenticationError",
@@ -23,7 +23,7 @@ router.get("/auth-error", (req: Request, res: Response) => {
 });
 
 // Test not found error
-router.get("/not-found-error", (req: Request, res: Response) => {
+router.get("/not-found-error", (_req: Request, res: Response) => {
   res.status(404).json({
     message: "Competition not found",
     code: "NotFoundError",
@@ -32,7 +32,7 @@ router.get("/not-found-error", (req: Request, res: Response) => {
 });
 
 // Test server error
-router.get("/server-error", (req: Request, res: Response) => {
+router.get("/server-error", (_req: Request, res: Response) => {
   res.status(500).json({
     message: "Internal server error",
     code: "InternalServerError",
@@ -40,7 +40,7 @@ router.get("/server-error", (req: Request, res: Response) => {
 });
 
 // Test conflict error
-router.post("/conflict-error", (req: Request, res: Response) => {
+router.post("/conflict-error", (_req: Request, res: Response) => {
   res.status(409).json({
     message: "Competition with this name already exists",
     code: "ConflictError",

@@ -62,12 +62,9 @@ export const getCompetitionInfo = async (
 ) => {
   try {
     const competitionId = getRequiredQuery(req, "compId");
-    const userId = getRequiredQuery(req, "userId");
 
-    const competition = await CompetitionService.getCompetitionInfo(
-      competitionId,
-      userId
-    );
+    const competition =
+      await CompetitionService.getCompetitionInfo(competitionId);
     sendSuccess(res, competition);
   } catch (error) {
     next(error);
@@ -100,12 +97,9 @@ export const getCompetitionTeams = async (
 ) => {
   try {
     const competitionId = getRequiredQuery(req, "compId");
-    const userId = getRequiredQuery(req, "userId");
 
-    const competition = await CompetitionService.getCompetitionTeams(
-      competitionId,
-      userId
-    );
+    const competition =
+      await CompetitionService.getCompetitionTeams(competitionId);
     sendSuccess(res, competition);
   } catch (error) {
     next(error);

@@ -2,7 +2,6 @@ import { CompetitionType } from "@prisma/client";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { CompetitionQueryRepo } from "../repositories/competition/competition-query-repo";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
-import { CompetitionVotingRepo } from "../repositories/competition/competition-voting-repo";
 import {
   transformCompetitionToResponse,
   transformAddCompetitionRequestToService,
@@ -36,7 +35,7 @@ export class CompetitionService {
     return transformCompetitionToResponse(competition, userId);
   }
 
-  static async getCompetitionInfo(competitionId: string, userId: string) {
+  static async getCompetitionInfo(competitionId: string) {
     const competition = await CompetitionRepo.findByIdWithInfo(competitionId);
     if (!competition) {
       throw new NotFoundError("Competition");
@@ -53,12 +52,12 @@ export class CompetitionService {
     return transformCompetitionToSettingsResponse(competition, userId);
   }
 
-  static async getCompetitionTeams(competitionId: string, userId: string) {
+  static async getCompetitionTeams(competitionId: string) {
     const competition = await CompetitionRepo.findByIdWithTeams(competitionId);
     if (!competition) {
       throw new NotFoundError("Competition");
     }
-    return transformCompetitionToTeamsResponse(competition, userId);
+    return transformCompetitionToTeamsResponse(competition);
   }
 
   static async getDetailedCompetitions(

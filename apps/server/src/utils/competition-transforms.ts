@@ -103,8 +103,7 @@ export function transformCompetitionToSettingsResponse(
 }
 
 export function transformCompetitionToTeamsResponse(
-  competition: CompetitionWithTeamCompetitions,
-  userId: string
+  competition: CompetitionWithTeamCompetitions
 ): CompetitionWithTeams {
   return {
     id: competition.id,
