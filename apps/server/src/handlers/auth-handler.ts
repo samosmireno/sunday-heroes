@@ -6,7 +6,11 @@ import { config } from "../config/config";
 import { AuthenticatedRequest } from "../types";
 import { UserService } from "../services/user-service";
 import { RefreshTokenService } from "../services/refresh-token-service";
-import { RegisterRequest, UserResponse } from "@repo/shared-types";
+import {
+  LoginRequest,
+  RegisterRequest,
+  UserResponse,
+} from "@repo/shared-types";
 import { PasswordResetService } from "../services/password-reset-service";
 import { EmailService } from "../services/email-service";
 
@@ -16,7 +20,7 @@ export const handleRegister = async (
   next: NextFunction
 ) => {
   try {
-    const { email, password, name } = req.body as RegisterRequest;
+    const { email, password, name, inviteToken } = req.body as RegisterRequest;
 
     if (!email || !password || !name) {
       return res.status(400).json({
@@ -36,6 +40,10 @@ export const handleRegister = async (
     );
 
     CookieUtils.setAuthCookies(res, accessToken, refreshToken);
+
+    if (inviteToken) {
+      await InvitationService.handleInvitationForAuth(inviteToken, user.id);
+    }
 
     const userResponse = {
       id: user.id,
@@ -61,7 +69,7 @@ export const handleLogin = async (
   next: NextFunction
 ) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, inviteToken } = req.body as LoginRequest;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -77,6 +85,10 @@ export const handleLogin = async (
     );
 
     CookieUtils.setAuthCookies(res, accessToken, refreshToken);
+
+    if (inviteToken) {
+      await InvitationService.handleInvitationForAuth(inviteToken, user.id);
+    }
 
     const userResponse = {
       id: user.id,
@@ -196,7 +208,11 @@ export const handleGoogleCallback = async (
     CookieUtils.setAuthCookies(res, accessToken, refreshToken);
 
     if (inviteToken) {
-      return await InvitationService.handleInvitation(inviteToken, user, res);
+      return await InvitationService.handleInvitationForGoogle(
+        inviteToken,
+        user,
+        res
+      );
     }
 
     const userInfo = AuthService.createUserResponse(user);

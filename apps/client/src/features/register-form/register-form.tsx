@@ -13,12 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { useRegister } from "./use-register";
-
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const { register: registerUser, isLoading } = useRegister();
+  const location = useLocation();
+  const { register, isLoading } = useRegister();
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -29,12 +30,14 @@ export default function RegisterForm() {
     },
     mode: "onSubmit",
   });
+  const inviteToken = location.state?.inviteToken;
 
   const onSubmit = (values: RegisterFormValues) => {
-    registerUser({
+    register({
       name: values.name,
       email: values.email,
       password: values.password,
+      inviteToken,
     });
   };
 

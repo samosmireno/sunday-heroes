@@ -135,7 +135,7 @@ export class InvitationService {
     await InvitationRepo.delete(invitationId);
   }
 
-  static async handleInvitation(
+  static async handleInvitationForGoogle(
     inviteToken: string,
     user: User,
     res: Response
@@ -158,6 +158,24 @@ export class InvitationService {
       return res.redirect(
         `${config.google.redirectClientUrl}?user=${encodedUser}&invitation=accepted&dashboard=${invitation.dashboardPlayer.dashboard.id}`
       );
+    } catch (error) {
+      throw new InvitationError("Failed to handle invitation");
+    }
+  }
+
+  static async handleInvitationForAuth(
+    inviteToken: string,
+    userId: string
+  ): Promise<boolean> {
+    try {
+      const invitation = await this.validateInvitation(inviteToken);
+
+      if (!invitation) {
+        throw new InvitationError("Invalid or expired invitation token");
+      }
+
+      await this.acceptInvitation(inviteToken, userId);
+      return true;
     } catch (error) {
       throw new InvitationError("Failed to handle invitation");
     }

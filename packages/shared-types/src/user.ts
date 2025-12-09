@@ -11,6 +11,7 @@ export type RegisterRequest = {
   email: string;
   name: string;
   password: string;
+  inviteToken?: string;
 };
 
 export type RegisterResponse = {
@@ -23,6 +24,7 @@ export type RegisterResponse = {
 export type LoginRequest = {
   email: string;
   password: string;
+  inviteToken?: string;
 };
 
 export type LoginResponse = {

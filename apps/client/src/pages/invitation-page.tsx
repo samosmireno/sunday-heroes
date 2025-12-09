@@ -7,7 +7,6 @@ import Background from "@/components/ui/background";
 import { useAuth } from "@/context/auth-context";
 import { useInvitation } from "@/features/invitation/hooks/use-invitation";
 import { useAcceptInvitation } from "@/features/invitation/hooks/use-accept-invitation";
-import { config } from "@/config/config";
 import InvitationDetails from "@/features/invitation/invitation-details";
 import InvitationActions from "@/features/invitation/invitation-actions";
 import { UserResponse } from "@repo/shared-types";
@@ -22,13 +21,6 @@ export default function InvitationPage() {
   const handleAccept = () => {
     if (token) {
       acceptMutation.mutate(token);
-    }
-  };
-
-  const handleGoogleAuth = () => {
-    if (token) {
-      const googleAuthUrl = `${config.google.authEndpoint}?client_id=${config.google.clientId}&redirect_uri=${config.redirect_uri}&response_type=code&scope=email profile&state=${token}`;
-      window.location.href = googleAuthUrl;
     }
   };
 
@@ -57,7 +49,7 @@ export default function InvitationPage() {
             user={user}
             isAccepting={acceptMutation.isPending}
             onAccept={handleAccept}
-            onGoogleAuth={handleGoogleAuth}
+            token={token}
           />
         </CardContent>
       </Card>

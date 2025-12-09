@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/config/axios-config";
 import { config } from "@/config/config";
 import { toast } from "sonner";
+import { AppError } from "@/hooks/use-error-handler/types";
 
 export function useResetCompetition(competitionId: string) {
   const queryClient = useQueryClient();
@@ -23,7 +24,7 @@ export function useResetCompetition(competitionId: string) {
       toast.success("Competition has been reset successfully");
       navigate("/competitions");
     },
-    onError: (error: any) => {
+    onError: (error: AppError) => {
       const message =
         error.response?.data?.message || "Failed to reset competition";
       toast.error(message);
@@ -45,7 +46,7 @@ export function useDeleteCompetition(competitionId: string) {
       toast.success("Competition has been deleted successfully");
       navigate("/competitions");
     },
-    onError: (error: any) => {
+    onError: (error: AppError) => {
       const message =
         error.response?.data?.message || "Failed to delete competition";
       toast.error(message);

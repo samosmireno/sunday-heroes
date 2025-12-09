@@ -27,7 +27,7 @@ export default function EditMatchPage() {
     isLoading: isLoadingMatch,
     isSubmitting,
     handleSubmit,
-  } = useEditMatch(competition?.type!, competitionId!, matchId!);
+  } = useEditMatch(competition?.type, competitionId!, matchId!);
 
   if (isLoadingCompetition || isLoadingMatch) {
     return (

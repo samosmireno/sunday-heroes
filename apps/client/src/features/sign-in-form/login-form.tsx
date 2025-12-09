@@ -14,11 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useLogin } from "./use-login";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading } = useLogin();
+  const location = useLocation();
   const form = useForm<loginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -27,11 +28,13 @@ export default function LoginForm() {
     },
     mode: "onSubmit",
   });
+  const inviteToken = location.state?.inviteToken;
 
   const onSubmit = (values: loginFormValues) => {
     login({
       email: values.email,
       password: values.password,
+      inviteToken,
     });
   };
 
