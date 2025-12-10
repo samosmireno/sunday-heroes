@@ -1,6 +1,12 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { UserRepo } from "../repositories/user/user-repo";
+import {
+  BadRequestError,
+  InvalidTokenError,
+  NotFoundError,
+  TokenExpiredError,
+} from "../utils/errors";
 
 export class PasswordResetService {
   static readonly RESET_TOKEN_EXPIRY_MS = 1 * 60 * 60 * 1000; // 1 hour
@@ -14,11 +20,13 @@ export class PasswordResetService {
     const user = await UserRepo.findByEmail(normalizedEmail);
 
     if (!user) {
-      throw new Error("If an account exists, you will receive a reset email");
+      throw new NotFoundError(
+        "If an account exists, you will receive a reset email"
+      );
     }
 
     if (!user.password) {
-      throw new Error(
+      throw new BadRequestError(
         "This account uses Google login. Please sign in with Google."
       );
     }
@@ -42,11 +50,11 @@ export class PasswordResetService {
     const user = await UserRepo.findByResetToken(token);
 
     if (!user || !user.resetTokenExpiresAt) {
-      throw new Error("Invalid or expired reset token");
+      throw new InvalidTokenError("Invalid or expired reset token");
     }
 
     if (user.resetTokenExpiresAt < new Date()) {
-      throw new Error("Reset token has expired");
+      throw new TokenExpiredError("Reset token has expired");
     }
 
     return { userId: user.id, email: user.email };

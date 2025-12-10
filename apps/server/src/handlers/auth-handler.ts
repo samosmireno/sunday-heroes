@@ -13,6 +13,13 @@ import {
 } from "@repo/shared-types";
 import { PasswordResetService } from "../services/password-reset-service";
 import { EmailService } from "../services/email-service";
+import {
+  AuthenticationError,
+  BadRequestError,
+  NotFoundError,
+  ValidationError,
+} from "../utils/errors";
+import { sendSuccess } from "../utils/response-utils";
 
 export const handleRegister = async (
   req: Request,
@@ -23,9 +30,7 @@ export const handleRegister = async (
     const { email, password, name, inviteToken } = req.body as RegisterRequest;
 
     if (!email || !password || !name) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
+      throw new BadRequestError("Email and password are required");
     }
 
     const user = await AuthService.registerUser({
@@ -52,13 +57,8 @@ export const handleRegister = async (
       role: user.role as UserResponse["role"],
     };
 
-    return res.status(201).json(userResponse);
+    sendSuccess(res, userResponse, 201);
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(400).json({
-        message: error.message,
-      });
-    }
     next(error);
   }
 };
@@ -72,9 +72,7 @@ export const handleLogin = async (
     const { email, password, inviteToken } = req.body as LoginRequest;
 
     if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-      });
+      throw new BadRequestError("Email and password are required");
     }
 
     const user = await AuthService.loginUser(email, password);
@@ -97,13 +95,8 @@ export const handleLogin = async (
       role: user.role as UserResponse["role"],
     };
 
-    return res.status(200).json(userResponse);
+    sendSuccess(res, userResponse);
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(401).json({
-        message: error.message,
-      });
-    }
     next(error);
   }
 };
@@ -117,10 +110,7 @@ export const handleRefreshToken = async (
     const refreshToken = req.cookies["refresh-token"];
 
     if (!refreshToken) {
-      return res.status(401).json({
-        loggedIn: false,
-        message: "Empty refresh token",
-      });
+      throw new AuthenticationError("Empty refresh token");
     }
 
     CookieUtils.clearAuthCookies(res);
@@ -130,18 +120,12 @@ export const handleRefreshToken = async (
     await RefreshTokenService.deleteToken(refreshToken);
 
     if (!userId) {
-      return res.status(401).json({
-        loggedIn: false,
-        message: "Invalid user ID",
-      });
+      throw new AuthenticationError("Invalid user ID");
     }
 
     const user = await UserService.getUserById(userId);
     if (!user) {
-      return res.status(404).json({
-        loggedIn: false,
-        message: "User not found",
-      });
+      throw new NotFoundError("User");
     }
 
     const { accessToken, refreshToken: newRefreshToken } =
@@ -156,14 +140,8 @@ export const handleRefreshToken = async (
       role: user.role as UserResponse["role"],
     };
 
-    return res.status(200).json(authResponse);
+    sendSuccess(res, authResponse);
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(403).json({
-        loggedIn: false,
-        message: error.message,
-      });
-    }
     next(error);
   }
 };
@@ -179,7 +157,7 @@ export const handleLogout = async (
 
     await AuthService.logout(refreshToken);
 
-    return res.status(200).json({
+    sendSuccess(res, {
       loggedIn: false,
       message: "Logged out successfully",
     });
@@ -221,9 +199,6 @@ export const handleGoogleCallback = async (
     );
     res.redirect(`${config.google.redirectClientUrl}?user=${encodedUser}`);
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Google callback error:", error.message);
-    }
     next(error);
   }
 };
@@ -238,7 +213,7 @@ export const getCurrentUser = async (
     const user = await UserService.getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      throw new NotFoundError("User");
     }
 
     const userResponse = {
@@ -247,7 +222,8 @@ export const getCurrentUser = async (
       name: user.givenName,
       role: user.role as UserResponse["role"],
     };
-    res.status(200).json(userResponse);
+
+    sendSuccess(res, userResponse);
   } catch (error) {
     console.error("Error fetching user:", error);
     next(error);
@@ -263,26 +239,18 @@ export const handleForgotPassword = async (
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({
-        message: "Email is required",
-      });
+      throw new BadRequestError("Email is required");
     }
 
     const resetToken =
       await PasswordResetService.createPasswordResetToken(email);
     await EmailService.sendPasswordResetEmail(email, resetToken);
 
-    return res.status(200).json({
+    sendSuccess(res, {
       message:
         "If an account exists with this email, you will receive password reset instructions",
     });
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(200).json({
-        message:
-          "If an account exists with this email, you will receive password reset instructions",
-      });
-    }
     next(error);
   }
 };
@@ -296,28 +264,25 @@ export const handleResetPassword = async (
     const { token, password } = req.body;
 
     if (!token || !password) {
-      return res.status(400).json({
-        message: "Token and password are required",
-      });
+      throw new BadRequestError("Token and password are required");
     }
 
     if (password.length < 8) {
-      return res.status(400).json({
-        message: "Password must be at least 8 characters long",
-      });
+      throw new ValidationError([
+        {
+          field: "password",
+          message: "Password must be at least 8 characters long",
+          code: "PASSWORD_TOO_SHORT",
+        },
+      ]);
     }
 
     await PasswordResetService.resetPassword(token, password);
 
-    return res.status(200).json({
+    sendSuccess(res, {
       message: "Password has been reset successfully",
     });
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(400).json({
-        message: error.message,
-      });
-    }
     next(error);
   }
 };

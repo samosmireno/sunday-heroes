@@ -9,7 +9,7 @@ import { AuthorizationError, BadRequestError } from "../utils/errors";
 const getRequiredQuery = (req: Request, param: string): string => {
   const value = req.query[param]?.toString();
   if (!value) {
-    throw new Error(`${param} query parameter is required`);
+    throw new BadRequestError(`${param} query parameter is required`);
   }
   return value;
 };

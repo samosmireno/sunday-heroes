@@ -2,6 +2,7 @@ import { Team, Prisma } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 import { TEAM_IN_COMPETITION_INCLUDE, TeamInCompetition } from "./types";
+import { NotFoundError } from "../../utils/errors";
 
 export class TeamRepo {
   static async findById(
@@ -183,7 +184,7 @@ export class TeamRepo {
     try {
       const team = await this.findByName(teamName, competitionId);
       if (!team) {
-        throw new Error(`Team with name ${teamName} not found`);
+        throw new NotFoundError(`Team with name ${teamName} not found`);
       }
       return team.id;
     } catch (error) {

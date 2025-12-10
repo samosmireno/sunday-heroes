@@ -1,6 +1,7 @@
 import prisma from "./prisma-client";
 import { Prisma, TeamCompetition } from "@prisma/client";
 import { PrismaErrorHandler } from "../utils/prisma-error-handler";
+import { NotFoundError } from "../utils/errors";
 
 export type TeamCompetitionWithDetails = Prisma.TeamCompetitionGetPayload<{
   include: {
@@ -79,7 +80,7 @@ export class TeamCompetitionRepo {
         tx
       );
       if (!current) {
-        throw new Error("Team competition record not found");
+        throw new NotFoundError("Team competition record not found");
       }
 
       return await prismaClient.teamCompetition.update({

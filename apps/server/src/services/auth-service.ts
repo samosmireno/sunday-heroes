@@ -7,6 +7,11 @@ import { Role, User } from "@prisma/client";
 import { RegisterRequest, UserResponse } from "@repo/shared-types";
 import { RefreshTokenService } from "./refresh-token-service";
 import { PasswordUtils } from "../utils/password-utils";
+import {
+  AuthenticationError,
+  ConflictError,
+  ValidationError,
+} from "../utils/errors";
 
 export class AuthService {
   static readonly ACCESS_TOKEN_EXPIRY = "30m";
@@ -75,12 +80,18 @@ export class AuthService {
 
     const existingUser = await UserRepo.findByEmail(normalizedEmail);
     if (existingUser) {
-      throw new Error("User with this email already exists");
+      throw new ConflictError("User with this email already exists");
     }
 
     const passwordValidation = PasswordUtils.validate(data.password);
     if (!passwordValidation.valid) {
-      throw new Error(passwordValidation.message);
+      throw new ValidationError([
+        {
+          field: "password",
+          message: passwordValidation.message || "Invalid password",
+          code: "INVALID_PASSWORD",
+        },
+      ]);
     }
 
     const hashedPassword = await PasswordUtils.hash(data.password);
@@ -110,11 +121,11 @@ export class AuthService {
   static async loginUser(email: string, password: string): Promise<User> {
     const user = await UserRepo.findByEmail(email.trim().toLowerCase());
     if (!user) {
-      throw new Error("Invalid email or password");
+      throw new AuthenticationError("Invalid email or password");
     }
 
     if (!user.password) {
-      throw new Error("Please login with Google");
+      throw new AuthenticationError("Please login with Google");
     }
 
     const isPasswordValid = await PasswordUtils.compare(
@@ -122,7 +133,7 @@ export class AuthService {
       user.password
     );
     if (!isPasswordValid) {
-      throw new Error("Invalid email or password");
+      throw new AuthenticationError("Invalid email or password");
     }
 
     await UserRepo.update(user.id, { lastLogin: new Date() });
