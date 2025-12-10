@@ -41,7 +41,7 @@ export default function StatsTable({
                 Name
               </th>
               <th
-                className="border-b-2 border-accent p-3 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm"
+                className="border-b-2 border-accent p-2 text-center text-xs uppercase tracking-wider text-accent hover:cursor-default hover:text-secondary md:text-sm"
                 onClick={() => sortPlayers("matches")}
               >
                 <span className="inline md:hidden" title="Matches">
@@ -103,28 +103,32 @@ export default function StatsTable({
           <tbody>
             {sortedPlayers &&
               sortedPlayers.map((player) => (
-                <tr className="group border-b border-white/10" key={player.id}>
-                  <td className="sticky left-0 z-10 bg-panel-bg p-2 text-left text-sm font-medium group-hover:bg-white/5 md:text-base md:font-semibold">
-                    {player.nickname}
+                <tr
+                  className="group relative border-b border-white/10 hover:bg-white/5"
+                  key={player.id}
+                >
+                  <td className="sticky left-0 z-10 bg-panel-bg px-2 py-1 text-left text-sm font-medium group-hover:bg-panel-bg md:text-base md:font-semibold">
+                    <span className="relative z-10">{player.nickname}</span>
+                    <div className="absolute inset-0 -z-10 bg-white/5 opacity-0 group-hover:opacity-100"></div>
                   </td>
-                  <td className="p-2 text-center text-sm font-medium group-hover:bg-white/5 md:text-base md:font-semibold">
+                  <td className="px-2 text-center text-sm font-medium md:text-base md:font-semibold">
                     {player.matches}
                   </td>
-                  <td className="p-2 text-center text-sm font-medium group-hover:bg-white/5 md:text-base md:font-semibold">
+                  <td className="px-2 text-center text-sm font-medium md:text-base md:font-semibold">
                     {player.goals}
                   </td>
-                  <td className="p-2 text-center text-sm font-medium group-hover:bg-white/5 md:text-base md:font-semibold">
+                  <td className="px-2 text-center text-sm font-medium md:text-base md:font-semibold">
                     {player.assists}
                   </td>
-                  <td className="p-2 text-center text-sm font-medium group-hover:bg-white/5 md:text-base md:font-semibold">
+                  <td className="px-2 text-center text-sm font-medium md:text-base md:font-semibold">
                     {player.winRate}
                   </td>
                   {votingEnabled && (
                     <>
-                      <td className="p-2 text-center text-sm font-medium group-hover:bg-white/5 md:text-base md:font-semibold">
+                      <td className="px-2 text-center text-sm font-medium md:text-base md:font-semibold">
                         {player.numManOfTheMatch}
                       </td>
-                      <td className="p-2 text-center text-sm font-medium group-hover:bg-white/5 md:text-base md:font-semibold">
+                      <td className="px-2 text-center text-sm font-medium md:text-base md:font-semibold">
                         {player.rating}
                       </td>
                     </>
