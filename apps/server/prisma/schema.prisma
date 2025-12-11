@@ -231,6 +231,7 @@ model MatchPlayer {
   assists        Int      @default(0)
   penaltyScored Boolean? 
   position       Int
+  rating        Float?
   createdAt     DateTime @default(now())
 
   match         Match        @relation(fields: [matchId], references: [id], onDelete: Cascade)
