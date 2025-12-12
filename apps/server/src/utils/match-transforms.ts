@@ -38,7 +38,9 @@ export function transformMatchServiceToResponse(
     goals: player.goals,
     assists: player.assists,
     position: player.position,
-    rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+    rating:
+      player.rating ??
+      calculatePlayerScore(player.receivedVotes, match.playerVotes),
     manOfTheMatch: motmIds.includes(player.id),
   }));
 
@@ -77,7 +79,9 @@ export function transformMatchesToMatchesResponse(
         goals: player.goals,
         assists: player.assists,
         isHome: player.isHome,
-        rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+        rating:
+          player.rating ??
+          calculatePlayerScore(player.receivedVotes, match.playerVotes),
         manOfTheMatch: motmIds.includes(player.id),
       }));
 
@@ -90,7 +94,9 @@ export function transformMatchesToMatchesResponse(
         goals: player.goals,
         assists: player.assists,
         isHome: player.isHome,
-        rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+        rating:
+          player.rating ??
+          calculatePlayerScore(player.receivedVotes, match.playerVotes),
         manOfTheMatch: motmIds.includes(player.id),
       }));
 

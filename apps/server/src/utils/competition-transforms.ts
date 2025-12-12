@@ -64,7 +64,9 @@ export function transformCompetitionToResponse(
           assists: player.assists,
           position: player.position,
           penaltyScored: player.penaltyScored ?? undefined,
-          rating: calculatePlayerScore(player.receivedVotes, match.playerVotes),
+          rating:
+            player.rating ??
+            calculatePlayerScore(player.receivedVotes, match.playerVotes),
           manOfTheMatch: motmIds.includes(player.id),
         };
       }),

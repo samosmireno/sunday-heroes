@@ -33,10 +33,11 @@ export function transformDashboardPlayersToResponse(
         ? player.matchPlayers.reduce(
             (sum: number, matchPlayer) =>
               sum +
-              calculatePlayerScore(
-                matchPlayer.receivedVotes,
-                matchPlayer.match.playerVotes
-              ),
+              (matchPlayer.rating ??
+                calculatePlayerScore(
+                  matchPlayer.receivedVotes,
+                  matchPlayer.match.playerVotes
+                )),
             0
           ) / player.matchPlayers.length
         : null,
@@ -66,10 +67,11 @@ export function transformDashboardPlayersToResponse(
                   .reduce(
                     (sum, mp) =>
                       sum +
-                      calculatePlayerScore(
-                        mp.receivedVotes,
-                        mp.match.playerVotes
-                      ),
+                      (mp.rating ??
+                        calculatePlayerScore(
+                          mp.receivedVotes,
+                          mp.match.playerVotes
+                        )),
                     0
                   ) /
                 player.matchPlayers.filter(

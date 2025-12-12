@@ -66,6 +66,7 @@ export const DASHBOARD_PLAYER_DETAILED_INCLUDE = {
       receivedVotes: true,
       goals: true,
       assists: true,
+      rating: true,
     },
   },
 } satisfies Prisma.DashboardPlayerInclude;
