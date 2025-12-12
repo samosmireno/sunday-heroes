@@ -12,11 +12,7 @@ import {
   CompetitionWithTeamCompetitions,
 } from "../repositories/competition/types";
 import { Competition } from "@prisma/client";
-import {
-  calculatePlayerScore,
-  calculatePlayerStats,
-  findManOfTheMatchIds,
-} from "./utils";
+import { calculatePlayerScore, calculatePlayerStats } from "./utils";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 
 export function getUserRole(
@@ -43,7 +39,6 @@ export function transformCompetitionToResponse(
   userId: string
 ): CompetitionResponse {
   const matches: MatchResponse[] = competition.matches.map((match) => {
-    const motmIds = findManOfTheMatchIds(match);
     return {
       id: match.id,
       date: match.date?.toLocaleDateString(),
@@ -67,7 +62,7 @@ export function transformCompetitionToResponse(
           rating:
             player.rating ??
             calculatePlayerScore(player.receivedVotes, match.playerVotes),
-          manOfTheMatch: motmIds.includes(player.id),
+          manOfTheMatch: player.isMotm,
         };
       }),
       videoUrl: match.videoUrl ?? undefined,

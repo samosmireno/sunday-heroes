@@ -18,6 +18,7 @@ export function transformAddMatchRequestToMatchPlayer(
     position: player.position,
     penaltyScored: player.penaltyScored ?? null,
     rating: null,
+    isMotm: false,
   };
 
   return matchPlayerForService;

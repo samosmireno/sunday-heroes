@@ -7,7 +7,6 @@ import {
 import { PlayerVote } from "@prisma/client";
 import { config } from "../config/config";
 import { VotingStatus } from "@prisma/client";
-import { CompetitionWithDetails } from "../repositories/competition/types";
 
 export function calculatePlayerScore(
   received_votes: PlayerVote[],
@@ -26,32 +25,6 @@ export function calculatePlayerScore(
   }
 
   return 0;
-}
-
-export function findManOfTheMatchIds(
-  match: CompetitionWithDetails["matches"][number]
-): string[] {
-  if (match.matchPlayers.length === 0) return [];
-
-  let highestScore = 0;
-  const topIds: string[] = [];
-
-  match.matchPlayers.forEach((player) => {
-    const playerScore = calculatePlayerScore(
-      player.receivedVotes,
-      match.playerVotes
-    );
-
-    if (playerScore > highestScore) {
-      highestScore = playerScore;
-      topIds.length = 0;
-      if (playerScore > 0) topIds.push(player.id);
-    } else if (playerScore === highestScore && playerScore > 0) {
-      topIds.push(player.id);
-    }
-  });
-
-  return topIds;
 }
 
 function determineMatchWinner(match: MatchResponse): "home" | "away" | "draw" {

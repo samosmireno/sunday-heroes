@@ -12,6 +12,7 @@ import {
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { Prisma } from "@prisma/client";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
+import { calculatePlayerScore } from "../utils/utils";
 
 export class VoteService {
   static async submitVotes(
@@ -232,13 +233,68 @@ export class VoteService {
     }
   }
 
+  private static async calculateAndStoreMatchRatings(
+    matchId: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<void> {
+    const transaction = tx || prisma;
+
+    const match = await MatchRepo.findByIdWithDetails(matchId);
+    if (!match) return;
+
+    const updates = match.matchPlayers.map(async (mp) => {
+      const rating = calculatePlayerScore(mp.receivedVotes, match.playerVotes);
+      return await transaction.matchPlayer.update({
+        where: { id: mp.id },
+        data: { rating },
+      });
+    });
+
+    await Promise.all(updates);
+    await this.markManOfTheMatch(matchId, transaction);
+  }
+
+  private static async markManOfTheMatch(
+    matchId: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<void> {
+    const transaction = tx || prisma;
+
+    const maxRatingResult = await transaction.matchPlayer.aggregate({
+      where: {
+        matchId,
+        rating: {
+          not: null,
+        },
+      },
+      _max: {
+        rating: true,
+      },
+    });
+
+    const maxRating = maxRatingResult._max.rating;
+
+    if (maxRating === null) return;
+
+    await transaction.matchPlayer.updateMany({
+      where: {
+        matchId,
+        rating: maxRating,
+      },
+      data: {
+        isMotm: true,
+      },
+    });
+  }
+
   private static async checkAndCloseVoting(
     matchId: string,
     tx?: Prisma.TransactionClient
   ): Promise<void> {
     const pendingVoters = await this.getPendingVoters(matchId);
 
-    if (pendingVoters.length === 0) {
+    if (pendingVoters.length - 1 === 0) {
+      await this.calculateAndStoreMatchRatings(matchId, tx);
       await MatchRepo.updateVotingStatus(matchId, "CLOSED", new Date(), tx);
     }
   }

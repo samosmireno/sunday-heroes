@@ -5,11 +5,7 @@ import {
 } from "@repo/shared-types";
 import { CompetitionWithDetails } from "../repositories/competition/types";
 import { MatchWithDetails } from "../repositories/match/types";
-import {
-  calculateLeaguePlayerStats,
-  calculatePlayerScore,
-  findManOfTheMatchIds,
-} from "./utils";
+import { calculateLeaguePlayerStats, calculatePlayerScore } from "./utils";
 import { TeamCompetitionWithDetails } from "../repositories/team-competition-repo";
 
 interface LeagueMatch {
@@ -62,7 +58,6 @@ export function transformCompetitionToPlayerStatsResponse(
   competition: CompetitionWithDetails
 ): LeaguePlayerTotals[] {
   const matches: MatchResponse[] = competition.matches.map((match) => {
-    const motmIds = findManOfTheMatchIds(match);
     return {
       id: match.id,
       date: match.date?.toLocaleDateString(),
@@ -86,7 +81,7 @@ export function transformCompetitionToPlayerStatsResponse(
           rating:
             player.rating ??
             calculatePlayerScore(player.receivedVotes, match.playerVotes),
-          manOfTheMatch: motmIds.includes(player.id),
+          manOfTheMatch: player.isMotm,
         };
       }),
     };
