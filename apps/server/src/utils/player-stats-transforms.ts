@@ -1,5 +1,9 @@
 import { MatchPlayerWithMatchDetails } from "../repositories/match-player/types";
-import { TopMatchResponse, CompetitionType } from "@repo/shared-types";
+import {
+  TopMatchResponse,
+  CompetitionType,
+  PerformanceDataPoint,
+} from "@repo/shared-types";
 
 export const transformTopMatchPlayerToMatch = (
   matchPlayer: MatchPlayerWithMatchDetails | null
@@ -41,4 +45,37 @@ export const transformTopMatchPlayerToMatch = (
     assists: matchPlayer.assists,
     rating: matchPlayer.rating || 0,
   };
+};
+
+export const transformMatchPlayerToPerformanceData = (
+  matchPlayers: MatchPlayerWithMatchDetails[]
+): PerformanceDataPoint[] => {
+  return matchPlayers.map((mp) => {
+    const playerScore = mp.isHome
+      ? mp.match.homeTeamScore
+      : mp.match.awayTeamScore;
+    const opponentScore = mp.isHome
+      ? mp.match.awayTeamScore
+      : mp.match.homeTeamScore;
+
+    let result: "W" | "D" | "L";
+    if (playerScore > opponentScore) result = "W";
+    else if (playerScore === opponentScore) result = "D";
+    else result = "L";
+
+    const opponentTeam = mp.match.matchTeams.find(
+      (mt) => mt.isHome !== mp.isHome
+    );
+
+    return {
+      matchId: mp.match.id,
+      date: mp.match.date?.toISOString() || "",
+      opponent: opponentTeam?.team.name || "Unknown",
+      competitionName: mp.match.competition.name,
+      result,
+      goals: mp.goals,
+      assists: mp.assists,
+      rating: mp.rating || 0,
+    };
+  });
 };

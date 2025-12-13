@@ -90,22 +90,13 @@ export interface PerformanceDataPoint {
 
 export interface PerformanceChartResponse {
   matches: PerformanceDataPoint[];
-  summary: {
-    totalGoals: number;
-    totalAssists: number;
-    avgRating: number;
-    goalsPerMatch: number;
-    assistsPerMatch: number;
-    matchCount: number;
-  };
-  range: number | "all";
-  competitionId?: string;
+  competitionId: string;
+  range?: number;
 }
 
 export interface TeammateStats {
   dashboardPlayerId: string;
   nickname: string;
-  userId: string | null;
   isRegistered: boolean;
   matchesTogether: number;
   record: {
@@ -116,11 +107,7 @@ export interface TeammateStats {
   winRate: number;
 }
 
-export interface TopTeammatesResponse {
-  teammates: TeammateStats[];
-}
-
-export interface CompetitionStats {
+export interface PlayerCompetitionStats {
   competitionId: string;
   name: string;
   type: CompetitionType;
@@ -135,9 +122,4 @@ export interface CompetitionStats {
   avgRating: number;
   goalsPerMatch: number;
   assistsPerMatch: number;
-}
-
-export interface CompetitionBreakdownResponse {
-  competitions: CompetitionStats[];
-  sortBy: "goals" | "assists" | "rating" | "matches";
 }

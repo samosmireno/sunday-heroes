@@ -1,7 +1,10 @@
 import { Prisma } from "@prisma/client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 import prisma from "../prisma-client";
-import { MATCH_PLAYER_WITH_MATCH_DETAILS_SELECT } from "../match-player/types";
+import {
+  MATCH_PLAYER_WITH_MATCH_DETAILS_SELECT,
+  MatchPlayerWithMatchDetails,
+} from "../match-player/types";
 import { AggregateCompetition } from "@repo/shared-types";
 
 export class DashboardPlayerStatsRepo {
@@ -285,6 +288,229 @@ export class DashboardPlayerStatsRepo {
       throw PrismaErrorHandler.handle(
         error,
         "DashboardPlayerStatsRepo.getTopCompetitions"
+      );
+    }
+  }
+
+  static async getPerformanceData(
+    playerIds: string[],
+    competitionId: string,
+    range?: number,
+    tx?: Prisma.TransactionClient
+  ): Promise<MatchPlayerWithMatchDetails[]> {
+    try {
+      const prismaClient = tx || prisma;
+
+      const matchPlayers = await prismaClient.matchPlayer.findMany({
+        where: {
+          dashboardPlayerId: { in: playerIds },
+          match: {
+            isCompleted: true,
+            competitionId,
+          },
+        },
+        select: MATCH_PLAYER_WITH_MATCH_DETAILS_SELECT,
+        orderBy: {
+          match: {
+            date: "desc",
+          },
+        },
+        ...(range && { take: range }),
+      });
+
+      return matchPlayers;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerStatsRepo.getPerformanceData"
+      );
+    }
+  }
+
+  static async getTopTeammates(
+    playerIds: string[],
+    limit: number = 5,
+    tx?: Prisma.TransactionClient
+  ) {
+    try {
+      const prismaClient = tx || prisma;
+
+      const result = await prismaClient.$queryRaw<
+        Array<{
+          dashboardPlayerId: string;
+          nickname: string;
+          userId: string | null;
+          isRegistered: boolean;
+          matchesTogether: number;
+          wins: number;
+          draws: number;
+          losses: number;
+          winRate: number;
+        }>
+      >`
+      WITH player_matches AS (
+        SELECT 
+          mp."matchId",
+          mp."teamId",
+          mp."isHome",
+          m."homeTeamScore",
+          m."awayTeamScore"
+        FROM "MatchPlayer" mp
+        JOIN "Match" m ON mp."matchId" = m.id
+        WHERE mp."dashboardPlayerId" IN (${Prisma.join(playerIds)})
+          AND m."isCompleted" = true
+      ),
+      teammate_matches AS (
+        SELECT 
+          mp."dashboardPlayerId",
+          mp."matchId",
+          pm."teamId",
+          pm."isHome",
+          pm."homeTeamScore",
+          pm."awayTeamScore"
+        FROM "MatchPlayer" mp
+        JOIN player_matches pm ON mp."matchId" = pm."matchId" 
+          AND mp."teamId" = pm."teamId"
+        WHERE mp."dashboardPlayerId" NOT IN (${Prisma.join(playerIds)})
+      ),
+      teammate_stats AS (
+        SELECT 
+          tm."dashboardPlayerId",
+          COUNT(DISTINCT tm."matchId")::int as "matchesTogether",
+          SUM(CASE 
+            WHEN (tm."isHome" AND tm."homeTeamScore" > tm."awayTeamScore") OR 
+                 (NOT tm."isHome" AND tm."awayTeamScore" > tm."homeTeamScore")
+            THEN 1 ELSE 0 
+          END)::int as wins,
+          SUM(CASE 
+            WHEN tm."homeTeamScore" = tm."awayTeamScore"
+            THEN 1 ELSE 0 
+          END)::int as draws,
+          SUM(CASE 
+            WHEN (tm."isHome" AND tm."homeTeamScore" < tm."awayTeamScore") OR 
+                 (NOT tm."isHome" AND tm."awayTeamScore" < tm."homeTeamScore")
+            THEN 1 ELSE 0 
+          END)::int as losses
+        FROM teammate_matches tm
+        GROUP BY tm."dashboardPlayerId"
+      )
+      SELECT 
+        dp.id as "dashboardPlayerId",
+        dp.nickname,
+        (dp."userId" IS NOT NULL) as "isRegistered",
+        ts."matchesTogether",
+        ts.wins,
+        ts.draws,
+        ts.losses,
+        ROUND((ts.wins::numeric / NULLIF(ts."matchesTogether", 0) * 100))::int as "winRate"
+      FROM teammate_stats ts
+      JOIN "DashboardPlayer" dp ON ts."dashboardPlayerId" = dp.id
+      ORDER BY ts."matchesTogether" DESC, ts.wins DESC
+      LIMIT ${limit}
+    `;
+
+      return result.map((row) => ({
+        dashboardPlayerId: row.dashboardPlayerId,
+        nickname: row.nickname,
+        isRegistered: row.isRegistered,
+        matchesTogether: row.matchesTogether,
+        record: {
+          wins: row.wins,
+          draws: row.draws,
+          losses: row.losses,
+        },
+        winRate: row.winRate,
+      }));
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerStatsRepo.getTopTeammates"
+      );
+    }
+  }
+
+  static async getPlayerCompetitionStats(
+    playerIds: string[],
+    tx?: Prisma.TransactionClient
+  ) {
+    try {
+      const prismaClient = tx || prisma;
+
+      const result = await prismaClient.$queryRaw<
+        Array<{
+          competitionId: string;
+          name: string;
+          type: "LEAGUE" | "DUEL" | "KNOCKOUT";
+          matches: number;
+          wins: number;
+          draws: number;
+          losses: number;
+          goals: number;
+          assists: number;
+          avgRating: number | null;
+        }>
+      >`
+        SELECT 
+          m."competitionId" as "competitionId",
+          c."name" as "name",
+          c."type" as "type",
+          COUNT(DISTINCT mp."matchId")::int AS "matches",
+          SUM(
+            CASE 
+              WHEN (mp."isHome" AND m."homeTeamScore" > m."awayTeamScore") OR 
+                   (NOT mp."isHome" AND m."awayTeamScore" > m."homeTeamScore")
+              THEN 1 ELSE 0
+            END
+          )::int AS "wins",
+          SUM(
+            CASE 
+              WHEN m."homeTeamScore" = m."awayTeamScore"
+              THEN 1 ELSE 0
+            END
+          )::int AS "draws",
+          SUM(
+            CASE 
+              WHEN (mp."isHome" AND m."homeTeamScore" < m."awayTeamScore") OR 
+                   (NOT mp."isHome" AND m."awayTeamScore" < m."homeTeamScore")
+              THEN 1 ELSE 0
+            END
+          )::int AS "losses",
+          COALESCE(SUM(mp.goals), 0)::int AS "goals",
+          COALESCE(SUM(mp.assists), 0)::int AS "assists",
+          AVG(mp.rating) AS "avgRating"
+        FROM "MatchPlayer" mp
+        JOIN "Match" m ON mp."matchId" = m.id
+        JOIN "Competition" c ON m."competitionId" = c.id
+        WHERE mp."dashboardPlayerId" IN (${Prisma.join(playerIds)})
+          AND m."isCompleted" = true
+        GROUP BY m."competitionId", c."name", c."type"
+        ORDER BY c."name" ASC
+      `;
+
+      return result.map((row) => ({
+        competitionId: row.competitionId,
+        name: row.name,
+        type: row.type as any,
+        matches: row.matches,
+        record: {
+          wins: row.wins,
+          draws: row.draws,
+          losses: row.losses,
+        },
+        goals: row.goals,
+        assists: row.assists,
+        avgRating: row.avgRating ?? 0,
+        goalsPerMatch: row.matches
+          ? Number((row.goals / row.matches).toFixed(2))
+          : 0,
+        assistsPerMatch: row.matches
+          ? Number((row.assists / row.matches).toFixed(2))
+          : 0,
+      }));
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerStatsRepo.getPlayerCompetitionStats"
       );
     }
   }

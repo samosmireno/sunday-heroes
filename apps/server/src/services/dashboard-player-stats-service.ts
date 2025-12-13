@@ -1,36 +1,29 @@
 import { NotFoundError } from "../utils/errors";
 import {
+  PerformanceChartResponse,
   PlayerStatsOverview,
+  TeammateStats,
   TopCompetitionsResponse,
   TopMatchesResponse,
 } from "@repo/shared-types";
 import { DashboardPlayerRepo } from "../repositories/dashboard-player/dashboard-player-repo";
 import { DashboardPlayerStatsRepo } from "../repositories/dashboard-player/dashboard-player-stats-repo";
-import { transformTopMatchPlayerToMatch } from "../utils/player-stats-transforms";
+import {
+  transformMatchPlayerToPerformanceData,
+  transformTopMatchPlayerToMatch,
+} from "../utils/player-stats-transforms";
 
 export class DashboardPlayerStatsService {
   static async getPlayerStats(playerId: string): Promise<PlayerStatsOverview> {
-    const player = await DashboardPlayerRepo.findByIdWithUserDetails(playerId);
-    if (!player) {
-      throw new NotFoundError("Player");
-    }
+    const { player, playerIds } = await this.getPlayerAndRelatedIds(
+      playerId,
+      true
+    );
 
-    let careerStats, recentForm;
-    if (player.userId) {
-      const playerIds = await DashboardPlayerRepo.findDashboardPlayerIdsByUser(
-        player.userId
-      );
-
-      [careerStats, recentForm] = await Promise.all([
-        DashboardPlayerStatsRepo.getPlayerCareerStats(playerIds || [playerId]),
-        DashboardPlayerStatsRepo.getRecentForm(playerIds || [playerId], 5),
-      ]);
-    } else {
-      [careerStats, recentForm] = await Promise.all([
-        DashboardPlayerStatsRepo.getPlayerCareerStats([playerId]),
-        DashboardPlayerStatsRepo.getRecentForm([playerId], 5),
-      ]);
-    }
+    const [careerStats, recentForm] = await Promise.all([
+      DashboardPlayerStatsRepo.getPlayerCareerStats(playerIds),
+      DashboardPlayerStatsRepo.getRecentForm(playerIds, 5),
+    ]);
 
     return {
       player: {
@@ -53,25 +46,11 @@ export class DashboardPlayerStatsService {
   }
 
   static async getTopMatches(playerId: string): Promise<TopMatchesResponse> {
-    const player = await DashboardPlayerRepo.findById(playerId);
-    if (!player) {
-      throw new NotFoundError("Player");
-    }
+    const { playerIds } = await this.getPlayerAndRelatedIds(playerId);
 
-    let topMatchPlayers;
-    if (player.userId) {
-      const playerIds = await DashboardPlayerRepo.findDashboardPlayerIdsByUser(
-        player.userId
-      );
+    const topMatchPlayers =
+      await DashboardPlayerStatsRepo.getTopMatches(playerIds);
 
-      topMatchPlayers = await DashboardPlayerStatsRepo.getTopMatches(
-        playerIds || [playerId]
-      );
-    } else {
-      topMatchPlayers = await DashboardPlayerStatsRepo.getTopMatches([
-        playerId,
-      ]);
-    }
     const topMatches: TopMatchesResponse = {
       topGoals: transformTopMatchPlayerToMatch(topMatchPlayers.topGoals),
       topAssists: transformTopMatchPlayerToMatch(topMatchPlayers.topAssists),
@@ -84,25 +63,10 @@ export class DashboardPlayerStatsService {
   static async getTopCompetitions(
     playerId: string
   ): Promise<TopCompetitionsResponse> {
-    const player = await DashboardPlayerRepo.findById(playerId);
-    if (!player) {
-      throw new NotFoundError("Player");
-    }
+    const { playerIds } = await this.getPlayerAndRelatedIds(playerId);
 
-    let competitionStats;
-    if (player.userId) {
-      const playerIds = await DashboardPlayerRepo.findDashboardPlayerIdsByUser(
-        player.userId
-      );
-
-      competitionStats = await DashboardPlayerStatsRepo.getCompetitionStats(
-        playerIds || [playerId]
-      );
-    } else {
-      competitionStats = await DashboardPlayerStatsRepo.getCompetitionStats([
-        playerId,
-      ]);
-    }
+    const competitionStats =
+      await DashboardPlayerStatsRepo.getCompetitionStats(playerIds);
 
     const topGoals = competitionStats.find(
       (stat) =>
@@ -126,5 +90,67 @@ export class DashboardPlayerStatsService {
       topAssists: topAssists ?? null,
       topRating: topRating ?? null,
     };
+  }
+
+  static async getPerformanceChart(
+    playerId: string,
+    competitionId: string,
+    range?: number
+  ): Promise<PerformanceChartResponse> {
+    const { playerIds } = await this.getPlayerAndRelatedIds(playerId);
+
+    const matchPlayers = await DashboardPlayerStatsRepo.getPerformanceData(
+      playerIds,
+      competitionId,
+      range
+    );
+
+    return {
+      matches: transformMatchPlayerToPerformanceData(matchPlayers),
+      range,
+      competitionId,
+    };
+  }
+
+  static async getStatsByCompetition(
+    playerId: string
+  ): Promise<import("@repo/shared-types").PlayerCompetitionStats[]> {
+    const { playerIds } = await this.getPlayerAndRelatedIds(playerId);
+
+    const stats =
+      await DashboardPlayerStatsRepo.getPlayerCompetitionStats(playerIds);
+    return stats;
+  }
+
+  static async getTopTeammates(playerId: string): Promise<TeammateStats[]> {
+    const { playerIds } = await this.getPlayerAndRelatedIds(playerId);
+
+    const topTeammates =
+      await DashboardPlayerStatsRepo.getTopTeammates(playerIds);
+
+    return topTeammates;
+  }
+
+  private static async getPlayerAndRelatedIds(
+    playerId: string,
+    includeUserDetails: boolean = false
+  ): Promise<{ player: any; playerIds: string[] }> {
+    const player = includeUserDetails
+      ? await DashboardPlayerRepo.findByIdWithUserDetails(playerId)
+      : await DashboardPlayerRepo.findById(playerId);
+
+    if (!player) {
+      throw new NotFoundError("Player");
+    }
+
+    let playerIds: string[] = [playerId];
+    if (player.userId) {
+      const relatedIds = await DashboardPlayerRepo.findDashboardPlayerIdsByUser(
+        player.userId
+      );
+      playerIds = relatedIds || [playerId];
+    }
+
+    return { player, playerIds };
   }
 }

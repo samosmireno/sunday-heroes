@@ -243,7 +243,6 @@ model MatchPlayer {
   @@unique([matchId, dashboardPlayerId])
   @@index([dashboardPlayerId])
   @@index([teamId])
-  @@index([isHome])
   @@index([dashboardPlayerId, matchId])
 }
 
