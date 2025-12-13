@@ -69,6 +69,27 @@ export class DashboardPlayerRepo {
     return dashboardIds;
   }
 
+  static async findDashboardPlayerIdsByUser(
+    userId: string,
+    tx?: Prisma.TransactionClient
+  ) {
+    const prismaClient = tx || prisma;
+
+    const dashboardPlayers = await prismaClient.dashboardPlayer.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        dashboardId: true,
+      },
+    });
+
+    if (dashboardPlayers.length === 0) return null;
+
+    const dashboardPlayerIds = dashboardPlayers.map((dp) => dp.id);
+
+    return dashboardPlayerIds;
+  }
+
   static async findByIdWithAdmin(
     id: string,
     tx?: Prisma.TransactionClient

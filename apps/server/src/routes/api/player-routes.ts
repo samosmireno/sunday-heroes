@@ -4,7 +4,11 @@ import {
   getAllDashboardPlayersWithDetails,
   getMyDashboardTeammates,
 } from "../../handlers/player";
-import { getPlayerStats } from "../../handlers/player-stats";
+import {
+  getPlayerStats,
+  getTopCompetitions,
+  getTopMatches,
+} from "../../handlers/player-stats";
 
 const router = Router();
 
@@ -13,5 +17,7 @@ router.get("/teammates", getMyDashboardTeammates);
 router.get("/basic", getAllDashboardPlayers);
 
 router.get("/:playerId/stats", getPlayerStats);
+router.get("/:playerId/stats/top-matches", getTopMatches);
+router.get("/:playerId/stats/top-competitions", getTopCompetitions);
 
 export default router;

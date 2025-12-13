@@ -1,6 +1,6 @@
 import { CompetitionType } from "./enums";
 
-interface PlayerStatsOverview {
+export interface PlayerStatsOverview {
   player: {
     id: string;
     nickname: string;
@@ -35,7 +35,7 @@ interface PlayerStatsOverview {
   }>;
 }
 
-interface TopMatchResponse {
+export interface TopMatchResponse {
   matchId: string;
   opponent: string;
   competition: {
@@ -55,29 +55,29 @@ interface TopMatchResponse {
   rating: number;
 }
 
-interface TopMatchesResponse {
+export interface TopMatchesResponse {
   topGoals: TopMatchResponse | null;
   topAssists: TopMatchResponse | null;
   topRating: TopMatchResponse | null;
 }
 
-interface TopCompetitionResponse {
+export interface AggregateCompetition {
   competitionId: string;
-  name: string;
-  type: CompetitionType;
-  goals: number;
-  assists: number;
+  competitionName: string;
+  competitionType: CompetitionType;
+  totalGoals: number;
+  totalAssists: number;
   avgRating: number;
   matchCount: number;
 }
 
-interface TopCompetitionsResponse {
-  topGoals: TopCompetitionResponse | null;
-  topAssists: TopCompetitionResponse | null;
-  topRating: TopCompetitionResponse | null;
+export interface TopCompetitionsResponse {
+  topGoals: AggregateCompetition | null;
+  topAssists: AggregateCompetition | null;
+  topRating: AggregateCompetition | null;
 }
 
-interface PerformanceDataPoint {
+export interface PerformanceDataPoint {
   matchId: string;
   date: string;
   opponent: string;
@@ -88,7 +88,7 @@ interface PerformanceDataPoint {
   rating: number;
 }
 
-interface PerformanceChartResponse {
+export interface PerformanceChartResponse {
   matches: PerformanceDataPoint[];
   summary: {
     totalGoals: number;
@@ -102,7 +102,7 @@ interface PerformanceChartResponse {
   competitionId?: string;
 }
 
-interface TeammateStats {
+export interface TeammateStats {
   dashboardPlayerId: string;
   nickname: string;
   userId: string | null;
@@ -116,11 +116,11 @@ interface TeammateStats {
   winRate: number;
 }
 
-interface TopTeammatesResponse {
+export interface TopTeammatesResponse {
   teammates: TeammateStats[];
 }
 
-interface CompetitionStats {
+export interface CompetitionStats {
   competitionId: string;
   name: string;
   type: CompetitionType;
@@ -137,7 +137,7 @@ interface CompetitionStats {
   assistsPerMatch: number;
 }
 
-interface CompetitionBreakdownResponse {
+export interface CompetitionBreakdownResponse {
   competitions: CompetitionStats[];
   sortBy: "goals" | "assists" | "rating" | "matches";
 }

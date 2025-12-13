@@ -1,6 +1,7 @@
 export * from "./schemas";
 export * from "./enums";
 export * from "./player";
+export * from "./player-stats";
 export * from "./match";
 export * from "./competition";
 export * from "./invitation";

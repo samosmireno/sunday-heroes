@@ -21,3 +21,43 @@ export const getPlayerStats = async (
     next(error);
   }
 };
+
+export const getTopMatches = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const playerId = req.params.playerId;
+
+    if (!playerId) {
+      throw new BadRequestError("Player ID is required");
+    }
+
+    const topMatches =
+      await DashboardPlayerStatsService.getTopMatches(playerId);
+    sendSuccess(res, topMatches);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getTopCompetitions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const playerId = req.params.playerId;
+
+    if (!playerId) {
+      throw new BadRequestError("Player ID is required");
+    }
+
+    const topCompetitions =
+      await DashboardPlayerStatsService.getTopCompetitions(playerId);
+    sendSuccess(res, topCompetitions);
+  } catch (error) {
+    next(error);
+  }
+};

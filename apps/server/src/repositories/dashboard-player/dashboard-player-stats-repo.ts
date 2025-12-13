@@ -1,10 +1,12 @@
 import { Prisma } from "@prisma/client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 import prisma from "../prisma-client";
+import { MATCH_PLAYER_WITH_MATCH_DETAILS_SELECT } from "../match-player/types";
+import { AggregateCompetition } from "@repo/shared-types";
 
 export class DashboardPlayerStatsRepo {
   static async getPlayerCareerStats(
-    playerId: string,
+    playerIds: string[],
     tx?: Prisma.TransactionClient
   ) {
     try {
@@ -14,7 +16,7 @@ export class DashboardPlayerStatsRepo {
         await Promise.all([
           prismaClient.matchPlayer.aggregate({
             where: {
-              dashboardPlayerId: playerId,
+              dashboardPlayerId: { in: playerIds },
               match: {
                 isCompleted: true,
               },
@@ -33,7 +35,7 @@ export class DashboardPlayerStatsRepo {
 
           prismaClient.matchPlayer.findMany({
             where: {
-              dashboardPlayerId: playerId,
+              dashboardPlayerId: { in: playerIds },
               match: {
                 isCompleted: true,
               },
@@ -50,7 +52,7 @@ export class DashboardPlayerStatsRepo {
 
           prismaClient.matchPlayer.count({
             where: {
-              dashboardPlayerId: playerId,
+              dashboardPlayerId: { in: playerIds },
               isMotm: true,
               match: {
                 isCompleted: true,
@@ -60,7 +62,7 @@ export class DashboardPlayerStatsRepo {
 
           prismaClient.matchPlayer.findMany({
             where: {
-              dashboardPlayerId: playerId,
+              dashboardPlayerId: { in: playerIds },
               match: {
                 isCompleted: true,
               },
@@ -102,7 +104,7 @@ export class DashboardPlayerStatsRepo {
         totalMatches: aggregations._count.id,
         totalGoals: aggregations._sum.goals || 0,
         totalAssists: aggregations._sum.assists || 0,
-        avgRating: aggregations._avg.rating || 0,
+        avgRating: Math.round((aggregations._avg.rating || 0) * 100) / 100,
         totalCompetitions: uniqueCompetitions.size,
         record: { wins, draws, losses },
         manOfTheMatchCount: motmCount,
@@ -116,7 +118,7 @@ export class DashboardPlayerStatsRepo {
   }
 
   static async getRecentForm(
-    playerId: string,
+    playerIds: string[],
     limit: number = 5,
     tx?: Prisma.TransactionClient
   ) {
@@ -125,7 +127,7 @@ export class DashboardPlayerStatsRepo {
 
       const recentMatches = await prismaClient.matchPlayer.findMany({
         where: {
-          dashboardPlayerId: playerId,
+          dashboardPlayerId: { in: playerIds },
           match: {
             isCompleted: true,
           },
@@ -200,6 +202,89 @@ export class DashboardPlayerStatsRepo {
       throw PrismaErrorHandler.handle(
         error,
         "DashboardPlayerStatsRepo.getRecentForm"
+      );
+    }
+  }
+
+  static async getTopMatches(
+    playerIds: string[],
+    tx?: Prisma.TransactionClient
+  ) {
+    try {
+      const prismaClient = tx || prisma;
+
+      const [topGoalsMatch, topAssistsMatch, topRatingMatch] =
+        await Promise.all([
+          prismaClient.matchPlayer.findFirst({
+            where: {
+              dashboardPlayerId: { in: playerIds },
+            },
+            select: MATCH_PLAYER_WITH_MATCH_DETAILS_SELECT,
+            orderBy: [{ goals: "desc" }, { match: { date: "desc" } }],
+          }),
+
+          prismaClient.matchPlayer.findFirst({
+            where: {
+              dashboardPlayerId: { in: playerIds },
+            },
+            select: MATCH_PLAYER_WITH_MATCH_DETAILS_SELECT,
+            orderBy: [{ assists: "desc" }, { match: { date: "desc" } }],
+          }),
+
+          prismaClient.matchPlayer.findFirst({
+            where: {
+              dashboardPlayerId: { in: playerIds },
+              rating: {
+                not: null,
+              },
+            },
+            select: MATCH_PLAYER_WITH_MATCH_DETAILS_SELECT,
+            orderBy: [{ rating: "desc" }, { match: { date: "desc" } }],
+          }),
+        ]);
+
+      return {
+        topGoals: topGoalsMatch,
+        topAssists: topAssistsMatch,
+        topRating: topRatingMatch,
+      };
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerStatsRepo.getTopMatches"
+      );
+    }
+  }
+
+  static async getCompetitionStats(
+    playerIds: string[],
+    tx?: Prisma.TransactionClient
+  ): Promise<AggregateCompetition[]> {
+    try {
+      const prismaClient = tx || prisma;
+
+      return await prismaClient.$queryRaw`
+        SELECT 
+          m."competitionId",
+          c."name" as "competitionName",
+          c."type" as "competitionType",
+          mp."dashboardPlayerId",
+          COUNT(*)::int as "matchCount",
+          SUM(mp.goals)::int as "totalGoals",
+          SUM(mp.assists)::int as "totalAssists",
+          AVG(mp.rating) as "avgRating"
+        FROM "MatchPlayer" mp
+        JOIN "Match" m ON mp."matchId" = m.id
+        JOIN "Competition" c ON m."competitionId" = c.id
+        WHERE mp."dashboardPlayerId" IN (${Prisma.join(playerIds)})
+          AND m."isCompleted" = true
+        GROUP BY m."competitionId", c."name", c."type", mp."dashboardPlayerId"
+        ORDER BY m."competitionId", mp."dashboardPlayerId"
+      `;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "DashboardPlayerStatsRepo.getTopCompetitions"
       );
     }
   }
