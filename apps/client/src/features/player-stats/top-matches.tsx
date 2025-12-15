@@ -92,7 +92,7 @@ export default function TopMatches() {
 
           return (
             <div key={label} className="group block">
-              <div className="flex items-center justify-between rounded-lg border-2 border-accent/30 bg-gray-800/20 p-3">
+              <div className="flex items-center gap-4 rounded-lg border-2 border-accent/30 bg-gray-800/20 p-3">
                 <div className="flex-1">
                   <div className="mb-1 flex items-center gap-2">
                     <p className="text-xs font-medium text-white">{label}</p>

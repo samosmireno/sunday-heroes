@@ -1,11 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Target, Users, TrendingUp, Award } from "lucide-react";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { PlayerStatsOverview } from "@repo/shared-types";
 import { getResultColor } from "./utils";
 
@@ -62,8 +61,11 @@ export default function PlayerOverview({
             <div className="text-2xl font-bold text-white">
               {careerStats.totalMatches}
             </div>
-            <p className="mt-1 text-xs text-gray-400">
-              {careerStats.totalCompetitions} competitions
+            <p className="mt-1 text-sm text-gray-400">
+              {careerStats.totalCompetitions}{" "}
+              {careerStats.totalCompetitions === 1
+                ? "competition"
+                : "competitions"}
             </p>
           </CardContent>
         </Card>
@@ -79,7 +81,7 @@ export default function PlayerOverview({
             <div className="text-2xl font-bold text-white">
               {careerStats.totalGoals} / {careerStats.totalAssists}
             </div>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-sm text-gray-400">
               {(
                 (careerStats.totalGoals + careerStats.totalAssists) /
                 (careerStats.totalMatches || 1)
@@ -100,7 +102,7 @@ export default function PlayerOverview({
             <div className="text-2xl font-bold text-white">
               {careerStats.avgRating.toFixed(2)}
             </div>
-            <p className="mt-1 text-xs text-gray-400">Overall performance</p>
+            <p className="mt-1 text-sm text-gray-400">Overall performance</p>
           </CardContent>
         </Card>
 
@@ -116,7 +118,7 @@ export default function PlayerOverview({
               {careerStats.record.wins}W - {careerStats.record.draws}D -{" "}
               {careerStats.record.losses}L
             </div>
-            <p className="mt-1 text-xs text-gray-400">{winRate}% win rate</p>
+            <p className="mt-1 text-sm text-gray-400">{winRate}% win rate</p>
           </CardContent>
         </Card>
 
@@ -131,7 +133,7 @@ export default function PlayerOverview({
             <div className="text-2xl font-bold text-white">
               {careerStats.manOfTheMatchCount}
             </div>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-sm text-gray-400">
               {careerStats.totalMatches > 0
                 ? (
                     (careerStats.manOfTheMatchCount /
@@ -146,52 +148,46 @@ export default function PlayerOverview({
         <Card className="min-w-0 border-2 border-accent bg-panel-bg">
           <CardHeader>
             <CardTitle className="text-sm font-medium text-gray-400">
-              Recent Form
+              Recent Form - Last 5 Matches
             </CardTitle>
           </CardHeader>
           <CardContent>
             {recentForm.length > 0 ? (
-              <TooltipProvider delayDuration={200}>
-                <div className="flex flex-wrap gap-2">
-                  {recentForm.map((match, index) => (
-                    <Tooltip key={index}>
-                      <TooltipTrigger>
-                        <div
-                          className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors ${getResultColor(match.result, true)}`}
-                        >
-                          {match.result}
+              <div className="flex flex-wrap gap-2">
+                {recentForm.map((match, index) => (
+                  <Popover key={index}>
+                    <PopoverTrigger>
+                      <div
+                        className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors ${getResultColor(match.result, true)}`}
+                      >
+                        {match.result}
+                      </div>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto border-2 border-accent bg-panel-bg">
+                      <div className="flex flex-col space-y-2 text-xs">
+                        <p className="font-semibold text-white">
+                          {match.opponent !== "Away" &&
+                          match.opponent !== "Home"
+                            ? `vs ${match.opponent}`
+                            : ""}
+                        </p>
+                        <p className="text-gray-400">{match.competitionName}</p>
+                        <p className="font-medium text-white">{match.score}</p>
+                        <div className="flex gap-3 text-gray-400">
+                          <span>Goals: {match.goals}</span>
+                          <span>Assists: {match.assists}</span>
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent className="border-2 border-accent bg-panel-bg">
-                        <div className="space-y-1 text-xs">
-                          <p className="font-semibold text-white">
-                            {match.opponent !== "Away" &&
-                            match.opponent !== "Home"
-                              ? `vs ${match.opponent}`
-                              : ""}
-                          </p>
-                          <p className="text-gray-400">
-                            {match.competitionName}
-                          </p>
-                          <p className="font-medium text-white">
-                            {match.score}
-                          </p>
-                          <div className="flex gap-3 text-gray-400">
-                            <span>Goals: {match.goals}</span>
-                            <span>Assists: {match.assists}</span>
-                          </div>
-                          <p className="text-accent">
-                            Rating: {match.rating.toFixed(1)}
-                          </p>
-                          <p className="text-[10px] text-gray-500">
-                            {new Date(match.date).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  ))}
-                </div>
-              </TooltipProvider>
+                        <p className="text-accent">
+                          Rating: {match.rating.toFixed(1)}
+                        </p>
+                        <p className="text-gray-500">
+                          {new Date(match.date).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                ))}
+              </div>
             ) : (
               <p className="text-sm text-gray-400">No recent matches</p>
             )}

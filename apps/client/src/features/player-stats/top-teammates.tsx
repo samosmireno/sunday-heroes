@@ -55,7 +55,7 @@ export default function TopTeammates() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
           {topTeammates.map((teammate: TeammateStats, index: number) => (
             <Link
               key={teammate.dashboardPlayerId}
@@ -63,7 +63,7 @@ export default function TopTeammates() {
               className="group block"
             >
               <div className="rounded-lg border-2 border-accent/30 bg-gray-800/20 p-3 transition-all hover:border-accent hover:bg-gray-800/40">
-                <div className="mb-3 flex items-center gap-3">
+                <div className="mb-3 flex flex-row items-center gap-3 md:flex-col md:items-start">
                   <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/20 text-sm font-bold text-accent">
                     {index + 1}
                   </div>
@@ -74,7 +74,7 @@ export default function TopTeammates() {
                     )}
                   </p>
                 </div>
-                <div className="space-y-1">
+                <div className="flex flex-row items-center gap-3 space-y-0 md:flex-col md:items-start md:space-y-1">
                   <p className="text-xs text-gray-400">
                     {teammate.matchesTogether}{" "}
                     {teammate.matchesTogether === 1 ? "match" : "matches"}
