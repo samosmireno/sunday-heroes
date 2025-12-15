@@ -5,11 +5,11 @@ export const playerTabs = {
 
 export const filterOptions = [
   {
-    value: playerTabs.ADMIN,
-    label: "Managed",
-  },
-  {
     value: playerTabs.PLAYED_WITH,
     label: "Played With",
+  },
+  {
+    value: playerTabs.ADMIN,
+    label: "Managed",
   },
 ];
