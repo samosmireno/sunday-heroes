@@ -20,10 +20,7 @@ router.get("/teammates", getMyDashboardTeammates);
 router.get("/basic", getAllDashboardPlayers);
 
 router.get("/:playerId/stats", getPlayerStats);
-router.get(
-  "/:playerId/stats/performance-chart/:competitionId",
-  getPerformanceChart
-);
+router.get("/:playerId/stats/performance/:competitionId", getPerformanceChart);
 router.get("/:playerId/stats/top-matches", getTopMatches);
 router.get("/:playerId/stats/top-competitions", getTopCompetitions);
 router.get("/:playerId/stats/top-teammates", getTopTeammates);

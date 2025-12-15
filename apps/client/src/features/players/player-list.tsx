@@ -1,10 +1,9 @@
-import { useState } from "react";
-import PlayerDetails from "./player-details";
 import { PlayerListResponse } from "@repo/shared-types";
 import React from "react";
 import InvitePlayerDialog from "../invite-player/invite-player-dialog";
 import { PlayerTabsType } from "@/pages/players/types";
 import { playerTabs } from "@/pages/players/constants";
+import { useNavigate } from "react-router-dom";
 
 interface PlayersListProps {
   players: PlayerListResponse[];
@@ -15,11 +14,7 @@ export default function PlayersList({
   players,
   activeFilter,
 }: PlayersListProps) {
-  const [expandedPlayerId, setExpandedPlayerId] = useState<string | null>(null);
-
-  const toggleExpand = (playerId: string) => {
-    setExpandedPlayerId(expandedPlayerId === playerId ? null : playerId);
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="relative -mx-2 sm:-mx-4 xl:-mx-0">
@@ -88,10 +83,8 @@ export default function PlayersList({
             {players.map((player) => (
               <React.Fragment key={player.id}>
                 <tr
-                  className={`cursor-pointer transition-colors hover:bg-accent/5 ${
-                    expandedPlayerId === player.id ? "bg-accent/10" : ""
-                  }`}
-                  onClick={() => toggleExpand(player.id)}
+                  className="cursor-pointer transition-colors hover:bg-accent/5"
+                  onClick={() => navigate(`/player-stats/${player.id}`)}
                 >
                   <td className="whitespace-nowrap px-2 py-2 sm:px-3 sm:py-3 lg:px-4">
                     <div className="flex items-center justify-between">
@@ -176,9 +169,6 @@ export default function PlayersList({
                     </td>
                   )}
                 </tr>
-                {expandedPlayerId === player.id && player.competitions && (
-                  <PlayerDetails player={player} />
-                )}
               </React.Fragment>
             ))}
           </tbody>

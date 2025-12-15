@@ -50,7 +50,7 @@ export const transformTopMatchPlayerToMatch = (
 export const transformMatchPlayerToPerformanceData = (
   matchPlayers: MatchPlayerWithMatchDetails[]
 ): PerformanceDataPoint[] => {
-  return matchPlayers.map((mp) => {
+  return matchPlayers.reverse().map((mp) => {
     const playerScore = mp.isHome
       ? mp.match.homeTeamScore
       : mp.match.awayTeamScore;

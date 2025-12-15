@@ -21,6 +21,7 @@ import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import ForgotPasswordPage from "./pages/forgot-password-page";
 import ResetPasswordPage from "./pages/reset-password-page";
+import PlayerStatsPage from "./pages/player-stats-page";
 
 export default function App() {
   return (
@@ -143,6 +144,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <PlayersPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/player-stats/:playerId"
+              element={
+                <ProtectedRoute>
+                  <PlayerStatsPage />
                 </ProtectedRoute>
               }
             />
