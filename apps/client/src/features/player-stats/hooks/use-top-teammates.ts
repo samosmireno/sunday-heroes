@@ -5,32 +5,30 @@ import { TeammateStats } from "@repo/shared-types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const fetchTopTeammates = async (
-  playerId: string,
-): Promise<TeammateStats[]> => {
-  const { data } = await axios.get<TeammateStats[]>(
-    `${config.server}/api/players/${playerId}/stats/top-teammates`,
-  );
-  return data;
-};
-
 export const useTopTeammates = (playerId: string) => {
   const { handleError } = useErrorHandler();
 
+  const fetchTopTeammates = async (
+    playerId: string,
+  ): Promise<TeammateStats[]> => {
+    try {
+      const { data } = await axios.get<TeammateStats[]>(
+        `${config.server}/api/players/${playerId}/stats/top-teammates`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error as AppError, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
   const query = useQuery({
     queryKey: ["playerTopTeammates", playerId],
-    queryFn: async () => {
-      try {
-        return await fetchTopTeammates(playerId);
-      } catch (error) {
-        handleError(error as AppError, {
-          showToast: true,
-          logError: true,
-          throwError: false,
-        });
-        throw error;
-      }
-    },
+    queryFn: () => fetchTopTeammates(playerId),
     enabled: !!playerId,
   });
 

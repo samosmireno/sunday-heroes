@@ -5,32 +5,30 @@ import { PlayerCompetitionStats } from "@repo/shared-types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const fetchPlayerCompetititonStats = async (
-  playerId: string,
-): Promise<PlayerCompetitionStats[]> => {
-  const { data } = await axios.get<PlayerCompetitionStats[]>(
-    `${config.server}/api/players/${playerId}/stats/competitions`,
-  );
-  return data;
-};
-
 export const usePlayerCompetitionStats = (playerId: string) => {
   const { handleError } = useErrorHandler();
 
+  const fetchPlayerCompetititonStats = async (
+    playerId: string,
+  ): Promise<PlayerCompetitionStats[]> => {
+    try {
+      const { data } = await axios.get<PlayerCompetitionStats[]>(
+        `${config.server}/api/players/${playerId}/stats/competitions`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error as AppError, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
   const query = useQuery({
     queryKey: ["playerStatsByCompetition", playerId],
-    queryFn: async () => {
-      try {
-        return await fetchPlayerCompetititonStats(playerId);
-      } catch (error) {
-        handleError(error as AppError, {
-          showToast: true,
-          logError: true,
-          throwError: false,
-        });
-        throw error;
-      }
-    },
+    queryFn: () => fetchPlayerCompetititonStats(playerId),
     enabled: !!playerId,
   });
 

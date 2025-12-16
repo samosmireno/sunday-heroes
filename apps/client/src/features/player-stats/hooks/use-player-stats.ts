@@ -5,32 +5,30 @@ import { PlayerStatsOverview } from "@repo/shared-types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const fetchPlayerStats = async (
-  playerId: string,
-): Promise<PlayerStatsOverview> => {
-  const { data } = await axios.get<PlayerStatsOverview>(
-    `${config.server}/api/players/${playerId}/stats`,
-  );
-  return data;
-};
-
 export const usePlayerStats = (playerId: string) => {
   const { handleError } = useErrorHandler();
 
+  const fetchPlayerStats = async (
+    playerId: string,
+  ): Promise<PlayerStatsOverview> => {
+    try {
+      const { data } = await axios.get<PlayerStatsOverview>(
+        `${config.server}/api/players/${playerId}/stats`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error as AppError, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
   const query = useQuery({
     queryKey: ["playerStats", playerId],
-    queryFn: async () => {
-      try {
-        return await fetchPlayerStats(playerId);
-      } catch (error) {
-        handleError(error as AppError, {
-          showToast: true,
-          logError: true,
-          throwError: false,
-        });
-        throw error;
-      }
-    },
+    queryFn: () => fetchPlayerStats(playerId),
     enabled: !!playerId,
   });
 

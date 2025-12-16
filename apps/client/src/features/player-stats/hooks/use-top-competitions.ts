@@ -5,32 +5,30 @@ import { TopCompetitionsResponse } from "@repo/shared-types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const fetchTopCompetititons = async (
-  playerId: string,
-): Promise<TopCompetitionsResponse> => {
-  const { data } = await axios.get<TopCompetitionsResponse>(
-    `${config.server}/api/players/${playerId}/stats/top-competitions`,
-  );
-  return data;
-};
-
 export const useTopCompetitions = (playerId: string) => {
   const { handleError } = useErrorHandler();
 
+  const fetchTopCompetititons = async (
+    playerId: string,
+  ): Promise<TopCompetitionsResponse> => {
+    try {
+      const { data } = await axios.get<TopCompetitionsResponse>(
+        `${config.server}/api/players/${playerId}/stats/top-competitions`,
+      );
+      return data;
+    } catch (error) {
+      handleError(error as AppError, {
+        showToast: true,
+        logError: true,
+        throwError: false,
+      });
+      throw error;
+    }
+  };
+
   const query = useQuery({
     queryKey: ["playerTopCompetitions", playerId],
-    queryFn: async () => {
-      try {
-        return await fetchTopCompetititons(playerId);
-      } catch (error) {
-        handleError(error as AppError, {
-          showToast: true,
-          logError: true,
-          throwError: false,
-        });
-        throw error;
-      }
-    },
+    queryFn: () => fetchTopCompetititons(playerId),
     enabled: !!playerId,
   });
 
