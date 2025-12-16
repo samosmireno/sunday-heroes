@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { PlayerStatsOverview } from "@repo/shared-types";
 import { getResultColor } from "./utils";
+import { formatDate } from "@/utils/string";
 
 interface PlayerOverviewProps {
   playerStats?: PlayerStatsOverview;
@@ -181,7 +182,7 @@ export default function PlayerOverview({
                           Rating: {match.rating.toFixed(1)}
                         </p>
                         <p className="text-gray-500">
-                          {new Date(match.date).toLocaleDateString()}
+                          {formatDate(match.date)}
                         </p>
                       </div>
                     </PopoverContent>

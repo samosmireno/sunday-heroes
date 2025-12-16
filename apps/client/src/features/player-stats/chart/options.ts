@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/string";
 import { PerformanceChartResponse } from "@repo/shared-types";
 
 export const METRICS = {
@@ -38,7 +39,7 @@ export const chartOptions = (performanceData: PerformanceChartResponse) => ({
           const index = items[0].dataIndex;
           const point = performanceData?.matches[index];
           return point
-            ? `vs ${point.opponent} (${new Date(point.date).toLocaleDateString()})`
+            ? `vs ${point.opponent} (${formatDate(point.date)})`
             : "";
         },
         label: (item: { dataIndex: number }) => {

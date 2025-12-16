@@ -8,7 +8,7 @@ export function getChartData(
   if (!performanceData?.matches) return { labels: [], datasets: [] };
   const labels = performanceData.matches.map((point) => {
     const date = new Date(point.date);
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+    return `${date.getDate()}/${date.getMonth() + 1}`;
   });
   const metric = METRICS[selectedMetric];
   const data = performanceData.matches.map((point) => point[selectedMetric]);
