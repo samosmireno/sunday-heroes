@@ -45,6 +45,7 @@ function DuelCompetitionPage({
         <StatsTable
           playerStats={competition.playerStats}
           votingEnabled={competition.votingEnabled}
+          totalMatches={competition.matches.length}
         />
       </div>
     </div>

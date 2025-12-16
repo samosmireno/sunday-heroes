@@ -1,20 +1,52 @@
+import { useState } from "react";
 import { useSortPlayers } from "./use-sort-players";
 import { PlayerTotals } from "@repo/shared-types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface StatsTableProps {
   playerStats: PlayerTotals[];
+  totalMatches: number;
   votingEnabled?: boolean;
 }
 
+const MATCH_PERCENTAGE_OPTIONS = [
+  { label: "All", value: "all" },
+  { label: "50%", value: "50" },
+  { label: "60%", value: "60" },
+  { label: "70%", value: "70" },
+  { label: "80%", value: "80" },
+  { label: "90%", value: "90" },
+  { label: "100%", value: "100" },
+];
+
 export default function StatsTable({
   playerStats,
+  totalMatches,
   votingEnabled,
 }: StatsTableProps) {
+  const [matchPercent, setMatchPercent] = useState<string>("all");
+
   const { sortedPlayers, sortOrder, sortColumn, sortPlayers } = useSortPlayers(
     playerStats,
     "goals",
     "desc",
   );
+
+  // Filter players based on selected match percentage
+  const filteredPlayers =
+    matchPercent === "all"
+      ? sortedPlayers
+      : sortedPlayers.filter(
+          (player) =>
+            player.matches >
+            Math.floor((parseInt(matchPercent) / 100) * totalMatches),
+        );
 
   const getSortArrow = (key: keyof PlayerTotals) => {
     if (sortColumn === key) {
@@ -25,13 +57,40 @@ export default function StatsTable({
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between border-b-2 border-dashed border-accent pb-3">
+      <div className="mb-6 flex flex-row items-center justify-between gap-2 border-b-2 border-dashed border-accent pb-3">
         <h2
           className="py-1 text-xl uppercase text-accent"
           style={{ textShadow: "1px 1px 0 #000" }}
         >
           Stats
         </h2>
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+          <label
+            htmlFor="match-percent-select"
+            className="text-sm font-medium text-accent"
+          >
+            Min. matches %
+          </label>
+          <Select value={matchPercent} onValueChange={setMatchPercent}>
+            <SelectTrigger
+              id="match-percent-select"
+              className="w-full min-w-[100px] max-w-[140px] border-2 border-accent/40 bg-gray-800/20 text-white sm:w-[120px]"
+            >
+              <SelectValue placeholder="Matches %" />
+            </SelectTrigger>
+            <SelectContent className="border-2 border-accent/40 bg-panel-bg">
+              {MATCH_PERCENTAGE_OPTIONS.map((opt) => (
+                <SelectItem
+                  key={opt.value}
+                  value={opt.value}
+                  className="text-white hover:bg-gray-800/40"
+                >
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <div className="relative overflow-x-auto">
         <table className="w-full">
@@ -101,8 +160,8 @@ export default function StatsTable({
             </tr>
           </thead>
           <tbody>
-            {sortedPlayers &&
-              sortedPlayers.map((player) => (
+            {filteredPlayers &&
+              filteredPlayers.map((player) => (
                 <tr
                   className="group relative border-b border-white/10 hover:bg-white/5"
                   key={player.id}
