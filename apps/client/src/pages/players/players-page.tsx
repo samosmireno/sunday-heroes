@@ -15,7 +15,8 @@ import { filterOptions } from "./constants";
 import { UserResponse } from "@repo/shared-types";
 
 export default function PlayersPage() {
-  const [activeFilter, setActiveFilter] = useState<PlayerTabsType>("admin");
+  const [activeFilter, setActiveFilter] =
+    useState<PlayerTabsType>("played-with");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const { currentPage, setPage } = useUrlPagination();
   const debouncedQuery = useDebounce(searchQuery, 500);

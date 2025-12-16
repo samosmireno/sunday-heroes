@@ -18,7 +18,7 @@ export default function PlayersList({
 
   return (
     <div className="relative -mx-2 sm:-mx-4 xl:-mx-0">
-      <div className="overflow-x-auto pb-2">
+      <div className="overflow-x-hidden pb-2">
         <table className="min-w-full divide-y divide-accent/30">
           <thead>
             <tr className="border-b-2 border-accent/50">

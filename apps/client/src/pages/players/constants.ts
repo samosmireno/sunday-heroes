@@ -1,6 +1,6 @@
 export const playerTabs = {
-  ADMIN: "admin",
   PLAYED_WITH: "played-with",
+  ADMIN: "admin",
 } as const;
 
 export const filterOptions = [

@@ -13,10 +13,12 @@ export default function PlayerStatsPage() {
   const { playerStats, isLoading } = usePlayerStats(playerId);
   return (
     <div className="relative min-w-0 flex-1 space-y-4 px-2 py-4 sm:px-4 sm:py-5">
-      <Header
-        title={playerStats?.player.nickname || "Player stats"}
-        hasSidebar={true}
-      />
+      <div className="sticky top-0 z-20 bg-panel-bg sm:static">
+        <Header
+          title={playerStats?.player.nickname || "Player stats"}
+          hasSidebar={true}
+        />
+      </div>
       <PlayerOverview playerStats={playerStats} isLoading={isLoading} />
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">
         <div className="min-w-0">

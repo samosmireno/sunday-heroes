@@ -26,7 +26,7 @@ export default function CompactPagination({
   return (
     <Pagination className={className}>
       <PaginationContent className="gap-1 sm:gap-2">
-        {currentPage > 1 && (
+        {currentPage > 2 && (
           <PaginationItem>
             <PaginationPrevious
               onClick={() => onPageChange(currentPage - 1)}

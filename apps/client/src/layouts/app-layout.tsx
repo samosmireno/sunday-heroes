@@ -32,7 +32,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       />
       <Background />
       <AppSidebar />
-      <div className="flex min-h-screen w-full overflow-x-hidden bg-bg font-retro text-gray-100">
+      <div className="flex min-h-screen w-full bg-bg font-retro text-gray-100">
         {children}
       </div>
     </SidebarProvider>
