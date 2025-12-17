@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Background from "@/components/ui/background";
 
 interface AppLayoutProps {
-  sidebarActive: boolean;
+  sidebarActive?: boolean;
   children: ReactNode;
 }
 
