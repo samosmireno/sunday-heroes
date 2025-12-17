@@ -5,18 +5,19 @@ import { useQuery } from "@tanstack/react-query";
 import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../hooks/use-error-handler/types";
 
-export const useCompetition = (compId: string, userId: string) => {
+export const useCompetition = (compId: string, userId?: string) => {
   const { handleError } = useErrorHandler();
 
   const fetchCompetition = async (
     compId: string,
-    userId: string,
+    userId?: string,
   ): Promise<CompetitionResponse> => {
     try {
-      const params = new URLSearchParams({
-        compId,
-        userId,
-      });
+      const paramsObj: Record<string, string> = { compId };
+      if (typeof userId === "string") {
+        paramsObj.userId = userId;
+      }
+      const params = new URLSearchParams(paramsObj);
       const { data } = await axios.get(
         `${config.server}/api/competitions/stats?${params.toString()}`,
         {
@@ -36,7 +37,7 @@ export const useCompetition = (compId: string, userId: string) => {
   const competitionQuery = useQuery({
     queryKey: ["competition", compId, userId],
     queryFn: () => fetchCompetition(compId, userId),
-    enabled: !!compId && !!userId,
+    enabled: !!compId,
   });
 
   return {

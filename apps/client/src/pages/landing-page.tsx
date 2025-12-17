@@ -1,5 +1,4 @@
 import { useAuth } from "../context/auth-context";
-import Background from "../components/ui/background";
 import Loading from "../components/ui/loading";
 import { useLocation } from "react-router-dom";
 import LandingHeader from "../features/landing/landing-header";
@@ -25,8 +24,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-secondary">
-      <Background />
+    <div className="min-h-screen w-full bg-secondary">
       <div className="relative">
         <LandingHeader />
         <HeroSection onGoogleLogin={handleLogin} />

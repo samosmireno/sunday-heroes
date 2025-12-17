@@ -17,7 +17,7 @@ import { createCompetitionRequest } from "../schemas/create-competition-request-
 
 export function getUserRole(
   competition: CompetitionWithSettings,
-  userId: string
+  userId?: string
 ): Role {
   if (competition.dashboard.adminId === userId) {
     return Role.ADMIN;
@@ -36,7 +36,7 @@ export function getUserRole(
 
 export function transformCompetitionToResponse(
   competition: CompetitionWithDetails,
-  userId: string
+  userId?: string
 ): CompetitionResponse {
   const matches: MatchResponse[] = competition.matches.map((match) => {
     return {

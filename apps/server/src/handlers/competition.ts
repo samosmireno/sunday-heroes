@@ -43,7 +43,7 @@ export const getCompetitionStats = async (
 ) => {
   try {
     const competitionId = getRequiredQuery(req, "compId");
-    const userId = getRequiredQuery(req, "userId");
+    const userId = req.query["userId"] as string;
 
     const competition = await CompetitionService.getCompetitionStats(
       competitionId,

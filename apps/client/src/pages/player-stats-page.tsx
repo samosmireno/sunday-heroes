@@ -1,4 +1,5 @@
 import Header from "@/components/ui/header";
+import { useAuth } from "@/context/auth-context";
 import CompetitionPerformance from "@/features/player-stats/competition-performance";
 import { usePlayerStats } from "@/features/player-stats/hooks/use-player-stats";
 import PlayerOverview from "@/features/player-stats/player-overview";
@@ -8,6 +9,7 @@ import TopTeammates from "@/features/player-stats/top-teammates";
 import { useParams } from "react-router-dom";
 
 export default function PlayerStatsPage() {
+  const { user } = useAuth();
   const { playerId } = useParams() as { playerId: string };
 
   const { playerStats, isLoading } = usePlayerStats(playerId);
@@ -16,7 +18,7 @@ export default function PlayerStatsPage() {
       <div className="sticky top-0 z-20 bg-panel-bg sm:static">
         <Header
           title={playerStats?.player.nickname || "Player stats"}
-          hasSidebar={true}
+          hasSidebar={!!user}
         />
       </div>
       <PlayerOverview playerStats={playerStats} isLoading={isLoading} />

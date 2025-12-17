@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import Loading from "@/components/ui/loading";
 import ErrorPage from "./error-page";
-import Background from "@/components/ui/background";
 import { useAuth } from "@/context/auth-context";
 import { useInvitation } from "@/features/invitation/hooks/use-invitation";
 import { useAcceptInvitation } from "@/features/invitation/hooks/use-accept-invitation";
@@ -33,8 +32,7 @@ export default function InvitationPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-secondary p-4">
-      <Background />
+    <div className="flex min-h-screen w-full items-center justify-center bg-secondary p-4">
       <Card className="relative w-full max-w-md border-2 border-accent/70 bg-panel-bg">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/20">

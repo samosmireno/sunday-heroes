@@ -26,7 +26,7 @@ export class CompetitionService {
     return competition;
   }
 
-  static async getCompetitionStats(competitionId: string, userId: string) {
+  static async getCompetitionStats(competitionId: string, userId?: string) {
     const competition =
       await CompetitionRepo.findByIdWithDetails(competitionId);
     if (!competition) {

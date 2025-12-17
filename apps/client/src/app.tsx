@@ -1,17 +1,17 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import LandingPage from "@/pages/landing-page.tsx";
+import LandingPage from "@/pages/landing-page";
 import ErrorPage from "@/pages/error-page";
 import ProtectedRoute from "@/layouts/protected-route";
-import { AuthProvider } from "@/context/auth-context.tsx";
-import AuthCallback from "@/pages/auth-callback.tsx";
+import { AuthProvider } from "@/context/auth-context";
+import AuthCallback from "@/pages/auth-callback";
 import Dashboard from "@/pages/dashboard";
-import CreateCompetitionForm from "@/pages/create-competition-form.tsx";
-import CompetitionListPage from "@/pages/competition-list/competition-list-page.tsx";
+import CreateCompetitionForm from "@/pages/create-competition-form";
+import CompetitionListPage from "@/pages/competition-list/competition-list-page";
 import VotePage from "@/pages/vote-page";
 import AdminPendingVotes from "@/pages/pending-votes-page";
 import MatchesPage from "@/pages/matches-page";
-import PlayersPage from "@/pages/players/players-page.tsx";
-import InvitationPage from "@/pages/invitation-page.tsx";
+import PlayersPage from "@/pages/players/players-page";
+import InvitationPage from "@/pages/invitation-page";
 import CompetitionAdminPage from "@/pages/competition-admin-page";
 import LeagueRouter from "@/features/league/league-router";
 import { GlobalErrorBoundary } from "@/components/error/global-error-boundary";
@@ -22,6 +22,37 @@ import RegisterPage from "./pages/register";
 import ForgotPasswordPage from "./pages/forgot-password-page";
 import ResetPasswordPage from "./pages/reset-password-page";
 import PlayerStatsPage from "./pages/player-stats-page";
+import PublicLayout from "./layouts/public-layout";
+
+const publicRoutes = [
+  { path: "/login", element: <LoginPage /> },
+  { path: "/register", element: <RegisterPage /> },
+  { path: "/forgot-password", element: <ForgotPasswordPage /> },
+  { path: "/reset-password", element: <ResetPasswordPage /> },
+  { path: "/landing", element: <LandingPage /> },
+  { path: "/auth/callback", element: <AuthCallback /> },
+  { path: "/player-stats/:playerId", element: <PlayerStatsPage /> },
+  { path: "/invite/:token", element: <InvitationPage /> },
+  { path: "/competition/:competitionId", element: <LeagueRouter /> },
+];
+
+const protectedRoutes = [
+  { path: "/vote/:matchId", element: <VotePage /> },
+  { path: "/pending/:matchId", element: <AdminPendingVotes /> },
+  { path: "/dashboard", element: <Dashboard /> },
+  { path: "/league-setup/:competitionId", element: <LeagueRouter /> },
+  { path: "/create-competition/:userId", element: <CreateCompetitionForm /> },
+  { path: "/add-match/:competitionId", element: <AddMatchPage /> },
+  { path: "/edit-match/:competitionId/:matchId", element: <EditMatchPage /> },
+  { path: "/competitions", element: <CompetitionListPage /> },
+  { path: "/matches", element: <MatchesPage /> },
+  { path: "/matches/:competitionId", element: <MatchesPage /> },
+  { path: "/players", element: <PlayersPage /> },
+  {
+    path: "/competition/:competitionId/admin",
+    element: <CompetitionAdminPage />,
+  },
+];
 
 export default function App() {
   return (
@@ -30,144 +61,20 @@ export default function App() {
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-
-            <Route path="/landing" element={<LandingPage />} />
-
-            <Route path="/auth/callback" element={<AuthCallback />} />
-
-            <Route
-              path="/vote/:matchId"
-              element={
-                <ProtectedRoute>
-                  <VotePage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/pending/:matchId"
-              element={
-                <ProtectedRoute>
-                  <AdminPendingVotes />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/competition/:competitionId"
-              element={
-                <ProtectedRoute>
-                  <LeagueRouter />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/league-setup/:competitionId"
-              element={
-                <ProtectedRoute>
-                  <LeagueRouter />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/create-competition/:userId"
-              element={
-                <ProtectedRoute>
-                  <CreateCompetitionForm />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/add-match/:competitionId"
-              element={
-                <ProtectedRoute>
-                  <AddMatchPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/edit-match/:competitionId/:matchId"
-              element={
-                <ProtectedRoute>
-                  <EditMatchPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/competitions"
-              element={
-                <ProtectedRoute>
-                  <CompetitionListPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/matches"
-              element={
-                <ProtectedRoute>
-                  <MatchesPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/matches/:competitionId"
-              element={
-                <ProtectedRoute>
-                  <MatchesPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/players"
-              element={
-                <ProtectedRoute>
-                  <PlayersPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/player-stats/:playerId"
-              element={
-                <ProtectedRoute>
-                  <PlayerStatsPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/competition/:competitionId/admin"
-              element={
-                <ProtectedRoute>
-                  <CompetitionAdminPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route path="/invite/:token" element={<InvitationPage />} />
-
+            {publicRoutes.map(({ path, element }) => (
+              <Route
+                key={path}
+                path={path}
+                element={<PublicLayout>{element}</PublicLayout>}
+              />
+            ))}
+            {protectedRoutes.map(({ path, element }) => (
+              <Route
+                key={path}
+                path={path}
+                element={<ProtectedRoute>{element}</ProtectedRoute>}
+              />
+            ))}
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </AuthProvider>

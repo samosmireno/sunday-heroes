@@ -82,14 +82,14 @@ export default function PlayersList({
           <tbody className="divide-y divide-accent/10">
             {players.map((player) => (
               <React.Fragment key={player.id}>
-                <tr
-                  className="cursor-pointer transition-colors hover:bg-accent/5"
-                  onClick={() => navigate(`/player-stats/${player.id}`)}
-                >
+                <tr className="cursor-pointer transition-colors hover:bg-accent/5">
                   <td className="whitespace-nowrap px-2 py-2 sm:px-3 sm:py-3 lg:px-4">
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-medium text-gray-200 sm:text-base">
+                        <div
+                          className="truncate text-sm font-medium text-gray-200 sm:text-base"
+                          onClick={() => navigate(`/player-stats/${player.id}`)}
+                        >
                           {player.nickname}
                         </div>
                         <div className="mt-1 flex items-center space-x-2 text-xs text-gray-400 lg:hidden">
