@@ -59,7 +59,7 @@ export default function ChartFilters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="border-2 border-accent/40 bg-panel-bg">
-          {[5, 10, 15].map((val) => (
+          {[5, 10, 20, 30].map((val) => (
             <SelectItem
               key={val}
               value={val.toString()}
