@@ -20,6 +20,8 @@ export interface PlayerStatsOverview {
       losses: number;
     };
     manOfTheMatchCount: number;
+    goalConsistencyRate: number;
+    assistConsistencyRate: number;
   };
 
   recentForm: Array<{

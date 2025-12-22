@@ -15,72 +15,94 @@ export class DashboardPlayerStatsRepo {
     try {
       const prismaClient = tx || prisma;
 
-      const [aggregations, competitionCount, motmCount, recordStats] =
-        await Promise.all([
-          prismaClient.matchPlayer.aggregate({
-            where: {
-              dashboardPlayerId: { in: playerIds },
-              match: {
-                isCompleted: true,
-              },
+      const [
+        aggregations,
+        competitionCount,
+        motmCount,
+        recordStats,
+        matchesWithGoal,
+        matchesWithAssist,
+      ] = await Promise.all([
+        prismaClient.matchPlayer.aggregate({
+          where: {
+            dashboardPlayerId: { in: playerIds },
+            match: {
+              isCompleted: true,
             },
-            _count: {
-              id: true,
-            },
-            _sum: {
-              goals: true,
-              assists: true,
-            },
-            _avg: {
-              rating: true,
-            },
-          }),
+          },
+          _count: {
+            id: true,
+          },
+          _sum: {
+            goals: true,
+            assists: true,
+          },
+          _avg: {
+            rating: true,
+          },
+        }),
 
-          prismaClient.matchPlayer.findMany({
-            where: {
-              dashboardPlayerId: { in: playerIds },
-              match: {
-                isCompleted: true,
+        prismaClient.matchPlayer.findMany({
+          where: {
+            dashboardPlayerId: { in: playerIds },
+            match: {
+              isCompleted: true,
+            },
+          },
+          select: {
+            match: {
+              select: {
+                competitionId: true,
               },
             },
-            select: {
-              match: {
-                select: {
-                  competitionId: true,
-                },
-              },
-            },
-            distinct: ["matchId"],
-          }),
+          },
+          distinct: ["matchId"],
+        }),
 
-          prismaClient.matchPlayer.count({
-            where: {
-              dashboardPlayerId: { in: playerIds },
-              isMotm: true,
-              match: {
-                isCompleted: true,
-              },
+        prismaClient.matchPlayer.count({
+          where: {
+            dashboardPlayerId: { in: playerIds },
+            isMotm: true,
+            match: {
+              isCompleted: true,
             },
-          }),
+          },
+        }),
 
-          prismaClient.matchPlayer.findMany({
-            where: {
-              dashboardPlayerId: { in: playerIds },
-              match: {
-                isCompleted: true,
+        prismaClient.matchPlayer.findMany({
+          where: {
+            dashboardPlayerId: { in: playerIds },
+            match: {
+              isCompleted: true,
+            },
+          },
+          select: {
+            isHome: true,
+            match: {
+              select: {
+                homeTeamScore: true,
+                awayTeamScore: true,
               },
             },
-            select: {
-              isHome: true,
-              match: {
-                select: {
-                  homeTeamScore: true,
-                  awayTeamScore: true,
-                },
-              },
-            },
-          }),
-        ]);
+          },
+        }),
+
+        prismaClient.matchPlayer.count({
+          where: {
+            dashboardPlayerId: { in: playerIds },
+            match: { isCompleted: true },
+            goals: { gt: 0 },
+          },
+        }),
+
+        prismaClient.matchPlayer.count({
+          where: {
+            dashboardPlayerId: { in: playerIds },
+            match: { isCompleted: true },
+            assists: { gt: 0 },
+          },
+        }),
+      ]);
 
       let wins = 0;
       let draws = 0;
@@ -103,14 +125,24 @@ export class DashboardPlayerStatsRepo {
         competitionCount.map((mp) => mp.match.competitionId)
       );
 
+      const totalMatches = aggregations._count.id;
+      const goalConsistencyRate = totalMatches
+        ? Number((matchesWithGoal / totalMatches).toFixed(2))
+        : 0;
+      const assistConsistencyRate = totalMatches
+        ? Number((matchesWithAssist / totalMatches).toFixed(2))
+        : 0;
+
       return {
-        totalMatches: aggregations._count.id,
+        totalMatches,
         totalGoals: aggregations._sum.goals || 0,
         totalAssists: aggregations._sum.assists || 0,
         avgRating: Math.round((aggregations._avg.rating || 0) * 100) / 100,
         totalCompetitions: uniqueCompetitions.size,
         record: { wins, draws, losses },
         manOfTheMatchCount: motmCount,
+        goalConsistencyRate,
+        assistConsistencyRate,
       };
     } catch (error) {
       throw PrismaErrorHandler.handle(

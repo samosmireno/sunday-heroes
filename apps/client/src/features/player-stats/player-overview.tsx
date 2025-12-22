@@ -89,6 +89,14 @@ export default function PlayerOverview({
               ).toFixed(2)}{" "}
               per match
             </p>
+            <p className="mt-1 text-sm text-gray-400">
+              {Math.round(careerStats.goalConsistencyRate * 100)}% matches with
+              goal
+            </p>
+            <p className="mt-1 text-sm text-gray-400">
+              {Math.round(careerStats.assistConsistencyRate * 100)}% matches
+              with assist
+            </p>
           </CardContent>
         </Card>
 

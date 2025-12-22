@@ -40,6 +40,8 @@ export class DashboardPlayerStatsService {
         totalCompetitions: careerStats.totalCompetitions,
         record: careerStats.record,
         manOfTheMatchCount: careerStats.manOfTheMatchCount,
+        goalConsistencyRate: careerStats.goalConsistencyRate,
+        assistConsistencyRate: careerStats.assistConsistencyRate,
       },
       recentForm,
     };
