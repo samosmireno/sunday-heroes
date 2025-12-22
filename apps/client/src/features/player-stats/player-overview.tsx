@@ -79,24 +79,30 @@ export default function PlayerOverview({
             <Target className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {careerStats.totalGoals} / {careerStats.totalAssists}
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div>
+                <div className="text-2xl font-bold text-white">
+                  {careerStats.totalGoals} / {careerStats.totalAssists}
+                </div>
+                <p className="mt-1 text-sm text-gray-400">
+                  {(
+                    (careerStats.totalGoals + careerStats.totalAssists) /
+                    (careerStats.totalMatches || 1)
+                  ).toFixed(2)}{" "}
+                  per match
+                </p>
+              </div>
+              <div className="md:text-right">
+                <p className="text-sm text-gray-400">
+                  {Math.round(careerStats.goalConsistencyRate * 100)}% matches
+                  with goal
+                </p>
+                <p className="text-sm text-gray-400">
+                  {Math.round(careerStats.assistConsistencyRate * 100)}% matches
+                  with assist
+                </p>
+              </div>
             </div>
-            <p className="mt-1 text-sm text-gray-400">
-              {(
-                (careerStats.totalGoals + careerStats.totalAssists) /
-                (careerStats.totalMatches || 1)
-              ).toFixed(2)}{" "}
-              per match
-            </p>
-            <p className="mt-1 text-sm text-gray-400">
-              {Math.round(careerStats.goalConsistencyRate * 100)}% matches with
-              goal
-            </p>
-            <p className="mt-1 text-sm text-gray-400">
-              {Math.round(careerStats.assistConsistencyRate * 100)}% matches
-              with assist
-            </p>
           </CardContent>
         </Card>
 
