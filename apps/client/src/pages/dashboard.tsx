@@ -1,4 +1,10 @@
-import { Trophy, Users, CheckSquare, Activity } from "lucide-react";
+import {
+  Trophy,
+  Users,
+  CheckSquare,
+  Activity,
+  AlertTriangle,
+} from "lucide-react";
 import DashboardBanner from "@/features/dashboard/dashboard-banner";
 import DashboardMatchList from "@/features/dashboard/dashboard-match-list";
 import DashboardStatCard from "@/features/dashboard/dashboard-stat-card";
@@ -21,54 +27,46 @@ export default function Dashboard() {
 
   return (
     <div className="relative flex flex-1 flex-col p-4 sm:p-6">
-      <div className="mb-6 sm:mb-8">
-        <DashboardBanner
-          name={user?.name}
-          onCreateClick={() =>
-            user && navigate(`/create-competition/${user.id}`)
+      <DashboardBanner
+        name={user?.name}
+        onCreateClick={() => user && navigate(`/create-competition/${user.id}`)}
+        className="mb-6 rounded-lg border-2 border-accent/70 bg-panel-bg shadow-md sm:mb-8"
+      />
+
+      <div className="mb-6 grid grid-cols-1 gap-3 sm:mb-8 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4">
+        <DashboardStatCard
+          title="Active Competitions"
+          value={dashboard?.activeCompetitions || 0}
+          icon={Trophy}
+        />
+        <DashboardStatCard
+          title="Total Players"
+          value={dashboard?.totalPlayers || 0}
+          icon={Users}
+        />
+        <DashboardStatCard
+          title="Pending Votes"
+          value={dashboard?.pendingVotes || 0}
+          icon={
+            (dashboard?.pendingVotes ?? 0) > 0 ? AlertTriangle : CheckSquare
           }
-          className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-md"
+          iconClassName={
+            (dashboard?.pendingVotes ?? 0) > 0 ? "bg-red-700/60" : ""
+          }
+        />
+        <DashboardStatCard
+          title="Completed Matches"
+          value={dashboard?.completedMatches || 0}
+          icon={Activity}
         />
       </div>
 
-      <>
-        <div className="mb-6 grid grid-cols-1 gap-3 sm:mb-8 sm:grid-cols-2 lg:gap-4 xl:grid-cols-4">
-          <DashboardStatCard
-            title="Active Competitions"
-            value={dashboard?.activeCompetitions || 0}
-            icon={Trophy}
-          />
-          <DashboardStatCard
-            title="Total Players"
-            value={dashboard?.totalPlayers || 0}
-            icon={Users}
-          />
-          <DashboardStatCard
-            title="Pending Votes"
-            value={dashboard?.pendingVotes || 0}
-            icon={CheckSquare}
-          />
-          <DashboardStatCard
-            title="Completed Matches"
-            value={dashboard?.completedMatches || 0}
-            icon={Activity}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 pb-6 lg:grid-cols-2">
-          <div className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
-            <DashboardCompetitionList
-              competitions={dashboard?.competitions || []}
-            />
-          </div>
-          <div className="rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg">
-            <DashboardMatchList
-              title="Latest Matches"
-              matches={dashboard?.matches || []}
-            />
-          </div>
-        </div>
-      </>
+      <div className="grid grid-cols-1 gap-6 pb-6 lg:grid-cols-2">
+        <DashboardCompetitionList
+          competitions={dashboard?.competitions || []}
+        />
+        <DashboardMatchList matches={dashboard?.matches || []} />
+      </div>
     </div>
   );
 }

@@ -10,10 +10,6 @@ import {
 
 export class DashboardService {
   static async getDashboardPlayerDetailsForUser(userId: string) {
-    // const dashboardIds =
-    //   await DashboardPlayerRepo.findDashboardIdsByUser(userId);
-    // if (!dashboardIds) throw new NotFoundError("DashboardPlayer");
-
     const competitionIdsForUser =
       await CompetitionRepo.findCompetitionIdsForUserIncludingAdmin(userId);
 

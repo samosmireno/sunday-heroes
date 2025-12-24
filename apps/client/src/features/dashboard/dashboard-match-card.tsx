@@ -21,35 +21,48 @@ export default function DashboardMatchCard({ match }: MatchCardProps) {
       })
     : "TBD";
 
+  const homeTeamWon = match.homeTeamScore > match.awayTeamScore;
+  const awayTeamWon = match.homeTeamScore < match.awayTeamScore;
+
   return (
-    <div
-      className="cursor-default rounded border-2 border-accent/50 bg-bg/30 p-3 transition-all hover:bg-bg/50"
-      tabIndex={0}
-      role="button"
-    >
-      <div className="relative mb-1 flex items-center justify-between">
-        <span
-          className={`rounded px-2 py-0.5 text-xs font-bold uppercase ${bg} ${text}`}
-        >
-          {match.competitionType}
-        </span>
+    <div className="rounded-lg border-2 border-accent/50 bg-panel-bg p-4">
+      <div className="relative mb-2 flex items-center justify-between">
+        <div className="space-x-4">
+          <span className="text-xs uppercase text-gray-400">
+            {match.competitionName}
+          </span>
+          <span
+            className={`rounded px-2 py-1 text-xs font-bold uppercase ${bg} ${text}`}
+          >
+            {match.competitionType}
+          </span>
+        </div>
         <span className="flex items-center gap-1 text-xs text-gray-400">
-          <CalendarDays className="h-3 w-3" />
+          <CalendarDays className="h-3 w-3" aria-hidden="true" />
           {formattedDate}
         </span>
       </div>
-      <div className="mt-1">
-        <h3 className="font-retro text-gray-200">
-          {match.teams[0]} vs {match.teams[1]}
-        </h3>
-        <div className="mt-1 flex items-center justify-between">
-          <p className="text-xs uppercase text-gray-400">
-            {match.competitionName}
-          </p>
-          <span className="font-bold text-accent">
+      <hr className="mb-2 border-accent/20" />
+      <div className="flex flex-col gap-2">
+        <h3 className="flex items-center justify-between font-retro text-gray-200">
+          <span
+            className={`transition-colors ${
+              homeTeamWon ? "font-bold" : "text-gray-200"
+            }`}
+          >
+            {match.teams[0]}
+          </span>
+          <span className="mx-2 text-lg font-extrabold text-accent">
             {match.homeTeamScore} : {match.awayTeamScore}
           </span>
-        </div>
+          <span
+            className={`transition-colors ${
+              awayTeamWon ? "font-bold" : "text-gray-200"
+            }`}
+          >
+            {match.teams[1]}
+          </span>
+        </h3>
       </div>
     </div>
   );

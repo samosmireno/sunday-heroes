@@ -1,24 +1,197 @@
 interface FieldLayoutProps {
+  aspectRatio?: number; // width / height
+  lineColor?: string;
+  grassLight?: string;
+  grassDark?: string;
+  lineWidth?: number;
   children: React.ReactElement;
 }
 
-export default function FieldLayout({ children }: FieldLayoutProps) {
+const FieldLayout = ({
+  aspectRatio = 105 / 68,
+  lineColor = "#ffffff",
+  grassLight = "#1e6f40",
+  lineWidth = 2,
+  children,
+}: FieldLayoutProps) => {
+  // Pitch dimensions
+  const W = 1050;
+  const H = 680;
+
+  const centerX = W / 2;
+  const centerY = H / 2;
+
+  const penaltyBoxWidth = 165;
+  const penaltyBoxHeight = 403;
+  const goalBoxWidth = 55;
+  const goalBoxHeight = 183;
+
+  const penaltySpotDistance = 110;
+  const circleRadius = 91.5;
+
   return (
-    <div className="relative top-0 mx-0 my-auto aspect-[1.5] w-full overflow-visible">
-      <div className="z-2 absolute h-full w-full border-2 border-solid border-white/30 bg-transparent"></div>
-      <div className="z-2 absolute left-0 top-1/4 h-1/2 w-1/6 border-2 border-white/30 bg-black bg-transparent"></div>
-      <div className="box-d left border"></div>
-      <div className="z-2 absolute left-0 top-[37%] h-1/4 w-1/12 border-2 border-white/30 bg-black bg-transparent"></div>
-      <div className="z-2 absolute right-0 top-1/4 h-1/2 w-1/6 border-2 border-white/30 bg-black bg-transparent"></div>
-      <div className="box-d right border"></div>
-      <div className="z-2 absolute right-0 top-[37%] h-1/4 w-1/12 border-2 border-white/30 bg-black bg-transparent"></div>
-      <div className="z-2 absolute left-[5.5%] top-1/2 h-[4px] w-[4px] -translate-y-1/2 rounded-full bg-white/30 md:left-[11%]"></div>
-      <div className="z-2 absolute right-[5.5%] top-1/2 h-[4px] w-[4px] -translate-y-1/2 rounded-full bg-white/30 md:right-[11%]"></div>
-      <div className="z-2 absolute left-1/2 top-1/2 h-[4px] w-[4px] -translate-x-[50%] -translate-y-1/2 rounded-full bg-white/30 md:h-[8px] md:w-[8px]"></div>
-      <div className="absolute left-1/2 top-0 z-20 h-full w-0.5 -translate-x-1/2 bg-white/30"></div>
-      <div className="absolute left-1/2 top-1/2 h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/30 bg-none md:h-[120px] md:w-[120px]"></div>
-      <div className="h-full w-full bg-animation-scanline bg-primary"></div>
-      {children}
+    <div className="relative w-full overflow-visible bg-primary">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="xMidYMid meet"
+        style={{
+          width: "100%",
+          height: "auto",
+          aspectRatio,
+          display: "block",
+        }}
+      >
+        <defs>
+          {/* Clip paths for penalty arcs */}
+          <clipPath id="leftArcClip">
+            <rect x={penaltyBoxWidth} y={0} width={W} height={H} />
+          </clipPath>
+          <clipPath id="rightArcClip">
+            <rect x={0} y={0} width={W - penaltyBoxWidth} height={H} />
+          </clipPath>
+        </defs>
+
+        {/* Grass (single color) */}
+        <rect width={W} height={H} fill={grassLight} />
+
+        {/* Outer boundary */}
+        <rect
+          x={lineWidth / 2}
+          y={lineWidth / 2}
+          width={W - lineWidth}
+          height={H - lineWidth}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          opacity={0.3}
+        />
+
+        {/* Halfway line */}
+        <line
+          x1={centerX}
+          y1={lineWidth}
+          x2={centerX}
+          y2={H - lineWidth}
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          opacity={0.3}
+        />
+
+        {/* Center circle & spot */}
+        <circle
+          cx={centerX}
+          cy={centerY}
+          r={circleRadius}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          opacity={0.3}
+        />
+        <circle
+          cx={centerX}
+          cy={centerY}
+          r={3}
+          fill={lineColor}
+          opacity={0.3}
+        />
+
+        {/* Penalty areas */}
+        <rect
+          x={0}
+          y={(H - penaltyBoxHeight) / 2}
+          width={penaltyBoxWidth}
+          height={penaltyBoxHeight}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          opacity={0.3}
+        />
+        <rect
+          x={W - penaltyBoxWidth}
+          y={(H - penaltyBoxHeight) / 2}
+          width={penaltyBoxWidth}
+          height={penaltyBoxHeight}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          opacity={0.3}
+        />
+
+        {/* Goal areas */}
+        <rect
+          x={0}
+          y={(H - goalBoxHeight) / 2}
+          width={goalBoxWidth}
+          height={goalBoxHeight}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          opacity={0.3}
+        />
+        <rect
+          x={W - goalBoxWidth}
+          y={(H - goalBoxHeight) / 2}
+          width={goalBoxWidth}
+          height={goalBoxHeight}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          opacity={0.3}
+        />
+
+        {/* Penalty spots */}
+        <circle
+          cx={penaltySpotDistance}
+          cy={centerY}
+          r={3}
+          fill={lineColor}
+          opacity={0.3}
+        />
+        <circle
+          cx={W - penaltySpotDistance}
+          cy={centerY}
+          r={3}
+          fill={lineColor}
+          opacity={0.3}
+        />
+
+        {/* Penalty arcs (outside box only) */}
+        <path
+          d={`M ${penaltySpotDistance} ${centerY - circleRadius}
+      A ${circleRadius} ${circleRadius} 0 0 1
+        ${penaltySpotDistance} ${centerY + circleRadius}`}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          clipPath="url(#leftArcClip)"
+          opacity={0.3}
+        />
+
+        <path
+          d={`M ${W - penaltySpotDistance} ${centerY - circleRadius}
+      A ${circleRadius} ${circleRadius} 0 0 0
+        ${W - penaltySpotDistance} ${centerY + circleRadius}`}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          vectorEffect="non-scaling-stroke"
+          clipPath="url(#rightArcClip)"
+          opacity={0.3}
+        />
+      </svg>
+      <div className="absolute inset-0 z-20 flex h-full w-full items-center justify-center">
+        {children}
+      </div>
     </div>
   );
-}
+};
+
+export default FieldLayout;

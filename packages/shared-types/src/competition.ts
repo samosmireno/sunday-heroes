@@ -42,13 +42,6 @@ export type CompetitionResponse = {
   playerStats: PlayerTotals[];
 };
 
-export type DashboardCompetitionResponse = {
-  id: string;
-  name: string;
-  type: CompetitionType;
-  matches: number;
-};
-
 export type DetailedCompetitionResponse = {
   id: string;
   userRole: Role;

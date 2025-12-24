@@ -27,7 +27,7 @@ export default function DashboardCompetitionCard({
   const navigate = useNavigate();
 
   return (
-    <div className="relative overflow-hidden rounded border-2 border-accent/70 bg-panel-bg shadow-md transition-all hover:shadow-lg">
+    <div className="relative overflow-hidden rounded-lg border-2 border-accent/70 bg-panel-bg shadow-md transition-all hover:shadow-lg">
       <div className="flex items-center justify-between p-3">
         <h3
           className="truncate font-bold text-gray-200"
@@ -44,11 +44,11 @@ export default function DashboardCompetitionCard({
         </span>
       </div>
 
-      <div className="border-t border-accent/30 px-3 py-2 text-sm text-gray-400">
+      <div className="border-t border-accent/20 px-3 py-2 text-sm text-gray-400">
         <span>Matches: {competition.matches}</span>
       </div>
 
-      <div className="border-t border-accent/30 p-2">
+      <div className="border-t border-accent/20 p-2">
         <Button
           onClick={() => navigate(`/competition/${competition.id}`)}
           className="w-full rounded bg-accent/20 px-4 py-2 text-sm font-bold text-accent transition-colors hover:bg-accent/30"

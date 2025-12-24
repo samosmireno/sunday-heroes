@@ -1,4 +1,4 @@
-import { MatchType, VotingStatus } from "./enums";
+import { CompetitionType, MatchType, VotingStatus } from "./enums";
 import { PlayerResponse } from "./player";
 
 export type MatchResponse = {
@@ -16,28 +16,12 @@ export type MatchResponse = {
   videoUrl?: string;
 };
 
-export type DashboardMatchResponse = {
-  id: string;
-  competitionType: import("./enums").CompetitionType;
-  competitionName: string;
-  date?: string;
-  matchType: MatchType;
-  round: number;
-  homeTeamScore: number;
-  awayTeamScore: number;
-  penaltyHomeScore?: number;
-  penaltyAwayScore?: number;
-  teams: string[];
-  matchPlayers: number;
-  votingStatus: VotingStatus;
-};
-
 export type MatchPageResponse = {
   id: string;
   date?: string;
   competitionId: string;
   competitionName: string;
-  competitionType: import("./enums").CompetitionType;
+  competitionType: CompetitionType;
   isAdmin: boolean;
   teams: string[];
   scores: number[];

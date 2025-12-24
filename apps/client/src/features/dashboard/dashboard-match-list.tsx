@@ -4,30 +4,25 @@ import { useNavigate } from "react-router-dom";
 
 interface MatchListProps {
   matches: DashboardMatchResponse[];
-  title: string;
   maxDisplay?: number;
 }
 
-export default function MatchList({
-  matches,
-  title,
-  maxDisplay = 5,
-}: MatchListProps) {
+export default function MatchList({ matches, maxDisplay = 5 }: MatchListProps) {
   const navigate = useNavigate();
   const displayedMatches = matches.slice(0, maxDisplay);
   return (
     <div className="flex h-full flex-col">
-      <div className="rounded-t-xl border-b-2 border-accent/70 bg-panel-bg px-4 py-3">
+      <div className="border-b-2 border-accent/70 px-4 py-3">
         <div className="flex items-center justify-between">
           <h2
-            className="flex items-center text-xl font-bold uppercase tracking-wider text-accent"
+            className="text-xl font-bold uppercase text-accent"
             style={{ textShadow: "1px 1px 0 #000" }}
           >
-            {title}
+            Latest Matches
           </h2>
 
           <button
-            className="text-sm font-bold text-accent hover:text-accent/80"
+            className="text-sm font-bold text-accent hover:text-accent/80 hover:underline"
             onClick={() => navigate("/matches")}
             aria-label="View all matches"
           >
@@ -35,7 +30,7 @@ export default function MatchList({
           </button>
         </div>
       </div>
-      <div className="flex-1 overflow-hidden bg-bg/40">
+      <div className="flex-1 overflow-hidden">
         <div className="h-full overflow-y-auto p-4">
           {matches && matches.length > 0 ? (
             <div className="grid grid-cols-1 gap-3">
@@ -44,8 +39,12 @@ export default function MatchList({
               ))}
             </div>
           ) : (
-            <div className="flex h-full items-center justify-center rounded-lg bg-bg/20 p-4 text-center text-sm text-gray-400">
-              No recent matches. Scheduled matches will appear here.
+            <div className="flex h-full min-h-[200px] items-center justify-center rounded-lg bg-bg/80 p-4 text-center sm:min-h-[250px] md:p-6">
+              <div className="max-w-md">
+                <p className="text-sm text-gray-400 sm:text-base lg:text-lg">
+                  No recent matches. Scheduled matches will appear here.
+                </p>
+              </div>
             </div>
           )}
         </div>

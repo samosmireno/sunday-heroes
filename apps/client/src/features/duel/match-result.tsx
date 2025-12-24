@@ -64,7 +64,7 @@ export default function MatchResult({
   };
 
   return (
-    <div>
+    <div className="w-full">
       <div className="relative mb-3 rounded-lg border-2 border-accent bg-secondary p-3 text-center shadow-inner sm:mb-4 sm:p-4 md:mb-6 md:p-6">
         <div className="flex w-full flex-col">
           <div className="mb-3 flex items-center justify-center gap-4 text-2xl font-bold sm:mb-4 sm:text-3xl md:mb-6 md:text-4xl">
