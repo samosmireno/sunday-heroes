@@ -9,6 +9,7 @@ interface InvitationActionsProps {
   isAccepting: boolean;
   onAccept: () => void;
   token?: string;
+  invitedBy?: string;
 }
 
 export default function InvitationActions({
@@ -16,6 +17,7 @@ export default function InvitationActions({
   isAccepting,
   onAccept,
   token,
+  invitedBy,
 }: InvitationActionsProps) {
   const navigate = useNavigate();
 
@@ -54,6 +56,7 @@ export default function InvitationActions({
               state: {
                 from: `/invitation/${token}`,
                 inviteToken: token,
+                invitedBy,
               },
             })
           }
@@ -69,6 +72,7 @@ export default function InvitationActions({
               state: {
                 from: `/invitation/${token}`,
                 inviteToken: token,
+                invitedBy,
               },
             })
           }

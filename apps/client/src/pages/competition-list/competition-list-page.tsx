@@ -66,7 +66,7 @@ export default function CompetitionListPage() {
       </div>
 
       <div className="mb-5 rounded-lg border-2 border-accent/70 bg-panel-bg shadow-lg sm:mb-6">
-        <div className="s border-b-2 border-accent/30 p-2 sm:p-3">
+        <div className="border-b-2 border-accent/30 p-2 sm:p-3">
           <SearchViewToggle
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}

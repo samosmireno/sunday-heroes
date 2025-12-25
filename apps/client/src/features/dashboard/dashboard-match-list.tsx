@@ -42,7 +42,7 @@ export default function MatchList({ matches, maxDisplay = 5 }: MatchListProps) {
             <div className="flex h-full min-h-[200px] items-center justify-center rounded-lg bg-bg/80 p-4 text-center sm:min-h-[250px] md:p-6">
               <div className="max-w-md">
                 <p className="text-sm text-gray-400 sm:text-base lg:text-lg">
-                  No recent matches. Scheduled matches will appear here.
+                  No matches yet. Matches appear here after they are added.
                 </p>
               </div>
             </div>

@@ -50,8 +50,8 @@ export default function DashboardCompetitionList({
             <div className="flex h-full min-h-[200px] items-center justify-center rounded-lg bg-bg/80 p-4 text-center sm:min-h-[250px] md:p-6">
               <div className="max-w-md">
                 <p className="text-sm text-gray-400 sm:text-base lg:text-lg">
-                  No competitions found. Create your first competition to get
-                  started.
+                  No competitions yet. Create one, or join via an invite from
+                  another player.
                 </p>
               </div>
             </div>

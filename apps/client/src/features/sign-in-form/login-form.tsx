@@ -18,8 +18,12 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading } = useLogin();
+
   const location = useLocation();
+  const inviteToken = location.state?.inviteToken as string;
+  const invitedBy = location.state?.invitedBy as string;
+
+  const { login, isLoading } = useLogin({ invitedBy });
   const form = useForm<loginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -28,7 +32,6 @@ export default function LoginForm() {
     },
     mode: "onSubmit",
   });
-  const inviteToken = location.state?.inviteToken;
 
   const onSubmit = (values: loginFormValues) => {
     login({

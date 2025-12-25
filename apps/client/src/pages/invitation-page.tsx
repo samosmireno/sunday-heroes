@@ -15,7 +15,7 @@ export default function InvitationPage() {
   const { user } = useAuth() as { user: UserResponse };
 
   const { data: invitation, isLoading, error } = useInvitation(token);
-  const acceptMutation = useAcceptInvitation();
+  const acceptMutation = useAcceptInvitation(invitation?.invitedBy.name);
 
   const handleAccept = () => {
     if (token) {
@@ -48,6 +48,7 @@ export default function InvitationPage() {
             isAccepting={acceptMutation.isPending}
             onAccept={handleAccept}
             token={token}
+            invitedBy={invitation.invitedBy.name}
           />
         </CardContent>
       </Card>

@@ -12,6 +12,7 @@ import { transformCompetitionFormToRequest } from "./utils";
 import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
 import axiosInstance from "@/config/axios-config";
 import { AppError } from "@/hooks/use-error-handler/types";
+import { toast } from "sonner";
 
 export function useCreateCompetition() {
   const navigate = useNavigate();
@@ -52,8 +53,12 @@ export function useCreateCompetition() {
     },
     onSuccess: (response, variables) => {
       if (variables.type === CompetitionType.LEAGUE) {
+        toast.success("League has been created successfully!");
         navigate(`/league-setup/${response.data.competition.id}`);
       } else {
+        toast.success(
+          "Competition has been created successfully! Add a match to start tracking stats.",
+        );
         navigate(-1);
       }
     },

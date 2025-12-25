@@ -4,7 +4,7 @@ import axiosInstance from "@/config/axios-config";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 
-export function useAcceptInvitation() {
+export function useAcceptInvitation(invitedBy?: string) {
   const navigate = useNavigate();
 
   return useMutation({
@@ -12,8 +12,7 @@ export function useAcceptInvitation() {
       await axiosInstance.post(`/api/invitations/${token}/accept`);
     },
     onSuccess: () => {
-      toast.success("Successfully connected to player profile!");
-      navigate("/dashboard");
+      navigate("/dashboard", { state: { showSuccessToast: true, invitedBy } });
     },
     onError: (error) => {
       let errorMessage = "Failed to accept invitation";

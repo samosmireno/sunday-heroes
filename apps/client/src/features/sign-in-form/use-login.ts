@@ -31,6 +31,7 @@ const login = async (data: LoginRequest): Promise<LoginResponse> => {
 interface UseLoginOptions {
   onSuccess?: () => void;
   redirectTo?: string;
+  invitedBy?: string;
 }
 
 export function useLogin(options?: UseLoginOptions) {
@@ -44,13 +45,16 @@ export function useLogin(options?: UseLoginOptions) {
       queryClient.setQueryData(["user"], data);
       setUserData(data);
 
-      toast.success(`Welcome back, ${data.name}!`);
-
       if (options?.onSuccess) {
         options.onSuccess();
       }
 
-      navigate(options?.redirectTo || "/dashboard");
+      navigate(options?.redirectTo || "/dashboard", {
+        state: {
+          showSuccessToast: true,
+          invitedBy: options?.invitedBy,
+        },
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Login failed. Please try again.");

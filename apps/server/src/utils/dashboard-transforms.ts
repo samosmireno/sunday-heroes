@@ -68,6 +68,8 @@ export function extractDashboardData(
     matches
   );
 
+  const votingEnabled = competitions.some((comp) => comp.votingEnabled);
+
   return {
     activeCompetitions,
     totalPlayers,
@@ -75,6 +77,7 @@ export function extractDashboardData(
     completedMatches,
     matches: dashboardMatches,
     competitions: dashboardCompetitions,
+    votingEnabled,
   };
 }
 

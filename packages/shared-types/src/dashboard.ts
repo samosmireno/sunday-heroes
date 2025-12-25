@@ -7,6 +7,7 @@ export type DashboardResponse = {
   completedMatches: number;
   matches: DashboardMatchResponse[];
   competitions: DashboardCompetitionResponse[];
+  votingEnabled: boolean;
 };
 
 export type DashboardMatchResponse = {

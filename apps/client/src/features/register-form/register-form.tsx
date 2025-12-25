@@ -19,7 +19,11 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const location = useLocation();
-  const { register, isLoading } = useRegister();
+
+  const inviteToken = location.state?.inviteToken as string;
+  const invitedBy = location.state?.invitedBy as string;
+
+  const { register, isLoading } = useRegister({ invitedBy });
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -30,7 +34,6 @@ export default function RegisterForm() {
     },
     mode: "onSubmit",
   });
-  const inviteToken = location.state?.inviteToken;
 
   const onSubmit = (values: RegisterFormValues) => {
     register({

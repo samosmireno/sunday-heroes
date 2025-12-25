@@ -32,6 +32,7 @@ const register = async (data: RegisterRequest): Promise<RegisterResponse> => {
 interface UseRegisterOptions {
   onSuccess?: () => void;
   redirectTo?: string;
+  invitedBy?: string;
 }
 
 export function useRegister(options?: UseRegisterOptions) {
@@ -45,13 +46,17 @@ export function useRegister(options?: UseRegisterOptions) {
       queryClient.setQueryData(["user"], data);
       setUserData(data);
 
-      toast.success("Registration successful! Welcome to Sunday Heroes.");
-
       if (options?.onSuccess) {
         options.onSuccess();
       }
 
-      navigate(options?.redirectTo || "/dashboard");
+      navigate(options?.redirectTo || "/dashboard", {
+        state: {
+          showSuccessToast: true,
+          invitedBy: options?.invitedBy,
+          registered: true,
+        },
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Registration failed. Please try again.");
