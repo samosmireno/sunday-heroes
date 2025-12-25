@@ -73,7 +73,7 @@ export default function DashboardStatCard({
             <PopoverContent
               side="left"
               className={cn(
-                "max-w-xs rounded-lg border-2 p-4 text-center text-sm shadow-md",
+                "max-w-64 rounded-lg border-2 p-4 text-center text-sm shadow-md",
                 styles.popover,
               )}
             >
