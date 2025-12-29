@@ -59,7 +59,7 @@ export function useCreateCompetition() {
         toast.success(
           "Competition has been created successfully! Add a match to start tracking stats.",
         );
-        navigate(-1);
+        navigate(`/competition/${response.data.competition.id}`);
       }
     },
     onError: (error) => {

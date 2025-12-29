@@ -133,7 +133,7 @@ export const createCompetition = async (
       );
     }
 
-    sendSuccess(res, competition, 201);
+    sendSuccess(res, { competition }, 201);
   } catch (error) {
     next(error);
   }

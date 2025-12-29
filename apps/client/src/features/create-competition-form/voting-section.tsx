@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -45,6 +46,10 @@ export function VotingSection({
                 <FormLabel className="font-medium text-gray-300">
                   Voting
                 </FormLabel>
+                <FormDescription className="mt-2 text-xs text-gray-400">
+                  After each match, players receive an email to vote for the 3
+                  best players.
+                </FormDescription>
               </div>
             </FormItem>
           )}
@@ -82,9 +87,13 @@ function VotingOptionsSection({
                   {...field}
                   type="number"
                   min={0}
+                  defaultValue={field.value ?? 3}
                   className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                 />
               </FormControl>
+              <FormDescription className="text-xs text-gray-400">
+                Number of days players can vote after a match is added.
+              </FormDescription>
               <FormMessage className="text-red-400" />
             </FormItem>
           )}
@@ -104,9 +113,14 @@ function VotingOptionsSection({
                   {...field}
                   type="number"
                   min={0}
+                  defaultValue={field.value ?? 2}
                   className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                 />
               </FormControl>
+              <FormDescription className="text-xs text-gray-400">
+                Send a reminder email if players haven’t voted after X days.
+                (Recommended: 1 day before voting period ends)
+              </FormDescription>
               <FormMessage className="text-red-400" />
             </FormItem>
           )}

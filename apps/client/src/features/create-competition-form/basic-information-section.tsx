@@ -1,4 +1,3 @@
-// components/features/create-competition-form/basic-information-section.tsx
 import { UseFormReturn } from "react-hook-form";
 import { CompetitionType } from "@repo/shared-types";
 import {
@@ -19,6 +18,12 @@ import {
 import { capitalizeFirstLetter } from "../../utils/string";
 import { CreateCompetitionFormValues } from "./create-competition-schema";
 import { LeagueSettingsSection } from "./league-settings-section";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Info } from "lucide-react";
 
 interface BasicInformationSectionProps {
   form: UseFormReturn<CreateCompetitionFormValues>;
@@ -39,7 +44,7 @@ export function BasicInformationSection({
           name="name"
           control={form.control}
           render={({ field }) => (
-            <FormItem className="flex w-full flex-col">
+            <FormItem className="flex w-full max-w-xs flex-col">
               <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
                 Competition name
               </FormLabel>
@@ -47,6 +52,7 @@ export function BasicInformationSection({
                 <Input
                   {...field}
                   type="text"
+                  placeholder="Sunday Night 5v5"
                   className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                 />
               </FormControl>
@@ -59,16 +65,50 @@ export function BasicInformationSection({
           name="type"
           control={form.control}
           render={({ field }) => (
-            <FormItem className="flex w-full flex-col">
-              <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
-                Competition Type
+            <FormItem className="flex w-full max-w-xs flex-col">
+              <FormLabel
+                htmlFor="type"
+                className="mb-1 flex items-center gap-2 text-sm font-medium text-gray-300"
+              >
+                Type
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <span className="cursor-pointer hover:text-accent">
+                      <Info size={16} aria-label="Competition type info" />
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    side="right"
+                    className="max-w-52 rounded-lg border-2 border-accent/60 bg-panel-bg p-4 text-sm text-gray-200 shadow-md"
+                  >
+                    <div>
+                      <strong>Duel</strong>
+                      <div>Teams and players are mixed every match.</div>
+                    </div>
+                    <div className="mt-2">
+                      <strong>League</strong>
+                      <div>
+                        Fixed teams compete in a standings-based format.
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <strong>Knockout</strong>
+                      <div>Losing teams are eliminated each round.</div>
+                    </div>
+                    <div className="mt-2">
+                      <strong>
+                        ⚠️ Competition type cannot be changed later.
+                      </strong>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </FormLabel>
               <FormControl>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <SelectTrigger className="w-full max-w-xs rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 sm:px-4 sm:py-2">
+                  <SelectTrigger className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 sm:px-4 sm:py-2">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent className="border-accent/60 bg-panel-bg text-gray-200">

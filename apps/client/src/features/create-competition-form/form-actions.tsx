@@ -12,7 +12,7 @@ export function FormActions({ isFormValid, onCancel }: FormActionsProps) {
     <div className="space-y-6 border-t border-accent/30 pt-4">
       <InfoBox title="Important note" icon={Info} className="w-11/12">
         <p>
-          Once a competition is created, the type and certain settings cannot be
+          Once a competition is created, the type and voting settings cannot be
           changed. Please review your settings carefully.
         </p>
       </InfoBox>

@@ -111,7 +111,7 @@ export default function FootballField({
           />
         </>
       </FieldLayout>
-      <div className="relative z-10 flex h-1/4 w-full justify-between bg-secondary">
+      <div className="relative flex h-1/4 w-full justify-between bg-secondary">
         <OffFieldPlayers match={match} homeTeam={true} hoverable={hoverable} />
         <OffFieldPlayers match={match} homeTeam={false} hoverable={hoverable} />
       </div>

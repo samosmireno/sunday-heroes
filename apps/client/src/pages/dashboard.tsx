@@ -58,7 +58,7 @@ export default function Dashboard() {
 
       <div className="mb-6 grid grid-cols-1 gap-3 sm:mb-8 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4">
         <DashboardStatCard
-          title="Active Competitions"
+          title="Total Competitions"
           value={dashboard?.activeCompetitions || 0}
           icon={Trophy}
           info={

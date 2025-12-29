@@ -1,4 +1,3 @@
-// components/features/create-competition-form/league-settings-section.tsx
 import { UseFormReturn } from "react-hook-form";
 import { MatchType } from "@repo/shared-types";
 import {
@@ -7,6 +6,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -33,15 +33,19 @@ export function LeagueSettingsSection({ form }: LeagueSettingsSectionProps) {
         name="numberOfTeams"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Number of Teams (Max 16)</FormLabel>
+            <FormLabel>Number of Teams</FormLabel>
             <FormControl>
               <Input
                 {...field}
                 type="number"
                 min={2}
+                max={16}
                 className="w-full max-w-xs rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
               />
             </FormControl>
+            <FormDescription className="mt-1 text-xs text-gray-400">
+              Total number of teams in this league. You can add players later.
+            </FormDescription>
             <FormMessage className="text-red-400" />
           </FormItem>
         )}
@@ -56,7 +60,12 @@ export function LeagueSettingsSection({ form }: LeagueSettingsSectionProps) {
               onCheckedChange={field.onChange}
               className="border-accent text-accent"
             />
-            <FormLabel>Double Round Robin</FormLabel>
+            <div>
+              <FormLabel>Double Round Robin</FormLabel>
+              <FormDescription className="text-xs text-gray-400">
+                Each team plays every other team twice.
+              </FormDescription>
+            </div>
           </FormItem>
         )}
       />
@@ -67,7 +76,7 @@ export function LeagueSettingsSection({ form }: LeagueSettingsSectionProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
-              Match Type
+              Match Format
             </FormLabel>
             <FormControl>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -87,6 +96,9 @@ export function LeagueSettingsSection({ form }: LeagueSettingsSectionProps) {
                 </SelectContent>
               </Select>
             </FormControl>
+            <FormDescription className="text-xs text-gray-400">
+              Used to validate team sizes and match setup.
+            </FormDescription>
             <FormMessage className="text-red-400" />
           </FormItem>
         )}
