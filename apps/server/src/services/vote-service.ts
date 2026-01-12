@@ -233,7 +233,7 @@ export class VoteService {
     }
   }
 
-  private static async calculateAndStoreMatchRatings(
+  static async calculateAndStoreMatchRatings(
     matchId: string,
     tx?: Prisma.TransactionClient
   ): Promise<void> {

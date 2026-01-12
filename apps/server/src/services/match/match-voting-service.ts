@@ -5,6 +5,7 @@ import { CompetitionRepo } from "../../repositories/competition/competition-repo
 import { EmailService } from "../email-service";
 import { DashboardPlayerBasic } from "../../repositories/dashboard-player/types";
 import { AppError } from "../../utils/errors";
+import { VoteService } from "../vote-service";
 
 interface MatchVotingEmailData {
   competitionName: string;
@@ -22,6 +23,11 @@ export class MatchVotingService {
     const expiredMatches = await MatchRepo.findWithExpiredVoting();
 
     if (expiredMatches.length > 0) {
+      await Promise.all(
+        expiredMatches.map((match) =>
+          VoteService.calculateAndStoreMatchRatings(match.id)
+        )
+      );
       const matchIds = expiredMatches.map((m) => m.id);
       await MatchRepo.updateManyVotingStatus(matchIds, "CLOSED");
       console.log(`Closed voting for ${expiredMatches.length} expired matches`);
