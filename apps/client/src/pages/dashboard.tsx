@@ -89,7 +89,7 @@ export default function Dashboard() {
                 ? `${dashboard.pendingVotes} player${dashboard.pendingVotes > 1 ? "s have" : " has"} yet to vote in recent matches.`
                 : "All votes are in for your recent matches."
             }
-            type="alert"
+            type={(dashboard?.pendingVotes ?? 0) > 0 ? "alert" : "info"}
           />
         ) : (
           <DashboardStatCard
