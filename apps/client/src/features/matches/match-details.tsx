@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Medal } from "lucide-react";
 import { MatchPageResponse } from "@repo/shared-types";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 interface MatchDetailsProps {
   match: MatchPageResponse;
 }
 
 export function MatchDetails({ match }: MatchDetailsProps) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<0 | 1>(0); // 0 for home team, 1 for away team
 
   const homeTeamPlayers = match.playerStats.filter(
@@ -73,12 +76,15 @@ export function MatchDetails({ match }: MatchDetailsProps) {
             {sortedPlayers.map((player) => (
               <tr key={player.id} className="hover:bg-accent/5">
                 <td className="px-2 py-2 text-sm font-medium text-gray-200">
-                  <div className="flex items-center">
+                  <Button
+                    className="flex items-center bg-transparent hover:cursor-pointer hover:bg-accent/20"
+                    onClick={() => navigate(`/player-stats/${player.id}`)}
+                  >
                     {topPlayer?.id === player.id && topPlayer.rating !== 0 && (
                       <Medal size={14} className="mr-1.5 text-amber-400" />
                     )}
                     {player.nickname}
-                  </div>
+                  </Button>
                 </td>
                 <td className="px-2 py-2 text-center text-sm text-gray-300">
                   {player.goals > 0 ? (

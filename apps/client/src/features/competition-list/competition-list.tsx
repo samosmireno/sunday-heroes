@@ -84,8 +84,9 @@ export default function CompetitionList({
                 <td className="whitespace-nowrap px-2 py-3 sm:px-4 sm:py-4">
                   <div className="flex items-center gap-2">
                     <div
-                      className="max-w-[100px] truncate text-sm font-bold text-gray-200 sm:max-w-[180px] md:max-w-[250px]"
+                      className="max-w-[100px] truncate text-sm font-bold text-gray-200 hover:cursor-pointer hover:underline sm:max-w-[180px] md:max-w-[250px]"
                       title={competition.name}
+                      onClick={() => navigate(`/competition/${competition.id}`)}
                     >
                       {competition.name}
                     </div>

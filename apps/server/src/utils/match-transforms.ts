@@ -26,7 +26,7 @@ export function transformMatchServiceToResponse(
   match: MatchWithDetails
 ): MatchResponse {
   const mappedPlayers = match.matchPlayers.map((player) => ({
-    id: player.id,
+    id: player.dashboardPlayer.id,
     nickname: player.dashboardPlayer.nickname,
     isHome: player.isHome,
     goals: player.goals,
@@ -66,7 +66,7 @@ export function transformMatchesToMatchesResponse(
     const homeTeamPlayers: PlayerResponse[] = match.matchPlayers
       .filter((player) => player.isHome)
       .map((player) => ({
-        id: player.id,
+        id: player.dashboardPlayer.id,
         nickname: player.dashboardPlayer.nickname,
         position: player.position,
         goals: player.goals,
@@ -81,7 +81,7 @@ export function transformMatchesToMatchesResponse(
     const awayTeamPlayers: PlayerResponse[] = match.matchPlayers
       .filter((player) => !player.isHome)
       .map((player) => ({
-        id: player.id,
+        id: player.dashboardPlayer.id,
         nickname: player.dashboardPlayer.nickname,
         position: player.position,
         goals: player.goals,

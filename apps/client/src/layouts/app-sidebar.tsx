@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth-context";
 import {
   DropdownMenu,
@@ -63,6 +63,7 @@ const sidebarItems = [
 export function AppSidebar() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { isMobile, setOpenMobile } = useSidebar();
 
   const isActive = (url: string) => {
@@ -83,14 +84,21 @@ export function AppSidebar() {
       <SidebarContent className="flex flex-1 flex-col overflow-y-auto">
         <SidebarGroup>
           <SidebarGroupLabel className="mb-4 mt-2 flex items-center justify-center gap-1 rounded-none border-b-2 border-dashed border-accent/70 pb-3 text-center font-oswald text-xl font-bold tracking-wider text-accent">
-            <img
-              src="/assets/logo.webp"
-              alt="Sunday Heroes Logo"
-              className="h-12 w-12 object-contain py-2"
-            />
-            <span className="bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">
-              Sunday Heroes
-            </span>
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard")}
+              className="flex items-center gap-1 focus:outline-none"
+              aria-label="Go to Dashboard"
+            >
+              <img
+                src="/assets/logo.webp"
+                alt="Sunday Heroes Logo"
+                className="h-12 w-12 object-contain py-2"
+              />
+              <span className="bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">
+                Sunday Heroes
+              </span>
+            </button>
           </SidebarGroupLabel>
         </SidebarGroup>
         <SidebarGroup>
