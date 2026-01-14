@@ -21,7 +21,7 @@ router.post(
   validateRequestBody(createMatchRequestSchema),
   createMatch
 );
-router.put(
+router.patch(
   "/:id",
   authenticateToken,
   validateRequestBody(createMatchRequestSchema),

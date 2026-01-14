@@ -21,7 +21,7 @@ export function useUpdateTeamNames() {
 
   return useMutation({
     mutationFn: async ({ competitionId, teamUpdates }: UpdateTeamNamesData) => {
-      return axiosInstance.put(`/api/leagues/${competitionId}/team-names`, {
+      return axiosInstance.patch(`/api/leagues/${competitionId}/team-names`, {
         teamUpdates,
       });
     },

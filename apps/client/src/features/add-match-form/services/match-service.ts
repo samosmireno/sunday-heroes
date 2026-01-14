@@ -34,7 +34,7 @@ export const matchService = {
         ? transformDuelFormToRequest(data, competitionId)
         : transformLeagueFormToRequest(data as LeagueFormData, competitionId);
 
-    return axiosInstance.put(
+    return axiosInstance.patch(
       `${config.server}/api/matches/${matchId}`,
       reqData,
       {

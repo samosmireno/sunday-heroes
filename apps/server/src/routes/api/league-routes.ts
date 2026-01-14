@@ -44,7 +44,7 @@ router.post(
   addTeamToLeague
 );
 
-router.put(
+router.patch(
   "/:id/team-names",
   authenticateToken,
   validateRequestBody(updateTeamNamesSchema),

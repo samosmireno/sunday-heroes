@@ -11,7 +11,7 @@ export function useResetCompetition(competitionId: string) {
 
   return useMutation({
     mutationFn: async () => {
-      await axiosInstance.put(
+      await axiosInstance.post(
         `${config.server}/api/competitions/${competitionId}/reset`,
         {},
         { withCredentials: true },

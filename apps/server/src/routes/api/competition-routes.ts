@@ -31,7 +31,7 @@ router.post(
   validateRequestBody(createCompetitionRequestSchema),
   createCompetition
 );
-router.put("/:id/reset", authenticateToken, resetCompetition);
+router.post("/:id/reset", authenticateToken, resetCompetition);
 router.delete("/:id", authenticateToken, deleteCompetition);
 
 router.post("/:id/moderators", authenticateToken, addModeratorToCompetition);
