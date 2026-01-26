@@ -17,6 +17,9 @@ interface StatsTableProps {
 
 const MATCH_PERCENTAGE_OPTIONS = [
   { label: "All", value: "all" },
+  { label: "20%", value: "20" },
+  { label: "30%", value: "30" },
+  { label: "40%", value: "40" },
   { label: "50%", value: "50" },
   { label: "60%", value: "60" },
   { label: "70%", value: "70" },
