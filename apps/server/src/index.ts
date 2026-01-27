@@ -7,8 +7,13 @@ import { config } from "./config/config";
 import { errorHandler } from "./middleware/error-handler";
 import { setupScheduledTasks } from "./services/match/match-expired-service";
 import path from "path";
+import pinoHttp from "pino-http";
+import logger from "./logger";
+import pinoHttpConfig from "./config/pino-http-config";
 
 const app = express();
+
+app.use(pinoHttp({ logger, ...pinoHttpConfig }));
 
 if (config.env === "production") {
   app.set("trust proxy", 1);
@@ -25,7 +30,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["X-Total-Count"],
-  })
+  }),
 );
 
 app.use("/api", apiRoutes);
@@ -53,7 +58,7 @@ if (config.env === "production") {
 } else {
   app.listen(config.port, () => {
     console.log(
-      `Development server running on http://localhost:${config.port}`
+      `Development server running on http://localhost:${config.port}`,
     );
   });
 }
