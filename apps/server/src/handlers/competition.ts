@@ -6,11 +6,12 @@ import { extractUserId, getRequiredQuery } from "../utils/request-utils";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 import { TeamService } from "../services/team-service";
 import { BadRequestError } from "../utils/errors";
+import logger from "../logger";
 
 export const getDetailedCompetitions = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = getRequiredQuery(req, "userId");
@@ -39,7 +40,7 @@ export const getDetailedCompetitions = async (
 export const getCompetitionStats = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = getRequiredQuery(req, "compId");
@@ -47,7 +48,7 @@ export const getCompetitionStats = async (
 
     const competition = await CompetitionService.getCompetitionStats(
       competitionId,
-      userId
+      userId,
     );
     sendSuccess(res, competition);
   } catch (error) {
@@ -58,7 +59,7 @@ export const getCompetitionStats = async (
 export const getCompetitionInfo = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = getRequiredQuery(req, "compId");
@@ -74,7 +75,7 @@ export const getCompetitionInfo = async (
 export const getCompetitionSettings = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = getRequiredQuery(req, "compId");
@@ -82,7 +83,7 @@ export const getCompetitionSettings = async (
 
     const competition = await CompetitionService.getCompetitionSettings(
       competitionId,
-      userId
+      userId,
     );
     sendSuccess(res, competition);
   } catch (error) {
@@ -93,7 +94,7 @@ export const getCompetitionSettings = async (
 export const getCompetitionTeams = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = getRequiredQuery(req, "compId");
@@ -109,10 +110,15 @@ export const getCompetitionTeams = async (
 export const createCompetition = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const data: createCompetitionRequest = req.body;
+
+    logger.info(
+      { userId: data.userId, type: data.type },
+      "Create competition attempt",
+    );
 
     if (!data.userId) {
       throw new BadRequestError("User ID is required");
@@ -120,16 +126,26 @@ export const createCompetition = async (
 
     const competition = await CompetitionService.createCompetition(data);
 
+    logger.info(
+      { userId: data.userId, competitionId: competition.id },
+      "Competition created",
+    );
+
     if (data.type === CompetitionType.DUEL) {
       await TeamService.createTeamInCompetition(
         "Home",
         competition.id,
-        data.userId
+        data.userId,
       );
       await TeamService.createTeamInCompetition(
         "Away",
         competition.id,
-        data.userId
+        data.userId,
+      );
+
+      logger.info(
+        { competitionId: competition.id },
+        "Teams created for duel competition",
       );
     }
 
@@ -142,11 +158,13 @@ export const createCompetition = async (
 export const resetCompetition = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = extractUserId(req);
     const competitionId = req.params.id;
+
+    logger.info({ userId, competitionId }, "Reset competition attempt");
 
     if (!competitionId) {
       throw new BadRequestError("Competition ID is required");
@@ -154,8 +172,10 @@ export const resetCompetition = async (
 
     const resetCompetition = await CompetitionService.resetCompetition(
       competitionId,
-      userId
+      userId,
     );
+
+    logger.info({ userId, competitionId }, "Competition reset");
     sendSuccess(res, resetCompetition);
   } catch (error) {
     next(error);
@@ -165,17 +185,21 @@ export const resetCompetition = async (
 export const deleteCompetition = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = extractUserId(req);
     const competitionId = req.params.id;
+
+    logger.info({ userId, competitionId }, "Delete competition attempt");
 
     if (!competitionId) {
       throw new BadRequestError("Competition ID is required");
     }
 
     await CompetitionService.deleteCompetition(competitionId, userId);
+
+    logger.info({ userId, competitionId }, "Competition deleted");
     sendSuccess(res, { message: "Competition deleted successfully" }, 204);
   } catch (error) {
     next(error);

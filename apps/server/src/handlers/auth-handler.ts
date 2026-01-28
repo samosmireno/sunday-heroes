@@ -20,11 +20,12 @@ import {
   ValidationError,
 } from "../utils/errors";
 import { sendSuccess } from "../utils/response-utils";
+import logger from "../logger";
 
 export const handleRegister = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { email, password, name, inviteToken } = req.body as RegisterRequest;
@@ -32,6 +33,8 @@ export const handleRegister = async (
     if (!email || !password || !name) {
       throw new BadRequestError("Email and password are required");
     }
+
+    logger.info({ email }, "User registration attempt");
 
     const user = await AuthService.registerUser({
       email,
@@ -41,13 +44,17 @@ export const handleRegister = async (
 
     const { accessToken, refreshToken } = await AuthService.refreshUserTokens(
       user.id,
-      user.email
+      user.email,
     );
 
     CookieUtils.setAuthCookies(res, accessToken, refreshToken);
 
     if (inviteToken) {
       await InvitationService.handleInvitationForAuth(inviteToken, user.id);
+      logger.info(
+        { userId: user.id },
+        "Invitation applied during registration",
+      );
     }
 
     const userResponse = {
@@ -56,6 +63,8 @@ export const handleRegister = async (
       name: user.givenName,
       role: user.role as UserResponse["role"],
     };
+
+    logger.info({ userId: user.id }, "User registered successfully");
 
     sendSuccess(res, userResponse, 201);
   } catch (error) {
@@ -66,7 +75,7 @@ export const handleRegister = async (
 export const handleLogin = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { email, password, inviteToken } = req.body as LoginRequest;
@@ -75,17 +84,23 @@ export const handleLogin = async (
       throw new BadRequestError("Email and password are required");
     }
 
+    logger.info({ email }, "Login attempt");
+
     const user = await AuthService.loginUser(email, password);
 
     const { accessToken, refreshToken } = await AuthService.refreshUserTokens(
       user.id,
-      user.email
+      user.email,
     );
 
     CookieUtils.setAuthCookies(res, accessToken, refreshToken);
 
     if (inviteToken) {
       await InvitationService.handleInvitationForAuth(inviteToken, user.id);
+      logger.info(
+        { userId: user.id },
+        "Invitation applied during registration",
+      );
     }
 
     const userResponse = {
@@ -94,6 +109,8 @@ export const handleLogin = async (
       name: user.givenName,
       role: user.role as UserResponse["role"],
     };
+
+    logger.info({ userId: user.id }, "User logged in");
 
     sendSuccess(res, userResponse);
   } catch (error) {
@@ -104,7 +121,7 @@ export const handleLogin = async (
 export const handleRefreshToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const refreshToken = req.cookies["refresh-token"];
@@ -140,6 +157,8 @@ export const handleRefreshToken = async (
       role: user.role as UserResponse["role"],
     };
 
+    logger.info({ userId: user.id }, "Access token refreshed");
+
     sendSuccess(res, authResponse);
   } catch (error) {
     next(error);
@@ -149,13 +168,15 @@ export const handleRefreshToken = async (
 export const handleLogout = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const refreshToken = req.cookies["refresh-token"];
     CookieUtils.clearAuthCookies(res);
 
-    await AuthService.logout(refreshToken);
+    const userId = await AuthService.logout(refreshToken);
+
+    logger.info({ userId }, "User logged out");
 
     sendSuccess(res, {
       loggedIn: false,
@@ -169,18 +190,20 @@ export const handleLogout = async (
 export const handleGoogleCallback = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const code = req.query.code as string;
     const inviteToken = req.query.state as string;
+
+    logger.info("Google OAuth callback received");
 
     const googleUser = await AuthService.exchangeGoogleCode(code);
     const user = await AuthService.findOrCreateUser(googleUser);
 
     const { accessToken, refreshToken } = await AuthService.refreshUserTokens(
       user.id,
-      googleUser.email
+      googleUser.email,
     );
 
     CookieUtils.setAuthCookies(res, accessToken, refreshToken);
@@ -189,14 +212,17 @@ export const handleGoogleCallback = async (
       return await InvitationService.handleInvitationForGoogle(
         inviteToken,
         user,
-        res
+        res,
       );
     }
 
     const userInfo = AuthService.createUserResponse(user);
     const encodedUser = encodeURIComponent(
-      AuthService.encodeUserInfo(userInfo)
+      AuthService.encodeUserInfo(userInfo),
     );
+
+    logger.info({ userId: user.id }, "Google OAuth login successful");
+
     res.redirect(`${config.google.redirectClientUrl}?user=${encodedUser}`);
   } catch (error) {
     next(error);
@@ -206,7 +232,7 @@ export const handleGoogleCallback = async (
 export const getCurrentUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { userId } = req as AuthenticatedRequest;
@@ -225,7 +251,6 @@ export const getCurrentUser = async (
 
     sendSuccess(res, userResponse);
   } catch (error) {
-    console.error("Error fetching user:", error);
     next(error);
   }
 };
@@ -233,7 +258,7 @@ export const getCurrentUser = async (
 export const handleForgotPassword = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { email } = req.body;
@@ -241,6 +266,8 @@ export const handleForgotPassword = async (
     if (!email) {
       throw new BadRequestError("Email is required");
     }
+
+    logger.info({ email }, "Password reset requested");
 
     const resetToken =
       await PasswordResetService.createPasswordResetToken(email);
@@ -258,7 +285,7 @@ export const handleForgotPassword = async (
 export const handleResetPassword = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { token, password } = req.body;
@@ -278,6 +305,8 @@ export const handleResetPassword = async (
     }
 
     await PasswordResetService.resetPassword(token, password);
+
+    logger.info("Password reset completed");
 
     sendSuccess(res, {
       message: "Password has been reset successfully",

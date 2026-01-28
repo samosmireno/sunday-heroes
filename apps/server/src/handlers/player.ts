@@ -3,11 +3,12 @@ import { DashboardPlayerService } from "../services/dashboard-player-service";
 import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { BadRequestError, ValidationError } from "../utils/errors";
+import logger from "../logger";
 
 export const getAllDashboardPlayers = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = req.query.userId?.toString();
@@ -26,7 +27,7 @@ export const getAllDashboardPlayers = async (
     const players = await DashboardPlayerService.getDashboardPlayersByQuery(
       userId,
       competitionId,
-      query || ""
+      query || "",
     );
     sendSuccess(res, players);
   } catch (error) {
@@ -37,7 +38,7 @@ export const getAllDashboardPlayers = async (
 export const getAllDashboardPlayersWithDetails = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = req.query.userId?.toString();
@@ -67,7 +68,7 @@ export const getAllDashboardPlayersWithDetails = async (
 export const getMyDashboardTeammates = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = req.query.userId?.toString();
@@ -85,7 +86,7 @@ export const getMyDashboardTeammates = async (
         page,
         limit,
         search,
-      }
+      },
     );
     res.setHeader("X-Total-Count", result.totalCount.toString());
     res.setHeader("X-Total-Pages", result.totalPages.toString());
@@ -100,11 +101,13 @@ export const getMyDashboardTeammates = async (
 export const createDashboardPlayer = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = extractUserId(req);
     const { nickname } = req.body;
+
+    logger.info({ userId, nickname }, "Create dashboard player attempt");
 
     if (!nickname) {
       throw new ValidationError([
@@ -119,52 +122,9 @@ export const createDashboardPlayer = async (
     const player = await DashboardPlayerService.createDashboardPlayer(userId, {
       nickname,
     });
+
+    logger.info({ userId, playerId: player.id }, "Dashboard player created");
     sendSuccess(res, player, 201);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const updateDashboardPlayer = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId = extractUserId(req);
-    const playerId = req.params.id;
-    const { nickname, user_id } = req.body;
-
-    if (!playerId) {
-      throw new BadRequestError("Player ID is required");
-    }
-
-    const player = await DashboardPlayerService.updateDashboardPlayer(
-      playerId,
-      userId,
-      { nickname, user_id }
-    );
-    sendSuccess(res, player);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const deleteDashboardPlayer = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId = extractUserId(req);
-    const playerId = req.params.id;
-
-    if (!playerId) {
-      throw new BadRequestError("Player ID is required");
-    }
-
-    await DashboardPlayerService.deleteDashboardPlayer(playerId, userId);
-    sendSuccess(res, { message: "Player deleted successfully" });
   } catch (error) {
     next(error);
   }

@@ -6,14 +6,18 @@ import { CreateLeagueRequest } from "../schemas/league-schemas";
 import { TeamService } from "../services/team-service";
 import { transformLeagueFixtureToResponse } from "../utils/league-transforms";
 import { BadRequestError } from "../utils/errors";
+import logger from "../logger";
 
 export const createLeague = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = req.body.userId;
+
+    logger.info({ userId }, "Create league attempt");
+
     if (!userId) {
       throw new BadRequestError("User ID is required");
     }
@@ -21,6 +25,7 @@ export const createLeague = async (
 
     const league = await LeagueService.createLeague(data, userId);
 
+    logger.info({ userId, leagueId: league.competition.id }, "League created");
     sendSuccess(res, league, 201);
   } catch (error) {
     next(error);
@@ -30,7 +35,7 @@ export const createLeague = async (
 export const getLeagueStandings = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = req.params.id;
@@ -50,7 +55,7 @@ export const getLeagueStandings = async (
 export const getLeagueFixtures = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = req.params.id;
@@ -72,7 +77,7 @@ export const getLeagueFixtures = async (
 export const getLeagueTeams = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = req.params.id;
@@ -91,7 +96,7 @@ export const getLeagueTeams = async (
 export const getPlayerStats = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = req.params.id;
@@ -110,12 +115,17 @@ export const getPlayerStats = async (
 export const addTeamToLeague = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = extractUserId(req);
     const competitionId = req.params.id;
     const { teamName } = req.body;
+
+    logger.info(
+      { userId, competitionId, teamName },
+      "Add team to league attempt",
+    );
 
     if (!competitionId || !teamName) {
       throw new BadRequestError("Competition ID and team name are required");
@@ -124,7 +134,12 @@ export const addTeamToLeague = async (
     const team = await TeamService.createTeamInCompetition(
       teamName,
       competitionId,
-      userId
+      userId,
+    );
+
+    logger.info(
+      { userId, competitionId, teamId: team.id },
+      "Team added to league",
     );
     sendSuccess(res, team, 201);
   } catch (error) {
@@ -135,31 +150,34 @@ export const addTeamToLeague = async (
 export const updateTeamNames = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = extractUserId(req);
     const competitionId = req.params.id;
     const { teamUpdates } = req.body;
 
+    logger.info({ userId, competitionId }, "Update team names attempt");
+
     if (!competitionId || !teamUpdates || !Array.isArray(teamUpdates)) {
       throw new BadRequestError(
-        "Competition ID and team updates are required and team updates must be an array"
+        "Competition ID and team updates are required and team updates must be an array",
       );
     }
 
     for (const update of teamUpdates) {
       if (!update.id || !update.name) {
         throw new BadRequestError(
-          "Each team update must contain teamId and newName"
+          "Each team update must contain teamId and newName",
         );
       }
     }
 
+    logger.info({ userId, competitionId }, "Team names updated");
     const result = await LeagueService.updateTeamNames(
       competitionId,
       teamUpdates,
-      userId
+      userId,
     );
     sendSuccess(res, result);
   } catch (error) {
@@ -170,13 +188,15 @@ export const updateTeamNames = async (
 export const completeLeagueMatch = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = extractUserId(req);
     const matchId = req.params.matchId;
 
     const result = await LeagueService.completeMatch(matchId, userId);
+
+    logger.info({ userId, matchId }, "League match completed");
     sendSuccess(res, result);
   } catch (error) {
     next(error);

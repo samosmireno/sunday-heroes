@@ -5,6 +5,7 @@ import { MatchAuthService } from "../services/match/match-auth-service";
 import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { AuthorizationError, BadRequestError } from "../utils/errors";
+import logger from "../logger";
 
 const getRequiredQuery = (req: Request, param: string): string => {
   const value = req.query[param]?.toString();
@@ -17,7 +18,7 @@ const getRequiredQuery = (req: Request, param: string): string => {
 const getOptionalNumberParam = (
   req: Request,
   param: string,
-  defaultValue: number
+  defaultValue: number,
 ): number => {
   const value = req.query[param]?.toString();
   return value ? parseInt(value, 10) : defaultValue;
@@ -26,7 +27,7 @@ const getOptionalNumberParam = (
 export const getMatchById = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const matchId = req.params.id;
@@ -42,7 +43,7 @@ export const getMatchById = async (
 export const getMatchesWithStats = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = getRequiredQuery(req, "userId");
@@ -69,11 +70,16 @@ export const getMatchesWithStats = async (
 export const createMatch = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = extractUserId(req);
     const data: createMatchRequest = req.body;
+
+    logger.info(
+      { userId, competitionId: data.competitionId },
+      "Create match attempt",
+    );
 
     if (!data.competitionId) {
       throw new BadRequestError("Competition ID is required");
@@ -81,16 +87,21 @@ export const createMatch = async (
 
     const isAuthorized = await MatchAuthService.canUserCreateMatch(
       data.competitionId,
-      userId
+      userId,
     );
 
     if (!isAuthorized) {
       throw new AuthorizationError(
-        "User is not authorized to create a match in this competition"
+        "User is not authorized to create a match in this competition",
       );
     }
 
     const match = await MatchService.createMatch(data);
+
+    logger.info(
+      { userId, matchId: match.id, competitionId: data.competitionId },
+      "Match created",
+    );
     sendSuccess(res, match, 201);
   } catch (error) {
     next(error);
@@ -100,12 +111,17 @@ export const createMatch = async (
 export const updateMatch = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = extractUserId(req);
     const matchId = req.params.id;
     const data: createMatchRequest = req.body;
+
+    logger.info(
+      { userId, matchId, competitionId: data.competitionId },
+      "Update match attempt",
+    );
 
     if (!matchId) {
       throw new BadRequestError("Match ID is required");
@@ -117,16 +133,18 @@ export const updateMatch = async (
 
     const isAuthorized = await MatchAuthService.canUserModifyMatch(
       matchId,
-      userId
+      userId,
     );
 
     if (!isAuthorized) {
       throw new AuthorizationError(
-        "User is not authorized to update this match"
+        "User is not authorized to update this match",
       );
     }
 
     const updatedMatch = await MatchService.updateMatch(matchId, data);
+
+    logger.info({ userId, matchId }, "Match updated");
     sendSuccess(res, updatedMatch);
   } catch (error) {
     next(error);
@@ -136,11 +154,13 @@ export const updateMatch = async (
 export const deleteMatch = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = extractUserId(req);
     const matchId = req.params.id;
+
+    logger.info({ userId, matchId }, "Delete match attempt");
 
     if (!matchId) {
       throw new BadRequestError("Match ID is required");
@@ -148,12 +168,12 @@ export const deleteMatch = async (
 
     const isAuthorized = await MatchAuthService.canUserModifyMatch(
       matchId,
-      userId
+      userId,
     );
 
     if (!isAuthorized) {
       throw new AuthorizationError(
-        "User is not authorized to delete this match"
+        "User is not authorized to delete this match",
       );
     }
 
@@ -163,6 +183,7 @@ export const deleteMatch = async (
       throw new BadRequestError("Match not found or already deleted");
     }
 
+    logger.info({ userId, matchId }, "Match deleted");
     sendSuccess(res, { message: "Match deleted successfully" });
   } catch (error) {
     next(error);

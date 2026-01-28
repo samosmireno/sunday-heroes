@@ -7,7 +7,7 @@ export class AppError extends Error {
     name: string,
     statusCode: number,
     description: string,
-    isOperational: boolean
+    isOperational: boolean,
   ) {
     super(description);
 
@@ -97,7 +97,7 @@ export class ExternalServiceError extends AppError {
 
   constructor(
     service: string,
-    message: string = "External service unavailable"
+    message: string = "External service unavailable",
   ) {
     super("ExternalServiceError", 503, `${service}: ${message}`, false);
     this.service = service;
@@ -113,5 +113,11 @@ export class TokenExpiredError extends AppError {
 export class InvalidTokenError extends AppError {
   constructor(message: string = "Invalid token") {
     super("InvalidTokenError", 401, message, true);
+  }
+}
+
+export class UncaughtError extends AppError {
+  constructor(message: string = "An unexpected error occurred") {
+    super("UncaughtError", 500, message, false);
   }
 }

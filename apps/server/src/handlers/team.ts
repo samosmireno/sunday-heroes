@@ -4,11 +4,12 @@ import { sendSuccess } from "../utils/response-utils";
 import { extractUserId } from "../utils/request-utils";
 import { TeamService } from "../services/team-service";
 import { BadRequestError } from "../utils/errors";
+import logger from "../logger";
 
 export const getTeamListFromCompetitionId = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const competitionId = req.params.competitionId;
@@ -27,12 +28,14 @@ export const getTeamListFromCompetitionId = async (
 export const deleteTeam = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = extractUserId(req);
     const teamId = req.params.id;
     const { competitionId } = req.body;
+
+    logger.info({ userId, teamId }, "Delete team attempt");
 
     if (!teamId) {
       throw new BadRequestError("Team ID is required");
@@ -43,6 +46,8 @@ export const deleteTeam = async (
     }
 
     await TeamService.deleteTeam(teamId, competitionId, userId);
+
+    logger.info({ userId, teamId }, "Team deleted");
     sendSuccess(res, { message: "Team deleted successfully" });
   } catch (error) {
     next(error);

@@ -130,7 +130,7 @@ export class AuthService {
 
     const isPasswordValid = await PasswordUtils.compare(
       password,
-      user.password
+      user.password,
     );
     if (!isPasswordValid) {
       throw new AuthenticationError("Invalid email or password");
@@ -154,12 +154,7 @@ export class AuthService {
     return Buffer.from(JSON.stringify(userInfo), "utf8").toString("base64");
   }
 
-  static async logout(refreshToken?: string) {
-    if (refreshToken) {
-      const userId = await RefreshTokenService.getUserIdFromToken(refreshToken);
-      if (userId) {
-        await RefreshTokenService.deleteToken(refreshToken);
-      }
-    }
+  static async logout(refreshToken: string): Promise<string | undefined> {
+    return await RefreshTokenService.deleteToken(refreshToken);
   }
 }

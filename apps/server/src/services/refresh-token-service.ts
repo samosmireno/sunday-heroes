@@ -24,7 +24,7 @@ export class RefreshTokenService {
       await this.deleteToken(token);
       throw new TokenExpiredError(
         "Refresh token has expired",
-        refreshToken.expiresAt
+        refreshToken.expiresAt,
       );
     }
 
@@ -74,13 +74,9 @@ export class RefreshTokenService {
     return await RefreshTokenRepo.findByUserId(userId);
   }
 
-  static async deleteToken(token: string): Promise<boolean> {
-    if (!token || typeof token !== "string") {
-      return false;
-    }
-
+  static async deleteToken(token: string): Promise<string | undefined> {
     const result = await RefreshTokenRepo.deleteByToken(token);
-    return result !== null;
+    return result?.userId;
   }
 
   static async deleteAllUserTokens(userId: string): Promise<number> {
@@ -91,7 +87,7 @@ export class RefreshTokenService {
   static async cleanupExpiredTokensForUser(userId: string): Promise<void> {
     const userTokens = await RefreshTokenRepo.findByUserId(userId);
     const expiredTokens = userTokens.filter(
-      (token) => token.expiresAt < new Date()
+      (token) => token.expiresAt < new Date(),
     );
 
     for (const token of expiredTokens) {
