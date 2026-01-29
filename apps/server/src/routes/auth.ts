@@ -11,14 +11,28 @@ import {
 } from "../handlers/auth-handler";
 import { authenticateToken } from "../middleware/authentication-middleware";
 import { loginRateLimiter } from "../middleware/rate-limiter";
+import { validateRequestBody } from "../middleware/validation-middleware";
+import { registerSchema } from "../schemas/register-schema";
+import { loginSchema } from "../schemas/login-schema";
+import { resetPasswordSchema } from "../schemas/reset-password-schema";
 
 const router = Router();
 
 router.get("/me", authenticateToken, getCurrentUser);
-router.post("/register", handleRegister);
-router.post("/login", loginRateLimiter, handleLogin);
+router.post("/register", validateRequestBody(registerSchema), handleRegister);
+router.post(
+  "/login",
+  validateRequestBody(loginSchema),
+  loginRateLimiter,
+  handleLogin,
+);
 router.post("/forgot-password", loginRateLimiter, handleForgotPassword);
-router.post("/reset-password", loginRateLimiter, handleResetPassword);
+router.post(
+  "/reset-password",
+  validateRequestBody(resetPasswordSchema),
+  loginRateLimiter,
+  handleResetPassword,
+);
 router.get("/refresh", handleRefreshToken);
 router.post("/refresh", handleRefreshToken);
 router.delete("/refresh", handleRefreshToken);
