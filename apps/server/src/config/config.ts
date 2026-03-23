@@ -21,13 +21,13 @@ requiredEnvVars.forEach((varName) => {
 
 if (!process.env.JWT_APP_ACCESS_SECRET) {
   throw new Error(
-    "JWT_APP_ACCESS_SECRET is not defined in environment variables."
+    "JWT_APP_ACCESS_SECRET is not defined in environment variables.",
   );
 }
 
 if (!process.env.JWT_APP_REFRESH_SECRET) {
   throw new Error(
-    "JWT_APP_REFRESH_SECRET is not defined in environment variables."
+    "JWT_APP_REFRESH_SECRET is not defined in environment variables.",
   );
 }
 
@@ -42,7 +42,7 @@ const redirectBaseUrl = isProd
 
 export const config = {
   env: process.env.NODE_ENV,
-  port: process.env.PORT || 5000,
+  port: process.env.PORT || 3001,
   client: isProd ? process.env.PRODUCTION_URL : process.env.DEV_CLIENT_URL,
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
