@@ -5,21 +5,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-stone-950 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 dark:focus-visible:ring-stone-300",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-oklch(0.709 0.01 56.259) disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 dark:focus-visible:ring-oklch(0.553 0.013 58.071)",
   {
     variants: {
       variant: {
         default:
-          "bg-stone-900 text-stone-50 shadow hover:bg-stone-900/90 dark:bg-stone-50 dark:text-stone-900 dark:hover:bg-stone-50/90",
+          "bg-oklch(0.216 0.006 56.043) text-oklch(0.985 0.001 106.423) shadow hover:bg-oklch(0.216 0.006 56.043)/90 dark:bg-oklch(0.923 0.003 48.717) dark:text-oklch(0.216 0.006 56.043) dark:hover:bg-oklch(0.923 0.003 48.717)/90",
         destructive:
-          "bg-red-500 text-stone-50 shadow-sm hover:bg-red-500/90 dark:bg-red-900 dark:text-stone-50 dark:hover:bg-red-900/90",
+          "bg-oklch(0.577 0.245 27.325) text-destructive-foreground shadow-sm hover:bg-oklch(0.577 0.245 27.325)/90 dark:bg-oklch(0.704 0.191 22.216) dark:hover:bg-oklch(0.704 0.191 22.216)/90",
         outline:
-          "border-2 border-stone-200 bg-white shadow-sm hover:bg-stone-100 hover:text-stone-900 dark:border-stone-800 dark:bg-stone-950 dark:hover:bg-stone-800 dark:hover:text-stone-50",
+          "border border-oklch(0.923 0.003 48.717) bg-oklch(1 0 0) shadow-sm hover:bg-oklch(0.97 0.001 106.424) hover:text-oklch(0.216 0.006 56.043) dark:border-oklch(1 0 0 / 15%) dark:bg-oklch(0.147 0.004 49.25) dark:hover:bg-oklch(0.268 0.007 34.298) dark:hover:text-oklch(0.985 0.001 106.423)",
         secondary:
-          "bg-stone-100 text-stone-900 shadow-sm hover:bg-stone-100/80 dark:bg-stone-800 dark:text-stone-50 dark:hover:bg-stone-800/80",
+          "bg-oklch(0.97 0.001 106.424) text-oklch(0.216 0.006 56.043) shadow-sm hover:bg-oklch(0.97 0.001 106.424)/80 dark:bg-oklch(0.268 0.007 34.298) dark:text-oklch(0.985 0.001 106.423) dark:hover:bg-oklch(0.268 0.007 34.298)/80",
         ghost:
-          "hover:bg-stone-100 hover:text-stone-900 dark:hover:bg-stone-800 dark:hover:text-stone-50",
-        link: "text-stone-900 underline-offset-4 hover:underline dark:text-stone-50",
+          "hover:bg-oklch(0.97 0.001 106.424) hover:text-oklch(0.216 0.006 56.043) dark:hover:bg-oklch(0.268 0.007 34.298) dark:hover:text-oklch(0.985 0.001 106.423)",
+        link: "text-oklch(0.216 0.006 56.043) underline-offset-4 hover:underline dark:text-oklch(0.923 0.003 48.717)",
       },
       size: {
         default: "h-9 px-4 py-2",
@@ -36,7 +36,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }

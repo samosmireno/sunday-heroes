@@ -15,7 +15,7 @@ A full-stack web application for managing football teams, matches, and player st
 
 ### Frontend
 
-- **React 18** with TypeScript
+- **React 19** with TypeScript
 - **Vite**
 - **Tailwind CSS**
 - **Shadcn UI**
