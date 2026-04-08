@@ -7,7 +7,7 @@ import {
   ValidationError,
 } from "../utils/errors";
 
-interface ErrorResponse {
+interface ErrorHandlerPayload {
   code: number;
   message: string;
   stack?: string;
@@ -50,7 +50,7 @@ export const errorHandler = (
     "Request failed",
   );
 
-  const response: ErrorResponse = {
+  const response: ErrorHandlerPayload = {
     code: statusCode,
     message,
   };

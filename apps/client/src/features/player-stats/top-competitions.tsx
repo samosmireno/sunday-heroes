@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useParams } from "react-router-dom";
 import { useTopCompetitions } from "./hooks/use-top-competitions";
+import { AggregateCompetition } from "@repo/shared-types";
 
 export default function TopCompetitions() {
   const { playerId } = useParams() as { playerId: string };
@@ -45,7 +46,7 @@ export default function TopCompetitions() {
   const competitionsMap = new Map<
     string,
     {
-      competition: any;
+      competition: AggregateCompetition;
       categories: Array<{
         label: string;
         stat: number;

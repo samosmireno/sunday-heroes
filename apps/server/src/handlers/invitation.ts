@@ -1,17 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { InvitationService } from "../services/invitation-service";
-import z from "zod";
 import { config } from "../config/config";
 import { sendSuccess } from "../utils/response-utils";
-import { BadRequestError, ValidationError } from "../utils/errors";
+import { BadRequestError } from "../utils/errors";
 import { extractUserId } from "../utils/request-utils";
+import { CreateInvitationRequest } from "../schemas/invitation-schemas";
 import logger from "../logger";
-
-const createInvitationSchema = z.object({
-  dashboardPlayerId: z.string().uuid(),
-  email: z.string().email().optional(),
-  expirationHours: z.number().positive().max(720).optional(),
-});
 
 export const createInvitation = async (
   req: Request,
@@ -20,32 +14,19 @@ export const createInvitation = async (
 ) => {
   try {
     const userId = extractUserId(req);
-    const validation = createInvitationSchema.safeParse(req.body);
+    const { dashboardPlayerId, email, expirationHours } =
+      req.body as CreateInvitationRequest;
 
-    logger.info({ userId, body: req.body }, "Create invitation attempt");
-
-    if (!validation.success) {
-      throw new ValidationError(
-        validation.error.errors.map((error) => ({
-          field: error.path.join("."),
-          message: error.message,
-          code: "INVALID",
-        })),
-      );
-    }
+    logger.info({ userId, dashboardPlayerId }, "Create invitation attempt");
 
     const token = await InvitationService.createInvitation({
-      ...validation.data,
+      dashboardPlayerId,
+      email,
+      expirationHours,
       invitedById: userId,
     });
 
-    logger.info(
-      {
-        userId,
-        dashboardPlayerId: validation.data.dashboardPlayerId,
-      },
-      "Invitation created",
-    );
+    logger.info({ userId, dashboardPlayerId }, "Invitation created");
     sendSuccess(
       res,
       {

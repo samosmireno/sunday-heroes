@@ -3,26 +3,13 @@ import { createMatchRequest } from "../schemas/create-match-request-schema";
 import { MatchService } from "../services/match/match-service";
 import { MatchAuthService } from "../services/match/match-auth-service";
 import { sendSuccess } from "../utils/response-utils";
-import { extractUserId } from "../utils/request-utils";
+import {
+  extractUserId,
+  getRequiredQuery,
+  getOptionalNumberParam,
+} from "../utils/request-utils";
 import { AuthorizationError, BadRequestError } from "../utils/errors";
 import logger from "../logger";
-
-const getRequiredQuery = (req: Request, param: string): string => {
-  const value = req.query[param]?.toString();
-  if (!value) {
-    throw new BadRequestError(`${param} query parameter is required`);
-  }
-  return value;
-};
-
-const getOptionalNumberParam = (
-  req: Request,
-  param: string,
-  defaultValue: number,
-): number => {
-  const value = req.query[param]?.toString();
-  return value ? parseInt(value, 10) : defaultValue;
-};
 
 export const getMatchById = async (
   req: Request,

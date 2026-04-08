@@ -9,16 +9,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Loader2, CheckCircle2 } from "lucide-react";
+import { useEffect } from "react";
+import { PasswordInput } from "@/components/ui/password-input";
 import { useResetPassword } from "./use-reset-password";
 import { useSearchParams } from "react-router-dom";
 
 export default function ResetPasswordForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
@@ -104,27 +102,11 @@ export default function ResetPasswordForm() {
               <FormItem>
                 <FormLabel className="text-accent">New Password</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      {...field}
-                      placeholder="••••••••"
-                      className="border-accent/40 bg-panel-bg/60 pr-10 text-white focus-visible:ring-accent/50"
-                    />
-                    <Button
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-0 top-0 h-full px-3 text-gray-300 hover:bg-transparent hover:text-accent"
-                      size="icon"
-                      type="button"
-                      variant="ghost"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </div>
+                  <PasswordInput
+                    {...field}
+                    placeholder="••••••••"
+                    className="border-accent/40 bg-panel-bg/60 text-white focus-visible:ring-accent/50"
+                  />
                 </FormControl>
                 <FormMessage className="text-red-400" />
               </FormItem>
@@ -137,27 +119,11 @@ export default function ResetPasswordForm() {
               <FormItem>
                 <FormLabel className="text-accent">Confirm Password</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      {...field}
-                      placeholder="••••••••"
-                      className="border-accent/40 bg-panel-bg/60 pr-10 text-white focus-visible:ring-accent/50"
-                    />
-                    <Button
-                      onClick={() => setShowConfirmPassword((v) => !v)}
-                      className="absolute right-0 top-0 h-full px-3 text-gray-300 hover:bg-transparent hover:text-accent"
-                      size="icon"
-                      type="button"
-                      variant="ghost"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </div>
+                  <PasswordInput
+                    {...field}
+                    placeholder="••••••••"
+                    className="border-accent/40 bg-panel-bg/60 text-white focus-visible:ring-accent/50"
+                  />
                 </FormControl>
                 <FormMessage className="text-red-400" />
               </FormItem>

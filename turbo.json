@@ -8,7 +8,8 @@
     "VITE_MODE",
     "VITE_SERVER_PROD_URL",
     "VITE_SERVER_DEV_URL",
-    "JWT_SECRET",
+    "JWT_APP_ACCESS_SECRET",
+    "JWT_APP_REFRESH_SECRET",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "GOOGLE_CALLBACK_URL",
@@ -16,7 +17,15 @@
     "API_URL",
     "PRODUCTION_URL",
     "DEV_SERVER_URL",
-    "DEV_CLIENT_URL"
+    "DEV_CLIENT_URL",
+    "ALLOWED_ORIGINS",
+    "ALLOWED_ORIGIN",
+    "PORT",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_SECURE",
+    "SMTP_USER",
+    "SMTP_PASSWORD"
   ],
   "tasks": {
     "build": {
@@ -46,7 +55,7 @@
       "dependsOn": []
     },
     "lint": {
-      "dependsOn": ["^build", "^lint"]
+      "dependsOn": []
     },
     "check-types": {
       "dependsOn": ["^build", "^check-types"]

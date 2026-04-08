@@ -5,6 +5,7 @@ const columnHelper = createColumnHelper<LeaguePlayerTotals>();
 
 export const createPlayerColumns = (
   votingEnabled: boolean,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): ColumnDef<LeaguePlayerTotals, any>[] => [
   columnHelper.accessor("nickname", {
     header: "Player",

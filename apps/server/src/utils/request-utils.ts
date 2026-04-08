@@ -17,3 +17,12 @@ export const getRequiredQuery = (req: Request, param: string): string => {
   }
   return value;
 };
+
+export const getOptionalNumberParam = (
+  req: Request,
+  param: string,
+  defaultValue: number,
+): number => {
+  const value = req.query[param]?.toString();
+  return value ? parseInt(value, 10) : defaultValue;
+};

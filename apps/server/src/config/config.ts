@@ -19,17 +19,12 @@ requiredEnvVars.forEach((varName) => {
   }
 });
 
-if (!process.env.JWT_APP_ACCESS_SECRET) {
-  throw new Error(
-    "JWT_APP_ACCESS_SECRET is not defined in environment variables.",
-  );
-}
-
-if (!process.env.JWT_APP_REFRESH_SECRET) {
-  throw new Error(
-    "JWT_APP_REFRESH_SECRET is not defined in environment variables.",
-  );
-}
+const smtpEnvVars = ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASSWORD"];
+smtpEnvVars.forEach((varName) => {
+  if (!process.env[varName]) {
+    throw new Error(`Environment variable ${varName} is not defined`);
+  }
+});
 
 const isProd = process.env.NODE_ENV === "production";
 const baseUrl = isProd
@@ -53,8 +48,8 @@ export const config = {
     redirectClientUrl: `${redirectBaseUrl}/auth/callback`,
   },
   jwt: {
-    accessSecret: process.env.JWT_APP_ACCESS_SECRET,
-    refreshSecret: process.env.JWT_APP_REFRESH_SECRET,
+    accessSecret: process.env.JWT_APP_ACCESS_SECRET as string,
+    refreshSecret: process.env.JWT_APP_REFRESH_SECRET as string,
   },
   cors: {
     allowedOrigins: process.env.ALLOWED_ORIGINS
@@ -62,11 +57,11 @@ export const config = {
       : [process.env.ALLOWED_ORIGIN || "*"],
   },
   smtp: {
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
+    host: process.env.SMTP_HOST as string,
+    port: process.env.SMTP_PORT as string,
     secure: process.env.SMTP_SECURE,
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
+    user: process.env.SMTP_USER as string,
+    pass: process.env.SMTP_PASSWORD as string,
   },
   votes: {
     maxVotesPerPlayer: 3,

@@ -47,7 +47,7 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
           </Button>
         </div>
 
-        {process.env.NODE_ENV === "development" && (
+        {import.meta.env.MODE === "development" && (
           <details className="mt-6 w-full">
             <summary className="cursor-pointer text-sm text-gray-400 hover:text-gray-300">
               Error Details (Development)

@@ -3,9 +3,6 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "build:combined": "npm run build:client && npm run build:server",
-    "build:client": "cd apps/client && npm run build",
-    "build:server": "cd apps/server && npm run build",
     "build:packages": "cd packages && npm run build",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
@@ -19,6 +16,7 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@types/node": "^25.5.2",
     "concurrently": "^8.2.2",
     "prettier": "^3.5.0",
     "turbo": "^2.4.4"

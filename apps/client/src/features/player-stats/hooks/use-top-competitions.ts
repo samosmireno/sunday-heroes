@@ -27,7 +27,7 @@ export const useTopCompetitions = (playerId: string) => {
   };
 
   const query = useQuery({
-    queryKey: ["playerTopCompetitions", playerId],
+    queryKey: ["playerTopCompetitions", { playerId }],
     queryFn: () => fetchTopCompetititons(playerId),
     enabled: !!playerId,
   });

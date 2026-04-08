@@ -27,9 +27,10 @@ export const useLeagueStats = (competitionId: string) => {
   };
 
   const leagueStatsQuery = useQuery({
-    queryKey: ["leagueStats", competitionId],
+    queryKey: ["leagueStats", { competitionId }],
     queryFn: () => fetchLeagueStats(competitionId),
     enabled: !!competitionId,
+    staleTime: 5 * 60 * 1000,
   });
 
   const topPerformers = useMemo(() => {

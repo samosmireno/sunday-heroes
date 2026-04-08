@@ -1,25 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { VoteService } from "../services/vote-service";
-import { z } from "zod";
 import { sendSuccess } from "../utils/response-utils";
 import { extractUserId, getRequiredQuery } from "../utils/request-utils";
-import { BadRequestError, ValidationError } from "../utils/errors";
+import { BadRequestError } from "../utils/errors";
+import { SubmitVotesRequest } from "../schemas/vote-schemas";
 import logger from "../logger";
-
-export const submitVotesSchema = z.object({
-  matchId: z.string(),
-  voterId: z.string(),
-  votes: z
-    .array(
-      z.object({
-        playerId: z.string(),
-        points: z.coerce.number().min(1).max(3),
-      }),
-    )
-    .length(3),
-});
-
-type SubmitVotesRequest = z.infer<typeof submitVotesSchema>;
 
 export const submitVotes = async (
   req: Request,
@@ -34,16 +19,6 @@ export const submitVotes = async (
       { requestingUserId, matchId: data.matchId, voterId: data.voterId },
       "Submit votes attempt",
     );
-
-    const validation = submitVotesSchema.safeParse(data);
-    if (!validation.success) {
-      const fields = validation.error.errors.map((err) => ({
-        field: err.path.join("."),
-        message: err.message,
-        code: err.code,
-      }));
-      throw new ValidationError(fields);
-    }
 
     const result = await VoteService.submitVotes(
       data.matchId,
@@ -69,13 +44,10 @@ export const getVotingStatus = async (
 ) => {
   try {
     const matchId = req.params.matchId;
-    const voterId = req.query.voterId?.toString();
+    const voterId = getRequiredQuery(req, "voterId");
 
     if (!matchId) {
       throw new BadRequestError("matchId parameter is required");
-    }
-    if (!voterId) {
-      throw new BadRequestError("voterId query parameter is required");
     }
 
     const status = await VoteService.getVotingStatus(matchId, voterId);

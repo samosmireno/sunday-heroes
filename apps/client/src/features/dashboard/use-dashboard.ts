@@ -28,6 +28,7 @@ export const useDashboard = (id: string) => {
     queryKey: ["dashboard", id],
     queryFn: () => fetchDashboard(id),
     enabled: !!id,
+    staleTime: 5 * 60 * 1000,
   });
 
   return {

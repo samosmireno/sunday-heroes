@@ -11,13 +11,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useRegister } from "./use-register";
+import { PasswordInput } from "@/components/ui/password-input";
+
 export default function RegisterForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const location = useLocation();
 
   const inviteToken = location.state?.inviteToken as string;
@@ -96,27 +95,11 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel className="text-accent">Password</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      {...field}
-                      placeholder="••••••••"
-                      className="border-accent/40 bg-panel-bg/60 pr-10 text-white focus-visible:ring-accent/50"
-                    />
-                    <Button
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-0 top-0 h-full px-3 text-gray-300 hover:bg-transparent hover:text-accent"
-                      size="icon"
-                      type="button"
-                      variant="ghost"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </div>
+                  <PasswordInput
+                    {...field}
+                    placeholder="••••••••"
+                    className="border-accent/40 bg-panel-bg/60 text-white focus-visible:ring-accent/50"
+                  />
                 </FormControl>
                 <FormMessage className="text-red-400" />
               </FormItem>
@@ -129,27 +112,11 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel className="text-accent">Confirm Password</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showConfirm ? "text" : "password"}
-                      {...field}
-                      placeholder="••••••••"
-                      className="border-accent/40 bg-panel-bg/60 pr-10 text-white focus-visible:ring-accent/50"
-                    />
-                    <Button
-                      onClick={() => setShowConfirm((v) => !v)}
-                      className="absolute right-0 top-0 h-full px-3 text-gray-300 hover:bg-transparent hover:text-accent"
-                      size="icon"
-                      type="button"
-                      variant="ghost"
-                    >
-                      {showConfirm ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </div>
+                  <PasswordInput
+                    {...field}
+                    placeholder="••••••••"
+                    className="border-accent/40 bg-panel-bg/60 text-white focus-visible:ring-accent/50"
+                  />
                 </FormControl>
                 <FormMessage className="text-red-400" />
               </FormItem>

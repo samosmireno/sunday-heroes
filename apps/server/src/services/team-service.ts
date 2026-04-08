@@ -50,8 +50,8 @@ export class TeamService {
     userId: string
   ) {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
-      userId,
-      competitionId
+      competitionId,
+      userId
     );
     if (!hasPermission) {
       throw new AuthorizationError(
@@ -111,8 +111,8 @@ export class TeamService {
     userId: string
   ) {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
-      userId,
-      competitionId
+      competitionId,
+      userId
     );
     if (!hasPermission) {
       throw new AuthorizationError(

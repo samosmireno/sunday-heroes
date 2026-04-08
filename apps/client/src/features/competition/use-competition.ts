@@ -35,9 +35,10 @@ export const useCompetition = (compId: string, userId?: string) => {
     }
   };
   const competitionQuery = useQuery({
-    queryKey: ["competition", compId, userId],
+    queryKey: ["competition", { compId, userId }],
     queryFn: () => fetchCompetition(compId, userId),
     enabled: !!compId,
+    staleTime: 5 * 60 * 1000,
   });
 
   return {

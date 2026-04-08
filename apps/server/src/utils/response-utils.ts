@@ -1,20 +1,6 @@
 import { Response } from "express";
 import { ZodError } from "zod";
-
-export interface ErrorResponse {
-  error: string;
-  details?: any;
-  code?: string;
-}
-
-export interface ValidationErrorResponse {
-  error: string;
-  validation_errors: Array<{
-    field: string;
-    message: string;
-    code: string;
-  }>;
-}
+import { ErrorResponse, ValidationErrorResponse } from "@repo/shared-types";
 
 export const sendSuccess = <T>(
   res: Response,
