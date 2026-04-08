@@ -5,6 +5,7 @@ import { transformAddMatchRequestToMatchPlayer } from "../utils/match-player-tra
 import { matchPlayersMatchRequest } from "@repo/shared-types";
 import { DashboardPlayerService } from "./dashboard-player-service";
 import { NotFoundError } from "../utils/errors";
+import logger from "../logger";
 
 export class MatchPlayerService {
   static async createMatchPlayers(
@@ -13,20 +14,20 @@ export class MatchPlayerService {
     dashboardId: string,
     hometeamID: string,
     awayteamID: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     const playerNicknames = players.map((p) => p.nickname);
 
     await DashboardPlayerService.addMissingPlayers(
       playerNicknames,
       dashboardId,
-      tx
+      tx,
     );
 
     const dashboardPlayers = await DashboardPlayerRepo.findByNicknames(
       playerNicknames,
       dashboardId,
-      tx
+      tx,
     );
 
     const playerMap = new Map(dashboardPlayers.map((p) => [p.nickname, p]));
@@ -41,7 +42,7 @@ export class MatchPlayerService {
         player,
         matchId,
         dashboardPlayer.id,
-        player.isHome ? hometeamID : awayteamID
+        player.isHome ? hometeamID : awayteamID,
       );
     });
 
@@ -55,22 +56,22 @@ export class MatchPlayerService {
     dashboardId: string,
     hometeamID: string,
     awayteamID: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     const existingMatchPlayers = await MatchPlayerRepo.getMatchPlayersFromMatch(
       matchId,
-      tx
+      tx,
     );
 
     const existingPlayerMap = new Map(
       existingMatchPlayers.map((mp) => [
         `${mp.dashboardPlayer.nickname}-${mp.isHome}`,
         mp,
-      ])
+      ]),
     );
 
     const newPlayerMap = new Map(
-      players.map((p) => [`${p.nickname}-${p.isHome}`, p])
+      players.map((p) => [`${p.nickname}-${p.isHome}`, p]),
     );
 
     const playersToAdd: matchPlayersMatchRequest = [];
@@ -121,11 +122,11 @@ export class MatchPlayerService {
       dashboardId,
       hometeamID,
       awayteamID,
-      tx
+      tx,
     );
 
-    console.log(
-      `Player update: ${playersToDelete.length} deleted, ${playersToUpdate.length} updated, ${playersToAdd.length} added`
+    logger.info(
+      `Player update: ${playersToDelete.length} deleted, ${playersToUpdate.length} updated, ${playersToAdd.length} added`,
     );
 
     return dashboardPlayers;

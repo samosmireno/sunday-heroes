@@ -4,6 +4,7 @@ import jwt, { TokenExpiredError } from "jsonwebtoken";
 import { config } from "../config/config";
 import { AuthService } from "./auth-service";
 import { InvalidTokenError } from "../utils/errors";
+import logger from "../logger";
 
 export class RefreshTokenService {
   static async validateRefreshToken(token: string): Promise<{
@@ -97,7 +98,7 @@ export class RefreshTokenService {
 
   static async cleanupExpiredTokens(): Promise<number> {
     const result = await RefreshTokenRepo.deleteExpired();
-    console.log(`Cleaned up ${result.count} expired refresh tokens`);
+    logger.info(`Cleaned up ${result.count} expired refresh tokens`);
     return result.count;
   }
 

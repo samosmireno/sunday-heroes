@@ -6,6 +6,7 @@ import { EmailService } from "../email-service";
 import { DashboardPlayerBasic } from "../../repositories/dashboard-player/types";
 import { AppError } from "../../utils/errors";
 import { VoteService } from "../vote-service";
+import logger from "../../logger";
 
 interface MatchVotingEmailData {
   competitionName: string;
@@ -25,12 +26,12 @@ export class MatchVotingService {
     if (expiredMatches.length > 0) {
       await Promise.all(
         expiredMatches.map((match) =>
-          VoteService.calculateAndStoreMatchRatings(match.id)
-        )
+          VoteService.calculateAndStoreMatchRatings(match.id),
+        ),
       );
       const matchIds = expiredMatches.map((m) => m.id);
       await MatchRepo.updateManyVotingStatus(matchIds, "CLOSED");
-      console.log(`Closed voting for ${expiredMatches.length} expired matches`);
+      logger.info(`Closed voting for ${expiredMatches.length} expired matches`);
     }
   }
 
@@ -38,7 +39,7 @@ export class MatchVotingService {
     match: Match,
     data: createMatchRequest,
     dashboardPlayers: DashboardPlayerBasic[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     const emailData = await this.setupVoting(match, data, tx);
 
@@ -50,7 +51,7 @@ export class MatchVotingService {
   private static async setupVoting(
     match: Match,
     data: createMatchRequest,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<MatchVotingEmailData | null> {
     const competition = await CompetitionRepo.findById(match.competitionId);
 
@@ -65,7 +66,7 @@ export class MatchVotingService {
       match.id,
       VotingStatus.OPEN,
       votingEndDate,
-      tx
+      tx,
     );
 
     return {
@@ -83,13 +84,13 @@ export class MatchVotingService {
   private static sendVotingEmails(
     matchDetails: MatchVotingEmailData,
     matchId: string,
-    dashboardPlayers: DashboardPlayerBasic[]
+    dashboardPlayers: DashboardPlayerBasic[],
   ) {
     setImmediate(async () => {
       try {
         const playersWithEmails = dashboardPlayers.filter(
           (player): player is typeof player & { user: { email: string } } =>
-            Boolean(player.user?.email)
+            Boolean(player.user?.email),
         );
 
         const emailPromises = playersWithEmails.map((player) =>
@@ -98,8 +99,8 @@ export class MatchVotingService {
             player.nickname,
             matchId,
             player.id,
-            matchDetails
-          )
+            matchDetails,
+          ),
         );
 
         await Promise.all(emailPromises);
@@ -108,7 +109,7 @@ export class MatchVotingService {
           "Error sending match voting emails",
           500,
           error instanceof Error ? error.message : "Unknown error",
-          true
+          true,
         );
       }
     });
@@ -122,7 +123,7 @@ export class MatchVotingService {
         for (const match of matches) {
           const notVotedPlayers = match.matchPlayers.filter((mp) => {
             const votesGiven = match.playerVotes.filter(
-              (v) => v.voterId === mp.dashboardPlayer.id
+              (v) => v.voterId === mp.dashboardPlayer.id,
             );
             return !votesGiven.length && mp.dashboardPlayer.user?.email;
           });
@@ -145,7 +146,7 @@ export class MatchVotingService {
                 homeScore: match.homeTeamScore,
                 awayScore: match.awayTeamScore,
               },
-              true
+              true,
             );
           }
         }
@@ -154,7 +155,7 @@ export class MatchVotingService {
           "Error sending match voting emails",
           500,
           error instanceof Error ? error.message : "Unknown error",
-          true
+          true,
         );
       }
     });

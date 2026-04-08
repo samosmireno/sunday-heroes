@@ -6,10 +6,14 @@ import {
   ConflictError,
   ValidationError,
 } from "./errors";
+import logger from "../logger";
 
 export class PrismaErrorHandler {
   static handle(error: unknown, context?: string): AppError {
-    console.error(`Prisma error${context ? ` in ${context}` : ""}:`, error);
+    logger.error(
+      { err: error },
+      `Prisma error${context ? ` in ${context}` : ""}`,
+    );
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       return this.handleKnownRequestError(error);
@@ -41,7 +45,7 @@ export class PrismaErrorHandler {
   }
 
   private static handleKnownRequestError(
-    error: Prisma.PrismaClientKnownRequestError
+    error: Prisma.PrismaClientKnownRequestError,
   ): AppError {
     switch (error.code) {
       case "P2001": // Record not found
@@ -53,7 +57,7 @@ export class PrismaErrorHandler {
 
       case "P2003": // Foreign key constraint violation
         return new ConflictError(
-          "Cannot perform operation due to related records"
+          "Cannot perform operation due to related records",
         );
 
       case "P2025": // Record not found for update/delete
@@ -99,25 +103,25 @@ export class PrismaErrorHandler {
   }
 
   private static handleUnknownRequestError(
-    _error: Prisma.PrismaClientUnknownRequestError
+    _error: Prisma.PrismaClientUnknownRequestError,
   ): AppError {
     return new DatabaseError("Database connection error");
   }
 
   private static handleRustPanicError(
-    _error: Prisma.PrismaClientRustPanicError
+    _error: Prisma.PrismaClientRustPanicError,
   ): AppError {
     return new DatabaseError("Database engine error");
   }
 
   private static handleInitializationError(
-    _error: Prisma.PrismaClientInitializationError
+    _error: Prisma.PrismaClientInitializationError,
   ): AppError {
     return new DatabaseError("Database initialization failed");
   }
 
   private static handleValidationError(
-    error: Prisma.PrismaClientValidationError
+    error: Prisma.PrismaClientValidationError,
   ): AppError {
     // Extract field information from validation error message
     const fields = this.parseValidationErrorMessage(error.message);
@@ -142,7 +146,7 @@ export class PrismaErrorHandler {
   }
 
   private static parseValidationErrorMessage(
-    _message: string
+    _message: string,
   ): Array<{ field: string; message: string; code: string }> {
     // Parse Prisma validation error messages
     // This is a simplified version - you might want to make it more sophisticated

@@ -10,6 +10,7 @@ import {
 import { CompetitionService } from "./competition-service";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { DashboardPlayerRepo } from "../repositories/dashboard-player/dashboard-player-repo";
+import logger from "../logger";
 
 export class DashboardPlayerService {
   static async getDashboardPlayers(
@@ -18,7 +19,7 @@ export class DashboardPlayerService {
       page?: number;
       limit?: number;
       search?: string;
-    } = {}
+    } = {},
   ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
     const { page = 0, limit = 10, search } = options;
@@ -54,7 +55,7 @@ export class DashboardPlayerService {
       page?: number;
       limit?: number;
       search?: string;
-    } = {}
+    } = {},
   ) {
     const competitionIds =
       await CompetitionRepo.findCompetitionIdsForUser(userId);
@@ -80,18 +81,18 @@ export class DashboardPlayerService {
   static async getDashboardPlayersByQuery(
     userId: string,
     competitionId: string,
-    query: string
+    query: string,
   ): Promise<{ id: string; nickname: string; isRegistered: boolean }[]> {
     const isModerator = await CompetitionService.isUserModerator(
       competitionId,
-      userId
+      userId,
     );
 
     if (isModerator) {
       const dashPlayers =
         await DashboardPlayerRepo.findByNameSearchInCompetition(
           query,
-          competitionId
+          competitionId,
         );
 
       return dashPlayers.map((dp) => ({
@@ -109,7 +110,7 @@ export class DashboardPlayerService {
 
       const dashPlayers = await DashboardPlayerRepo.findByNameSearchWithBasic(
         query,
-        dashboardId
+        dashboardId,
       );
 
       return dashPlayers.map((dp) => ({
@@ -122,7 +123,7 @@ export class DashboardPlayerService {
 
   static async createDashboardPlayer(
     userId: string,
-    data: { nickname: string }
+    data: { nickname: string },
   ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
 
@@ -132,21 +133,21 @@ export class DashboardPlayerService {
 
     const canCreate = await DashboardService.canUserAccessDashboard(
       dashboardId,
-      userId
+      userId,
     );
     if (!canCreate) {
       throw new AuthorizationError(
-        "User is not authorized to create players in this dashboard"
+        "User is not authorized to create players in this dashboard",
       );
     }
 
     const existingPlayer = await DashboardPlayerRepo.findByNickname(
       data.nickname,
-      dashboardId
+      dashboardId,
     );
     if (existingPlayer) {
       throw new ConflictError(
-        "Player with this nickname already exists in the dashboard"
+        "Player with this nickname already exists in the dashboard",
       );
     }
 
@@ -161,7 +162,7 @@ export class DashboardPlayerService {
   static async updateDashboardPlayer(
     playerId: string,
     userId: string,
-    data: { nickname?: string; user_id?: string }
+    data: { nickname?: string; user_id?: string },
   ) {
     const player = await DashboardPlayerRepo.findByIdWithAdmin(playerId);
     if (!player) {
@@ -176,11 +177,11 @@ export class DashboardPlayerService {
     if (data.nickname && data.nickname !== player.nickname) {
       const existingPlayer = await DashboardPlayerRepo.findByNickname(
         data.nickname,
-        player.dashboardId
+        player.dashboardId,
       );
       if (existingPlayer) {
         throw new ConflictError(
-          "Player with this nickname already exists in the dashboard"
+          "Player with this nickname already exists in the dashboard",
         );
       }
     }
@@ -205,13 +206,13 @@ export class DashboardPlayerService {
   static async addMissingPlayers(
     playerNames: string[],
     dashboardId: string,
-    tx?: any
+    tx?: any,
   ): Promise<void> {
     for (const playerName of playerNames) {
       const existingPlayer = await DashboardPlayerRepo.findByNickname(
         playerName,
         dashboardId,
-        tx
+        tx,
       );
 
       if (!existingPlayer) {
@@ -222,7 +223,7 @@ export class DashboardPlayerService {
             dashboardId,
             createdAt: new Date(),
           },
-          tx
+          tx,
         );
       }
     }
@@ -231,12 +232,12 @@ export class DashboardPlayerService {
   static async getPlayersByNicknames(
     nicknames: string[],
     dashboardId: string,
-    tx?: any
+    tx?: any,
   ) {
     return await DashboardPlayerRepo.findByNicknames(
       nicknames,
       dashboardId,
-      tx
+      tx,
     );
   }
 
@@ -254,8 +255,8 @@ export class DashboardPlayerService {
     if (unusedPlayers.length > 0) {
       const ids = unusedPlayers.map((p: { id: string }) => p.id);
       await DashboardPlayerRepo.deleteMany(ids, transaction);
-      console.log(
-        `Cleaned up ${unusedPlayers.length} unused dashboard players`
+      logger.info(
+        `Cleaned up ${unusedPlayers.length} unused dashboard players`,
       );
     }
   }

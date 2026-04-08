@@ -2,10 +2,11 @@ import cron from "node-cron";
 import { MatchService } from "./match-service";
 import { AppError } from "../../utils/errors";
 import { MatchVotingService } from "./match-voting-service";
+import logger from "../../logger";
 
 export const setupScheduledTasks = () => {
   cron.schedule("0 0 * * *", async () => {
-    console.log("Running scheduled task: closeExpiredMatchVoting");
+    logger.info("Running scheduled task: closeExpiredMatchVoting");
     try {
       await MatchService.closeExpiredVoting();
     } catch (error) {
@@ -13,13 +14,13 @@ export const setupScheduledTasks = () => {
         "Error closing expired match voting",
         500,
         error instanceof Error ? error.message : "Unknown error",
-        true
+        true,
       );
     }
   });
 
   cron.schedule("00 12 * * *", async () => {
-    console.log("Running scheduled task: sendReminderEmails");
+    logger.info("Running scheduled task: sendReminderEmails");
     try {
       await MatchVotingService.sendReminderEmails();
     } catch (error) {
@@ -27,7 +28,7 @@ export const setupScheduledTasks = () => {
         "Error sending reminder emails",
         500,
         error instanceof Error ? error.message : "Unknown error",
-        true
+        true,
       );
     }
   });

@@ -53,11 +53,11 @@ setupScheduledTasks();
 
 if (config.env === "production") {
   app.listen(Number(config.port), "0.0.0.0", () => {
-    console.log(`Production server running on http://0.0.0.0:${config.port}`);
+    logger.info(`Production server running on http://0.0.0.0:${config.port}`);
   });
 } else {
   app.listen(config.port, () => {
-    console.log(
+    logger.info(
       `Development server running on http://localhost:${config.port}`,
     );
   });
