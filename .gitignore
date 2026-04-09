@@ -13,4 +13,4 @@ public/dist
 .vercel
 
 # Claude files
-CLAUDE.*.worktrees/
+.worktrees/
