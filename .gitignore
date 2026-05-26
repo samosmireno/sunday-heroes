@@ -14,3 +14,5 @@ public/dist
 
 # Claude files
 .worktrees/
+
+CLAUDE.md

@@ -24,6 +24,10 @@ const refreshAuthLogic = async () => {
   } catch (error) {
     refreshPromise = null;
     localStorage.removeItem("user");
+    sessionStorage.setItem(
+      "redirectAfterLogin",
+      window.location.pathname + window.location.search,
+    );
     window.location.href = "/landing";
     return Promise.reject(error);
   }

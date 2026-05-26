@@ -130,8 +130,6 @@ export const handleRefreshToken = async (
       throw new AuthenticationError("Empty refresh token");
     }
 
-    CookieUtils.clearAuthCookies(res);
-
     const { userId, decoded } =
       await AuthService.validateRefreshToken(refreshToken);
     await RefreshTokenService.deleteToken(refreshToken);
