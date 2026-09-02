@@ -8,6 +8,9 @@ import { CompetitionType } from "@repo/shared-types";
 import { useAuth } from "@/context/auth-context";
 import LeagueCompetitionPage from "./league-competition/league-competition-page";
 import CompetitionAdminPageSkeleton from "@/features/competition-admin/competition-admin-page-skeleton";
+// PROTOTYPE — throwaway: season selector variants replace the page in dev.
+import SeasonPrototypePage from "@/features/season-prototype/season-prototype-page";
+import { PROTOTYPE_ENABLED } from "@/components/prototype/prototype-switcher";
 
 function CompetitionPage() {
   const { user } = useAuth();
@@ -44,6 +47,14 @@ function CompetitionPage() {
 
   if (!competition || !competitionId) {
     return <ErrorPage />;
+  }
+
+  if (PROTOTYPE_ENABLED) {
+    return (
+      <CompetitionProvider value={{ competition, isLoading, refetch }}>
+        <SeasonPrototypePage competition={competition} hasSidebar={!!user} />
+      </CompetitionProvider>
+    );
   }
 
   return (

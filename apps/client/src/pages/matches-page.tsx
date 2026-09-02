@@ -8,8 +8,19 @@ import { useParams } from "react-router-dom";
 import MatchesPageSkeleton from "@/features/matches/matches-page-skeleton";
 import { useUrlPagination } from "@/hooks/use-url-pagination";
 import { UserResponse } from "@repo/shared-types";
+// PROTOTYPE — throwaway: season filter variants on the per-competition route.
+import MatchesPrototypePage from "@/features/season-prototype/matches-prototype-page";
+import { PROTOTYPE_ENABLED } from "@/components/prototype/prototype-switcher";
 
 export default function MatchesPage() {
+  const { competitionId } = useParams() as { competitionId?: string };
+  if (PROTOTYPE_ENABLED && competitionId) {
+    return <MatchesPrototypePage competitionId={competitionId} />;
+  }
+  return <RealMatchesPage />;
+}
+
+function RealMatchesPage() {
   const { user } = useAuth() as { user: UserResponse };
   const { competitionId } = useParams() as { competitionId: string };
   const { currentPage, setPage, resetPage } = useUrlPagination();
