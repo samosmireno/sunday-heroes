@@ -18,6 +18,10 @@ _Avoid_: Active season, live season
 A closed Season. Its Matches are history: viewable by selecting that Season, never changed. Voting that was open when the Season closed runs on to its deadline.
 _Avoid_: Previous season, archived season, old season
 
+**All seasons**:
+The whole of a Competition's history across every Season, viewable as one set of Matches, stats and Standings.
+_Avoid_: All time, overall, total
+
 **Start new season**:
 The admin act that closes the Current season and opens the next one in a single step. Also called a rollover.
 _Avoid_: Finish season, end season, close season (there is no separate closing act), new season (as a verb)
@@ -27,7 +31,7 @@ The existing destructive act that deletes every Match of a Competition, across a
 _Avoid_: Clear competition, wipe
 
 **Standings**:
-The League table for the Current season only. Not kept per Past season.
+The League table of a Season: its teams ranked by points, then goal difference, then goals for. Every Season has one, Past seasons included.
 _Avoid_: League table, ranking, ladder
 
 **Teams setup**:
