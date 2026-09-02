@@ -7,7 +7,7 @@ A platform where a dashboard admin runs football competitions (League, Duel, Kno
 ### Competition lifecycle
 
 **Season**:
-A numbered span of a Competition's life to which every Match belongs. Seasons are numbered from 1 and have a start date and, once closed, an end date.
+A numbered span of a Competition's life to which every Match belongs. Seasons are numbered from 1 and have a start date and, once closed, an end date. Both dates mark the admin's acts (creating the Competition, Start new season), not the dates of the Matches played in it.
 _Avoid_: Period, edition, campaign, year
 
 **Current season**:
@@ -23,7 +23,7 @@ The admin act that closes the Current season and opens the next one in a single 
 _Avoid_: Finish season, end season, close season (there is no separate closing act), new season (as a verb)
 
 **Reset competition**:
-The existing destructive act that deletes every Match of a Competition, across all Seasons. Distinct from Start new season.
+The existing destructive act that deletes every Match of a Competition, across all Seasons, and returns the Competition to a fresh Season 1. Distinct from Start new season.
 _Avoid_: Clear competition, wipe
 
 **Standings**:
