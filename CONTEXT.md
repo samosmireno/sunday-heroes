@@ -15,7 +15,7 @@ The one open Season of a Competition. New Matches always land in it.
 _Avoid_: Active season, live season
 
 **Past season**:
-A closed Season. Its Matches are history, viewable by selecting that Season.
+A closed Season. Its Matches are history: viewable by selecting that Season, never changed. Voting that was open when the Season closed runs on to its deadline.
 _Avoid_: Previous season, archived season, old season
 
 **Start new season**:
@@ -29,3 +29,17 @@ _Avoid_: Clear competition, wipe
 **Standings**:
 The League table for the Current season only. Not kept per Past season.
 _Avoid_: League table, ranking, ladder
+
+**Teams setup**:
+The admin step, taken once per Season, that names a League's teams; from the second Season on it also generates that Season's Fixtures.
+_Avoid_: Team names page, league setup
+
+### Matches
+
+**Fixture**:
+A League Match created in advance when a Season's schedule is generated, to be played later.
+_Avoid_: Game, scheduled match
+
+**Completed match**:
+A Match the admin has marked as completed. Only Completed matches count toward Standings and player stats; a Fixture that is not yet a Completed match is "not completed", whether or not a result has been entered.
+_Avoid_: Played match, finished match, unplayed (as a state)
