@@ -27,7 +27,7 @@ The admin act that closes the Current season and opens the next one in a single 
 _Avoid_: Finish season, end season, close season (there is no separate closing act), new season (as a verb)
 
 **Reset competition**:
-The existing destructive act that deletes every Match of a Competition, across all Seasons, and returns the Competition to a fresh Season 1. Distinct from Start new season.
+The existing destructive act that deletes every Match of a Competition, across all Seasons, and returns the Competition to a fresh Season 1. A League keeps its teams and goes back through Teams setup. Distinct from Start new season.
 _Avoid_: Clear competition, wipe
 
 **Standings**:
@@ -35,7 +35,7 @@ The League table of a Season: its teams ranked by points, then goal difference, 
 _Avoid_: League table, ranking, ladder
 
 **Teams setup**:
-The admin step, taken once per Season, that names a League's teams; from the second Season on it also generates that Season's Fixtures.
+The admin step, taken once per Season, that names a League's teams and generates that Season's Fixtures, unless they were already created with the Competition.
 _Avoid_: Team names page, league setup
 
 ### Matches
