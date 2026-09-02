@@ -15,4 +15,12 @@ public/dist
 # Claude files
 .worktrees/
 
+# Database dumps
+*.dump
+
+# Vote analysis files
+*.docx
+*.pages
+*.xlsx
+
 CLAUDE.md
