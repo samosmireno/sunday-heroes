@@ -1,11 +1,9 @@
 import { CompetitionSettings } from "@repo/shared-types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ConfirmationDialog from "@/components/ui/confirmation-dialog";
+import ResetCompetition from "./reset-competition";
 import SeasonCard from "./season-card";
-import {
-  useDeleteCompetition,
-  useResetCompetition,
-} from "./use-competition-mutations";
+import { useDeleteCompetition } from "./use-competition-mutations";
 
 interface CompetitionSettingsListProps {
   competition: CompetitionSettings;
@@ -14,12 +12,7 @@ interface CompetitionSettingsListProps {
 export default function CompetitionSettingsList({
   competition,
 }: CompetitionSettingsListProps) {
-  const resetMutation = useResetCompetition(competition.id);
   const deleteMutation = useDeleteCompetition(competition.id);
-
-  const handleReset = async () => {
-    resetMutation.mutate();
-  };
 
   const handleDelete = async () => {
     deleteMutation.mutate();
@@ -35,28 +28,7 @@ export default function CompetitionSettingsList({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="border-t border-red-500/30 pt-4">
-              <p className="mb-3 text-sm text-gray-300">
-                Remove all matches and reset statistics while keeping teams and
-                settings.
-              </p>
-              <ConfirmationDialog
-                title="Reset Competition"
-                description={
-                  <div className="space-y-3">
-                    <p className="text-gray-200">
-                      Are you sure you want to reset "{competition.name}"?
-                    </p>
-                  </div>
-                }
-                triggerContent="Reset Competition"
-                confirmText="Reset Competition"
-                onConfirm={handleReset}
-                variant="warning"
-                icon="reset"
-                loadingText="Resetting..."
-              />
-            </div>
+            <ResetCompetition competition={competition} />
 
             <div className="border-t border-red-500/30 pt-4">
               <p className="mb-3 text-sm text-gray-300">
@@ -87,8 +59,8 @@ export default function CompetitionSettingsList({
                     </ul>
                   </div>
                 }
-                triggerContent="Delete Competition"
-                confirmText="Delete Competition"
+                triggerContent="Delete competition"
+                confirmText="Delete competition"
                 onConfirm={handleDelete}
                 variant="destructive"
                 icon="trash"

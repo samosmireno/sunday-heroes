@@ -347,45 +347,4 @@ export class CompetitionRepo {
       throw PrismaErrorHandler.handle(error, "CompetitionRepo.delete");
     }
   }
-
-  static async resetCompetition(
-    id: string,
-    tx?: Prisma.TransactionClient
-  ): Promise<Competition> {
-    try {
-      const prismaClient = tx || prisma;
-      return await prismaClient.competition.update({
-        where: { id },
-        data: {
-          matches: { deleteMany: {} },
-          teamCompetitions: { deleteMany: {} },
-        },
-      });
-    } catch (error) {
-      throw PrismaErrorHandler.handle(
-        error,
-        "CompetitionRepo.resetCompetition"
-      );
-    }
-  }
-
-  static async resetCompetitionWithoutTeams(
-    id: string,
-    tx?: Prisma.TransactionClient
-  ): Promise<Competition> {
-    try {
-      const prismaClient = tx || prisma;
-      return await prismaClient.competition.update({
-        where: { id },
-        data: {
-          matches: { deleteMany: {} },
-        },
-      });
-    } catch (error) {
-      throw PrismaErrorHandler.handle(
-        error,
-        "CompetitionRepo.resetCompetitionWithoutTeam"
-      );
-    }
-  }
 }

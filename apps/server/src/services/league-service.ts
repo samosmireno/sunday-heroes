@@ -425,7 +425,9 @@ export class LeagueService {
    * Season N's Fixtures come from Teams setup: generated once, while the
    * Current season holds no Match, for the team set as it stands after the
    * renames and merges, with the latest Past season's match type and the
-   * League's round-robin format. Returns how many Fixtures were generated.
+   * League's round-robin format. After Reset competition no Match is left to
+   * copy the match type from, so the one stored on the League serves instead.
+   * Returns how many Fixtures were generated.
    */
   private static async generateCurrentSeasonFixtures(
     competitionId: string,
@@ -442,16 +444,16 @@ export class LeagueService {
       return 0;
     }
 
-    // No Match in any Season leaves nothing to copy the match type from. Only
-    // Reset competition gets a League here; regenerating Season 1 after it is #23.
-    const matchType = await MatchRepo.findLatestMatchType(competitionId, tx);
-    if (!matchType) {
-      return 0;
-    }
-
     const competition = await CompetitionRepo.findById(competitionId, tx);
     if (!competition) {
       throw new NotFoundError("Competition");
+    }
+
+    const matchType =
+      (await MatchRepo.findLatestMatchType(competitionId, tx)) ??
+      competition.matchType;
+    if (!matchType) {
+      return 0;
     }
 
     const teamCompetitions =

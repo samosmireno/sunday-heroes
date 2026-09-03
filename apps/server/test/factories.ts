@@ -46,6 +46,27 @@ export async function createUserWithDashboard(
 }
 
 /**
+ * A registered user present on the dashboard as a player under `nickname`:
+ * the dashboard-player row that links an account to a dashboard, which no
+ * cheap service path creates. Such a player survives the unused-player cleanup.
+ */
+export async function createRegisteredPlayer(options: {
+  dashboardId: string;
+  nickname: string;
+}) {
+  const user = await createUser({ givenName: options.nickname });
+  const dashboardPlayer = await prisma.dashboardPlayer.create({
+    data: {
+      dashboardId: options.dashboardId,
+      userId: user.id,
+      nickname: options.nickname,
+    },
+  });
+
+  return { user, dashboardPlayer };
+}
+
+/**
  * A new user made moderator of the Competition through the moderator service,
  * via the dashboard player that links the user to the dashboard.
  */

@@ -177,8 +177,8 @@ export class MatchRepo {
 
   /**
    * The match type of the Competition's most recent Match, by Season number;
-   * null when the Competition has no Match in any Season. Match type is not
-   * stored on the Competition, so a new Season's Fixtures copy it from here.
+   * null when the Competition has no Match in any Season. A new Season's
+   * Fixtures copy it from here, falling back to `Competition.matchType`.
    */
   static async findLatestMatchType(
     competitionId: string,
@@ -477,6 +477,19 @@ export class MatchRepo {
       return await prismaClient.match.delete({ where: { id } });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchRepo.delete");
+    }
+  }
+
+  /** Every Match of the Competition, across all Seasons. */
+  static async deleteByCompetitionId(
+    competitionId: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<void> {
+    try {
+      const prismaClient = tx || prisma;
+      await prismaClient.match.deleteMany({ where: { competitionId } });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "MatchRepo.deleteByCompetitionId");
     }
   }
 }

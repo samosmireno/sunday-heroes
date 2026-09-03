@@ -4,6 +4,7 @@ import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { MatchRepo } from "../repositories/match/match-repo";
 import { SeasonRepo } from "../repositories/season/season-repo";
 import { isCurrentSeason } from "../repositories/season/types";
+import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
 import { CompetitionQueryRepo } from "../repositories/competition/competition-query-repo";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import {
@@ -197,6 +198,13 @@ export class CompetitionService {
     return tx ? createWithSeason(tx) : prisma.$transaction(createWithSeason);
   }
 
+  /**
+   * Reset competition: deletes every Match across all Seasons, deletes the
+   * Seasons and opens a fresh Season 1 at the reset instant, in one
+   * transaction. A League keeps its teams with the Standings counters zeroed
+   * in place, exactly as at rollover, so Teams setup regenerates Season 1's
+   * Fixtures (ADR 0001). The dashboard-wide unused-player cleanup runs after.
+   */
   static async resetCompetition(competitionId: string, userId: string) {
     const isAuthorized = await this.canUserModifyCompetition(
       competitionId,
@@ -208,17 +216,37 @@ export class CompetitionService {
       );
     }
 
-    const competition =
-      await CompetitionRepo.findByIdWithDetails(competitionId);
+    const competition = await CompetitionRepo.findById(competitionId);
     if (!competition) {
       throw new NotFoundError("Competition");
     }
 
-    if (competition.type === CompetitionType.DUEL) {
-      await CompetitionRepo.resetCompetitionWithoutTeams(competitionId);
-    } else {
-      await CompetitionRepo.resetCompetition(competitionId);
-    }
+    const isLeague = competition.type === CompetitionType.LEAGUE;
+
+    await prisma.$transaction(async (tx) => {
+      // A League from before its match type was stored has it only on its
+      // Matches; keep it so Teams setup can regenerate Season 1's Fixtures.
+      if (isLeague && !competition.matchType) {
+        const matchType = await MatchRepo.findLatestMatchType(
+          competitionId,
+          tx
+        );
+        if (matchType) {
+          await CompetitionRepo.update(competitionId, { matchType }, tx);
+        }
+      }
+
+      await MatchRepo.deleteByCompetitionId(competitionId, tx);
+      await SeasonRepo.deleteByCompetitionId(competitionId, tx);
+      await SeasonRepo.create(
+        { competitionId, number: 1, startedAt: new Date() },
+        tx
+      );
+
+      if (isLeague) {
+        await TeamCompetitionRepo.bulkResetStats(competitionId, tx);
+      }
+    });
 
     await DashboardPlayerService.cleanupUnusedPlayers();
   }

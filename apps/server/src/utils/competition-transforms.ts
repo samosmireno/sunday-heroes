@@ -160,8 +160,9 @@ export function transformAddCompetitionRequestToService(
     knockoutVotingPeriodDays: competitionReq.knockoutVotingPeriodDays ?? null,
     reminderDays: competitionReq.reminderDays ?? null,
     minPlayers: competitionReq.minPlayers ?? 4,
-    // A League's round-robin choice is remembered for later seasons.
+    // A League's format is remembered for later seasons' Fixtures.
     isRoundRobin: competitionReq.isRoundRobin ?? null,
+    matchType: competitionReq.matchType ?? null,
   };
 
   return competition;

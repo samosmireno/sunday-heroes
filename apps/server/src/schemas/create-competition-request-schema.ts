@@ -1,3 +1,4 @@
+import { MatchType } from "@prisma/client";
 import { CompetitionType } from "@repo/shared-types";
 import { z } from "zod";
 
@@ -36,7 +37,8 @@ export type createCompetitionRequest = z.infer<
   typeof createCompetitionRequestSchema
 >;
 
-/** What competition creation consumes: the request, plus a League's round-robin choice. */
+/** What competition creation consumes: the request, plus a League's format. */
 export type CreateCompetitionInput = createCompetitionRequest & {
   isRoundRobin?: boolean;
+  matchType?: MatchType;
 };

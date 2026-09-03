@@ -119,6 +119,9 @@ model Competition {
   knockoutVotingPeriodDays Int?
   reminderDays              Int?
   isRoundRobin          Boolean?
+  // A League's match type, chosen at creation: what Teams setup generates a
+  // Season's Fixtures with once no Match is left to copy it from (after Reset).
+  matchType             MatchType?
   createdAt                 DateTime        @default(now())
 
   dashboard     Dashboard              @relation(fields: [dashboardId], references: [id], onDelete: Cascade)

@@ -91,6 +91,25 @@ export class SeasonRepo {
     }
   }
 
+  /**
+   * Every Season of the Competition. Only Reset competition deletes Seasons,
+   * and it opens a fresh Season 1 in the same transaction (ADR 0001).
+   */
+  static async deleteByCompetitionId(
+    competitionId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<void> {
+    try {
+      const prismaClient = tx || prisma;
+      await prismaClient.season.deleteMany({ where: { competitionId } });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "SeasonRepo.deleteByCompetitionId",
+      );
+    }
+  }
+
   /** Every Season of the Competition, ascending by number, with its Match counts. */
   static async listWithCounts(
     competitionId: string,

@@ -153,6 +153,86 @@ describe("useResetCompetition", () => {
     vi.restoreAllMocks();
   });
 
+  /** The settings read answers three seasons before the reset and a fresh Season 1 after it. */
+  function stubServer(type: CompetitionType, name: string) {
+    const before = competitionSettings({
+      name,
+      type,
+      currentSeason: currentSeasonResponse({ number: 3, matchCount: 10 }),
+      seasons: [
+        seasonResponse({ number: 1, endedAt: "2025-12-01T10:00:00.000Z" }),
+        seasonResponse({ number: 2, endedAt: "2026-05-01T10:00:00.000Z" }),
+        seasonResponse({ number: 3, matchCount: 10 }),
+      ],
+    });
+    const after = competitionSettings({
+      name,
+      type,
+      currentSeason: currentSeasonResponse({ number: 1, matchCount: 0 }),
+    });
+    vi.spyOn(axios, "get")
+      .mockResolvedValueOnce(axiosResponse(before))
+      .mockResolvedValue(axiosResponse(after));
+    const post = vi
+      .spyOn(axiosInstance, "post")
+      .mockResolvedValue(axiosResponse({}));
+    const success = vi.spyOn(toast, "success").mockImplementation(() => "");
+    return { before, post, success };
+  }
+
+  it("Duel: the admin stays on the Settings tab and the Season card re-renders as Season 1", async () => {
+    const { before, post, success } = stubServer(
+      CompetitionType.DUEL,
+      "Thursday Duel",
+    );
+    const { result } = renderHook(
+      () => ({
+        settings: useCompetitionSettings(competitionId, userId),
+        reset: useResetCompetition(before),
+        location: useLocation(),
+      }),
+      { wrapper: createTestProviders() },
+    );
+    await waitFor(() =>
+      expect(result.current.settings.competition?.seasons).toHaveLength(3),
+    );
+
+    await act(() => result.current.reset.mutateAsync());
+
+    await waitFor(() =>
+      expect(result.current.settings.competition?.currentSeason.number).toBe(1),
+    );
+    expect(result.current.settings.competition?.seasons).toHaveLength(1);
+    expect(post).toHaveBeenCalledWith(
+      expect.stringContaining(`/api/competitions/${competitionId}/reset`),
+      {},
+      { withCredentials: true },
+    );
+    expect(success).toHaveBeenCalledWith('"Thursday Duel" has been reset.');
+    expect(result.current.location.pathname).toBe("/");
+  });
+
+  it("League: the admin is sent to Teams setup", async () => {
+    const { before, success } = stubServer(
+      CompetitionType.LEAGUE,
+      "Sunday League",
+    );
+    const { result } = renderHook(
+      () => ({
+        reset: useResetCompetition(before),
+        location: useLocation(),
+      }),
+      { wrapper: createTestProviders() },
+    );
+
+    await act(() => result.current.reset.mutateAsync());
+
+    expect(success).toHaveBeenCalledWith('"Sunday League" has been reset.');
+    expect(result.current.location.pathname).toBe(
+      `/league-setup/${competitionId}`,
+    );
+  });
+
   it("shows an empty competition page after resetting the competition", async () => {
     // The server has one match on the first visit and none after the reset.
     vi.spyOn(axios, "get")
@@ -163,6 +243,7 @@ describe("useResetCompetition", () => {
       )
       .mockResolvedValue(axiosResponse(competitionResponse({ matches: [] })));
     vi.spyOn(axiosInstance, "post").mockResolvedValue(axiosResponse({}));
+    vi.spyOn(toast, "success").mockImplementation(() => "");
     const wrapper = createTestProviders();
 
     const firstVisit = renderHook(() => useCompetition(competitionId, userId), {
@@ -173,13 +254,17 @@ describe("useResetCompetition", () => {
     );
     firstVisit.unmount();
 
-    const settingsPage = renderHook(() => useResetCompetition(competitionId), {
-      wrapper,
-    });
-    act(() => settingsPage.result.current.mutate());
-    await waitFor(() =>
-      expect(settingsPage.result.current.isPending).toBe(false),
+    const settingsPage = renderHook(
+      () =>
+        useResetCompetition(
+          competitionSettings({
+            id: competitionId,
+            type: CompetitionType.DUEL,
+          }),
+        ),
+      { wrapper },
     );
+    await act(() => settingsPage.result.current.mutateAsync());
     settingsPage.unmount();
 
     const returnVisit = renderHook(

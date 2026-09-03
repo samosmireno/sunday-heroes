@@ -7,13 +7,17 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/config/axios-config";
 import { config } from "@/config/config";
 import { toast } from "sonner";
-import { CompetitionType, SeasonResponse } from "@repo/shared-types";
+import {
+  CompetitionSettings,
+  CompetitionType,
+  SeasonResponse,
+} from "@repo/shared-types";
 import { AppError } from "@/hooks/use-error-handler/types";
 
 /**
  * Every read that describes a Competition's seasons, by key prefix: after a
- * Start new season the Current season, its Standings, Fixtures, stats and match
- * lists all change.
+ * Start new season or a Reset competition the Current season, its Standings,
+ * Fixtures, stats and match lists all change.
  */
 export function invalidateCompetitionReads(
   queryClient: QueryClient,
@@ -65,24 +69,33 @@ export function useStartNewSeason(
   });
 }
 
-export function useResetCompetition(competitionId: string) {
+/**
+ * Reset competition: every Season's Matches go and Season 1 starts again. A
+ * League admin goes on to Teams setup to regenerate its Fixtures; a Duel admin
+ * stays on the Settings tab, where the Season card re-renders as Season 1.
+ */
+export function useResetCompetition({
+  id,
+  name,
+  type,
+}: Pick<CompetitionSettings, "id" | "name" | "type">) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   return useMutation({
     mutationFn: async () => {
       await axiosInstance.post(
-        `${config.server}/api/competitions/${competitionId}/reset`,
+        `${config.server}/api/competitions/${id}/reset`,
         {},
         { withCredentials: true },
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["competition", { compId: competitionId }],
-      });
-      toast.success("Competition has been reset successfully");
-      navigate("/competitions");
+      invalidateCompetitionReads(queryClient, id);
+      toast.success(`"${name}" has been reset.`);
+      if (type === CompetitionType.LEAGUE) {
+        navigate(`/league-setup/${id}`);
+      }
     },
     onError: (error: AppError) => {
       const message =
