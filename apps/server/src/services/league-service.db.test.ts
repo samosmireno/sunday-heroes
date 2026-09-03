@@ -15,7 +15,11 @@ import {
 import { MatchRepo } from "../repositories/match/match-repo";
 import { MatchWithDetails } from "../repositories/match/types";
 import { SeasonRepo } from "../repositories/season/season-repo";
-import { AuthorizationError, NotFoundError } from "../utils/errors";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+} from "../utils/errors";
 import { LeagueService } from "./league-service";
 import { MatchService } from "./match/match-service";
 import { SeasonService } from "./season-service";
@@ -762,5 +766,81 @@ describe("LeagueService.getLeagueStandings by season", () => {
     await expect(
       LeagueService.getLeagueStandings("no-such-competition"),
     ).rejects.toThrow(new NotFoundError("Competition"));
+  });
+});
+
+const PAST_SEASON_CONFLICT = new ConflictError(
+  "Matches from a past season cannot be changed.",
+);
+
+/** Gives a Fixture the players, score and date League completion requires, without completing it. */
+async function makeCompletable(fixtureId: string) {
+  await addPlayersToFixture(fixtureId, [
+    { nickname: "Ana", isHome: true, goals: 2 },
+    { nickname: "Bo", isHome: false },
+  ]);
+  await setFixtureScore(fixtureId, 2, 0);
+  await setFixtureDate(fixtureId, new Date("2026-02-01T18:00:00.000Z"));
+}
+
+describe("Past seasons are read-only: League completion (ADR 0002)", () => {
+  it("refuses to complete a Season-1 Fixture after the rollover, leaving it not completed and the counters at zero, while a Season-2 Fixture completes", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, teams, fixtures } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 4,
+    });
+    const seasonOneFixture = fixtures[0].match;
+    await makeCompletable(seasonOneFixture.id);
+    await SeasonService.startNewSeason(competition.id, user.id);
+    await LeagueService.updateTeamNames(
+      competition.id,
+      nameTeams(teams),
+      user.id,
+    );
+
+    await expect(
+      LeagueService.completeMatch(seasonOneFixture.id, user.id),
+    ).rejects.toThrow(PAST_SEASON_CONFLICT);
+
+    expect(
+      (await MatchService.getMatchById(seasonOneFixture.id))?.isCompleted,
+    ).toBe(false);
+    const current = await LeagueService.getLeagueStandings(competition.id);
+    expect(total(current, "points")).toBe(0);
+    expect(total(current, "played")).toBe(0);
+
+    const [seasonTwoFixture] = await LeagueService.getLeagueFixtures(
+      competition.id,
+    );
+    await makeCompletable(seasonTwoFixture.id);
+    await LeagueService.completeMatch(seasonTwoFixture.id, user.id);
+
+    expect(
+      (await MatchService.getMatchById(seasonTwoFixture.id))?.isCompleted,
+    ).toBe(true);
+    expect(
+      total(await LeagueService.getLeagueStandings(competition.id), "points"),
+    ).toBe(3);
+  });
+
+  it("a player on a closed-season Fixture gets the authorization error, not the conflict", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, fixtures } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 2,
+    });
+    const [fixture] = fixtures;
+    await makeCompletable(fixture.match.id);
+    await SeasonService.startNewSeason(competition.id, user.id);
+    const player = await createUser();
+
+    await expect(
+      LeagueService.completeMatch(fixture.match.id, player.id),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+
+    expect(
+      (await MatchService.getMatchById(fixture.match.id))?.isCompleted,
+    ).toBe(false);
   });
 });

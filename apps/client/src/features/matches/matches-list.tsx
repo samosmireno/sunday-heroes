@@ -8,6 +8,7 @@ import { convertMatchType } from "@/utils/string";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { seasonName } from "@/features/competition/season-labels";
+import ClosedSeasonLock from "@/features/competition/closed-season-lock";
 
 interface MatchesListProps {
   matches: MatchPageResponse[];
@@ -183,7 +184,11 @@ export default function MatchesList({
                     {getVotingStatusBadge(match)}
                   </td>
                   <td className="whitespace-nowrap px-2 py-3 text-right text-sm md:px-4 md:py-4">
-                    <div className="flex justify-end space-x-1 md:space-x-2">
+                    <div className="flex items-center justify-end space-x-1 md:space-x-2">
+                      {/* A Past season's match is history (ADR 0002); voting open at the rollover runs on. */}
+                      {match.season.isClosed && (
+                        <ClosedSeasonLock seasonNumber={match.season.number} />
+                      )}
                       {match.votingStatus === "OPEN" && match.votingEnabled && (
                         <Button
                           onClick={(e) => {

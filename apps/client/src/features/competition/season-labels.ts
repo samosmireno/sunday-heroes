@@ -102,3 +102,8 @@ export function duelStatsCaption(
 export function addMatchHint(current: number): string {
   return `New matches go to ${seasonName(current)}`;
 }
+
+/** In place of a Past season's Match's write actions (ADR 0002): `Season 2 · closed`. */
+export function closedSeasonLabel(number: number): string {
+  return `${seasonName(number)} · closed`;
+}

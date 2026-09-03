@@ -6,6 +6,7 @@ import Loading from "@/components/ui/loading";
 import { LeagueMatchResponse, MatchResponse, Role } from "@repo/shared-types";
 import { displayedScore, leftNotCompleted } from "./fixture-display";
 import NotCompletedTag from "./not-completed-tag";
+import ClosedSeasonLock from "@/features/competition/closed-season-lock";
 
 interface LeagueMatchDetailsProps {
   role: Role;
@@ -93,21 +94,30 @@ export default function LeagueMatchDetails({
                 </div>
               </Button>
             )}
-            <Button
-              onClick={onEditMatch}
-              className="w-full border-2 border-accent/40 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:w-auto"
-              size="sm"
-            >
-              <Edit className="mr-2 h-4 w-4" />
-              <span className="text-xs xl:text-sm">Edit</span>
-            </Button>
+            {/* A Past season's match is history: no Edit, no Mark as Completed (ADR 0002). */}
+            {selectedMatch.season.isClosed ? (
+              <ClosedSeasonLock
+                seasonNumber={selectedMatch.season.number}
+                className="justify-center py-1.5"
+              />
+            ) : (
+              <Button
+                onClick={onEditMatch}
+                className="w-full border-2 border-accent/40 bg-bg/30 text-gray-300 hover:bg-accent/10 sm:w-auto"
+                size="sm"
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                <span className="text-xs xl:text-sm">Edit</span>
+              </Button>
+            )}
 
             {isMatchCompleted ? (
               <div className="rounded-md border-2 border-green-500/30 bg-green-900/20 px-3 py-1.5 text-center text-xs text-green-400 lg:py-1 lg:text-sm">
                 ✓ Match completed
               </div>
             ) : (
-              !isMatchUnfinished && (
+              !isMatchUnfinished &&
+              !selectedMatch.season.isClosed && (
                 <ConfirmationDialog
                   title="Mark match as Completed"
                   description={

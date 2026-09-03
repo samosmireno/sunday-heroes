@@ -6,8 +6,9 @@ import { useState } from "react";
 import ConfirmDeleteModal from "./confirm-delete-modal";
 import { config } from "@/config/config";
 import { useCompetitionContext } from "@/context/competition-context";
-import { Role } from "@repo/shared-types";
+import { MatchSeason, Role } from "@repo/shared-types";
 import { seasonName } from "@/features/competition/season-labels";
+import ClosedSeasonLock from "@/features/competition/closed-season-lock";
 
 interface MatchProps {
   matchId: string;
@@ -20,8 +21,10 @@ interface MatchProps {
   refetchMatches: () => void;
   userRole: Role;
   videoUrl?: string;
-  /** The Match's Season number, shown as a tag under All seasons. */
-  seasonTag?: number;
+  /** The Match's Season: closed means no pencil and no bin (ADR 0002). */
+  season: MatchSeason;
+  /** Under All seasons, a tag names the Season the card belongs to. */
+  showSeasonTag?: boolean;
 }
 
 export default function MatchResult({
@@ -34,7 +37,8 @@ export default function MatchResult({
   refetchMatches,
   userRole,
   videoUrl,
-  seasonTag,
+  season,
+  showSeasonTag = false,
 }: MatchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -70,9 +74,9 @@ export default function MatchResult({
   return (
     <div className="w-full">
       <div className="relative mb-3 rounded-lg border-2 border-accent bg-secondary p-3 text-center shadow-inner sm:mb-4 sm:p-4 md:mb-6 md:p-6">
-        {seasonTag !== undefined && (
+        {showSeasonTag && (
           <span className="absolute left-2 top-2 rounded bg-bg/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent/80">
-            {seasonName(seasonTag)}
+            {seasonName(season.number)}
           </span>
         )}
         <div className="flex w-full flex-col">
@@ -113,17 +117,24 @@ export default function MatchResult({
                   <Video className="h-4 w-4 text-accent md:h-5 md:w-5" />
                 </a>
               )}
-              {userRole !== Role.PLAYER && (
-                <>
-                  <Link to={`/edit-match/${competition?.id}/${matchId}`}>
-                    <Pencil className="h-4 w-4 text-accent md:h-5 md:w-5" />
-                  </Link>
-                  <Trash
-                    className="h-4 w-4 text-accent hover:cursor-pointer md:h-5 md:w-5"
-                    onClick={handleDeleteClick}
-                  />
-                </>
-              )}
+              {userRole !== Role.PLAYER &&
+                (season.isClosed ? (
+                  <ClosedSeasonLock seasonNumber={season.number} />
+                ) : (
+                  <>
+                    <Link
+                      to={`/edit-match/${competition?.id}/${matchId}`}
+                      aria-label="Edit match"
+                    >
+                      <Pencil className="h-4 w-4 text-accent md:h-5 md:w-5" />
+                    </Link>
+                    <Trash
+                      className="h-4 w-4 text-accent hover:cursor-pointer md:h-5 md:w-5"
+                      aria-label="Delete match"
+                      onClick={handleDeleteClick}
+                    />
+                  </>
+                ))}
             </div>
           </div>
         </div>

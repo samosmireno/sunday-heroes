@@ -122,18 +122,7 @@ export const updateMatch = async (
       throw new BadRequestError("Competition ID is required");
     }
 
-    const isAuthorized = await MatchAuthService.canUserModifyMatch(
-      matchId,
-      userId,
-    );
-
-    if (!isAuthorized) {
-      throw new AuthorizationError(
-        "User is not authorized to update this match",
-      );
-    }
-
-    const updatedMatch = await MatchService.updateMatch(matchId, data);
+    const updatedMatch = await MatchService.updateMatch(matchId, data, userId);
 
     logger.info({ userId, matchId }, "Match updated");
     sendSuccess(res, updatedMatch);
@@ -157,22 +146,7 @@ export const deleteMatch = async (
       throw new BadRequestError("Match ID is required");
     }
 
-    const isAuthorized = await MatchAuthService.canUserModifyMatch(
-      matchId,
-      userId,
-    );
-
-    if (!isAuthorized) {
-      throw new AuthorizationError(
-        "User is not authorized to delete this match",
-      );
-    }
-
-    const deletedMatch = await MatchService.deleteMatch(matchId);
-
-    if (!deletedMatch) {
-      throw new BadRequestError("Match not found or already deleted");
-    }
+    await MatchService.deleteMatch(matchId, userId);
 
     logger.info({ userId, matchId }, "Match deleted");
     sendSuccess(res, { message: "Match deleted successfully" });

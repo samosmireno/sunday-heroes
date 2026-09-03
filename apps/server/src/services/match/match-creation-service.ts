@@ -10,10 +10,10 @@ import { transformAddMatchRequestToService } from "../../utils/match-transforms"
 import { CompetitionVotingRepo } from "../../repositories/competition/competition-voting-repo";
 import { DashboardService } from "../dashboard-service";
 import { DashboardPlayerService } from "../dashboard-player-service";
-import { MatchService } from "./match-service";
 import { LeagueService } from "../league-service";
 import { NotFoundError } from "../../utils/errors";
 import { SeasonRepo } from "../../repositories/season/season-repo";
+import { MatchWithTeams } from "../../repositories/match/types";
 
 export class MatchCreationService {
   static async createMatch(data: createMatchRequest) {
@@ -63,7 +63,9 @@ export class MatchCreationService {
     });
   }
 
-  static async updateMatch(matchId: string, data: createMatchRequest) {
+  /** Writes the edit-match request onto a Match the caller has read and cleared for writing. */
+  static async updateMatch(match: MatchWithTeams, data: createMatchRequest) {
+    const matchId = match.id;
     const [hometeamID, awayteamID, dashboardId] = await Promise.all([
       TeamRepo.getTeamIDFromName(data.teams[0], data.competitionId),
       TeamRepo.getTeamIDFromName(data.teams[1], data.competitionId),
@@ -77,16 +79,8 @@ export class MatchCreationService {
       videoUrl: data.videoUrl,
     };
 
-    const competitionType =
-      await MatchService.getCompetitionTypeFromMatchId(matchId);
-
-    const match = await MatchRepo.findByIdWithTeams(matchId);
-    if (!match) {
-      throw new NotFoundError("Match");
-    }
-
     if (
-      competitionType === CompetitionType.LEAGUE &&
+      match.competition.type === CompetitionType.LEAGUE &&
       match.isCompleted === true
     ) {
       await LeagueService.recalculateLeagueStandings(

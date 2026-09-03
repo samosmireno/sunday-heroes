@@ -536,16 +536,6 @@ export class LeagueService {
       throw new NotFoundError("Match");
     }
 
-    if (match.isCompleted) {
-      throw new ConflictError("Match is already completed");
-    }
-
-    if (!this.isMatchFinished(match)) {
-      throw new ConflictError(
-        "Match cannot be completed. Ensure all players have played and the match has a date."
-      );
-    }
-
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       match.competitionId,
       userId
@@ -554,6 +544,18 @@ export class LeagueService {
     if (!hasPermission) {
       throw new AuthorizationError(
         "User is not authorized to complete this match"
+      );
+    }
+
+    SeasonService.assertSeasonOpen(match);
+
+    if (match.isCompleted) {
+      throw new ConflictError("Match is already completed");
+    }
+
+    if (!this.isMatchFinished(match)) {
+      throw new ConflictError(
+        "Match cannot be completed. Ensure all players have played and the match has a date."
       );
     }
 

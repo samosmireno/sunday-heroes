@@ -66,7 +66,9 @@ export const MATCH_VOTES_INCLUDE = {
   },
 } satisfies Prisma.MatchInclude;
 
+/** What the write paths read: the Season, so the read-only guard costs no extra query (ADR 0002). */
 export const MATCH_BASIC_INCLUDE = {
+  season: MATCH_SEASON_SELECT,
   matchTeams: {
     include: {
       team: true,

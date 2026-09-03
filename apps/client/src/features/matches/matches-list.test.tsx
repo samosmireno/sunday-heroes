@@ -28,4 +28,13 @@ describe("MatchesList", () => {
     expect(screen.queryByRole("columnheader", { name: "Season" })).toBeNull();
     expect(screen.queryByText("Season 2")).toBeNull();
   });
+
+  it("reads the closed Season in the actions cell of a Past season's match, for everyone", () => {
+    render(<MatchesList matches={twoSeasons} />, {
+      wrapper: createTestProviders(),
+    });
+
+    expect(screen.getByText("Season 1 · closed")).toBeDefined();
+    expect(screen.queryByText("Season 2 · closed")).toBeNull();
+  });
 });

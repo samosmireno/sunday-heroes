@@ -3,6 +3,7 @@ import { seasonResponse } from "@/test/fixtures";
 import {
   addMatchHint,
   allSeasonsOptionLabel,
+  closedSeasonLabel,
   duelStatsCaption,
   leagueStatsCaption,
   pastSeasonBanner,
@@ -133,5 +134,11 @@ describe("duelStatsCaption", () => {
 describe("addMatchHint", () => {
   it("tells the admin on a Past season where a new match goes", () => {
     expect(addMatchHint(3)).toBe("New matches go to Season 3");
+  });
+});
+
+describe("closedSeasonLabel", () => {
+  it("names the closed Season in place of a Match's write actions", () => {
+    expect(closedSeasonLabel(2)).toBe("Season 2 · closed");
   });
 });

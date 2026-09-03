@@ -1,8 +1,11 @@
-import { CompetitionType, Prisma } from "@prisma/client";
+import { CompetitionType, Prisma, Season } from "@prisma/client";
 import prisma from "../repositories/prisma-client";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { SeasonRepo } from "../repositories/season/season-repo";
-import { SeasonWithCounts } from "../repositories/season/types";
+import {
+  isCurrentSeason,
+  SeasonWithCounts,
+} from "../repositories/season/types";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
 import {
   AuthorizationError,
@@ -25,7 +28,23 @@ export interface SeasonSelection {
   isCurrent: boolean;
 }
 
+/** A Match read with its Season, as the write paths load it. */
+export interface MatchInSeason {
+  season: Pick<Season, "endedAt">;
+}
+
 export class SeasonService {
+  /**
+   * Past seasons are read-only (ADR 0002): a Match whose Season is closed can
+   * be neither edited, completed nor deleted. Called after the permission
+   * check on each write path, on a Match read that already carries its Season.
+   */
+  static assertSeasonOpen(match: MatchInSeason): void {
+    if (!isCurrentSeason(match.season)) {
+      throw new ConflictError("Matches from a past season cannot be changed.");
+    }
+  }
+
   /**
    * The season filter contract: absent selects the Current season, a number one
    * Season of this Competition, "all" every Season. Season numbers are per

@@ -136,7 +136,8 @@ export default function MatchList({
                       refetchMatches={refetchMatches}
                       userRole={userRole}
                       videoUrl={match.videoUrl}
-                      seasonTag={isAll ? match.season.number : undefined}
+                      season={match.season}
+                      showSeasonTag={isAll}
                     />
                   </CarouselItem>
                 );
