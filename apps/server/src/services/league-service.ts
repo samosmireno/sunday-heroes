@@ -7,7 +7,10 @@ import {
 } from "../repositories/match/types";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import { MatchType, Prisma, VotingStatus } from "@prisma/client";
-import { LeagueTeamResponse, UpdateTeamNamesResponse } from "@repo/shared-types";
+import {
+  LeagueTeamResponse,
+  UpdateTeamNamesResponse,
+} from "@repo/shared-types";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
 import prisma from "../repositories/prisma-client";
 import { MatchTeamRepo } from "../repositories/match-team-repo";
@@ -43,18 +46,18 @@ export class LeagueService {
     return await prisma.$transaction(async (tx) => {
       const competition = await CompetitionService.createCompetition(
         { ...request, isRoundRobin },
-        tx
+        tx,
       );
 
       const teams = [];
       for (let i = 0; i < request.numberOfTeams; i++) {
-        const teamName = `team-${Math.floor(Math.random() * 10000)}`;
+        const teamName = `Team ${i + 1}`;
 
         const team = await TeamService.createTeamInCompetition(
           teamName,
           competition.id,
           userId,
-          tx
+          tx,
         );
         teams.push(team);
       }
@@ -64,7 +67,7 @@ export class LeagueService {
         teams,
         isRoundRobin,
         request.matchType,
-        tx
+        tx,
       );
 
       return {
@@ -81,7 +84,7 @@ export class LeagueService {
     teams: { id: string; name: string }[],
     isDoubleRoundRobin: boolean = false,
     matchType: MatchType,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     const fixtures = [];
 
@@ -92,7 +95,7 @@ export class LeagueService {
 
     const roundMatches = this.generateRoundRobinMatches(
       teams,
-      isDoubleRoundRobin
+      isDoubleRoundRobin,
     );
 
     for (let roundIndex = 0; roundIndex < roundMatches.length; roundIndex++) {
@@ -117,20 +120,20 @@ export class LeagueService {
             isCompleted: false,
             videoUrl: null,
           },
-          tx
+          tx,
         );
 
         await MatchTeamRepo.create(
           createdMatch.id,
           match.homeTeam.id,
           true,
-          tx
+          tx,
         );
         await MatchTeamRepo.create(
           createdMatch.id,
           match.awayTeam.id,
           false,
-          tx
+          tx,
         );
 
         fixtures.push({
@@ -147,7 +150,7 @@ export class LeagueService {
 
   private static generateRoundRobinMatches(
     teams: { id: string; name: string }[],
-    isDoubleRoundRobin: boolean = false
+    isDoubleRoundRobin: boolean = false,
   ) {
     const shuffledTeams = [...teams].sort(() => Math.random() - 0.5);
     const numberOfTeams = shuffledTeams.length;
@@ -212,7 +215,7 @@ export class LeagueService {
         round.map((match) => ({
           homeTeam: match.awayTeam,
           awayTeam: match.homeTeam,
-        }))
+        })),
       );
       return [...fixtures, ...reverseFixtures];
     }
@@ -228,7 +231,7 @@ export class LeagueService {
    */
   static async getLeagueStandings(
     competitionId: string,
-    season?: SeasonQuery
+    season?: SeasonQuery,
   ): Promise<LeagueTeamResponse[]> {
     const { where: seasonWhere, isCurrent } =
       await SeasonService.resolveSeasonSelection(competitionId, season);
@@ -241,18 +244,18 @@ export class LeagueService {
 
     const matches = await MatchRepo.findCompletedWithTeamSides(
       competitionId,
-      seasonWhere
+      seasonWhere,
     );
 
     return computeStandings(
       teamCompetitions.map(({ team }) => team),
-      matches.map((match) => this.toStandingsMatch(match))
+      matches.map((match) => this.toStandingsMatch(match)),
     );
   }
 
   /** The two sides of a Match; a Match always has a home and an away team. */
   private static teamSides<T extends { isHome: boolean }>(
-    matchTeams: T[]
+    matchTeams: T[],
   ): { homeTeam: T; awayTeam: T } {
     const homeTeam = matchTeams.find((mt) => mt.isHome);
     const awayTeam = matchTeams.find((mt) => !mt.isHome);
@@ -277,24 +280,24 @@ export class LeagueService {
   static async recalculateLeagueStandings(
     match: MatchWithTeams,
     newHomeScore: number,
-    newAwayScore: number
+    newAwayScore: number,
   ) {
     const { homeTeam, awayTeam } = this.teamSides(match.matchTeams);
 
     const result = calculateMatchResult(newHomeScore, newAwayScore);
     const previousResult = calculateMatchResult(
       match.homeTeamScore,
-      match.awayTeamScore
+      match.awayTeamScore,
     );
 
     const diffHomeStats = this.calculateStatsDifference(
       previousResult.homeTeamStats,
-      result.homeTeamStats
+      result.homeTeamStats,
     );
 
     const diffAwayStats = this.calculateStatsDifference(
       previousResult.awayTeamStats,
-      result.awayTeamStats
+      result.awayTeamStats,
     );
 
     await prisma.$transaction(async (tx) => {
@@ -302,21 +305,21 @@ export class LeagueService {
         homeTeam.teamId,
         match.competitionId,
         diffHomeStats,
-        tx
+        tx,
       );
 
       await TeamCompetitionRepo.incrementTeamStats(
         awayTeam.teamId,
         match.competitionId,
         diffAwayStats,
-        tx
+        tx,
       );
     });
   }
 
   private static calculateStatsDifference(
     previousStats: TeamStats,
-    newStats: TeamStats
+    newStats: TeamStats,
   ): TeamStats {
     return {
       points: newStats.points - previousStats.points,
@@ -337,11 +340,11 @@ export class LeagueService {
    */
   static async getLeagueFixtures(
     competitionId: string,
-    season?: SeasonQuery
+    season?: SeasonQuery,
   ): Promise<MatchWithDetails[]> {
     const seasonWhere = await SeasonService.resolveSeasonFilter(
       competitionId,
-      season
+      season,
     );
     return MatchRepo.findByCompetitionId(competitionId, {
       where: seasonWhere,
@@ -361,11 +364,11 @@ export class LeagueService {
   static async getPlayerStats(competitionId: string, season?: SeasonQuery) {
     const seasonWhere = await SeasonService.resolveSeasonFilter(
       competitionId,
-      season
+      season,
     );
     const competition = await CompetitionRepo.findByIdWithDetails(
       competitionId,
-      { ...seasonWhere, isCompleted: true }
+      { ...seasonWhere, isCompleted: true },
     );
     if (!competition) {
       throw new NotFoundError("Competition");
@@ -387,15 +390,15 @@ export class LeagueService {
       id: string;
       name: string;
     }[],
-    userId: string
+    userId: string,
   ): Promise<UpdateTeamNamesResponse> {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       competitionId,
-      userId
+      userId,
     );
     if (!hasPermission) {
       throw new AuthorizationError(
-        "User is not authorized to update team names in this competition"
+        "User is not authorized to update team names in this competition",
       );
     }
 
@@ -409,7 +412,7 @@ export class LeagueService {
           update.name.trim(),
           competitionId,
           dashboardId,
-          tx
+          tx,
         );
       }
 
@@ -434,11 +437,11 @@ export class LeagueService {
    */
   private static async generateCurrentSeasonFixtures(
     competitionId: string,
-    tx: Prisma.TransactionClient
+    tx: Prisma.TransactionClient,
   ): Promise<number> {
     const currentSeason = await SeasonRepo.findCurrentWithMatchCount(
       competitionId,
-      tx
+      tx,
     );
     if (!currentSeason) {
       throw new NotFoundError("Season");
@@ -459,8 +462,10 @@ export class LeagueService {
       return 0;
     }
 
-    const teamCompetitions =
-      await TeamCompetitionRepo.getAllTeamsInCompetition(competitionId, tx);
+    const teamCompetitions = await TeamCompetitionRepo.getAllTeamsInCompetition(
+      competitionId,
+      tx,
+    );
     const teams = teamCompetitions.map(({ team }) => ({
       id: team.id,
       name: team.name,
@@ -471,7 +476,7 @@ export class LeagueService {
       teams,
       competition.isRoundRobin ?? false,
       matchType,
-      tx
+      tx,
     );
     return fixtures.length;
   }
@@ -481,12 +486,12 @@ export class LeagueService {
     newName: string,
     competitionId: string,
     dashboardId: string,
-    tx: any
+    tx: any,
   ) {
     const existingTeam = await TeamRepo.findByNameInDashboard(
       newName,
       dashboardId,
-      tx
+      tx,
     );
 
     if (existingTeam && existingTeam.id !== teamId) {
@@ -494,19 +499,19 @@ export class LeagueService {
         await TeamCompetitionRepo.findByTeamAndCompetition(
           existingTeam.id,
           competitionId,
-          tx
+          tx,
         );
 
       if (existingInCompetition) {
         throw new ConflictError(
-          `Team with name "${newName}" already exists in this competition`
+          `Team with name "${newName}" already exists in this competition`,
         );
       }
       await TeamCompetitionRepo.updateTeamId(
         teamId,
         existingTeam.id,
         competitionId,
-        tx
+        tx,
       );
 
       await MatchTeamRepo.updateTeamReferences(teamId, existingTeam.id, tx);
@@ -538,12 +543,12 @@ export class LeagueService {
 
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       match.competitionId,
-      userId
+      userId,
     );
 
     if (!hasPermission) {
       throw new AuthorizationError(
-        "User is not authorized to complete this match"
+        "User is not authorized to complete this match",
       );
     }
 
@@ -555,7 +560,7 @@ export class LeagueService {
 
     if (!this.isMatchFinished(match)) {
       throw new ConflictError(
-        "Match cannot be completed. Ensure all players have played and the match has a date."
+        "Match cannot be completed. Ensure all players have played and the match has a date.",
       );
     }
 
@@ -566,21 +571,21 @@ export class LeagueService {
 
       const result = calculateMatchResult(
         match.homeTeamScore,
-        match.awayTeamScore
+        match.awayTeamScore,
       );
 
       await TeamCompetitionRepo.incrementTeamStats(
         homeTeam.teamId,
         match.competitionId,
         result.homeTeamStats,
-        tx
+        tx,
       );
 
       await TeamCompetitionRepo.incrementTeamStats(
         awayTeam.teamId,
         match.competitionId,
         result.awayTeamStats,
-        tx
+        tx,
       );
     });
 
@@ -588,7 +593,7 @@ export class LeagueService {
   }
 
   private static isMatchFinished = (
-    match: MatchWithTeams | undefined
+    match: MatchWithTeams | undefined,
   ): boolean => {
     if (!match) return false;
 

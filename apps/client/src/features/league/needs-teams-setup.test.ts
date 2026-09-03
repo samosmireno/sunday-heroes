@@ -36,6 +36,22 @@ describe("needsTeamsSetup", () => {
     ).toBe(true);
   });
 
+  it("a freshly created League, its teams still Team 1 … Team N, sets them up", () => {
+    expect(
+      needsTeamsSetup({
+        type: CompetitionType.LEAGUE,
+        userRole: Role.ADMIN,
+        seasons: seasonOneWithFixtures,
+        teams: [
+          { id: "team-1", name: "Team 1" },
+          { id: "team-2", name: "Team 2" },
+          { id: "team-3", name: "Team 3" },
+          { id: "team-4", name: "Team 4" },
+        ],
+      }),
+    ).toBe(true);
+  });
+
   it("an admin with named teams and an empty Current season sets up the new Season", () => {
     expect(
       needsTeamsSetup({

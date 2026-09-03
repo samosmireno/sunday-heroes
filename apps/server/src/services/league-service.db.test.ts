@@ -159,6 +159,24 @@ describe("LeagueService.createLeague", () => {
     expect(single.competition.isRoundRobin).toBe(false);
     expect(double.competition.isRoundRobin).toBe(true);
   });
+  it("names the placeholder teams Team 1 … Team N, distinct however many there are", async () => {
+    const { user } = await createUserWithDashboard();
+
+    const { competition, teams } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 20,
+    });
+
+    const names = teams.map((team) => team.name);
+    expect(new Set(names).size).toBe(20);
+    expect(names).toEqual(
+      Array.from({ length: 20 }, (_, index) => `Team ${index + 1}`),
+    );
+    const stored = await LeagueService.getLeagueTeams(competition.id);
+    expect(stored.map(({ team }) => team.name).sort()).toEqual(
+      [...names].sort(),
+    );
+  });
 });
 
 describe("Fixture leaf-state factories", () => {
