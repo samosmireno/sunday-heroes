@@ -47,10 +47,17 @@ export interface SeasonSelectionState {
   /** The URL value for the query keys and requests; undefined means the Current season. */
   season: SeasonParam;
   /**
-   * The resolved selection. Once the season list is known, an unknown value
-   * resolves to the Current season; before that it is the raw `season`.
+   * The effective selection. Once the season list is known, an unknown value
+   * falls back to the Current season; before that it is the raw `season`.
    */
   selection: SeasonFilter | undefined;
+  /**
+   * Whether the client can vouch for `season`, so the season-scoped reads may
+   * send it: the Current season and All seasons need no list, a Season number
+   * only once the list has it. A stale link's season never reaches the
+   * server; the hook drops it from the URL instead.
+   */
+  resolved: boolean;
   /** The Current season's number, once the season list is known. */
   current: number | undefined;
   seasons: SeasonResponse[];
@@ -87,6 +94,7 @@ export function useSeasonParam(seasons: SeasonResponse[] = NO_SEASONS) {
     season === "all" ||
     (season !== undefined && seasons.some((s) => s.number === season));
   const selection = listKnown ? (selectionKnown ? season : current) : season;
+  const resolved = season === undefined || selectionKnown;
   const selectedSeason =
     typeof selection === "number"
       ? seasons.find((s) => s.number === selection)
@@ -121,6 +129,7 @@ export function useSeasonParam(seasons: SeasonResponse[] = NO_SEASONS) {
   const state: SeasonSelectionState = {
     season,
     selection,
+    resolved,
     current,
     seasons,
     selectedSeason,

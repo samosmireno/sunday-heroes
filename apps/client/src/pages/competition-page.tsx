@@ -30,6 +30,7 @@ function CompetitionPage() {
     competitionId,
     user?.id,
     seasonState.season,
+    { enabled: seasonState.resolved },
   );
 
   const renderCompetitionPage = () => {
@@ -69,26 +70,18 @@ function CompetitionPage() {
     />
   );
 
-  if (isLoading) {
-    // A season switch keeps the header and its selector in place.
-    if (!info) {
-      return <CompetitionAdminPageSkeleton />;
-    }
-    return (
-      <div className="flex-1 p-6">
-        {header}
-        <Loading text="Loading matches..." />
-      </div>
-    );
-  }
-
-  // A stale link's season: the read failed for a Season the list does not
-  // know and the param is about to be dropped, or the list is not in yet.
+  // The read has nothing yet, and that is no error while the page settles: the
+  // season list is not in yet (a `?season=` read waits on it), or a stale
+  // link's season is one the list does not know and is about to be dropped.
   const seasonSettling =
     isInfoLoading ||
     (seasonState.season !== undefined &&
       seasonState.selection !== seasonState.season);
-  if (!competition && seasonSettling) {
+  if (isLoading || (!competition && seasonSettling)) {
+    // A season switch keeps the header and its selector in place.
+    if (!info) {
+      return <CompetitionAdminPageSkeleton />;
+    }
     return (
       <div className="flex-1 p-6">
         {header}

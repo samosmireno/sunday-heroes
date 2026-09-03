@@ -112,16 +112,31 @@ describe("useSeasonParam", () => {
     expect(all.result.current.season).toBe("all");
   });
 
+  it("vouches for the Current season and All seasons without the list, and for a Season number only once the list has it", () => {
+    expect(renderSeasonParam("").result.current.resolved).toBe(true);
+    expect(renderSeasonParam("?season=all").result.current.resolved).toBe(true);
+
+    const past = renderSeasonParam("?season=2");
+    expect(past.result.current.resolved).toBe(false);
+
+    past.rerender({ seasons: threeSeasons });
+    expect(past.result.current).toMatchObject({ season: 2, resolved: true });
+  });
+
   it("drops an unknown season number from the URL once the list arrives and shows the Current season", () => {
     const { result, rerender } = renderSeasonParam("?season=9&tab=fixtures");
-    expect(result.current.season).toBe(9);
+    expect(result.current).toMatchObject({ season: 9, resolved: false });
     expect(searchOf(result.current).get("season")).toBe("9");
 
     rerender({ seasons: threeSeasons });
 
     expect(searchOf(result.current).has("season")).toBe(false);
     expect(searchOf(result.current).get("tab")).toBe("fixtures");
-    expect(result.current).toMatchObject({ season: undefined, selection: 3 });
+    expect(result.current).toMatchObject({
+      season: undefined,
+      selection: 3,
+      resolved: true,
+    });
 
     // The bad URL was replaced, not pushed: going back does not return to it.
     act(() => result.current.navigate(-1));
@@ -132,7 +147,10 @@ describe("useSeasonParam", () => {
     "treats the malformed value %j as absent from the first render and drops it once the list arrives",
     (bad) => {
       const { result, rerender } = renderSeasonParam(`?season=${bad}`);
-      expect(result.current.season).toBeUndefined();
+      expect(result.current).toMatchObject({
+        season: undefined,
+        resolved: true,
+      });
       expect(searchOf(result.current).has("season")).toBe(true);
 
       rerender({ seasons: threeSeasons });

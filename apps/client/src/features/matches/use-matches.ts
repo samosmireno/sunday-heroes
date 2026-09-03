@@ -17,6 +17,15 @@ interface MatchQueryParams {
   season?: SeasonParam;
 }
 
+interface MatchesReadParams extends MatchQueryParams {
+  /**
+   * Whether the read may go. The page holds it back while the client cannot
+   * yet vouch for `season` (a `?season=` value before the season list is in),
+   * so a stale link's season never reaches the server.
+   */
+  enabled?: boolean;
+}
+
 interface MatchesResult {
   data: MatchPageResponse[];
   totalCount: number;
@@ -39,16 +48,19 @@ export const useMatches = ({
   competitionId,
   page,
   season,
-}: MatchQueryParams) => {
+  enabled = true,
+}: MatchesReadParams) => {
   const { handleError } = useErrorHandler();
 
   // Only a competition's list is season-scoped: the server refuses a season
-  // without a competition, so the user-wide read never sends or keys on one.
+  // without a competition, so the user-wide read never sends or keys on one,
+  // and never waits on one either.
+  const seasonScoped = competitionId !== undefined;
   const scope: MatchQueryParams = {
     userId,
     competitionId,
     page,
-    season: competitionId ? season : undefined,
+    season: seasonScoped ? season : undefined,
   };
 
   const fetchMatches = async (
@@ -86,7 +98,7 @@ export const useMatches = ({
     }
   };
 
-  const { data, isLoading, refetch, isError, error } = useQuery<
+  const { data, isLoading, isPending, refetch, isError, error } = useQuery<
     MatchesResult,
     AxiosError,
     MatchesResult,
@@ -94,6 +106,7 @@ export const useMatches = ({
   >({
     queryKey: ["matches", scope],
     queryFn: fetchMatches,
+    enabled: !seasonScoped || enabled,
     placeholderData: (prevData, prevQuery) =>
       prevQuery && sameList(prevQuery.queryKey[1], scope)
         ? prevData
@@ -105,6 +118,8 @@ export const useMatches = ({
     totalCount: data?.totalCount || 0,
     totalPages: data?.totalPages || 0,
     isLoading,
+    /** No answer yet: the read is in flight, or still waiting on the season. */
+    isPending,
     refetch,
     isError,
     error,

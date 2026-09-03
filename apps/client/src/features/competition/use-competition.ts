@@ -6,14 +6,25 @@ import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler
 import { AppError } from "../../hooks/use-error-handler/types";
 import { SeasonParam, seasonQuery } from "./use-season-param";
 
+interface CompetitionReadOptions {
+  /**
+   * Whether the read may go. The page holds it back while the client cannot
+   * yet vouch for `season` (a `?season=` value before the season list is in),
+   * so a stale link's season never reaches the server.
+   */
+  enabled?: boolean;
+}
+
 /**
  * The competition stats read. `season` is the URL value passed through
- * verbatim, absent included, so the read never waits on the season list.
+ * verbatim, absent included; the Current season needs no vouching, so that
+ * common path never waits on the season list.
  */
 export const useCompetition = (
   compId: string,
   userId?: string,
   season?: SeasonParam,
+  { enabled = true }: CompetitionReadOptions = {},
 ) => {
   const { handleError } = useErrorHandler();
 
@@ -50,7 +61,7 @@ export const useCompetition = (
   const competitionQuery = useQuery({
     queryKey: ["competition", { compId, userId, season }],
     queryFn: () => fetchCompetition(compId, userId, season),
-    enabled: !!compId,
+    enabled: !!compId && enabled,
     staleTime: 5 * 60 * 1000,
   });
 

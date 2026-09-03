@@ -27,14 +27,17 @@ export default function MatchesPage() {
     user.id,
   );
   const { setSelection, ...seasonState } = useSeasonParam(info?.seasons);
-  const { season, selection, seasons, isAll, showSelector } = seasonState;
+  const { season, selection, resolved, seasons, isAll, showSelector } =
+    seasonState;
 
-  const { matches, isLoading, isError, totalCount, totalPages } = useMatches({
-    userId: user.id,
-    competitionId,
-    page: currentPage,
-    season,
-  });
+  const { matches, isLoading, isPending, isError, totalCount, totalPages } =
+    useMatches({
+      userId: user.id,
+      competitionId,
+      page: currentPage,
+      season,
+      enabled: resolved,
+    });
 
   useEffect(() => {
     resetPage();
@@ -67,12 +70,13 @@ export default function MatchesPage() {
     />
   );
 
-  // A stale link's season: the read failed for a Season the list does not
-  // know and the param is about to be dropped, or the list is not in yet.
+  // The read has nothing yet, and that is no error while the page settles: the
+  // season list is not in yet (a `?season=` read waits on it), or a stale
+  // link's season is one the list does not know and is about to be dropped.
   const seasonSettling =
     seasonAware &&
     (isInfoLoading || (season !== undefined && selection !== season));
-  if (isLoading || (isError && seasonSettling)) {
+  if (isLoading || ((isPending || isError) && seasonSettling)) {
     // A season switch keeps the header and its selector in place.
     if (!info) {
       return <MatchesPageSkeleton />;
