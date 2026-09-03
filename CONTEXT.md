@@ -31,7 +31,7 @@ The existing destructive act that deletes every Match of a Competition, across a
 _Avoid_: Clear competition, wipe
 
 **Standings**:
-The League table of a Season: its teams ranked by points, then goal difference, then goals for. Every Season has one, Past seasons included.
+The League table of a Season: its teams ranked by points, then goal difference, then goals for, then team name. Every Season has one, Past seasons included.
 _Avoid_: League table, ranking, ladder
 
 **Teams setup**:
