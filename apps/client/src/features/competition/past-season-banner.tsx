@@ -20,7 +20,7 @@ export default function PastSeasonBanner({
   return (
     <div
       role="status"
-      className="mb-6 flex flex-col gap-2 rounded-lg border-2 border-gray-500/40 bg-gray-800/30 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+      className="mb-6 flex flex-col gap-2 rounded-lg border-2 border-accent/40 bg-panel-bg px-4 py-3 shadow-md sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="flex items-start gap-2 text-sm text-gray-200">
         <Lock className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
