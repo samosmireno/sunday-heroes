@@ -1,4 +1,3 @@
-import "./football-field.css";
 import { MatchResponse } from "@repo/shared-types";
 import FieldLayout from "./field-layout.tsx";
 import OnFieldPlayers from "./on-field-players.tsx";
