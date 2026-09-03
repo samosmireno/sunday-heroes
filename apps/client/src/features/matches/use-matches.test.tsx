@@ -17,6 +17,7 @@ import {
   SeasonParam,
   useSeasonParam,
 } from "@/features/competition/use-season-param";
+import { seasonPageShell } from "@/features/competition/season-page-shell";
 import { useMatches } from "./use-matches";
 
 const userId = "user-1";
@@ -248,11 +249,11 @@ function atMatchesUrl(search: string) {
   );
 }
 
-/** The 404 the server answers a Season it does not have with, as the error handler reads it. */
-const seasonNotFound = () =>
+/** The 404 the server answers a resource it does not have with, as the error handler reads it. */
+const notFound = (resource: string) =>
   Object.assign(new Error("Request failed with status code 404"), {
     status: 404,
-    response: { data: { resource: "Season" } },
+    response: { data: { resource } },
   });
 
 /**
@@ -270,7 +271,17 @@ function stubServer() {
       season !== null &&
       !threeSeasons.some((s) => String(s.number) === season)
     ) {
-      throw seasonNotFound();
+      throw notFound("Season");
+    }
+    return matchesPage([matchPageResponse()], 1);
+  });
+}
+
+/** The server refusing the competition: the info read fails, so the season list never comes. */
+function stubServerWithoutCompetition() {
+  return vi.spyOn(axios, "get").mockImplementation(async (url: string) => {
+    if (new URL(url).pathname.endsWith("/competitions/info")) {
+      throw notFound("Competition");
     }
     return matchesPage([matchPageResponse()], 1);
   });
@@ -281,20 +292,31 @@ const matchesRequests = (get: ReturnType<typeof stubServer>) =>
     .map(([url]) => new URL(url))
     .filter((url) => url.pathname.endsWith("/matches/stats"));
 
-/** All Matches' reads for a competition: the info, the season selection on it, and the list gated on that. */
+/**
+ * All Matches' reads for a competition, wired as the page wires them: the
+ * info, the season selection on it, the list gated on that, and the shell's
+ * settling over them.
+ */
 function useMatchesPageReads() {
-  const { competition: info } = useCompetitionInfo(competitionId, userId);
-  const { season, resolved } = useSeasonParam(info?.seasons);
-  return {
-    read: useMatches({
-      userId,
-      competitionId,
-      page: 1,
-      season,
-      enabled: resolved,
-    }),
-    location: useLocation(),
-  };
+  const {
+    competition: info,
+    isLoading: isInfoLoading,
+    error: infoError,
+  } = useCompetitionInfo(competitionId, userId);
+  const seasonSelection = useSeasonParam(info?.seasons);
+  const read = useMatches({
+    userId,
+    competitionId,
+    page: 1,
+    season: seasonSelection.season,
+    enabled: seasonSelection.resolved,
+  });
+  const { settling } = seasonPageShell(seasonSelection, {
+    title: "Matches",
+    hasSidebar: false,
+    isInfoLoading,
+  });
+  return { read, infoError, settling, location: useLocation() };
 }
 
 describe("useMatches at a competition's All Matches URL", () => {
@@ -341,5 +363,29 @@ describe("useMatches at a competition's All Matches URL", () => {
     expect(
       new URLSearchParams(page.result.current.location.search).get("season"),
     ).toBe("2");
+  });
+
+  it("?season=2 with the season list failing: no matches read, and a failure for the page to show, not an empty list", async () => {
+    const get = stubServerWithoutCompetition();
+    const toastError = vi.spyOn(toast, "error");
+
+    const page = renderHook(useMatchesPageReads, {
+      wrapper: atMatchesUrl("?season=2"),
+    });
+    await waitFor(() => expect(page.result.current.infoError).not.toBeNull());
+
+    expect(matchesRequests(get)).toHaveLength(0);
+    // Past its loader: the page has settled, and the list read, never let
+    // go, is pending with no error of its own; the info read's is the one
+    // to show.
+    expect(page.result.current.settling).toBe(false);
+    expect(page.result.current.read).toMatchObject({
+      matches: [],
+      isPending: true,
+      isLoading: false,
+      isError: false,
+    });
+    expect(toastError).toHaveBeenCalledTimes(1);
+    expect(toastError).toHaveBeenCalledWith("Competition not found.");
   });
 });

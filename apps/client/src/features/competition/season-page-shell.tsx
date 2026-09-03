@@ -59,8 +59,9 @@ export function seasonPageShell(
  * show is no error yet: the season list is not in (a `?season=` read waits on
  * it), or the list does not know the link's season, which `useSeasonParam`
  * is about to drop from the URL. No season, or one the list knows, settles as
- * soon as the list is in; a failed list read settles too, so the page can
- * show its error.
+ * soon as the list is in. A failed list read settles too, but settles nothing:
+ * a read waiting on the list never goes and so never fails, so the page has
+ * to show the list read's own error itself.
  */
 export function isSeasonSettling(
   { season, selection }: Pick<SeasonSelectionState, "season" | "selection">,

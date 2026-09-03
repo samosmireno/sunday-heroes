@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { AlertCircle } from "lucide-react";
 import CompactPagination from "@/components/pagination/compact-pagination";
 import MatchesList from "@/features/matches/matches-list";
 import { useAuth } from "@/context/auth-context";
@@ -21,21 +22,29 @@ export default function MatchesPage() {
   const { user } = useAuth() as { user: UserResponse };
   const { competitionId } = useParams<{ competitionId: string }>();
   const { currentPage, setPage, resetPage } = useUrlPagination();
-  const { competition: info, isLoading: isInfoLoading } = useCompetitionInfo(
-    competitionId,
-    user.id,
-  );
+  const {
+    competition: info,
+    isLoading: isInfoLoading,
+    error: infoError,
+  } = useCompetitionInfo(competitionId, user.id);
   const seasonSelection = useSeasonParam(info?.seasons);
   const { season, resolved, isAll } = seasonSelection;
 
-  const { matches, isLoading, isPending, isError, totalCount, totalPages } =
-    useMatches({
-      userId: user.id,
-      competitionId,
-      page: currentPage,
-      season,
-      enabled: resolved,
-    });
+  const {
+    matches,
+    isLoading,
+    isPending,
+    isError,
+    error,
+    totalCount,
+    totalPages,
+  } = useMatches({
+    userId: user.id,
+    competitionId,
+    page: currentPage,
+    season,
+    enabled: resolved,
+  });
 
   useEffect(() => {
     resetPage();
@@ -68,6 +77,29 @@ export default function MatchesPage() {
       <div className="relative flex-1 p-4 sm:p-5">
         {header}
         <Loading text="Loading matches..." />
+      </div>
+    );
+  }
+
+  // The list read failed, or it waits on a season list that failed and so
+  // never goes: either way the page has a failure to show, not an empty list.
+  if (isError || (isPending && infoError !== null)) {
+    return (
+      <div className="relative flex-1 p-4 sm:p-5">
+        {header}
+        <div className="relative m-0 flex min-h-[50vh] items-center justify-center rounded-lg border-2 border-accent bg-panel-bg p-2 shadow-lg sm:p-4">
+          <div className="max-w-md text-center">
+            <div className="mb-3 text-red-400 sm:mb-4">
+              <AlertCircle className="mx-auto mb-2 h-8 w-8 sm:h-12 sm:w-12" />
+              <h3 className="text-base font-medium sm:text-lg">
+                Error Loading Matches
+              </h3>
+            </div>
+            <p className="text-sm text-gray-400 sm:text-base">
+              {(error ?? infoError)?.message}
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
