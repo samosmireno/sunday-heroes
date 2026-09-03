@@ -37,6 +37,21 @@ function nameTeams(teams: { id: string }[]) {
  * floor(n/2) matches, and every pair of teams meeting `meetings` times.
  * Order is never asserted: the generator shuffles teams and home/away.
  */
+/** Every generated Fixture carries the Current season and the copied match type. */
+function expectStampedWith(
+  fixtures: MatchWithDetails[],
+  seasonId: string,
+  matchType: MatchType,
+) {
+  expect(fixtures.length).toBeGreaterThan(0);
+  expect(fixtures.map((fixture) => fixture.seasonId)).toEqual(
+    Array(fixtures.length).fill(seasonId),
+  );
+  expect(fixtures.map((fixture) => fixture.matchType)).toEqual(
+    Array(fixtures.length).fill(matchType),
+  );
+}
+
 function expectRoundRobin(
   fixturesByRound: Record<number, MatchWithDetails[]>,
   teamIds: string[],
@@ -251,12 +266,10 @@ describe("Fixtures on Teams setup save", () => {
     const fixturesByRound = await LeagueService.getLeagueFixtures(
       competition.id,
     );
-    const fixtures = Object.values(fixturesByRound).flat();
-    expect(fixtures.map((fixture) => fixture.seasonId)).toEqual(
-      Array(6).fill(currentSeason.id),
-    );
-    expect(fixtures.map((fixture) => fixture.matchType)).toEqual(
-      Array(6).fill(MatchType.SEVEN_A_SIDE),
+    expectStampedWith(
+      Object.values(fixturesByRound).flat(),
+      currentSeason.id,
+      MatchType.SEVEN_A_SIDE,
     );
     expectRoundRobin(
       fixturesByRound,
@@ -272,10 +285,11 @@ describe("Fixtures on Teams setup save", () => {
 
   it("an odd number of teams gets n rounds, each with a bye", async () => {
     const { user } = await createUserWithDashboard();
-    const { competition, teams } = await createLeagueWithClosedSeason({
-      userId: user.id,
-      numberOfTeams: 5,
-    });
+    const { competition, teams, currentSeason } =
+      await createLeagueWithClosedSeason({
+        userId: user.id,
+        numberOfTeams: 5,
+      });
 
     const result = await LeagueService.updateTeamNames(
       competition.id,
@@ -284,20 +298,29 @@ describe("Fixtures on Teams setup save", () => {
     );
 
     expect(result.fixturesGenerated).toBe(10);
+    const fixturesByRound = await LeagueService.getLeagueFixtures(
+      competition.id,
+    );
     expectRoundRobin(
-      await LeagueService.getLeagueFixtures(competition.id),
+      fixturesByRound,
       teams.map((team) => team.id),
       1,
+    );
+    expectStampedWith(
+      Object.values(fixturesByRound).flat(),
+      currentSeason.id,
+      MatchType.FIVE_A_SIDE,
     );
   });
 
   it("a double round-robin League gets n(n-1) Fixtures, every pair meeting twice", async () => {
     const { user } = await createUserWithDashboard();
-    const { competition, teams } = await createLeagueWithClosedSeason({
-      userId: user.id,
-      numberOfTeams: 4,
-      isRoundRobin: true,
-    });
+    const { competition, teams, currentSeason } =
+      await createLeagueWithClosedSeason({
+        userId: user.id,
+        numberOfTeams: 4,
+        isRoundRobin: true,
+      });
 
     const result = await LeagueService.updateTeamNames(
       competition.id,
@@ -306,10 +329,18 @@ describe("Fixtures on Teams setup save", () => {
     );
 
     expect(result.fixturesGenerated).toBe(12);
+    const fixturesByRound = await LeagueService.getLeagueFixtures(
+      competition.id,
+    );
     expectRoundRobin(
-      await LeagueService.getLeagueFixtures(competition.id),
+      fixturesByRound,
       teams.map((team) => team.id),
       2,
+    );
+    expectStampedWith(
+      Object.values(fixturesByRound).flat(),
+      currentSeason.id,
+      MatchType.FIVE_A_SIDE,
     );
   });
 

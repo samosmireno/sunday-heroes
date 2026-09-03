@@ -19,7 +19,10 @@ function CompetitionPage() {
   const { competitionId } = useParams<{ competitionId: string }>() as {
     competitionId: string;
   };
-  const { competition: info } = useCompetitionInfo(competitionId, user?.id);
+  const { competition: info, isLoading: isInfoLoading } = useCompetitionInfo(
+    competitionId,
+    user?.id,
+  );
   const { setSelection, ...seasonState } = useSeasonParam(info?.seasons);
   const { selection, selectedSeason, current, seasons, isPast, showSelector } =
     seasonState;
@@ -71,6 +74,21 @@ function CompetitionPage() {
     if (!info) {
       return <CompetitionAdminPageSkeleton />;
     }
+    return (
+      <div className="flex-1 p-6">
+        {header}
+        <Loading text="Loading matches..." />
+      </div>
+    );
+  }
+
+  // A stale link's season: the read failed for a Season the list does not
+  // know and the param is about to be dropped, or the list is not in yet.
+  const seasonSettling =
+    isInfoLoading ||
+    (seasonState.season !== undefined &&
+      seasonState.selection !== seasonState.season);
+  if (!competition && seasonSettling) {
     return (
       <div className="flex-1 p-6">
         {header}

@@ -424,7 +424,7 @@ export class LeagueService {
   /**
    * Season N's Fixtures come from Teams setup: generated once, while the
    * Current season holds no Match, for the team set as it stands after the
-   * renames and merges, with the previous Season's match type and the
+   * renames and merges, with the latest Past season's match type and the
    * League's round-robin format. Returns how many Fixtures were generated.
    */
   private static async generateCurrentSeasonFixtures(

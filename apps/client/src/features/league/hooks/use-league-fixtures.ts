@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { LeagueMatchResponse } from "@repo/shared-types";
 import { useErrorHandler } from "../../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../../hooks/use-error-handler/types";
-import { SeasonParam } from "@/features/competition/use-season-param";
+import {
+  SeasonParam,
+  withSeasonQuery,
+} from "@/features/competition/use-season-param";
 
 /** The selected season's Fixtures by round; `season` is the URL value, passed through verbatim. */
 export const useLeagueFixtures = (
@@ -18,12 +21,11 @@ export const useLeagueFixtures = (
     season?: SeasonParam,
   ): Promise<Record<number, LeagueMatchResponse[]>> => {
     try {
-      const query =
-        season === undefined
-          ? ""
-          : `?${new URLSearchParams({ season: String(season) })}`;
       const { data } = await axios.get(
-        `${config.server}/api/leagues/${competitionId}/fixtures${query}`,
+        withSeasonQuery(
+          `${config.server}/api/leagues/${competitionId}/fixtures`,
+          season,
+        ),
       );
       return data;
     } catch (error) {

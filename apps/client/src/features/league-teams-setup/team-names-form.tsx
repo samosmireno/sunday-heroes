@@ -28,8 +28,8 @@ export function TeamNamesForm({
 }: TeamNamesFormProps) {
   const formSchema = createTeamNamesSchema(competition.teams?.length);
 
-  // Pre-filled with the current names: after Start new season these are last
-  // season's teams, to be kept, renamed or merged.
+  // Pre-filled with the current names: after Start new season these are the
+  // Past season's teams, to be kept, renamed or merged.
   const defaultValues = useMemo(() => {
     const values: Record<string, string> = {};
     competition.teams?.forEach((team, index) => {

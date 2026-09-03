@@ -55,7 +55,9 @@ describe("useUpdateTeamNames", () => {
     const { queryClient } = teamsSetupPage.result.current;
     const teamsKey = ["competitionTeams", competitionId];
     const infoKey = ["competitionInfo", competitionId, userId];
-    const fixturesKey = ["leagueFixtures", competitionId];
+    // The fixtures read is keyed on the season too; the save invalidates by prefix.
+    const currentFixturesKey = ["leagueFixtures", competitionId, undefined];
+    const pastFixturesKey = ["leagueFixtures", competitionId, 1];
     queryClient.setQueryData(teamsKey, {
       id: competitionId,
       name: "Sunday League",
@@ -74,7 +76,8 @@ describe("useUpdateTeamNames", () => {
         seasons: [seasonResponse({ number: 2, matchCount: 0 })],
       }),
     );
-    queryClient.setQueryData(fixturesKey, {});
+    queryClient.setQueryData(currentFixturesKey, {});
+    queryClient.setQueryData(pastFixturesKey, {});
 
     act(() =>
       teamsSetupPage.result.current.save.mutate({ competitionId, teamUpdates }),
@@ -83,7 +86,12 @@ describe("useUpdateTeamNames", () => {
       expect(teamsSetupPage.result.current.save.isSuccess).toBe(true),
     );
 
-    for (const key of [teamsKey, infoKey, fixturesKey]) {
+    for (const key of [
+      teamsKey,
+      infoKey,
+      currentFixturesKey,
+      pastFixturesKey,
+    ]) {
       expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true);
     }
     expect(teamsSetupPage.result.current.location.pathname).toBe(

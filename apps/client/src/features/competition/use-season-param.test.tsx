@@ -4,7 +4,12 @@ import { ReactNode } from "react";
 import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import { SeasonResponse } from "@repo/shared-types";
 import { seasonResponse } from "@/test/fixtures";
-import { useSeasonParam } from "./use-season-param";
+import {
+  currentSeasonOf,
+  seasonQuery,
+  useSeasonParam,
+  withSeasonQuery,
+} from "./use-season-param";
 
 /** Seasons 1 and 2 are Past seasons; Season 3 is the Current season. */
 const threeSeasons: SeasonResponse[] = [
@@ -60,6 +65,7 @@ describe("useSeasonParam", () => {
       season: undefined,
       selection: 3,
       current: 3,
+      selectedMatchCount: 4,
       isPast: false,
       isAll: false,
       showSelector: true,
@@ -72,10 +78,11 @@ describe("useSeasonParam", () => {
     expect(result.current).toMatchObject({
       season: 2,
       selection: 2,
+      selectedMatchCount: 25,
       isPast: true,
       isAll: false,
     });
-    expect(result.current.selectedSeason?.matchCount).toBe(25);
+    expect(result.current.selectedSeason?.number).toBe(2);
   });
 
   it("?season=all selects All seasons", () => {
@@ -84,6 +91,7 @@ describe("useSeasonParam", () => {
     expect(result.current).toMatchObject({
       season: "all",
       selection: "all",
+      selectedMatchCount: 39,
       isPast: false,
       isAll: true,
       selectedSeason: undefined,
@@ -96,6 +104,7 @@ describe("useSeasonParam", () => {
       season: 2,
       selection: 2,
       current: undefined,
+      selectedMatchCount: undefined,
       showSelector: false,
     });
 
@@ -168,5 +177,30 @@ describe("useSeasonParam", () => {
     act(() => result.current.setSelection("all"));
     expect(searchOf(result.current).get("season")).toBe("all");
     expect(result.current.isAll).toBe(true);
+  });
+});
+
+describe("season helpers", () => {
+  it("currentSeasonOf finds the one Season with no end date", () => {
+    expect(currentSeasonOf(threeSeasons)?.number).toBe(3);
+    expect(currentSeasonOf([])).toBeUndefined();
+  });
+
+  it("seasonQuery sends nothing for the Current season and the value otherwise", () => {
+    expect(seasonQuery(undefined)).toEqual({});
+    expect(seasonQuery(2)).toEqual({ season: "2" });
+    expect(seasonQuery("all")).toEqual({ season: "all" });
+  });
+
+  it("withSeasonQuery appends the selection to a read's URL", () => {
+    expect(withSeasonQuery("/api/leagues/comp-1/stats", undefined)).toBe(
+      "/api/leagues/comp-1/stats",
+    );
+    expect(withSeasonQuery("/api/leagues/comp-1/stats", 2)).toBe(
+      "/api/leagues/comp-1/stats?season=2",
+    );
+    expect(withSeasonQuery("/api/leagues/comp-1/stats", "all")).toBe(
+      "/api/leagues/comp-1/stats?season=all",
+    );
   });
 });

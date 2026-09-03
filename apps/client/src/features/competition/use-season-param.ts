@@ -2,14 +2,23 @@ import { useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { SeasonFilter, SeasonResponse } from "@repo/shared-types";
 
-/** A season selection: one Season by number, or "all" for All seasons. */
-export type SeasonSelection = SeasonFilter;
-
-/** The season a read takes: a selection, or undefined for the Current season. */
-export type SeasonParam = SeasonSelection | undefined;
+/** The season a read takes: one Season by number, "all", or undefined for the Current season. */
+export type SeasonParam = SeasonFilter | undefined;
 
 const SEASON_NUMBER = /^[1-9]\d*$/;
 const NO_SEASONS: SeasonResponse[] = [];
+
+/** The Current season is the one Season of a Competition with no end date. */
+export function isCurrentSeason(season: Pick<SeasonResponse, "endedAt">) {
+  return season.endedAt === null;
+}
+
+/** The Current season of a season list, once the list is known. */
+export function currentSeasonOf(
+  seasons: SeasonResponse[],
+): SeasonResponse | undefined {
+  return seasons.find(isCurrentSeason);
+}
 
 /**
  * The `?season=` value as the reads take it. "all" and a positive whole
@@ -22,6 +31,17 @@ export function parseSeasonParam(raw: string | null): SeasonParam {
   return undefined;
 }
 
+/** The `season` query entry a read sends: none for the Current season. */
+export function seasonQuery(season: SeasonParam): Record<string, string> {
+  return season === undefined ? {} : { season: String(season) };
+}
+
+/** A read's URL with the season selection appended, untouched for the Current season. */
+export function withSeasonQuery(url: string, season: SeasonParam): string {
+  const query = new URLSearchParams(seasonQuery(season)).toString();
+  return query ? `${url}?${query}` : url;
+}
+
 /** The season selection every season-aware view reads. */
 export interface SeasonSelectionState {
   /** The URL value for the query keys and requests; undefined means the Current season. */
@@ -30,12 +50,17 @@ export interface SeasonSelectionState {
    * The resolved selection. Once the season list is known, an unknown value
    * resolves to the Current season; before that it is the raw `season`.
    */
-  selection: SeasonSelection | undefined;
+  selection: SeasonFilter | undefined;
   /** The Current season's number, once the season list is known. */
   current: number | undefined;
   seasons: SeasonResponse[];
   /** The selected Season, when the selection is one Season of the list. */
   selectedSeason: SeasonResponse | undefined;
+  /**
+   * The Matches the selection covers: one Season's count, or the sum over
+   * every Season under All seasons; undefined until the list is known.
+   */
+  selectedMatchCount: number | undefined;
   isPast: boolean;
   isAll: boolean;
   /** A single Season needs no selector. */
@@ -56,7 +81,7 @@ export function useSeasonParam(seasons: SeasonResponse[] = NO_SEASONS) {
   const season = parseSeasonParam(raw);
 
   const listKnown = seasons.length > 0;
-  const current = seasons.find((s) => s.endedAt === null)?.number;
+  const current = currentSeasonOf(seasons)?.number;
   const selectionKnown =
     season === "all" ||
     (season !== undefined && seasons.some((s) => s.number === season));
@@ -65,6 +90,12 @@ export function useSeasonParam(seasons: SeasonResponse[] = NO_SEASONS) {
     typeof selection === "number"
       ? seasons.find((s) => s.number === selection)
       : undefined;
+  const selectedMatchCount =
+    selection === "all"
+      ? listKnown
+        ? seasons.reduce((count, s) => count + s.matchCount, 0)
+        : undefined
+      : selectedSeason?.matchCount;
 
   useEffect(() => {
     if (!listKnown || raw === null || selectionKnown) return;
@@ -74,7 +105,7 @@ export function useSeasonParam(seasons: SeasonResponse[] = NO_SEASONS) {
   }, [listKnown, raw, selectionKnown, searchParams, setSearchParams]);
 
   const setSelection = useCallback(
-    (next: SeasonSelection) => {
+    (next: SeasonFilter) => {
       const params = new URLSearchParams(searchParams);
       if (next === current) params.delete("season");
       else params.set("season", String(next));
@@ -90,7 +121,8 @@ export function useSeasonParam(seasons: SeasonResponse[] = NO_SEASONS) {
     current,
     seasons,
     selectedSeason,
-    isPast: selectedSeason !== undefined && selectedSeason.endedAt !== null,
+    selectedMatchCount,
+    isPast: selectedSeason !== undefined && !isCurrentSeason(selectedSeason),
     isAll: selection === "all",
     showSelector: seasons.length > 1,
   };

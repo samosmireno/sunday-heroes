@@ -144,7 +144,7 @@ export default function MatchList({
           </CarouselContent>
         ) : (
           <div className="w-full rounded-lg bg-primary/20 py-4 text-center text-sm sm:text-base">
-            {isPast ? "No matches in this season" : "Add your first match"}
+            Add your first match
           </div>
         )}
 

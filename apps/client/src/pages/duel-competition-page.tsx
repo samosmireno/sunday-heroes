@@ -19,23 +19,19 @@ function DuelCompetitionPage({
   refetch,
 }: DuelCompetitionPageProps) {
   const [currentMatch, setCurrentMatch] = useState<number>(0);
-  const { selection, selectedSeason, seasons, isAll } = useCompetitionContext();
+  const { selection, selectedMatchCount, showSelector } =
+    useCompetitionContext();
 
   function handleMatchClick(getCurrentMatch: number) {
     setCurrentMatch(getCurrentMatch);
   }
 
-  // The percentage filter's denominator: the selected season's match count
-  // from the season list (summed under All seasons), the read's own matches
-  // until the list is there.
-  const seasonMatchCount = isAll
-    ? seasons.length > 0
-      ? seasons.reduce((count, season) => count + season.matchCount, 0)
-      : undefined
-    : selectedSeason?.matchCount;
-  const totalMatches = seasonMatchCount ?? competition.matches.length;
+  // The percentage filter's denominator: the selection's match count from
+  // the season list, the read's own matches until the list is there. With one
+  // Season there is nothing to select, so the table reads as it always did.
+  const totalMatches = selectedMatchCount ?? competition.matches.length;
   const caption =
-    selection !== undefined
+    showSelector && selection !== undefined
       ? duelStatsCaption(selection, totalMatches)
       : undefined;
 

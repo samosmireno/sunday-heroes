@@ -83,7 +83,7 @@ export default function LeagueMatchList({
   }
 
   if (rounds.length === 0) {
-    return <SeasonBeingSetUp competitionId={competitionId} />;
+    return <SeasonBeingSetUp />;
   }
 
   return (

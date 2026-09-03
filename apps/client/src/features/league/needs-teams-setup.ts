@@ -1,4 +1,5 @@
 import { CompetitionType, Role, SeasonResponse } from "@repo/shared-types";
+import { currentSeasonOf } from "@/features/competition/use-season-param";
 
 /** The names League creation gives its teams before Teams setup. */
 const PLACEHOLDER_NAMES = [/^team-\d+$/i, /^Team \d+$/i];
@@ -31,7 +32,7 @@ export function needsTeamsSetup(input: {
     return false;
   }
 
-  const currentSeason = input.seasons.find((season) => season.endedAt === null);
+  const currentSeason = currentSeasonOf(input.seasons);
   const currentSeasonIsEmpty = currentSeason?.matchCount === 0;
 
   return !hasCustomTeamNames(input.teams) || currentSeasonIsEmpty;

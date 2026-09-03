@@ -5,7 +5,10 @@ import { LeaguePlayerTotals } from "@repo/shared-types";
 import { useMemo } from "react";
 import { useErrorHandler } from "../../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../../hooks/use-error-handler/types";
-import { SeasonParam } from "@/features/competition/use-season-param";
+import {
+  SeasonParam,
+  withSeasonQuery,
+} from "@/features/competition/use-season-param";
 
 /** Player totals over the selected season; `season` is the URL value, passed through verbatim. */
 export const useLeagueStats = (competitionId: string, season?: SeasonParam) => {
@@ -15,12 +18,11 @@ export const useLeagueStats = (competitionId: string, season?: SeasonParam) => {
     season?: SeasonParam,
   ): Promise<LeaguePlayerTotals[]> => {
     try {
-      const query =
-        season === undefined
-          ? ""
-          : `?${new URLSearchParams({ season: String(season) })}`;
       const { data } = await axios.get(
-        `${config.server}/api/leagues/${competitionId}/stats${query}`,
+        withSeasonQuery(
+          `${config.server}/api/leagues/${competitionId}/stats`,
+          season,
+        ),
       );
       return data;
     } catch (error) {

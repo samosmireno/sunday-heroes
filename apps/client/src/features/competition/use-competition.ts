@@ -4,7 +4,7 @@ import { config } from "../../config/config";
 import { useQuery } from "@tanstack/react-query";
 import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../hooks/use-error-handler/types";
-import { SeasonParam } from "./use-season-param";
+import { SeasonParam, seasonQuery } from "./use-season-param";
 
 /**
  * The competition stats read. `season` is the URL value passed through
@@ -27,10 +27,10 @@ export const useCompetition = (
       if (typeof userId === "string") {
         paramsObj.userId = userId;
       }
-      if (season !== undefined) {
-        paramsObj.season = String(season);
-      }
-      const params = new URLSearchParams(paramsObj);
+      const params = new URLSearchParams({
+        ...paramsObj,
+        ...seasonQuery(season),
+      });
       const { data } = await axios.get(
         `${config.server}/api/competitions/stats?${params.toString()}`,
         {

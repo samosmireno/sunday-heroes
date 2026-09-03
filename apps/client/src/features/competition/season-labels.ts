@@ -1,6 +1,5 @@
-import { SeasonResponse } from "@repo/shared-types";
+import { SeasonFilter, SeasonResponse } from "@repo/shared-types";
 import { format } from "date-fns";
-import { SeasonSelection } from "./use-season-param";
 
 const day = (iso: string) => format(new Date(iso), "d MMM yyyy");
 const month = (iso: string) => format(new Date(iso), "MMM yy");
@@ -53,7 +52,7 @@ export function pastSeasonBanner(
 
 /** Which matches the Duel stats table's percentage filter counts. */
 export function duelStatsCaption(
-  selection: SeasonSelection,
+  selection: SeasonFilter,
   matchCount: number,
 ): string {
   const scope = selection === "all" ? ALL_SEASONS_LABEL : seasonName(selection);
