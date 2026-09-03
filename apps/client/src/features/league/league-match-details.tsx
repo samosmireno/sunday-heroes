@@ -4,6 +4,8 @@ import ConfirmationDialog from "@/components/ui/confirmation-dialog";
 import FootballField from "../football-field/football-field";
 import Loading from "@/components/ui/loading";
 import { LeagueMatchResponse, MatchResponse, Role } from "@repo/shared-types";
+import { displayedScore, leftNotCompleted } from "./fixture-display";
+import NotCompletedTag from "./not-completed-tag";
 
 interface LeagueMatchDetailsProps {
   role: Role;
@@ -24,6 +26,9 @@ export default function LeagueMatchDetails({
   onEditMatch,
   onCompleteMatch,
 }: LeagueMatchDetailsProps) {
+  const notCompleted = leftNotCompleted(selectedMatch);
+  const score = displayedScore(selectedMatch);
+
   return (
     <div className="flex flex-1 flex-col">
       {/* Match Header */}
@@ -39,11 +44,23 @@ export default function LeagueMatchDetails({
               {selectedMatch.awayTeam.name}
             </span>
           </h3>
-          <div className="mb-2 text-xl font-bold text-white sm:mb-3 sm:text-2xl lg:text-3xl">
-            {selectedMatch.homeScore} - {selectedMatch.awayScore}
+          <div
+            className={`mb-2 text-xl font-bold sm:mb-3 sm:text-2xl lg:text-3xl ${
+              notCompleted ? "text-gray-500" : "text-white"
+            }`}
+          >
+            {score.home} - {score.away}
           </div>
           <div className="text-xs text-gray-400 sm:text-sm">
             <span className="block sm:inline">Round {selectedMatch.round}</span>
+            {notCompleted && (
+              <>
+                <span className="mx-2 hidden sm:inline">•</span>
+                <span className="block sm:inline">
+                  <NotCompletedTag />
+                </span>
+              </>
+            )}
             <span className="mx-2 hidden sm:inline">•</span>
             <span className="block sm:inline">
               {selectedMatch.date

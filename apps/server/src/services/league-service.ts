@@ -328,27 +328,30 @@ export class LeagueService {
     };
   }
 
-  /** The selected season's Fixtures by round, the Current season by default. */
-  static async getLeagueFixtures(competitionId: string, season?: SeasonQuery) {
+  /**
+   * The selected season's Fixtures, the Current season by default, as one
+   * list ordered by season number descending, round ascending, date
+   * ascending (undated Fixtures last), so All seasons reads newest first
+   * and the client regroups. The id settles the ties that leaves open
+   * (undated Fixtures in one round), so a refetch never reorders the list.
+   */
+  static async getLeagueFixtures(
+    competitionId: string,
+    season?: SeasonQuery
+  ): Promise<MatchWithDetails[]> {
     const seasonWhere = await SeasonService.resolveSeasonFilter(
       competitionId,
       season
     );
-    const fixtures = await MatchRepo.findByCompetitionId(competitionId, {
+    return MatchRepo.findByCompetitionId(competitionId, {
       where: seasonWhere,
+      orderBy: [
+        { season: { number: "desc" } },
+        { round: "asc" },
+        { date: { sort: "asc", nulls: "last" } },
+        { id: "asc" },
+      ],
     });
-
-    const fixturesByRound = fixtures.reduce(
-      (acc, match) => {
-        const round = match.round;
-        if (!acc[round]) acc[round] = [];
-        acc[round].push(match);
-        return acc;
-      },
-      {} as Record<number, MatchWithDetails[]>
-    );
-
-    return fixturesByRound;
   }
 
   /** Player totals over the selected season's matches, Current by default. */

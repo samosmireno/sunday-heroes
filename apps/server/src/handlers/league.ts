@@ -5,7 +5,7 @@ import { getSeasonQuery } from "../schemas/season-schemas";
 import { sendSuccess } from "../utils/response-utils";
 import { CreateLeagueRequest } from "../schemas/league-schemas";
 import { TeamService } from "../services/team-service";
-import { transformLeagueFixtureToResponse } from "../utils/league-transforms";
+import { transformLeagueFixturesToResponse } from "../utils/league-transforms";
 import { BadRequestError } from "../utils/errors";
 import logger from "../logger";
 
@@ -76,10 +76,8 @@ export const getLeagueFixtures = async (
       competitionId,
       season,
     );
-    const fixtureResponse: Record<number, any[]> =
-      transformLeagueFixtureToResponse(fixtures);
 
-    sendSuccess(res, fixtureResponse);
+    sendSuccess(res, transformLeagueFixturesToResponse(fixtures));
   } catch (error) {
     next(error);
   }

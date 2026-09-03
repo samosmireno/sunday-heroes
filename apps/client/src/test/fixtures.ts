@@ -4,6 +4,7 @@ import {
   CompetitionSettings,
   CompetitionType,
   CurrentSeasonResponse,
+  LeagueMatchResponse,
   LeagueTeamResponse,
   MatchResponse,
   MatchType,
@@ -48,6 +49,25 @@ export function leagueTeamResponse(
     points: 0,
     goalDifference: 0,
     team: { id, name },
+    ...overrides,
+  };
+}
+
+/** A League Fixture as the fixtures read lists it: not completed, in Season 1. */
+export function leagueMatchResponse(
+  overrides: Partial<LeagueMatchResponse> = {},
+): LeagueMatchResponse {
+  return {
+    id: "fixture-1",
+    homeTeam: { id: "team-1", name: "Lions", score: 0 },
+    awayTeam: { id: "team-2", name: "Tigers", score: 0 },
+    homeScore: 0,
+    awayScore: 0,
+    date: null,
+    round: 1,
+    votingStatus: "CLOSED",
+    isCompleted: false,
+    season: { number: 1, isClosed: false },
     ...overrides,
   };
 }

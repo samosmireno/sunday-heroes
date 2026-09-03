@@ -10,37 +10,43 @@ import { calculateLeaguePlayerStats, calculatePlayerScore } from "./utils";
 import { transformMatchSeasonToResponse } from "./season-transforms";
 import { TeamCompetitionWithDetails } from "../repositories/team-competition-repo";
 import { compareStandings, standingsRow } from "./standings";
+import { NotFoundError } from "./errors";
 
-export function transformLeagueFixtureToResponse(
-  fixture: Record<number, MatchWithDetails[]>,
-): Record<number, LeagueMatchResponse[]> {
-  const transformedFixtures: Record<number, LeagueMatchResponse[]> = {};
-
-  for (const [round, matches] of Object.entries(fixture)) {
-    transformedFixtures[Number(round)] = matches.map((match) => ({
-      id: match.id,
-      homeTeam: {
-        id: match.matchTeams[0].teamId,
-        name: match.matchTeams[0].team.name,
-        score: match.homeTeamScore,
-      },
-      awayTeam: {
-        id: match.matchTeams[1].teamId,
-        name: match.matchTeams[1].team.name,
-        score: match.awayTeamScore,
-      },
-      homeScore: match.homeTeamScore,
-      awayScore: match.awayTeamScore,
-      date: match.date ? match.date.toISOString() : null,
-      round: match.round,
-      votingStatus: match.votingStatus,
-      isCompleted: match.isCompleted,
-      videoUrl: match.videoUrl ?? undefined,
-      season: transformMatchSeasonToResponse(match.season),
-    }));
+/** One side of a League Match: the home or the away team with its score. */
+function transformMatchSide(
+  match: MatchWithDetails,
+  isHome: boolean,
+): LeagueMatchResponse["homeTeam"] {
+  const side = match.matchTeams.find(
+    (matchTeam) => matchTeam.isHome === isHome,
+  );
+  if (!side) {
+    throw new NotFoundError("Match team");
   }
+  return {
+    id: side.teamId,
+    name: side.team.name,
+    score: isHome ? match.homeTeamScore : match.awayTeamScore,
+  };
+}
 
-  return transformedFixtures;
+/** The fixtures read's answer, in the order the read returns them. */
+export function transformLeagueFixturesToResponse(
+  fixtures: MatchWithDetails[],
+): LeagueMatchResponse[] {
+  return fixtures.map((match) => ({
+    id: match.id,
+    homeTeam: transformMatchSide(match, true),
+    awayTeam: transformMatchSide(match, false),
+    homeScore: match.homeTeamScore,
+    awayScore: match.awayTeamScore,
+    date: match.date ? match.date.toISOString() : null,
+    round: match.round,
+    votingStatus: match.votingStatus,
+    isCompleted: match.isCompleted,
+    videoUrl: match.videoUrl ?? undefined,
+    season: transformMatchSeasonToResponse(match.season),
+  }));
 }
 
 export function transformCompetitionToPlayerStatsResponse(

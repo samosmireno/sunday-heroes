@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Loading from "@/components/ui/loading";
 import { LeagueMatchResponse, Role } from "@repo/shared-types";
@@ -10,52 +10,112 @@ import SeasonBeingSetUp from "./season-being-set-up";
 import { useCompleteMatch } from "@/features/league/hooks/use-complete-match";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCompetitionContext } from "@/context/competition-context";
+import {
+  GroupedFixtures,
+  SeasonFixtures,
+  matchesByRound,
+  roundNumbers,
+} from "./group-fixtures";
+import {
+  seasonDatesLabel,
+  seasonName,
+} from "@/features/competition/season-labels";
 
 interface LeagueMatchListProps {
   competitionId: string;
   userRole: Role;
 }
 
+/** The cards on view: the active round's for one Season, every season's under All seasons. */
+function visibleMatches(
+  fixtures: GroupedFixtures,
+  activeRound: number | null,
+): LeagueMatchResponse[] {
+  if (fixtures.view === "seasons") {
+    return fixtures.seasons.flatMap((group) => matchesByRound(group.rounds));
+  }
+  return activeRound === null ? [] : (fixtures.rounds[activeRound] ?? []);
+}
+
+/** One Season's cards under All seasons: a header, then the matches in round order with their R-number. */
+function SeasonGroup({
+  group,
+  dates,
+  selectedId,
+  onSelect,
+}: {
+  group: SeasonFixtures;
+  /** The Season's date range, once the season list is known. */
+  dates: string | undefined;
+  selectedId: string | undefined;
+  onSelect: (match: LeagueMatchResponse) => void;
+}) {
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between border-b border-accent/20 pb-1">
+        <span className="text-sm font-semibold text-accent">
+          {seasonName(group.season.number)}
+        </span>
+        {dates && <span className="text-[11px] text-gray-500">{dates}</span>}
+      </div>
+      <div className="space-y-2">
+        {matchesByRound(group.rounds).map((match) => (
+          <LeagueMatchCard
+            key={match.id}
+            match={match}
+            isSelected={selectedId === match.id}
+            onSelect={onSelect}
+            showRound
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LeagueMatchList({
   competitionId,
   userRole,
 }: LeagueMatchListProps) {
-  const [selectedMatch, setSelectedMatch] =
-    useState<LeagueMatchResponse | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { season } = useCompetitionContext();
+  const { season, seasons } = useCompetitionContext();
 
   const { leagueFixtures, isFixturesLoading } = useLeagueFixtures(
     competitionId,
     season,
   );
+
+  const rounds =
+    leagueFixtures?.view === "rounds"
+      ? roundNumbers(leagueFixtures.rounds)
+      : [];
+  const requestedRound = Number(searchParams.get("round"));
+  const activeRound = rounds.includes(requestedRound)
+    ? requestedRound
+    : (rounds[0] ?? null);
+
+  // The card the viewer picked while it is on view, else the first on view.
+  // A season switch drops the URL round and, with it, a selection from the
+  // season before, so the details panel never shows another season's match.
+  const matches = leagueFixtures
+    ? visibleMatches(leagueFixtures, activeRound)
+    : [];
+  const selectedMatch =
+    matches.find((match) => match.id === selectedId) ?? matches[0] ?? null;
+
   const { match, isMatchLoading, isMatchCompleted, isMatchUnfinished } =
     useMatchDetails(selectedMatch?.id || "");
   const completeMatchMutation = useCompleteMatch(competitionId);
 
-  // The details panel never shows a match from another season.
-  useEffect(() => {
-    setSelectedMatch(null);
-  }, [season]);
-
-  const rounds = Object.keys(leagueFixtures)
-    .map(Number)
-    .sort((a, b) => a - b);
-
-  const activeRound = searchParams.get("round")
-    ? Number(searchParams.get("round"))
-    : rounds[0] || null;
+  const selectMatch = (match: LeagueMatchResponse) => setSelectedId(match.id);
 
   const handleRoundChange = (roundStr: string) => {
-    const round = Number(roundStr);
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("round", roundStr);
     setSearchParams(newSearchParams);
-
-    if (leagueFixtures[round]?.length > 0) {
-      setSelectedMatch(leagueFixtures[round][0]);
-    }
+    setSelectedId(null);
   };
 
   const handleEditMatch = () => {
@@ -70,59 +130,70 @@ export default function LeagueMatchList({
     }
   };
 
-  useEffect(() => {
-    if (!isFixturesLoading && rounds.length > 0 && activeRound) {
-      if (!selectedMatch && leagueFixtures[activeRound]?.length > 0) {
-        setSelectedMatch(leagueFixtures[activeRound][0]);
-      }
-    }
-  }, [isFixturesLoading, rounds, leagueFixtures, activeRound, selectedMatch]);
-
   if (isFixturesLoading || isMatchLoading) {
     return <Loading text="Loading matches..." />;
   }
 
-  if (rounds.length === 0) {
+  if (!leagueFixtures || matches.length === 0) {
     return <SeasonBeingSetUp />;
   }
 
   return (
     <div className="grid h-full grid-cols-1 gap-6 lg:grid-cols-5">
       <div className="space-y-4 lg:col-span-2">
-        <Tabs
-          value={activeRound?.toString() || ""}
-          onValueChange={handleRoundChange}
-          className="w-full"
-        >
-          <div className="h-full w-full overflow-x-auto">
-            <TabsList className="flex h-full w-max min-w-full gap-1 bg-bg/30 p-2 pb-4">
-              {rounds.map((round) => (
-                <TabsTrigger
-                  key={round}
-                  value={round.toString()}
-                  className="flex-shrink-0 whitespace-nowrap text-sm data-[state=active]:bg-accent/20 data-[state=active]:text-accent"
-                >
-                  Round {round}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+        {leagueFixtures.view === "seasons" ? (
+          <div className="max-h-screen space-y-4 overflow-y-auto pr-1">
+            {leagueFixtures.seasons.map((group) => {
+              const season = seasons.find(
+                (s) => s.number === group.season.number,
+              );
+              return (
+                <SeasonGroup
+                  key={group.season.number}
+                  group={group}
+                  dates={season && seasonDatesLabel(season)}
+                  selectedId={selectedMatch?.id}
+                  onSelect={selectMatch}
+                />
+              );
+            })}
           </div>
-
-          {rounds.map((round) => (
-            <TabsContent key={round} value={round.toString()}>
-              <div className="max-h-screen space-y-2 overflow-y-auto">
-                {leagueFixtures[round]?.map((match) => (
-                  <LeagueMatchCard
-                    key={match.id}
-                    match={match}
-                    isSelected={selectedMatch?.id === match.id}
-                    onSelect={setSelectedMatch}
-                  />
+        ) : (
+          <Tabs
+            value={activeRound?.toString() || ""}
+            onValueChange={handleRoundChange}
+            className="w-full"
+          >
+            <div className="h-full w-full overflow-x-auto">
+              <TabsList className="flex h-full w-max min-w-full gap-1 bg-bg/30 p-2 pb-4">
+                {rounds.map((round) => (
+                  <TabsTrigger
+                    key={round}
+                    value={round.toString()}
+                    className="flex-shrink-0 whitespace-nowrap text-sm data-[state=active]:bg-accent/20 data-[state=active]:text-accent"
+                  >
+                    Round {round}
+                  </TabsTrigger>
                 ))}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+              </TabsList>
+            </div>
+
+            {rounds.map((round) => (
+              <TabsContent key={round} value={round.toString()}>
+                <div className="max-h-screen space-y-2 overflow-y-auto">
+                  {leagueFixtures.rounds[round]?.map((match) => (
+                    <LeagueMatchCard
+                      key={match.id}
+                      match={match}
+                      isSelected={selectedMatch?.id === match.id}
+                      onSelect={selectMatch}
+                    />
+                  ))}
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        )}
       </div>
 
       <div className="lg:col-span-3">

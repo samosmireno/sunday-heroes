@@ -106,6 +106,8 @@ export class MatchRepo {
       limit?: number;
       offset?: number;
       where?: Prisma.MatchWhereInput;
+      /** Newest first by date unless the read says otherwise. */
+      orderBy?: Prisma.MatchOrderByWithRelationInput[];
     },
     tx?: Prisma.TransactionClient
   ): Promise<MatchWithDetails[]> {
@@ -114,7 +116,7 @@ export class MatchRepo {
       return await prismaClient.match.findMany({
         where: { ...options?.where, competitionId },
         include: MATCH_DETAILED_INCLUDE,
-        orderBy: { date: "desc" },
+        orderBy: options?.orderBy ?? { date: "desc" },
         take: options?.limit,
         skip: options?.offset,
       });

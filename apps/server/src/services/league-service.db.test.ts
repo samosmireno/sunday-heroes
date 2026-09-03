@@ -19,11 +19,10 @@ import { AuthorizationError, NotFoundError } from "../utils/errors";
 import { LeagueService } from "./league-service";
 import { MatchService } from "./match/match-service";
 import { SeasonService } from "./season-service";
-import { transformLeagueFixtureToResponse } from "../utils/league-transforms";
+import { transformLeagueFixturesToResponse } from "../utils/league-transforms";
 
 async function countFixtures(competitionId: string) {
-  const fixturesByRound = await LeagueService.getLeagueFixtures(competitionId);
-  return Object.values(fixturesByRound).flat().length;
+  return (await LeagueService.getLeagueFixtures(competitionId)).length;
 }
 
 const TEAM_NAMES = ["Lions", "Tigers", "Bears", "Wolves", "Eagles"];
@@ -55,22 +54,24 @@ function expectStampedWith(
 }
 
 function expectRoundRobin(
-  fixturesByRound: Record<number, MatchWithDetails[]>,
+  fixtures: MatchWithDetails[],
   teamIds: string[],
   meetings: 1 | 2,
 ) {
   const n = teamIds.length;
   const roundCount = (n % 2 === 0 ? n - 1 : n) * meetings;
-  const rounds = Object.keys(fixturesByRound)
-    .map(Number)
-    .sort((a, b) => a - b);
+  const rounds = [...new Set(fixtures.map((fixture) => fixture.round))].sort(
+    (a, b) => a - b,
+  );
   expect(rounds).toEqual(Array.from({ length: roundCount }, (_, i) => i + 1));
   for (const round of rounds) {
-    expect(fixturesByRound[round]).toHaveLength(Math.floor(n / 2));
+    expect(fixtures.filter((fixture) => fixture.round === round)).toHaveLength(
+      Math.floor(n / 2),
+    );
   }
 
   const meetingsByPair = new Map<string, number>();
-  for (const match of Object.values(fixturesByRound).flat()) {
+  for (const match of fixtures) {
     const pair = match.matchTeams
       .map((matchTeam) => matchTeam.teamId)
       .sort()
@@ -194,17 +195,68 @@ describe("Season filter on the League reads", () => {
       numberOfTeams: 4,
     });
 
-    expect(await LeagueService.getLeagueFixtures(competition.id)).toEqual({});
+    expect(await LeagueService.getLeagueFixtures(competition.id)).toEqual([]);
     expect(
-      Object.values(
-        await LeagueService.getLeagueFixtures(competition.id, 1),
-      ).flat(),
+      await LeagueService.getLeagueFixtures(competition.id, 1),
     ).toHaveLength(6);
     expect(
-      Object.values(
-        await LeagueService.getLeagueFixtures(competition.id, "all"),
-      ).flat(),
+      await LeagueService.getLeagueFixtures(competition.id, "all"),
     ).toHaveLength(6);
+  });
+
+  it("getLeagueFixtures lists every Fixture by season number descending, round ascending, date ascending", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, teams, fixtures } = await createLeagueWithClosedSeason(
+      { userId: user.id, numberOfTeams: 4 },
+    );
+    await LeagueService.updateTeamNames(
+      competition.id,
+      nameTeams(teams),
+      user.id,
+    );
+    // Season 1, round 1: the later date on the Fixture created first.
+    const [firstOfRoundOne, secondOfRoundOne] = fixtures.filter(
+      (fixture) => fixture.round === 1,
+    );
+    await setFixtureDate(
+      firstOfRoundOne.match.id,
+      new Date("2025-01-12T18:00:00.000Z"),
+    );
+    await setFixtureDate(
+      secondOfRoundOne.match.id,
+      new Date("2025-01-05T18:00:00.000Z"),
+    );
+    // Season 1, round 2: one dated Fixture, one undated.
+    const [, secondOfRoundTwo] = fixtures.filter(
+      (fixture) => fixture.round === 2,
+    );
+    await setFixtureDate(
+      secondOfRoundTwo.match.id,
+      new Date("2025-01-19T18:00:00.000Z"),
+    );
+
+    const all = await LeagueService.getLeagueFixtures(competition.id, "all");
+
+    expect(
+      all.map((fixture) => [
+        fixture.season.number,
+        fixture.round,
+        fixture.date?.toISOString() ?? null,
+      ]),
+    ).toEqual([
+      [2, 1, null],
+      [2, 1, null],
+      [2, 2, null],
+      [2, 2, null],
+      [2, 3, null],
+      [2, 3, null],
+      [1, 1, "2025-01-05T18:00:00.000Z"],
+      [1, 1, "2025-01-12T18:00:00.000Z"],
+      [1, 2, "2025-01-19T18:00:00.000Z"],
+      [1, 2, null],
+      [1, 3, null],
+      [1, 3, null],
+    ]);
   });
 
   it("getPlayerStats counts the selected season's matches, the Current season by default", async () => {
@@ -238,12 +290,50 @@ describe("Season filter on the League reads", () => {
       numberOfTeams: 2,
     });
 
-    const seasonOne = transformLeagueFixtureToResponse(
+    const seasonOne = transformLeagueFixturesToResponse(
       await LeagueService.getLeagueFixtures(competition.id, 1),
     );
 
-    expect(Object.values(seasonOne).flat()).toEqual([
+    expect(seasonOne).toEqual([
       expect.objectContaining({ season: { number: 1, isClosed: true } }),
+    ]);
+  });
+
+  it("the fixtures response is the declared League match shape: teams with their scores, round, state and Season", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, fixtures } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 2,
+    });
+    const [fixture] = fixtures;
+    await setFixtureScore(fixture.match.id, 2, 0);
+
+    const response = transformLeagueFixturesToResponse(
+      await LeagueService.getLeagueFixtures(competition.id),
+    );
+
+    expect(response).toEqual([
+      {
+        id: fixture.match.id,
+        homeTeam: {
+          id: fixture.homeTeam.id,
+          name: fixture.homeTeam.name,
+          score: 2,
+        },
+        awayTeam: {
+          id: fixture.awayTeam.id,
+          name: fixture.awayTeam.name,
+          score: 0,
+        },
+        homeScore: 2,
+        awayScore: 0,
+        date: null,
+        round: 1,
+        votingStatus: "CLOSED",
+        isCompleted: false,
+        videoUrl: undefined,
+        season: { number: 1, isClosed: false },
+      },
     ]);
   });
 });
@@ -265,23 +355,15 @@ describe("Fixtures on Teams setup save", () => {
     );
 
     expect(result.fixturesGenerated).toBe(6);
-    const fixturesByRound = await LeagueService.getLeagueFixtures(
-      competition.id,
-    );
-    expectStampedWith(
-      Object.values(fixturesByRound).flat(),
-      currentSeason.id,
-      MatchType.SEVEN_A_SIDE,
-    );
+    const fixtures = await LeagueService.getLeagueFixtures(competition.id);
+    expectStampedWith(fixtures, currentSeason.id, MatchType.SEVEN_A_SIDE);
     expectRoundRobin(
-      fixturesByRound,
+      fixtures,
       teams.map((team) => team.id),
       1,
     );
     expect(
-      Object.values(
-        await LeagueService.getLeagueFixtures(competition.id, 1),
-      ).flat(),
+      await LeagueService.getLeagueFixtures(competition.id, 1),
     ).toHaveLength(6);
   });
 
@@ -300,19 +382,13 @@ describe("Fixtures on Teams setup save", () => {
     );
 
     expect(result.fixturesGenerated).toBe(10);
-    const fixturesByRound = await LeagueService.getLeagueFixtures(
-      competition.id,
-    );
+    const fixtures = await LeagueService.getLeagueFixtures(competition.id);
     expectRoundRobin(
-      fixturesByRound,
+      fixtures,
       teams.map((team) => team.id),
       1,
     );
-    expectStampedWith(
-      Object.values(fixturesByRound).flat(),
-      currentSeason.id,
-      MatchType.FIVE_A_SIDE,
-    );
+    expectStampedWith(fixtures, currentSeason.id, MatchType.FIVE_A_SIDE);
   });
 
   it("a double round-robin League gets n(n-1) Fixtures, every pair meeting twice", async () => {
@@ -331,19 +407,13 @@ describe("Fixtures on Teams setup save", () => {
     );
 
     expect(result.fixturesGenerated).toBe(12);
-    const fixturesByRound = await LeagueService.getLeagueFixtures(
-      competition.id,
-    );
+    const fixtures = await LeagueService.getLeagueFixtures(competition.id);
     expectRoundRobin(
-      fixturesByRound,
+      fixtures,
       teams.map((team) => team.id),
       2,
     );
-    expectStampedWith(
-      Object.values(fixturesByRound).flat(),
-      currentSeason.id,
-      MatchType.FIVE_A_SIDE,
-    );
+    expectStampedWith(fixtures, currentSeason.id, MatchType.FIVE_A_SIDE);
   });
 
   it("saving again generates nothing and leaves Season 2's Fixtures as they were", async () => {
