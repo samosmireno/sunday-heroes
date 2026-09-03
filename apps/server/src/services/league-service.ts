@@ -382,7 +382,8 @@ export class LeagueService {
 
   /**
    * Teams setup: renames or merges the teams and, when the Current season has
-   * no Match yet, generates its Fixtures in the same transaction.
+   * no Match yet, generates its Fixtures in the same transaction. A name left
+   * as it is (a placeholder the admin did not touch) is skipped.
    */
   static async updateTeamNames(
     competitionId: string,
@@ -481,6 +482,12 @@ export class LeagueService {
     return fixtures.length;
   }
 
+  /**
+   * A name the admin left as it is never reaches the dashboard-wide lookup:
+   * two Leagues in one dashboard share the `Team N` placeholders, and the
+   * lookup would merge this League's team onto the other League's team of
+   * that name. A case-only edit renames in place for the same reason.
+   */
   private static async handleTeamNameUpdate(
     teamId: string,
     newName: string,
@@ -488,6 +495,19 @@ export class LeagueService {
     dashboardId: string,
     tx: any,
   ) {
+    const team = await TeamRepo.findById(teamId, tx);
+    if (!team) {
+      throw new NotFoundError("Team");
+    }
+
+    if (team.name.toLowerCase() === newName.toLowerCase()) {
+      if (team.name === newName) {
+        return { action: "unchanged", teamId, name: team.name };
+      }
+      await TeamRepo.update(teamId, { name: newName }, tx);
+      return { action: "renamed", teamId, newName };
+    }
+
     const existingTeam = await TeamRepo.findByNameInDashboard(
       newName,
       dashboardId,

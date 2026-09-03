@@ -629,6 +629,114 @@ const AT_ZERO: StandingsFigures = {
 const total = (rows: LeagueTeamResponse[], field: "points" | "played") =>
   rows.reduce((sum, row) => sum + row[field], 0);
 
+describe("Teams setup on a dashboard with two Leagues", () => {
+  /** Every team of a League, by id, under its current name. */
+  async function teamsOf(competitionId: string) {
+    const teamCompetitions = await LeagueService.getLeagueTeams(competitionId);
+    return teamCompetitions
+      .map(({ team }) => ({ id: team.id, name: team.name }))
+      .sort((a, b) => a.id.localeCompare(b.id));
+  }
+
+  /** Two Leagues of one admin, both holding "Team 1" … "Team 4" from creation. */
+  async function createTwoLeagues() {
+    const { user } = await createUserWithDashboard();
+    const first = await createLeague({ userId: user.id, name: "First" });
+    const second = await createLeague({ userId: user.id, name: "Second" });
+    return { user, first, second };
+  }
+
+  /** The League keeps its own four team rows, and its Fixtures still reference them. */
+  async function expectOwnTeams(
+    league: { competition: { id: string }; teams: { id: string }[] },
+    names: string[],
+  ) {
+    const ids = league.teams.map((team) => team.id).sort();
+    const after = await teamsOf(league.competition.id);
+    expect(after.map((team) => team.id)).toEqual(ids);
+    expect(after.map((team) => team.name).sort()).toEqual([...names].sort());
+    expectRoundRobin(
+      await LeagueService.getLeagueFixtures(league.competition.id),
+      ids,
+      1,
+    );
+  }
+
+  /** The Teams setup save that names three teams and leaves "Team 4" as it is. */
+  function nameThree(teams: { id: string }[], prefix: string) {
+    return [
+      ...teams
+        .slice(0, 3)
+        .map((team, index) => ({
+          id: team.id,
+          name: `${prefix} ${index + 1}`,
+        })),
+      { id: teams[3].id, name: "Team 4" },
+    ];
+  }
+
+  it("leaves an untouched placeholder alone instead of merging it onto the other League's team of that name", async () => {
+    const { user, first, second } = await createTwoLeagues();
+    const firstBefore = await teamsOf(first.competition.id);
+
+    await LeagueService.updateTeamNames(
+      second.competition.id,
+      nameThree(second.teams, "Newcomers"),
+      user.id,
+    );
+
+    await expectOwnTeams(second, [
+      "Newcomers 1",
+      "Newcomers 2",
+      "Newcomers 3",
+      "Team 4",
+    ]);
+    expect(await teamsOf(first.competition.id)).toEqual(firstBefore);
+
+    // The mirror save on the first League: whichever "Team 4" the dashboard
+    // lookup would find first, one of the two saves would have merged it.
+    await LeagueService.updateTeamNames(
+      first.competition.id,
+      nameThree(first.teams, "Founders"),
+      user.id,
+    );
+
+    await expectOwnTeams(first, [
+      "Founders 1",
+      "Founders 2",
+      "Founders 3",
+      "Team 4",
+    ]);
+    await expectOwnTeams(second, [
+      "Newcomers 1",
+      "Newcomers 2",
+      "Newcomers 3",
+      "Team 4",
+    ]);
+  });
+
+  it("a case-only edit of a placeholder renames it in place, without a merge", async () => {
+    const { user, first, second } = await createTwoLeagues();
+    const upperCased = (teams: { id: string; name: string }[]) =>
+      teams.map((team) => ({ id: team.id, name: team.name.toUpperCase() }));
+    const upperNames = ["TEAM 1", "TEAM 2", "TEAM 3", "TEAM 4"];
+
+    await LeagueService.updateTeamNames(
+      second.competition.id,
+      upperCased(second.teams),
+      user.id,
+    );
+    await LeagueService.updateTeamNames(
+      first.competition.id,
+      upperCased(first.teams),
+      user.id,
+    );
+
+    await expectOwnTeams(second, upperNames);
+    await expectOwnTeams(first, upperNames);
+  });
+});
+
 describe("LeagueService.getLeagueStandings by season", () => {
   it("after a rollover: the zeroed counters by default, Season 1's table derived for 1, the All seasons table for all", async () => {
     const { user } = await createUserWithDashboard();
