@@ -1,6 +1,9 @@
 import { CompetitionType } from "@repo/shared-types";
 import { describe, expect, it } from "vitest";
-import { createCompetitionRequestSchema } from "./create-competition-request-schema";
+import {
+  createCompetitionRequestSchema,
+  createNonLeagueCompetitionRequestSchema,
+} from "./create-competition-request-schema";
 
 const request = {
   userId: "user-1",
@@ -34,5 +37,22 @@ describe("createCompetitionRequestSchema", () => {
     });
 
     expect(result.success).toBe(false);
+  });
+});
+
+describe("createNonLeagueCompetitionRequestSchema", () => {
+  it("accepts a Duel", () => {
+    const result = createNonLeagueCompetitionRequestSchema.safeParse({
+      ...request,
+      type: CompetitionType.DUEL,
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("refuses a League, which only POST /api/leagues creates", () => {
+    expect(() =>
+      createNonLeagueCompetitionRequestSchema.parse(request),
+    ).toThrow("Leagues are created through POST /api/leagues");
   });
 });

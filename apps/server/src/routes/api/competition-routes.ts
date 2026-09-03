@@ -15,7 +15,7 @@ import {
   removeModeratorFromCompetition,
 } from "../../handlers/competition-moderator";
 import { validateRequestBody } from "../../middleware/validation-middleware";
-import { createCompetitionRequestSchema } from "../../schemas/create-competition-request-schema";
+import { createNonLeagueCompetitionRequestSchema } from "../../schemas/create-competition-request-schema";
 import { authenticateToken } from "../../middleware/authentication-middleware";
 
 const router = Router();
@@ -29,8 +29,8 @@ router.get("/stats", getCompetitionStats);
 router.post(
   "/",
   authenticateToken,
-  validateRequestBody(createCompetitionRequestSchema),
-  createCompetition
+  validateRequestBody(createNonLeagueCompetitionRequestSchema),
+  createCompetition,
 );
 router.post("/:id/reset", authenticateToken, resetCompetition);
 router.post("/:id/seasons", authenticateToken, startNewSeason);
@@ -40,7 +40,7 @@ router.post("/:id/moderators", authenticateToken, addModeratorToCompetition);
 router.delete(
   "/moderators/:moderatorId",
   authenticateToken,
-  removeModeratorFromCompetition
+  removeModeratorFromCompetition,
 );
 
 export default router;
