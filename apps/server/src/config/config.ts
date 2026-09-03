@@ -1,6 +1,11 @@
 import dotenv from "dotenv";
 
-dotenv.config();
+// Under test (the harness sets NODE_ENV=test) only the committed .env.test is read,
+// so a developer's .env, which holds the production DATABASE_URL, stays untouched.
+// dotenv never overrides a variable that is already set.
+dotenv.config({
+  path: process.env.NODE_ENV === "test" ? ".env.test" : undefined,
+});
 
 const requiredEnvVars = [
   "GOOGLE_CLIENT_ID",

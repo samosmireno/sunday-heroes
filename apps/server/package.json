@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run build:tsc && npm run copy:client",
-    "build:tsc": "tsc",
+    "build:tsc": "tsc -p tsconfig.build.json",
     "copy:client": "mkdir -p dist && cp -r ../client/dist dist/client 2>/dev/null || true",
     "dev": "ts-node src/index.ts",
-    "start": "node dist/src/index.js"
+    "start": "node dist/src/index.js",
+    "test": "vitest run",
+    "check-types": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -44,6 +46,7 @@
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/nodemailer": "^8.0.1",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "vitest": "^3.2.7"
   }
 }

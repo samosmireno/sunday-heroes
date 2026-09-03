@@ -74,7 +74,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    include: ["**/*.test.tsx"],
+    include: ["**/*.test.{ts,tsx}"],
     globals: true,
     coverage: {
       reporter: ["text", "json", "html"],

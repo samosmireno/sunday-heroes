@@ -51,8 +51,9 @@
       "cache": false
     },
     "test": {
-      "outputs": ["coverage/**"],
-      "dependsOn": []
+      "dependsOn": ["^build"],
+      "env": ["TEST_DATABASE_URL"],
+      "outputs": ["coverage/**"]
     },
     "lint": {
       "dependsOn": []

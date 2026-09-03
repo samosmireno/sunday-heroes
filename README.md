@@ -29,3 +29,12 @@ A full-stack web application for managing football teams, matches, and player st
 - **TypeScript**
 - **Prisma**
 - **JWT**
+
+## Tests
+
+```bash
+docker compose up -d   # disposable Postgres 16 on localhost:5433; the only setup step
+npm test               # server (Vitest: unit + db projects) and client (Vitest) through Turbo
+```
+
+The server's `db` tests apply the real migrations to the compose database and truncate every table before each test; the harness refuses any database host other than localhost. CI (`.github/workflows/ci.yml`) runs lint, type checks and tests on every push to `main` and every pull request.
