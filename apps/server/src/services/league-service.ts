@@ -1,9 +1,13 @@
 import { CompetitionService } from "./competition-service";
 import { TeamService } from "./team-service";
-import { MatchWithDetails, MatchWithTeams } from "../repositories/match/types";
+import {
+  MatchWithDetails,
+  MatchWithTeams,
+  MatchWithTeamSides,
+} from "../repositories/match/types";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import { MatchType, Prisma, VotingStatus } from "@prisma/client";
-import { UpdateTeamNamesResponse } from "@repo/shared-types";
+import { LeagueTeamResponse, UpdateTeamNamesResponse } from "@repo/shared-types";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
 import prisma from "../repositories/prisma-client";
 import { MatchTeamRepo } from "../repositories/match-team-repo";
@@ -24,15 +28,12 @@ import { MatchRepo } from "../repositories/match/match-repo";
 import { SeasonRepo } from "../repositories/season/season-repo";
 import { SeasonService } from "./season-service";
 import { SeasonQuery } from "../schemas/season-schemas";
-
-interface MatchStats {
-  points: number;
-  wins: number;
-  draws: number;
-  losses: number;
-  goalsFor: number;
-  goalsAgainst: number;
-}
+import {
+  calculateMatchResult,
+  computeStandings,
+  StandingsMatch,
+  TeamStats,
+} from "../utils/standings";
 
 export class LeagueService {
   /** Competition, Season 1, teams and the initial Fixtures in one transaction. */
@@ -219,14 +220,58 @@ export class LeagueService {
     return fixtures;
   }
 
-  static async getLeagueStandings(competitionId: string) {
+  /**
+   * The Standings of the selected season (ADR 0003): the live counters for the
+   * Current season; for a Past season or All seasons the table derived from
+   * that selection's Completed matches. The rows are the Competition's teams
+   * under their current names in every mode.
+   */
+  static async getLeagueStandings(
+    competitionId: string,
+    season?: SeasonQuery
+  ): Promise<LeagueTeamResponse[]> {
+    const { where: seasonWhere, isCurrent } =
+      await SeasonService.resolveSeasonSelection(competitionId, season);
     const teamCompetitions =
       await TeamCompetitionRepo.getTeamCompetitionsForLeague(competitionId);
 
-    const standings =
-      transformTeamCompetitionToStandingsResponse(teamCompetitions);
+    if (isCurrent) {
+      return transformTeamCompetitionToStandingsResponse(teamCompetitions);
+    }
 
-    return standings;
+    const matches = await MatchRepo.findCompletedWithTeamSides(
+      competitionId,
+      seasonWhere
+    );
+
+    return computeStandings(
+      teamCompetitions.map(({ team }) => team),
+      matches.map((match) => this.toStandingsMatch(match))
+    );
+  }
+
+  /** The two sides of a Match; a Match always has a home and an away team. */
+  private static teamSides<T extends { isHome: boolean }>(
+    matchTeams: T[]
+  ): { homeTeam: T; awayTeam: T } {
+    const homeTeam = matchTeams.find((mt) => mt.isHome);
+    const awayTeam = matchTeams.find((mt) => !mt.isHome);
+    if (!homeTeam || !awayTeam) {
+      throw new NotFoundError("Match team");
+    }
+    return { homeTeam, awayTeam };
+  }
+
+  private static toStandingsMatch(match: MatchWithTeamSides): StandingsMatch {
+    const { homeTeam, awayTeam } = this.teamSides(match.matchTeams);
+
+    return {
+      homeTeamId: homeTeam.teamId,
+      awayTeamId: awayTeam.teamId,
+      homeTeamScore: match.homeTeamScore,
+      awayTeamScore: match.awayTeamScore,
+      isCompleted: match.isCompleted,
+    };
   }
 
   static async recalculateLeagueStandings(
@@ -234,15 +279,10 @@ export class LeagueService {
     newHomeScore: number,
     newAwayScore: number
   ) {
-    const homeTeam = match.matchTeams.find((mt) => mt.isHome);
-    const awayTeam = match.matchTeams.find((mt) => !mt.isHome);
+    const { homeTeam, awayTeam } = this.teamSides(match.matchTeams);
 
-    if (!homeTeam || !awayTeam) {
-      throw new NotFoundError("Match team");
-    }
-
-    const result = this.calculateMatchResult(newHomeScore, newAwayScore);
-    const previousResult = this.calculateMatchResult(
+    const result = calculateMatchResult(newHomeScore, newAwayScore);
+    const previousResult = calculateMatchResult(
       match.homeTeamScore,
       match.awayTeamScore
     );
@@ -275,9 +315,9 @@ export class LeagueService {
   }
 
   private static calculateStatsDifference(
-    previousStats: MatchStats,
-    newStats: MatchStats
-  ): MatchStats {
+    previousStats: TeamStats,
+    newStats: TeamStats
+  ): TeamStats {
     return {
       points: newStats.points - previousStats.points,
       wins: newStats.wins - previousStats.wins,
@@ -285,49 +325,6 @@ export class LeagueService {
       losses: newStats.losses - previousStats.losses,
       goalsFor: newStats.goalsFor - previousStats.goalsFor,
       goalsAgainst: newStats.goalsAgainst - previousStats.goalsAgainst,
-    };
-  }
-
-  private static calculateMatchResult(homeScore: number, awayScore: number) {
-    let homePoints = 0,
-      awayPoints = 0;
-    let homeWins = 0,
-      homeDraws = 0,
-      homeLosses = 0;
-    let awayWins = 0,
-      awayDraws = 0,
-      awayLosses = 0;
-
-    if (homeScore > awayScore) {
-      homePoints = 3;
-      homeWins = 1;
-      awayLosses = 1;
-    } else if (homeScore < awayScore) {
-      awayPoints = 3;
-      awayWins = 1;
-      homeLosses = 1;
-    } else {
-      homePoints = awayPoints = 1;
-      homeDraws = awayDraws = 1;
-    }
-
-    return {
-      homeTeamStats: {
-        points: homePoints,
-        wins: homeWins,
-        draws: homeDraws,
-        losses: homeLosses,
-        goalsFor: homeScore,
-        goalsAgainst: awayScore,
-      },
-      awayTeamStats: {
-        points: awayPoints,
-        wins: awayWins,
-        draws: awayDraws,
-        losses: awayLosses,
-        goalsFor: awayScore,
-        goalsAgainst: homeScore,
-      },
     };
   }
 
@@ -552,17 +549,12 @@ export class LeagueService {
       );
     }
 
-    const homeTeam = match.matchTeams.find((mt) => mt.isHome);
-    const awayTeam = match.matchTeams.find((mt) => !mt.isHome);
-
-    if (!homeTeam || !awayTeam) {
-      throw new NotFoundError("Match team");
-    }
+    const { homeTeam, awayTeam } = this.teamSides(match.matchTeams);
 
     await prisma.$transaction(async (tx) => {
       await MatchRepo.update(matchId, { isCompleted: true }, tx);
 
-      const result = this.calculateMatchResult(
+      const result = calculateMatchResult(
         match.homeTeamScore,
         match.awayTeamScore
       );

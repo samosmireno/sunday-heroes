@@ -18,6 +18,7 @@ import {
   ConflictError,
   NotFoundError,
 } from "../utils/errors";
+import { SeasonQuery } from "../schemas/season-schemas";
 import { LeagueService } from "./league-service";
 import { SeasonService } from "./season-service";
 
@@ -219,5 +220,38 @@ describe("SeasonService.resolveSeasonFilter", () => {
     await expect(
       SeasonService.resolveSeasonFilter("no-such-competition", undefined),
     ).rejects.toThrow(new NotFoundError("Competition"));
+  });
+});
+
+describe("SeasonService.resolveSeasonSelection", () => {
+  it("reports the Current season whether selected by default or by its number, never a Past season or All seasons", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition } = await createDuelWithClosedSeason({
+      userId: user.id,
+    });
+    const isCurrent = async (season: SeasonQuery) =>
+      (await SeasonService.resolveSeasonSelection(competition.id, season))
+        .isCurrent;
+
+    expect(await isCurrent(undefined)).toBe(true);
+    expect(await isCurrent(2)).toBe(true);
+    expect(await isCurrent(1)).toBe(false);
+    expect(await isCurrent("all")).toBe(false);
+  });
+
+  it("carries the same where fragment as the season filter", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition } = await createDuelWithClosedSeason({
+      userId: user.id,
+    });
+
+    const selection = await SeasonService.resolveSeasonSelection(
+      competition.id,
+      1,
+    );
+
+    expect(selection.where).toEqual(
+      await SeasonService.resolveSeasonFilter(competition.id, 1),
+    );
   });
 });

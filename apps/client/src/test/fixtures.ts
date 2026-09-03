@@ -4,6 +4,7 @@ import {
   CompetitionSettings,
   CompetitionType,
   CurrentSeasonResponse,
+  LeagueTeamResponse,
   MatchResponse,
   MatchType,
   Role,
@@ -25,6 +26,28 @@ export function matchResponse(
     teams: ["Home", "Away"],
     players: [],
     season: { number: 1, isClosed: false },
+    ...overrides,
+  };
+}
+
+/** A Standings row; at zero unless overridden. */
+export function leagueTeamResponse(
+  overrides: Partial<LeagueTeamResponse> = {},
+): LeagueTeamResponse {
+  const id = overrides.id ?? "team-1";
+  const name = overrides.name ?? "Lions";
+  return {
+    id,
+    name,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+    goalDifference: 0,
+    team: { id, name },
     ...overrides,
   };
 }

@@ -1,4 +1,5 @@
 import { MatchType } from "@prisma/client";
+import { LeagueTeamResponse } from "@repo/shared-types";
 import { describe, expect, it } from "vitest";
 import {
   addModerator,
@@ -8,12 +9,13 @@ import {
   createUser,
   createUserWithDashboard,
   markCompleted,
+  setFixtureDate,
   setFixtureScore,
 } from "../../test/factories";
 import { MatchRepo } from "../repositories/match/match-repo";
 import { MatchWithDetails } from "../repositories/match/types";
 import { SeasonRepo } from "../repositories/season/season-repo";
-import { AuthorizationError } from "../utils/errors";
+import { AuthorizationError, NotFoundError } from "../utils/errors";
 import { LeagueService } from "./league-service";
 import { MatchService } from "./match/match-service";
 import { SeasonService } from "./season-service";
@@ -463,5 +465,195 @@ describe("Fixtures on Teams setup save", () => {
     ).rejects.toThrow(AuthorizationError);
 
     expect(await countFixtures(competition.id)).toBe(0);
+  });
+});
+
+/** Plays and completes a Fixture through the League service so the Standings counters move. */
+async function completeFixture(
+  fixtureId: string,
+  userId: string,
+  homeTeamScore: number,
+  awayTeamScore: number,
+) {
+  await addPlayersToFixture(fixtureId, [
+    { nickname: "Ana", isHome: true, goals: homeTeamScore },
+    { nickname: "Bo", isHome: false, goals: awayTeamScore },
+  ]);
+  await setFixtureScore(fixtureId, homeTeamScore, awayTeamScore);
+  await setFixtureDate(fixtureId, new Date("2026-02-01T18:00:00.000Z"));
+  await LeagueService.completeMatch(fixtureId, userId);
+}
+
+type StandingsFigures = Omit<LeagueTeamResponse, "id" | "name" | "team">;
+
+const AT_ZERO: StandingsFigures = {
+  played: 0,
+  wins: 0,
+  draws: 0,
+  losses: 0,
+  goalsFor: 0,
+  goalsAgainst: 0,
+  points: 0,
+  goalDifference: 0,
+};
+
+const total = (rows: LeagueTeamResponse[], field: "points" | "played") =>
+  rows.reduce((sum, row) => sum + row[field], 0);
+
+describe("LeagueService.getLeagueStandings by season", () => {
+  it("after a rollover: the zeroed counters by default, Season 1's table derived for 1, the All seasons table for all", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, teams, fixtures } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 4,
+    });
+    await LeagueService.updateTeamNames(
+      competition.id,
+      nameTeams(teams),
+      user.id,
+    );
+    const nameOf = new Map(nameTeams(teams).map(({ id, name }) => [id, name]));
+    const idOf = (name: string) => teams[TEAM_NAMES.indexOf(name)].id;
+    const row = (
+      team: { id: string },
+      figures: StandingsFigures,
+    ): LeagueTeamResponse => {
+      const name = nameOf.get(team.id) ?? "";
+      return { id: team.id, name, ...figures, team: { id: team.id, name } };
+    };
+    // Round 1 of a four-team round-robin: two Fixtures between disjoint pairs.
+    const [first, second] = fixtures.filter((fixture) => fixture.round === 1);
+    const third = fixtures.find((fixture) => fixture.round === 2)!;
+    await completeFixture(first.match.id, user.id, 2, 0);
+    await completeFixture(second.match.id, user.id, 1, 0);
+    // A score entered on a Fixture that is never completed.
+    await setFixtureScore(third.match.id, 3, 3);
+    const onSeasonOnesLastDay = await LeagueService.getLeagueStandings(
+      competition.id,
+    );
+
+    await SeasonService.startNewSeason(competition.id, user.id);
+
+    expect(await LeagueService.getLeagueStandings(competition.id)).toEqual(
+      ["Bears", "Lions", "Tigers", "Wolves"].map((name) =>
+        row({ id: idOf(name) }, AT_ZERO),
+      ),
+    );
+    const seasonOne = await LeagueService.getLeagueStandings(competition.id, 1);
+    expect(seasonOne).toEqual([
+      row(first.homeTeam, {
+        played: 1,
+        wins: 1,
+        draws: 0,
+        losses: 0,
+        goalsFor: 2,
+        goalsAgainst: 0,
+        points: 3,
+        goalDifference: 2,
+      }),
+      row(second.homeTeam, {
+        played: 1,
+        wins: 1,
+        draws: 0,
+        losses: 0,
+        goalsFor: 1,
+        goalsAgainst: 0,
+        points: 3,
+        goalDifference: 1,
+      }),
+      row(second.awayTeam, {
+        played: 1,
+        wins: 0,
+        draws: 0,
+        losses: 1,
+        goalsFor: 0,
+        goalsAgainst: 1,
+        points: 0,
+        goalDifference: -1,
+      }),
+      row(first.awayTeam, {
+        played: 1,
+        wins: 0,
+        draws: 0,
+        losses: 1,
+        goalsFor: 0,
+        goalsAgainst: 2,
+        points: 0,
+        goalDifference: -2,
+      }),
+    ]);
+    // The derived table is the one the counters showed on the Season's last day.
+    expect(seasonOne).toEqual(onSeasonOnesLastDay);
+    expect(
+      await LeagueService.getLeagueStandings(competition.id, "all"),
+    ).toEqual(seasonOne);
+  });
+
+  it("All seasons counts the Completed matches of every Season, and a team renamed since shows its current name", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, teams, fixtures } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 4,
+    });
+    await LeagueService.updateTeamNames(
+      competition.id,
+      nameTeams(teams),
+      user.id,
+    );
+    await completeFixture(fixtures[0].match.id, user.id, 2, 0);
+    const seasonTwo = await SeasonService.startNewSeason(
+      competition.id,
+      user.id,
+    );
+    // Teams setup for Season 2 renames Lions and generates Season 2's Fixtures.
+    await LeagueService.updateTeamNames(
+      competition.id,
+      [{ id: teams[0].id, name: "Lions FC" }, ...nameTeams(teams).slice(1)],
+      user.id,
+    );
+    const seasonTwoFixture = (
+      await MatchRepo.findByCompetitionId(competition.id, {
+        where: { seasonId: seasonTwo.id },
+      })
+    )[0];
+    await completeFixture(seasonTwoFixture.id, user.id, 1, 0);
+
+    const seasonOne = await LeagueService.getLeagueStandings(competition.id, 1);
+    const current = await LeagueService.getLeagueStandings(competition.id);
+    const all = await LeagueService.getLeagueStandings(competition.id, "all");
+
+    expect(seasonOne.map((row) => row.name).sort()).toEqual([
+      "Bears",
+      "Lions FC",
+      "Tigers",
+      "Wolves",
+    ]);
+    expect([total(seasonOne, "points"), total(seasonOne, "played")]).toEqual([
+      3, 2,
+    ]);
+    expect([total(current, "points"), total(current, "played")]).toEqual([
+      3, 2,
+    ]);
+    // Season 2's five other Fixtures are not completed and count for nothing.
+    expect([total(all, "points"), total(all, "played")]).toEqual([6, 4]);
+    // The Current season named by number is still the counters.
+    expect(await LeagueService.getLeagueStandings(competition.id, 2)).toEqual(
+      current,
+    );
+  });
+
+  it("refuses a Season the Competition does not have", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition } = await createLeague({ userId: user.id });
+
+    await expect(
+      LeagueService.getLeagueStandings(competition.id, 9),
+    ).rejects.toThrow(new NotFoundError("Season"));
+  });
+
+  it("refuses an unknown Competition like every other filtered read", async () => {
+    await expect(
+      LeagueService.getLeagueStandings("no-such-competition"),
+    ).rejects.toThrow(new NotFoundError("Competition"));
   });
 });

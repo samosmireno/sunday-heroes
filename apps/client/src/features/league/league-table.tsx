@@ -1,12 +1,18 @@
 import Loading from "@/components/ui/loading";
 import { useLeagueStandings } from "@/features/league/hooks/use-league-standings";
+import { useCompetitionContext } from "@/context/competition-context";
 
 interface LeagueTableProps {
   competitionId: string;
 }
 
+/** The Standings of the selected season: live for the Current season, final for a Past one. */
 export default function LeagueTable({ competitionId }: LeagueTableProps) {
-  const { leagueStandings, isLoading } = useLeagueStandings(competitionId);
+  const { season } = useCompetitionContext();
+  const { leagueStandings, isLoading } = useLeagueStandings(
+    competitionId,
+    season,
+  );
 
   if (isLoading) {
     return <Loading text="Loading league table..." />;

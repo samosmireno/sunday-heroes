@@ -9,6 +9,7 @@ import { MatchWithDetails } from "../repositories/match/types";
 import { calculateLeaguePlayerStats, calculatePlayerScore } from "./utils";
 import { transformMatchSeasonToResponse } from "./season-transforms";
 import { TeamCompetitionWithDetails } from "../repositories/team-competition-repo";
+import { compareStandings, standingsRow } from "./standings";
 
 export function transformLeagueFixtureToResponse(
   fixture: Record<number, MatchWithDetails[]>,
@@ -81,35 +82,11 @@ export function transformCompetitionToPlayerStatsResponse(
   return playerStats;
 }
 
+/** The Current season's Standings: the live counters, ranked. */
 export function transformTeamCompetitionToStandingsResponse(
   teamCompetition: TeamCompetitionWithDetails[],
 ): LeagueTeamResponse[] {
-  const standings = teamCompetition.map((tc) => {
-    const team = tc.team;
-    return {
-      id: team.id,
-      name: team.name,
-      points: tc.points,
-      wins: tc.wins,
-      draws: tc.draws,
-      losses: tc.losses,
-      goalsFor: tc.goalsFor,
-      goalsAgainst: tc.goalsAgainst,
-      goalDifference: tc.goalsFor - tc.goalsAgainst,
-      played: tc.wins + tc.draws + tc.losses,
-      team: {
-        id: team.id,
-        name: team.name,
-      },
-    };
-  });
-
-  standings.sort((a, b) => {
-    if (b.points !== a.points) return b.points - a.points;
-    if (b.goalDifference !== a.goalDifference)
-      return b.goalDifference - a.goalDifference;
-    return b.goalsFor - a.goalsFor;
-  });
-
-  return standings;
+  return teamCompetition
+    .map((tc) => standingsRow(tc.team, tc))
+    .sort(compareStandings);
 }

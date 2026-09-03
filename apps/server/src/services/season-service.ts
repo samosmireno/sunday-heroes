@@ -15,6 +15,16 @@ import { SeasonQuery } from "../schemas/season-schemas";
 /** The Prisma where fragment a season selection adds to a Match read. */
 export type SeasonWhere = Pick<Prisma.MatchWhereInput, "seasonId">;
 
+/** A season selection resolved once: what its Match reads filter on, and which Season it is. */
+export interface SeasonSelection {
+  where: SeasonWhere;
+  /**
+   * The Current season, selected by default or by its own number. It is the
+   * one Season whose Standings are the live counters (ADR 0003).
+   */
+  isCurrent: boolean;
+}
+
 export class SeasonService {
   /**
    * The season filter contract: absent selects the Current season, a number one
@@ -25,15 +35,20 @@ export class SeasonService {
     competitionId: string,
     season: SeasonQuery,
   ): Promise<SeasonWhere> {
+    return (await this.resolveSeasonSelection(competitionId, season)).where;
+  }
+
+  /** The season filter contract, with the selection's identity for a read that branches on it. */
+  static async resolveSeasonSelection(
+    competitionId: string,
+    season: SeasonQuery,
+  ): Promise<SeasonSelection> {
     if (season === "all") {
-      return {};
+      return { where: {}, isCurrent: false };
     }
 
-    const selected =
-      season === undefined
-        ? await SeasonRepo.findCurrent(competitionId)
-        : await SeasonRepo.findByNumber(competitionId, season);
-    if (!selected) {
+    const current = await SeasonRepo.findCurrent(competitionId);
+    if (!current) {
       // Every Competition has a Current season, so a miss on the Current
       // season means the Competition itself is unknown.
       if (!(await CompetitionRepo.findById(competitionId))) {
@@ -41,8 +56,19 @@ export class SeasonService {
       }
       throw new NotFoundError("Season");
     }
+    if (season === undefined) {
+      return { where: { seasonId: current.id }, isCurrent: true };
+    }
 
-    return { seasonId: selected.id };
+    const selected = await SeasonRepo.findByNumber(competitionId, season);
+    if (!selected) {
+      throw new NotFoundError("Season");
+    }
+
+    return {
+      where: { seasonId: selected.id },
+      isCurrent: selected.id === current.id,
+    };
   }
 
   /**

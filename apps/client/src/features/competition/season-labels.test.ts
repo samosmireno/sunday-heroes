@@ -5,6 +5,7 @@ import {
   allSeasonsOptionLabel,
   duelStatsCaption,
   pastSeasonBanner,
+  seasonCaption,
   seasonOptionLabel,
   seasonTriggerLabel,
 } from "./season-labels";
@@ -47,6 +48,30 @@ describe("pastSeasonBanner", () => {
         "Season 2 · closed 14 Sep 2025. Matches from a past season can be viewed but not changed.",
       backButton: "Back to Season 3",
     });
+  });
+});
+
+describe("seasonCaption", () => {
+  const seasons = [
+    seasonResponse({
+      number: 1,
+      startedAt: "2024-09-08T10:00:00.000Z",
+      endedAt: "2025-03-02T10:00:00.000Z",
+    }),
+    pastSeason,
+    currentSeason,
+  ];
+
+  it("names a Past season by its number alone", () => {
+    expect(seasonCaption(2, seasons)).toBe("Season 2");
+  });
+
+  it("marks the Current season", () => {
+    expect(seasonCaption(3, seasons)).toBe("Season 3 · current");
+  });
+
+  it("counts the Seasons under All seasons", () => {
+    expect(seasonCaption("all", seasons)).toBe("All seasons · 3 seasons");
   });
 });
 

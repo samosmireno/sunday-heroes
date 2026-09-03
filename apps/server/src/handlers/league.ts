@@ -45,7 +45,12 @@ export const getLeagueStandings = async (
       throw new BadRequestError("Competition ID is required");
     }
 
-    const standings = await LeagueService.getLeagueStandings(competitionId);
+    const season = getSeasonQuery(req);
+
+    const standings = await LeagueService.getLeagueStandings(
+      competitionId,
+      season,
+    );
 
     sendSuccess(res, standings);
   } catch (error) {

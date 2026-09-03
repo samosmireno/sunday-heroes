@@ -7,9 +7,11 @@ import {
   CompetitionMatch,
   MATCH_BASIC_INCLUDE,
   MATCH_DETAILED_INCLUDE,
+  MATCH_TEAM_SIDES_SELECT,
   MATCH_VOTES_INCLUDE,
   MatchWithDetails,
   MatchWithTeams,
+  MatchWithTeamSides,
   MatchWithVotes,
 } from "./types";
 
@@ -133,6 +135,26 @@ export class MatchRepo {
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchRepo.countByCompetitionId");
+    }
+  }
+
+  /** The Completed matches of a selection with their team sides, for a derived Standings table. */
+  static async findCompletedWithTeamSides(
+    competitionId: string,
+    where: Prisma.MatchWhereInput = {},
+    tx?: Prisma.TransactionClient
+  ): Promise<MatchWithTeamSides[]> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.findMany({
+        where: { ...where, competitionId, isCompleted: true },
+        select: MATCH_TEAM_SIDES_SELECT,
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "MatchRepo.findCompletedWithTeamSides"
+      );
     }
   }
 

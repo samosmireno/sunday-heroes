@@ -2,9 +2,16 @@ import { CompetitionResponse, Role } from "@repo/shared-types";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Settings, Calendar } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TAB_CONFIG } from "./constants";
+import { useCompetitionContext } from "@/context/competition-context";
+import { LeagueTab, TAB_CONFIG } from "./constants";
 
 interface LeagueCompetitionPageProps {
   competition: CompetitionResponse;
@@ -16,6 +23,12 @@ export default function LeagueCompetitionPage({
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "standings";
+  const { selection, seasons, showSelector } = useCompetitionContext();
+
+  const captionOf = (tab: LeagueTab) =>
+    showSelector && selection !== undefined && tab.caption
+      ? tab.caption(selection, seasons)
+      : undefined;
 
   const handleTabChange = (value: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
@@ -84,28 +97,36 @@ export default function LeagueCompetitionPage({
           ))}
         </TabsList>
 
-        {TAB_CONFIG.map((tab) => (
-          <TabsContent
-            key={tab.value}
-            value={tab.value}
-            className="animate-in fade-in-50"
-          >
-            <Card className="border-2 border-accent/30 bg-panel-bg shadow-md">
-              <CardHeader className="pb-3 sm:pb-6">
-                <CardTitle className="text-lg text-accent sm:text-xl">
-                  {tab.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="max-w-full overflow-hidden p-3 sm:p-6">
-                <tab.component
-                  competitionId={competition.id}
-                  userRole={competition.userRole}
-                  votingEnabled={competition.votingEnabled}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
+        {TAB_CONFIG.map((tab) => {
+          const caption = captionOf(tab);
+          return (
+            <TabsContent
+              key={tab.value}
+              value={tab.value}
+              className="animate-in fade-in-50"
+            >
+              <Card className="border-2 border-accent/30 bg-panel-bg shadow-md">
+                <CardHeader className="pb-3 sm:pb-6">
+                  <CardTitle className="text-lg text-accent sm:text-xl">
+                    {tab.title}
+                  </CardTitle>
+                  {caption && (
+                    <CardDescription className="text-sm text-gray-400">
+                      {caption}
+                    </CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="max-w-full overflow-hidden p-3 sm:p-6">
+                  <tab.component
+                    competitionId={competition.id}
+                    userRole={competition.userRole}
+                    votingEnabled={competition.votingEnabled}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          );
+        })}
       </Tabs>
     </div>
   );

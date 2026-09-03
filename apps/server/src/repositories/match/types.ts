@@ -80,6 +80,24 @@ export const MATCH_BASIC_INCLUDE = {
   },
 } satisfies Prisma.MatchInclude;
 
+/** A Match's result and which team played on which side: what a derived Standings table reads. */
+export const MATCH_TEAM_SIDES_SELECT = {
+  id: true,
+  homeTeamScore: true,
+  awayTeamScore: true,
+  isCompleted: true,
+  matchTeams: {
+    select: {
+      teamId: true,
+      isHome: true,
+    },
+  },
+} satisfies Prisma.MatchSelect;
+
+export type MatchWithTeamSides = Prisma.MatchGetPayload<{
+  select: typeof MATCH_TEAM_SIDES_SELECT;
+}>;
+
 export const COMPETITION_MATCH_SELECT = {
   id: true,
   date: true,

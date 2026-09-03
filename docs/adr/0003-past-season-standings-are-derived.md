@@ -4,7 +4,7 @@ status: accepted
 
 # Past-season standings are derived from completed matches
 
-The Standings table lives as incrementally updated counters on `TeamCompetition`, one row per team per Competition, zeroed at each Start new season (ADR 0001). The seasons effort first ruled that a Past season's table would not be preserved; the selector UX ticket reversed that. We preserve it by **deriving** a Past season's table from that Season's Completed matches at read time, with the same ranking as the live table (points, goal difference, goals for). The Current season keeps the counters. Nothing is stored per Past season.
+The Standings table lives as incrementally updated counters on `TeamCompetition`, one row per team per Competition, zeroed at each Start new season (ADR 0001). The seasons effort first ruled that a Past season's table would not be preserved; the selector UX ticket reversed that. We preserve it by **deriving** a Past season's table from that Season's Completed matches at read time, with the same ranking as the live table (points, goal difference, goals for, team name). The Current season keeps the counters. Nothing is stored per Past season.
 
 ## Considered options
 

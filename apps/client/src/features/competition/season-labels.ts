@@ -50,6 +50,22 @@ export function pastSeasonBanner(
   };
 }
 
+/**
+ * The Season a card shows, so its table is never mistaken for another
+ * season's: `Season 2`, `Season 3 · current`, or `All seasons · 3 seasons`.
+ */
+export function seasonCaption(
+  selection: SeasonFilter,
+  seasons: SeasonResponse[],
+): string {
+  if (selection === "all") return allSeasonsOptionLabel(seasons.length);
+  const season = seasons.find((s) => s.number === selection);
+  const isCurrent = season !== undefined && season.endedAt === null;
+  return isCurrent
+    ? `${seasonName(selection)} · current`
+    : seasonName(selection);
+}
+
 /** Which matches the Duel stats table's percentage filter counts. */
 export function duelStatsCaption(
   selection: SeasonFilter,
