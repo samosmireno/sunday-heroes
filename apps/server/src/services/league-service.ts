@@ -20,6 +20,7 @@ import {
   NotFoundError,
 } from "../utils/errors";
 import { MatchRepo } from "../repositories/match/match-repo";
+import { SeasonRepo } from "../repositories/season/season-repo";
 
 interface MatchStats {
   points: number;
@@ -31,9 +32,15 @@ interface MatchStats {
 }
 
 export class LeagueService {
+  /** Competition, Season 1, teams and the initial Fixtures in one transaction. */
   static async createLeague(request: CreateLeagueRequest, userId: string) {
+    const isRoundRobin = request.isRoundRobin ?? false;
+
     return await prisma.$transaction(async (tx) => {
-      const competition = await CompetitionService.createCompetition(request);
+      const competition = await CompetitionService.createCompetition(
+        { ...request, isRoundRobin },
+        tx
+      );
 
       const teams = [];
       for (let i = 0; i < request.numberOfTeams; i++) {
@@ -42,7 +49,8 @@ export class LeagueService {
         const team = await TeamService.createTeamInCompetition(
           teamName,
           competition.id,
-          userId
+          userId,
+          tx
         );
         teams.push(team);
       }
@@ -50,7 +58,7 @@ export class LeagueService {
       const fixtures = await this.generateLeagueFixtures(
         competition.id,
         teams,
-        request.isRoundRobin || false,
+        isRoundRobin,
         request.matchType,
         tx
       );
@@ -63,6 +71,7 @@ export class LeagueService {
     });
   }
 
+  /** Generates the round-robin Fixtures and stamps each with the Current season. */
   static async generateLeagueFixtures(
     competitionId: string,
     teams: { id: string; name: string }[],
@@ -71,6 +80,11 @@ export class LeagueService {
     tx?: Prisma.TransactionClient
   ) {
     const fixtures = [];
+
+    const currentSeason = await SeasonRepo.findCurrent(competitionId, tx);
+    if (!currentSeason) {
+      throw new NotFoundError("Season");
+    }
 
     const roundMatches = this.generateRoundRobinMatches(
       teams,
@@ -81,22 +95,26 @@ export class LeagueService {
       const round = roundIndex + 1;
 
       for (const match of roundMatches[roundIndex]) {
-        const createdMatch = await MatchRepo.create({
-          createdAt: new Date(),
-          competitionId,
-          matchType,
-          date: null,
-          round: round,
-          homeTeamScore: 0,
-          awayTeamScore: 0,
-          penaltyHomeScore: null,
-          penaltyAwayScore: null,
-          bracketPosition: null,
-          votingStatus: VotingStatus.CLOSED,
-          votingEndsAt: null,
-          isCompleted: false,
-          videoUrl: null,
-        });
+        const createdMatch = await MatchRepo.create(
+          {
+            createdAt: new Date(),
+            competitionId,
+            seasonId: currentSeason.id,
+            matchType,
+            date: null,
+            round: round,
+            homeTeamScore: 0,
+            awayTeamScore: 0,
+            penaltyHomeScore: null,
+            penaltyAwayScore: null,
+            bracketPosition: null,
+            votingStatus: VotingStatus.CLOSED,
+            votingEndsAt: null,
+            isCompleted: false,
+            videoUrl: null,
+          },
+          tx
+        );
 
         await MatchTeamRepo.create(
           createdMatch.id,

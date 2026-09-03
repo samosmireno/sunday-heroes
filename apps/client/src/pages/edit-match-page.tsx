@@ -6,6 +6,7 @@ import Loading from "../components/ui/loading";
 import SubmitSpinner from "../components/ui/submit-spinner";
 import { MatchFormContent } from "../features/add-match-form/match-form-content";
 import { useCompetitionInfo } from "@/features/competition/use-competition-info";
+import { useAuth } from "@/context/auth-context";
 
 export default function EditMatchPage() {
   const { competitionId, matchId } = useParams<{
@@ -13,8 +14,11 @@ export default function EditMatchPage() {
     matchId: string;
   }>() as { competitionId: string; matchId: string };
 
-  const { competition, isLoading: isLoadingCompetition } =
-    useCompetitionInfo(competitionId);
+  const { user } = useAuth();
+  const { competition, isLoading: isLoadingCompetition } = useCompetitionInfo(
+    competitionId,
+    user?.id,
+  );
 
   const {
     form,

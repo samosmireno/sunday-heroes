@@ -6,7 +6,6 @@ const request = {
   userId: "user-1",
   name: "Sunday League",
   type: CompetitionType.LEAGUE,
-  trackSeasons: false,
   votingEnabled: false,
 };
 

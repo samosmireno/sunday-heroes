@@ -1,6 +1,7 @@
 import { CompetitionSettings } from "@repo/shared-types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ConfirmationDialog from "@/components/ui/confirmation-dialog";
+import SeasonCard from "./season-card";
 import {
   useDeleteCompetition,
   useResetCompetition,
@@ -26,6 +27,8 @@ export default function CompetitionSettingsList({
 
   return (
     <div className="relative space-y-6">
+      <SeasonCard currentSeason={competition.currentSeason} />
+
       <Card className="border-2 border-red-500/50 bg-panel-bg">
         <CardHeader>
           <CardTitle className="text-red-400">Danger Zone</CardTitle>

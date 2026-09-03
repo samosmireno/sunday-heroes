@@ -63,9 +63,12 @@ export const getCompetitionInfo = async (
 ) => {
   try {
     const competitionId = getRequiredQuery(req, "compId");
+    const userId = req.query["userId"]?.toString();
 
-    const competition =
-      await CompetitionService.getCompetitionInfo(competitionId);
+    const competition = await CompetitionService.getCompetitionInfo(
+      competitionId,
+      userId,
+    );
     sendSuccess(res, competition);
   } catch (error) {
     next(error);

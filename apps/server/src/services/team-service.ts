@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { TeamRepo } from "../repositories/team/team-repo";
 import { TeamRosterRepo } from "../repositories/team-roster-repo";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
@@ -15,11 +16,13 @@ export class TeamService {
   static async createTeamInCompetition(
     name: string,
     competitionId: string,
-    userId: string
+    userId: string,
+    tx?: Prisma.TransactionClient
   ) {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       competitionId,
-      userId
+      userId,
+      tx
     );
     if (!hasPermission) {
       throw new AuthorizationError(
@@ -29,7 +32,9 @@ export class TeamService {
 
     const isUnique = await TeamRepo.checkNameUniqueInCompetition(
       name,
-      competitionId
+      competitionId,
+      undefined,
+      tx
     );
     if (!isUnique) {
       throw new ConflictError(
@@ -37,8 +42,8 @@ export class TeamService {
       );
     }
 
-    const team = await TeamRepo.create({ name, createdAt: new Date() });
-    await TeamCompetitionRepo.addTeamToCompetition(team.id, competitionId);
+    const team = await TeamRepo.create({ name, createdAt: new Date() }, tx);
+    await TeamCompetitionRepo.addTeamToCompetition(team.id, competitionId, tx);
 
     return team;
   }

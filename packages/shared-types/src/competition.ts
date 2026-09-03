@@ -1,12 +1,17 @@
 import { CompetitionType, Role } from "./enums";
 import { MatchResponse } from "./match";
 import { PlayerTotals } from "./player";
+import { CurrentSeasonResponse, SeasonResponse } from "./season";
 
 export type CompetitionInfo = {
   id: string;
   name: string;
   type: CompetitionType;
   votingEnabled: boolean;
+  /** PLAYER when the read is made without a user. */
+  userRole: Role;
+  /** Ascending by number. */
+  seasons: SeasonResponse[];
 };
 
 export type CompetitionSettings = {
@@ -19,6 +24,9 @@ export type CompetitionSettings = {
     id: string;
     nickname: string;
   }[];
+  currentSeason: CurrentSeasonResponse;
+  /** Ascending by number. */
+  seasons: SeasonResponse[];
 };
 
 export type CompetitionWithTeams = {

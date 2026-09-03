@@ -1,9 +1,11 @@
 import {
+  CompetitionInfo,
   CompetitionResponse,
   CompetitionType,
   MatchResponse,
   MatchType,
   Role,
+  SeasonResponse,
 } from "@repo/shared-types";
 import { DuelFormData } from "@/features/add-match-form/schemas/types";
 
@@ -20,6 +22,33 @@ export function matchResponse(
     isCompleted: true,
     teams: ["Home", "Away"],
     players: [],
+    ...overrides,
+  };
+}
+
+export function seasonResponse(
+  overrides: Partial<SeasonResponse> = {},
+): SeasonResponse {
+  return {
+    number: 1,
+    startedAt: "2025-09-12T10:00:00.000Z",
+    endedAt: null,
+    matchCount: 0,
+    completedMatchCount: 0,
+    ...overrides,
+  };
+}
+
+export function competitionInfo(
+  overrides: Partial<CompetitionInfo> = {},
+): CompetitionInfo {
+  return {
+    id: "comp-1",
+    name: "Zlatna lopta",
+    type: CompetitionType.DUEL,
+    votingEnabled: false,
+    userRole: Role.PLAYER,
+    seasons: [seasonResponse()],
     ...overrides,
   };
 }

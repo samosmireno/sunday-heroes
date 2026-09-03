@@ -113,8 +113,6 @@ model Competition {
   dashboardId                String
   name                        String
   type                        CompetitionType
-  trackSeasons              Boolean         @default(false)
-  currentSeason             Int             @default(1)
   minPlayers                Int
   votingEnabled             Boolean         @default(false)
   votingPeriodDays         Int?
@@ -128,9 +126,28 @@ model Competition {
   teamCompetitions TeamCompetition[]
   matches       Match[]
   teamRosters  TeamRoster[]
+  seasons       Season[]
 
   @@index([dashboardId])
   @@index([name])
+}
+
+// One open Season per Competition is enforced by a partial unique index on
+// (competitionId) WHERE endedAt IS NULL, written as custom SQL in the migration.
+// The Prisma 6 engine ignores partial indexes; Prisma 7.4+ sees them and an
+// upgrade must redeclare it here or the next migration drops it (ADR 0001).
+model Season {
+  id             String    @id @default(uuid())
+  competitionId String
+  number         Int
+  startedAt     DateTime
+  endedAt       DateTime?
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  matches     Match[]
+
+  @@unique([competitionId, number])
+  @@index([competitionId])
 }
 
 model CompetitionModerator {
@@ -183,6 +200,7 @@ model TeamCompetition {
 model Match {
   id                String      @id @default(uuid())
   competitionId    String
+  seasonId         String
   matchType        MatchType
   date              DateTime?
   homeTeamScore   Int        @default(0)
@@ -199,11 +217,13 @@ model Match {
 
 
   competition    Competition  @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  season         Season       @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   matchTeams    MatchTeam[]
   matchPlayers MatchPlayer[]
   playerVotes   PlayerVote[]
 
   @@index([competitionId])
+  @@index([seasonId])
 }
 
 model MatchTeam {

@@ -1,22 +1,33 @@
 import {
+  CompetitionInfo,
   CompetitionResponse,
   CompetitionSettings,
   CompetitionWithTeams,
+  CurrentSeasonResponse,
   MatchResponse,
   PlayerTotals,
   Role,
+  SeasonResponse,
 } from "@repo/shared-types";
 import {
   CompetitionWithDetails,
+  CompetitionWithInfo,
   CompetitionWithSettings,
   CompetitionWithTeamCompetitions,
 } from "../repositories/competition/types";
 import { Competition } from "@prisma/client";
 import { calculatePlayerScore, calculatePlayerStats } from "./utils";
-import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
+import { CreateCompetitionInput } from "../schemas/create-competition-request-schema";
 
+/** What a competition read must carry to place the user: the admin and the moderators. */
+interface CompetitionWithRoles {
+  dashboard: { adminId: string };
+  moderators: { dashboardPlayer: { userId: string | null } }[];
+}
+
+/** PLAYER when there is no user, the rule every competition read shares. */
 export function getUserRole(
-  competition: CompetitionWithSettings,
+  competition: CompetitionWithRoles,
   userId?: string
 ): Role {
   if (competition.dashboard.adminId === userId) {
@@ -82,9 +93,26 @@ export function transformCompetitionToResponse(
   };
 }
 
+export function transformCompetitionToInfoResponse(
+  competition: CompetitionWithInfo,
+  seasons: SeasonResponse[],
+  userId?: string
+): CompetitionInfo {
+  return {
+    id: competition.id,
+    name: competition.name,
+    type: competition.type as CompetitionResponse["type"],
+    votingEnabled: competition.votingEnabled,
+    userRole: getUserRole(competition, userId),
+    seasons,
+  };
+}
+
 export function transformCompetitionToSettingsResponse(
   competition: CompetitionWithSettings,
-  userId: string
+  userId: string,
+  currentSeason: CurrentSeasonResponse,
+  seasons: SeasonResponse[]
 ): CompetitionSettings {
   return {
     id: competition.id,
@@ -96,6 +124,8 @@ export function transformCompetitionToSettingsResponse(
       id: moderator.id,
       nickname: moderator.dashboardPlayer.nickname,
     })),
+    currentSeason,
+    seasons,
   };
 }
 
@@ -115,7 +145,7 @@ export function transformCompetitionToTeamsResponse(
 }
 
 export function transformAddCompetitionRequestToService(
-  competitionReq: createCompetitionRequest,
+  competitionReq: CreateCompetitionInput,
   dashboardId: string
 ): Omit<Competition, "id"> {
   const competition: Omit<Competition, "id"> = {
@@ -123,14 +153,13 @@ export function transformAddCompetitionRequestToService(
     name: competitionReq.name,
     type: competitionReq.type,
     createdAt: new Date(Date.now()),
-    trackSeasons: competitionReq.trackSeasons,
-    currentSeason: competitionReq.currentSeason ?? 1,
     votingEnabled: competitionReq.votingEnabled,
     votingPeriodDays: competitionReq.votingPeriodDays ?? null,
     knockoutVotingPeriodDays: competitionReq.knockoutVotingPeriodDays ?? null,
     reminderDays: competitionReq.reminderDays ?? null,
     minPlayers: competitionReq.minPlayers ?? 4,
-    isRoundRobin: null,
+    // A League's round-robin choice is remembered for later seasons.
+    isRoundRobin: competitionReq.isRoundRobin ?? null,
   };
 
   return competition;

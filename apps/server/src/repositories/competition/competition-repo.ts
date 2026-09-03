@@ -1,14 +1,15 @@
 import { Competition, Prisma, Role } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
-import { CompetitionInfo } from "@repo/shared-types";
 import {
   COMPETITION_BASIC_INCLUDE,
   COMPETITION_BASIC_SELECT,
   COMPETITION_DETAILED_INCLUDE,
+  COMPETITION_INFO_INCLUDE,
   COMPETITION_SETTINGS_INCLUDE,
   COMPETITION_TEAMS_INCLUDE,
   CompetitionWithDetails,
+  CompetitionWithInfo,
   CompetitionWithSettings,
   CompetitionWithTeamCompetitions,
   CompetitionWithMatches,
@@ -48,19 +49,17 @@ export class CompetitionRepo {
   static async findByIdWithInfo(
     id: string,
     tx?: Prisma.TransactionClient
-  ): Promise<CompetitionInfo | null> {
+  ): Promise<CompetitionWithInfo | null> {
     try {
       const prismaClient = tx || prisma;
-      const comp = await prismaClient.competition.findUnique({
+      return await prismaClient.competition.findUnique({
         where: { id },
-        select: COMPETITION_BASIC_SELECT,
+        include: COMPETITION_INFO_INCLUDE,
       });
-
-      return comp as CompetitionInfo | null;
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionRepo.findByIdWithDetails"
+        "CompetitionRepo.findByIdWithInfo"
       );
     }
   }

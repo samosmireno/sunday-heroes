@@ -32,10 +32,7 @@ export async function createUserWithDashboard(
   return { user, dashboard };
 }
 
-/**
- * The fields every create-competition request needs today. `trackSeasons` goes
- * here alone, so dropping it from the schema (ADR 0001) is a one-line change.
- */
+/** The fields every create-competition request needs. */
 function competitionRequest(fields: {
   userId: string;
   name: string;
@@ -48,7 +45,6 @@ function competitionRequest(fields: {
     userId: fields.userId,
     name: fields.name,
     type: fields.type,
-    trackSeasons: false,
     votingEnabled,
     ...(votingEnabled ? { votingPeriodDays: 7, reminderDays: 3 } : {}),
   };

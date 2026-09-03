@@ -239,10 +239,12 @@ export class TeamCompetitionRepo {
 
   static async addTeamToCompetition(
     teamId: string,
-    competitionId: string
+    competitionId: string,
+    tx?: Prisma.TransactionClient
   ): Promise<TeamCompetition> {
     try {
-      return await prisma.teamCompetition.create({
+      const prismaClient = tx || prisma;
+      return await prismaClient.teamCompetition.create({
         data: {
           teamId,
           competitionId,

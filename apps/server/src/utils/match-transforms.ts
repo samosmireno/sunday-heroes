@@ -122,11 +122,15 @@ export function transformMatchesToMatchesResponse(
   });
 }
 
+/**
+ * The create request never carries a season: the creation service stamps the
+ * Current season inside its transaction.
+ */
 export function transformAddMatchRequestToService(
   match: createMatchRequest,
   competitionVoting?: VotingStatus
-): Omit<Match, "id"> {
-  const matchForService: Omit<Match, "id"> = {
+): Omit<Match, "id" | "seasonId"> {
+  const matchForService: Omit<Match, "id" | "seasonId"> = {
     competitionId: match.competitionId,
     matchType: match.matchType,
     date: match.date ? new Date(match.date) : null,

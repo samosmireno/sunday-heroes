@@ -1,16 +1,25 @@
-import { CompetitionType } from "@prisma/client";
+import { CompetitionType, Prisma, VotingStatus } from "@prisma/client";
+import prisma from "../repositories/prisma-client";
 import { CompetitionRepo } from "../repositories/competition/competition-repo";
+import { MatchRepo } from "../repositories/match/match-repo";
+import { SeasonRepo } from "../repositories/season/season-repo";
+import { isCurrentSeason } from "../repositories/season/types";
 import { CompetitionQueryRepo } from "../repositories/competition/competition-query-repo";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import {
   transformCompetitionToResponse,
   transformAddCompetitionRequestToService,
+  transformCompetitionToInfoResponse,
   transformCompetitionToSettingsResponse,
   transformCompetitionToTeamsResponse,
 } from "../utils/competition-transforms";
+import {
+  transformCurrentSeasonToResponse,
+  transformSeasonToResponse,
+} from "../utils/season-transforms";
 import { transformDashboardCompetitionsToDetailedResponse } from "../utils/dashboard-transforms";
 import { DashboardService } from "./dashboard-service";
-import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
+import { CreateCompetitionInput } from "../schemas/create-competition-request-schema";
 import { TeamService } from "./team-service";
 import { AuthorizationError, NotFoundError } from "../utils/errors";
 import { DashboardPlayerService } from "./dashboard-player-service";
@@ -35,21 +44,49 @@ export class CompetitionService {
     return transformCompetitionToResponse(competition, userId);
   }
 
-  static async getCompetitionInfo(competitionId: string) {
-    const competition = await CompetitionRepo.findByIdWithInfo(competitionId);
+  static async getCompetitionInfo(competitionId: string, userId?: string) {
+    const [competition, seasons] = await Promise.all([
+      CompetitionRepo.findByIdWithInfo(competitionId),
+      SeasonRepo.listWithCounts(competitionId),
+    ]);
     if (!competition) {
       throw new NotFoundError("Competition");
     }
-    return competition;
+    return transformCompetitionToInfoResponse(
+      competition,
+      seasons.map(transformSeasonToResponse),
+      userId
+    );
   }
 
   static async getCompetitionSettings(competitionId: string, userId: string) {
-    const competition =
-      await CompetitionRepo.findByIdWithSettings(competitionId);
+    const [competition, seasons] = await Promise.all([
+      CompetitionRepo.findByIdWithSettings(competitionId),
+      SeasonRepo.listWithCounts(competitionId),
+    ]);
     if (!competition) {
       throw new NotFoundError("Competition");
     }
-    return transformCompetitionToSettingsResponse(competition, userId);
+
+    const currentSeason = seasons.find(isCurrentSeason);
+    if (!currentSeason) {
+      throw new NotFoundError("Season");
+    }
+
+    const openVotingCount = await MatchRepo.countBySeasonId(currentSeason.id, {
+      votingStatus: VotingStatus.OPEN,
+    });
+
+    return transformCompetitionToSettingsResponse(
+      competition,
+      userId,
+      transformCurrentSeasonToResponse(currentSeason, {
+        notCompletedCount:
+          currentSeason.matchCount - currentSeason.completedMatchCount,
+        openVotingCount,
+      }),
+      seasons.map(transformSeasonToResponse)
+    );
   }
 
   static async getCompetitionTeams(competitionId: string) {
@@ -110,7 +147,15 @@ export class CompetitionService {
     };
   }
 
-  static async createCompetition(data: createCompetitionRequest) {
+  /**
+   * Creates the Competition and its Season 1 together: every Competition is in
+   * Season 1 from creation, started at the Competition's `createdAt` (ADR 0001).
+   * Callers that need more in the same transaction (League creation) pass `tx`.
+   */
+  static async createCompetition(
+    data: CreateCompetitionInput,
+    tx?: Prisma.TransactionClient
+  ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(
       data.userId
     );
@@ -122,7 +167,21 @@ export class CompetitionService {
       data,
       dashboardId
     );
-    return await CompetitionRepo.create(competitionToAdd);
+
+    const createWithSeason = async (client: Prisma.TransactionClient) => {
+      const competition = await CompetitionRepo.create(competitionToAdd, client);
+      await SeasonRepo.create(
+        {
+          competitionId: competition.id,
+          number: 1,
+          startedAt: competition.createdAt,
+        },
+        client
+      );
+      return competition;
+    };
+
+    return tx ? createWithSeason(tx) : prisma.$transaction(createWithSeason);
   }
 
   static async resetCompetition(competitionId: string, userId: string) {

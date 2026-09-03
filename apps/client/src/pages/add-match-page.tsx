@@ -5,13 +5,18 @@ import Loading from "../components/ui/loading";
 import SubmitSpinner from "../components/ui/submit-spinner";
 import { MatchFormContent } from "@/features/add-match-form/match-form-content";
 import { useCompetitionInfo } from "@/features/competition/use-competition-info";
+import { useAuth } from "@/context/auth-context";
 
 export default function AddMatchPage() {
   const { competitionId } = useParams<{ competitionId: string }>() as {
     competitionId: string;
   };
 
-  const { competition, isLoading } = useCompetitionInfo(competitionId);
+  const { user } = useAuth();
+  const { competition, isLoading } = useCompetitionInfo(
+    competitionId,
+    user?.id,
+  );
 
   const { form, formSchema, isSubmitting, handleSubmit } = useAddMatch(
     competition?.type,

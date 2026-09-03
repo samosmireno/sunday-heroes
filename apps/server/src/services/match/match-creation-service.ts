@@ -13,6 +13,7 @@ import { DashboardPlayerService } from "../dashboard-player-service";
 import { MatchService } from "./match-service";
 import { LeagueService } from "../league-service";
 import { NotFoundError } from "../../utils/errors";
+import { SeasonRepo } from "../../repositories/season/season-repo";
 
 export class MatchCreationService {
   static async createMatch(data: createMatchRequest) {
@@ -30,7 +31,16 @@ export class MatchCreationService {
     );
 
     return await prisma.$transaction(async (tx) => {
-      const match = await MatchRepo.create(matchToAdd, tx);
+      // A new Match always lands in the Current season.
+      const currentSeason = await SeasonRepo.findCurrent(data.competitionId, tx);
+      if (!currentSeason) {
+        throw new NotFoundError("Season");
+      }
+
+      const match = await MatchRepo.create(
+        { ...matchToAdd, seasonId: currentSeason.id },
+        tx
+      );
 
       await this.createMatchTeams(match.id, hometeamID, awayteamID, tx);
       const dashboardPlayers = await MatchPlayerService.createMatchPlayers(

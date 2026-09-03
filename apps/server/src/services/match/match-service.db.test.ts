@@ -5,6 +5,7 @@ import {
   createDuelMatch,
   createUserWithDashboard,
 } from "../../../test/factories";
+import { SeasonRepo } from "../../repositories/season/season-repo";
 import { CompetitionService } from "../competition-service";
 import { MatchService } from "./match-service";
 
@@ -41,6 +42,19 @@ describe("Duel Match creation", () => {
       "Bea",
       "Cal",
       "Dan",
+    ]);
+  });
+
+  it("stamps a new Match with the Current season although the request carries none", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition } = await createDuel({ userId: user.id });
+
+    const created = await createDuelMatch({ competitionId: competition.id });
+
+    const current = await SeasonRepo.findCurrent(competition.id);
+    expect(created.seasonId).toBe(current?.id);
+    expect(await SeasonRepo.listWithCounts(competition.id)).toEqual([
+      expect.objectContaining({ number: 1, matchCount: 1 }),
     ]);
   });
 });

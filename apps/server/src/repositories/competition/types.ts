@@ -20,6 +20,23 @@ export const COMPETITION_LIST_SELECT = {
   dashboardId: true,
 } satisfies Prisma.CompetitionSelect;
 
+export const COMPETITION_INFO_INCLUDE = {
+  dashboard: {
+    select: {
+      adminId: true,
+    },
+  },
+  moderators: {
+    select: {
+      dashboardPlayer: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.CompetitionInclude;
+
 export const COMPETITION_SETTINGS_INCLUDE = {
   dashboard: {
     select: {
@@ -104,6 +121,10 @@ export type CompetitionBasic = Prisma.CompetitionGetPayload<{
 
 export type CompetitionListSelect = Prisma.CompetitionGetPayload<{
   select: typeof COMPETITION_LIST_SELECT;
+}>;
+
+export type CompetitionWithInfo = Prisma.CompetitionGetPayload<{
+  include: typeof COMPETITION_INFO_INCLUDE;
 }>;
 
 export type CompetitionWithSettings = Prisma.CompetitionGetPayload<{

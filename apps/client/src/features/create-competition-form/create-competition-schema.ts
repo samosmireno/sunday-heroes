@@ -9,7 +9,6 @@ export const CreateCompetitionFormSchema = z
   .object({
     name: z.string().min(1).max(30).trim(),
     type: z.nativeEnum(CompetitionType),
-    trackSeasons: z.boolean().default(false),
     votingEnabled: z.boolean().default(false),
     votingPeriodDays: z.coerce.number().min(0).nonnegative().optional(),
     reminderDays: z.coerce.number().min(0).nonnegative().optional(),

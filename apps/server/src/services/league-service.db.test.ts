@@ -6,6 +6,7 @@ import {
   markCompleted,
   setFixtureScore,
 } from "../../test/factories";
+import { SeasonRepo } from "../repositories/season/season-repo";
 import { LeagueService } from "./league-service";
 import { MatchService } from "./match/match-service";
 
@@ -47,6 +48,39 @@ describe("LeagueService.createLeague", () => {
     });
 
     expect(await countFixtures(competition.id)).toBe(12);
+  });
+
+  it("puts the League in an open Season 1 and stamps every initial Fixture with it", async () => {
+    const { user } = await createUserWithDashboard();
+
+    const { competition, fixtures } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 4,
+    });
+
+    expect(await SeasonRepo.listWithCounts(competition.id)).toEqual([
+      expect.objectContaining({
+        number: 1,
+        startedAt: competition.createdAt,
+        endedAt: null,
+        matchCount: 6,
+        completedMatchCount: 0,
+      }),
+    ]);
+    const current = await SeasonRepo.findCurrent(competition.id);
+    expect(fixtures.map((fixture) => fixture.match.seasonId)).toEqual(
+      Array(6).fill(current?.id),
+    );
+  });
+
+  it("remembers the round-robin choice on the League", async () => {
+    const { user } = await createUserWithDashboard();
+
+    const single = await createLeague({ userId: user.id, isRoundRobin: false });
+    const double = await createLeague({ userId: user.id, isRoundRobin: true });
+
+    expect(single.competition.isRoundRobin).toBe(false);
+    expect(double.competition.isRoundRobin).toBe(true);
   });
 });
 

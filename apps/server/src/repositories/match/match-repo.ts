@@ -131,6 +131,21 @@ export class MatchRepo {
     }
   }
 
+  static async countBySeasonId(
+    seasonId: string,
+    filter: { votingStatus?: VotingStatus } = {},
+    tx?: Prisma.TransactionClient
+  ): Promise<number> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.match.count({
+        where: { seasonId, ...filter },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "MatchRepo.countBySeasonId");
+    }
+  }
+
   static async findByDashboardId(
     dashboardId: string,
     options?: { limit?: number; offset?: number },

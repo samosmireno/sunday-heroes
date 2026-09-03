@@ -25,7 +25,6 @@ export function useCreateCompetition() {
     defaultValues: {
       name: "",
       type: undefined,
-      trackSeasons: false,
       votingEnabled: false,
       votingPeriodDays: "" as unknown as number,
       reminderDays: "" as unknown as number,

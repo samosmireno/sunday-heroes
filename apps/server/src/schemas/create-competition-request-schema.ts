@@ -6,8 +6,6 @@ export const createCompetitionRequestSchema = z
     userId: z.string(),
     name: z.string(),
     type: z.nativeEnum(CompetitionType),
-    trackSeasons: z.boolean(),
-    currentSeason: z.coerce.number().min(1).optional(),
     minPlayers: z.coerce.number().min(4).optional(),
     votingEnabled: z.boolean(),
     votingPeriodDays: z.coerce.number().optional(),
@@ -37,3 +35,8 @@ export const createCompetitionRequestSchema = z
 export type createCompetitionRequest = z.infer<
   typeof createCompetitionRequestSchema
 >;
+
+/** What competition creation consumes: the request, plus a League's round-robin choice. */
+export type CreateCompetitionInput = createCompetitionRequest & {
+  isRoundRobin?: boolean;
+};
