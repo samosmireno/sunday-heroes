@@ -2,21 +2,31 @@ import { useParams } from "react-router-dom";
 import { useCompetition } from "../features/competition/use-competition";
 import ErrorPage from "./error-page";
 import Header from "@/components/ui/header";
+import Loading from "@/components/ui/loading";
 import { CompetitionProvider } from "../context/competition-context";
 import DuelCompetitionPage from "./duel-competition-page";
 import { CompetitionType } from "@repo/shared-types";
 import { useAuth } from "@/context/auth-context";
 import LeagueCompetitionPage from "./league-competition/league-competition-page";
 import CompetitionAdminPageSkeleton from "@/features/competition-admin/competition-admin-page-skeleton";
+import { useCompetitionInfo } from "@/features/competition/use-competition-info";
+import { useSeasonParam } from "@/features/competition/use-season-param";
+import SeasonSelect from "@/features/competition/season-select";
+import PastSeasonBanner from "@/features/competition/past-season-banner";
 
 function CompetitionPage() {
   const { user } = useAuth();
   const { competitionId } = useParams<{ competitionId: string }>() as {
     competitionId: string;
   };
+  const { competition: info } = useCompetitionInfo(competitionId, user?.id);
+  const { setSelection, ...seasonState } = useSeasonParam(info?.seasons);
+  const { selection, selectedSeason, current, seasons, isPast, showSelector } =
+    seasonState;
   const { competition, isLoading, refetch } = useCompetition(
     competitionId,
     user?.id,
+    seasonState.season,
   );
 
   const renderCompetitionPage = () => {
@@ -38,8 +48,35 @@ function CompetitionPage() {
     }
   };
 
+  const title = info?.name ?? competition?.name;
+  const header = title !== undefined && (
+    <Header
+      title={title}
+      hasSidebar={!!user}
+      actions={
+        showSelector &&
+        selection !== undefined && (
+          <SeasonSelect
+            seasons={seasons}
+            value={selection}
+            onChange={setSelection}
+          />
+        )
+      }
+    />
+  );
+
   if (isLoading) {
-    return <CompetitionAdminPageSkeleton />;
+    // A season switch keeps the header and its selector in place.
+    if (!info) {
+      return <CompetitionAdminPageSkeleton />;
+    }
+    return (
+      <div className="flex-1 p-6">
+        {header}
+        <Loading text="Loading matches..." />
+      </div>
+    );
   }
 
   if (!competition || !competitionId) {
@@ -47,9 +84,18 @@ function CompetitionPage() {
   }
 
   return (
-    <CompetitionProvider value={{ competition, isLoading, refetch }}>
+    <CompetitionProvider
+      value={{ competition, isLoading, refetch, ...seasonState }}
+    >
       <div className="flex-1 p-6">
-        <Header title={competition.name} hasSidebar={!!user} />
+        {header}
+        {isPast && selectedSeason && current !== undefined && (
+          <PastSeasonBanner
+            season={selectedSeason}
+            current={current}
+            onBack={() => setSelection(current)}
+          />
+        )}
         {renderCompetitionPage()}
       </div>
     </CompetitionProvider>

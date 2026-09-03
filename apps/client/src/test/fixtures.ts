@@ -24,6 +24,7 @@ export function matchResponse(
     isCompleted: true,
     teams: ["Home", "Away"],
     players: [],
+    season: { number: 1, isClosed: false },
     ...overrides,
   };
 }

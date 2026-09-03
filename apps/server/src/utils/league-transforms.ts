@@ -1,4 +1,5 @@
 import {
+  LeagueMatchResponse,
   LeaguePlayerTotals,
   LeagueTeamResponse,
   MatchResponse,
@@ -6,30 +7,13 @@ import {
 import { CompetitionWithDetails } from "../repositories/competition/types";
 import { MatchWithDetails } from "../repositories/match/types";
 import { calculateLeaguePlayerStats, calculatePlayerScore } from "./utils";
+import { transformMatchSeasonToResponse } from "./season-transforms";
 import { TeamCompetitionWithDetails } from "../repositories/team-competition-repo";
 
-interface LeagueMatch {
-  id: string;
-  homeTeam: {
-    id: string;
-    name: string;
-  };
-  awayTeam: {
-    id: string;
-    name: string;
-  };
-  homeScore: number;
-  awayScore: number;
-  date: string | null;
-  round: number;
-  votingStatus: string;
-  isCompleted: boolean;
-}
-
 export function transformLeagueFixtureToResponse(
-  fixture: Record<number, MatchWithDetails[]>
-): Record<number, LeagueMatch[]> {
-  const transformedFixtures: Record<number, LeagueMatch[]> = {};
+  fixture: Record<number, MatchWithDetails[]>,
+): Record<number, LeagueMatchResponse[]> {
+  const transformedFixtures: Record<number, LeagueMatchResponse[]> = {};
 
   for (const [round, matches] of Object.entries(fixture)) {
     transformedFixtures[Number(round)] = matches.map((match) => ({
@@ -37,10 +21,12 @@ export function transformLeagueFixtureToResponse(
       homeTeam: {
         id: match.matchTeams[0].teamId,
         name: match.matchTeams[0].team.name,
+        score: match.homeTeamScore,
       },
       awayTeam: {
         id: match.matchTeams[1].teamId,
         name: match.matchTeams[1].team.name,
+        score: match.awayTeamScore,
       },
       homeScore: match.homeTeamScore,
       awayScore: match.awayTeamScore,
@@ -48,6 +34,8 @@ export function transformLeagueFixtureToResponse(
       round: match.round,
       votingStatus: match.votingStatus,
       isCompleted: match.isCompleted,
+      videoUrl: match.videoUrl ?? undefined,
+      season: transformMatchSeasonToResponse(match.season),
     }));
   }
 
@@ -55,7 +43,7 @@ export function transformLeagueFixtureToResponse(
 }
 
 export function transformCompetitionToPlayerStatsResponse(
-  competition: CompetitionWithDetails
+  competition: CompetitionWithDetails,
 ): LeaguePlayerTotals[] {
   const matches: MatchResponse[] = competition.matches.map((match) => {
     return {
@@ -84,6 +72,7 @@ export function transformCompetitionToPlayerStatsResponse(
           manOfTheMatch: player.isMotm,
         };
       }),
+      season: transformMatchSeasonToResponse(match.season),
     };
   });
 
@@ -93,7 +82,7 @@ export function transformCompetitionToPlayerStatsResponse(
 }
 
 export function transformTeamCompetitionToStandingsResponse(
-  teamCompetition: TeamCompetitionWithDetails[]
+  teamCompetition: TeamCompetitionWithDetails[],
 ): LeagueTeamResponse[] {
   const standings = teamCompetition.map((tc) => {
     const team = tc.team;

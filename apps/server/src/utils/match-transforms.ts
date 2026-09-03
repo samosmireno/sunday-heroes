@@ -7,10 +7,11 @@ import {
 import { MatchWithDetails } from "../repositories/match/types";
 import { Match, VotingStatus } from "@prisma/client";
 import { calculatePendingVotes, calculatePlayerScore } from "./utils";
+import { transformMatchSeasonToResponse } from "./season-transforms";
 import { createMatchRequest } from "../schemas/create-match-request-schema";
 
 function sortPlayersHomeAwayByPosition(
-  players: PlayerResponse[]
+  players: PlayerResponse[],
 ): PlayerResponse[] {
   const homePlayers = players
     .filter((player) => player.isHome === true)
@@ -23,7 +24,7 @@ function sortPlayersHomeAwayByPosition(
 }
 
 export function transformMatchServiceToResponse(
-  match: MatchWithDetails
+  match: MatchWithDetails,
 ): MatchResponse {
   const mappedPlayers = match.matchPlayers.map((player) => ({
     id: player.dashboardPlayer.id,
@@ -53,6 +54,7 @@ export function transformMatchServiceToResponse(
     players: sortedPlayers,
     isCompleted: match.isCompleted,
     videoUrl: match.videoUrl ?? undefined,
+    season: transformMatchSeasonToResponse(match.season),
   };
 
   return transformedData;
@@ -60,7 +62,7 @@ export function transformMatchServiceToResponse(
 
 export function transformMatchesToMatchesResponse(
   userId: string,
-  matches: MatchWithDetails[]
+  matches: MatchWithDetails[],
 ): MatchPageResponse[] {
   return matches.map((match) => {
     const homeTeamPlayers: PlayerResponse[] = match.matchPlayers
@@ -116,6 +118,7 @@ export function transformMatchesToMatchesResponse(
       competitionType: match.competition.type as CompetitionResponse["type"],
       isAdmin: match.competition.dashboard.adminId === userId,
       videoUrl: match.videoUrl ?? undefined,
+      season: transformMatchSeasonToResponse(match.season),
     };
 
     return res;
@@ -128,7 +131,7 @@ export function transformMatchesToMatchesResponse(
  */
 export function transformAddMatchRequestToService(
   match: createMatchRequest,
-  competitionVoting?: VotingStatus
+  competitionVoting?: VotingStatus,
 ): Omit<Match, "id" | "seasonId"> {
   const matchForService: Omit<Match, "id" | "seasonId"> = {
     competitionId: match.competitionId,

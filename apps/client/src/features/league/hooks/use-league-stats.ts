@@ -5,15 +5,22 @@ import { LeaguePlayerTotals } from "@repo/shared-types";
 import { useMemo } from "react";
 import { useErrorHandler } from "../../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../../hooks/use-error-handler/types";
+import { SeasonParam } from "@/features/competition/use-season-param";
 
-export const useLeagueStats = (competitionId: string) => {
+/** Player totals over the selected season; `season` is the URL value, passed through verbatim. */
+export const useLeagueStats = (competitionId: string, season?: SeasonParam) => {
   const { handleError } = useErrorHandler();
   const fetchLeagueStats = async (
     competitionId: string,
+    season?: SeasonParam,
   ): Promise<LeaguePlayerTotals[]> => {
     try {
+      const query =
+        season === undefined
+          ? ""
+          : `?${new URLSearchParams({ season: String(season) })}`;
       const { data } = await axios.get(
-        `${config.server}/api/leagues/${competitionId}/stats`,
+        `${config.server}/api/leagues/${competitionId}/stats${query}`,
       );
       return data;
     } catch (error) {
@@ -27,8 +34,8 @@ export const useLeagueStats = (competitionId: string) => {
   };
 
   const leagueStatsQuery = useQuery({
-    queryKey: ["leagueStats", { competitionId }],
-    queryFn: () => fetchLeagueStats(competitionId),
+    queryKey: ["leagueStats", { competitionId, season }],
+    queryFn: () => fetchLeagueStats(competitionId, season),
     enabled: !!competitionId,
     staleTime: 5 * 60 * 1000,
   });

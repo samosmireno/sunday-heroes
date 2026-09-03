@@ -9,6 +9,7 @@ import LeagueMatchDetails from "./league-match-details";
 import SeasonBeingSetUp from "./season-being-set-up";
 import { useCompleteMatch } from "@/features/league/hooks/use-complete-match";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCompetitionContext } from "@/context/competition-context";
 
 interface LeagueMatchListProps {
   competitionId: string;
@@ -23,12 +24,20 @@ export default function LeagueMatchList({
     useState<LeagueMatchResponse | null>(null);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { season } = useCompetitionContext();
 
-  const { leagueFixtures, isFixturesLoading } =
-    useLeagueFixtures(competitionId);
+  const { leagueFixtures, isFixturesLoading } = useLeagueFixtures(
+    competitionId,
+    season,
+  );
   const { match, isMatchLoading, isMatchCompleted, isMatchUnfinished } =
     useMatchDetails(selectedMatch?.id || "");
   const completeMatchMutation = useCompleteMatch(competitionId);
+
+  // The details panel never shows a match from another season.
+  useEffect(() => {
+    setSelectedMatch(null);
+  }, [season]);
 
   const rounds = Object.keys(leagueFixtures)
     .map(Number)

@@ -1,4 +1,4 @@
-import { Role } from "@repo/shared-types";
+import { PlayerTotals, Role } from "@repo/shared-types";
 import { describe, expect, it } from "vitest";
 import {
   createDuel,
@@ -136,5 +136,74 @@ describe("CompetitionService.getCompetitionStats", () => {
       "all",
     );
     expect(all.matches).toHaveLength(1);
+  });
+
+  it("tags each Match with its Season and totals each Season's players on its own after a rollover", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, seasonOneMatch } = await createDuelWithClosedSeason({
+      userId: user.id,
+    });
+    const seasonTwoMatch = await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-02-20",
+      homeTeamScore: 3,
+      awayTeamScore: 0,
+      players: [
+        { nickname: "Ana", goals: 3, assists: 0, position: 1, isHome: true },
+        { nickname: "Eva", goals: 0, assists: 0, position: 1, isHome: false },
+      ],
+    });
+    const totals = (stats: { playerStats: PlayerTotals[] }) =>
+      stats.playerStats
+        .map(({ nickname, matches, goals }) => ({ nickname, matches, goals }))
+        .sort((a, b) => a.nickname.localeCompare(b.nickname));
+
+    const seasonOne = await CompetitionService.getCompetitionStats(
+      competition.id,
+      user.id,
+      1,
+    );
+    expect(seasonOne.matches).toEqual([
+      expect.objectContaining({
+        id: seasonOneMatch.id,
+        season: { number: 1, isClosed: true },
+      }),
+    ]);
+    expect(totals(seasonOne)).toEqual([
+      { nickname: "Ana", matches: 1, goals: 1 },
+      { nickname: "Bea", matches: 1, goals: 1 },
+      { nickname: "Cal", matches: 1, goals: 1 },
+      { nickname: "Dan", matches: 1, goals: 0 },
+    ]);
+
+    const current = await CompetitionService.getCompetitionStats(
+      competition.id,
+      user.id,
+    );
+    expect(current.matches).toEqual([
+      expect.objectContaining({
+        id: seasonTwoMatch.id,
+        season: { number: 2, isClosed: false },
+      }),
+    ]);
+    expect(totals(current)).toEqual([
+      { nickname: "Ana", matches: 1, goals: 3 },
+      { nickname: "Eva", matches: 1, goals: 0 },
+    ]);
+
+    const all = await CompetitionService.getCompetitionStats(
+      competition.id,
+      user.id,
+      "all",
+    );
+    expect(all.matches.map((match) => match.season)).toEqual([
+      { number: 2, isClosed: false },
+      { number: 1, isClosed: true },
+    ]);
+    expect(totals(all)).toContainEqual({
+      nickname: "Ana",
+      matches: 2,
+      goals: 4,
+    });
   });
 });

@@ -7,6 +7,7 @@ import ConfirmDeleteModal from "./confirm-delete-modal";
 import { config } from "@/config/config";
 import { useCompetitionContext } from "@/context/competition-context";
 import { Role } from "@repo/shared-types";
+import { seasonName } from "@/features/competition/season-labels";
 
 interface MatchProps {
   matchId: string;
@@ -19,6 +20,8 @@ interface MatchProps {
   refetchMatches: () => void;
   userRole: Role;
   videoUrl?: string;
+  /** The Match's Season number, shown as a tag under All seasons. */
+  seasonTag?: number;
 }
 
 export default function MatchResult({
@@ -31,6 +34,7 @@ export default function MatchResult({
   refetchMatches,
   userRole,
   videoUrl,
+  seasonTag,
 }: MatchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -66,6 +70,11 @@ export default function MatchResult({
   return (
     <div className="w-full">
       <div className="relative mb-3 rounded-lg border-2 border-accent bg-secondary p-3 text-center shadow-inner sm:mb-4 sm:p-4 md:mb-6 md:p-6">
+        {seasonTag !== undefined && (
+          <span className="absolute left-2 top-2 rounded bg-bg/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent/80">
+            {seasonName(seasonTag)}
+          </span>
+        )}
         <div className="flex w-full flex-col">
           <div className="mb-3 flex items-center justify-center gap-4 text-2xl font-bold sm:mb-4 sm:text-3xl md:mb-6 md:text-4xl">
             <div className="flex flex-col gap-2 text-center sm:gap-3 md:gap-4">

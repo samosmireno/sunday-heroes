@@ -11,8 +11,11 @@ import {
 
 interface StatsTableProps {
   playerStats: PlayerTotals[];
+  /** The percentage filter's denominator. */
   totalMatches: number;
   votingEnabled?: boolean;
+  /** Which matches `totalMatches` counts, under the heading. */
+  caption?: string;
 }
 
 const MATCH_PERCENTAGE_OPTIONS = [
@@ -32,6 +35,7 @@ export default function StatsTable({
   playerStats,
   totalMatches,
   votingEnabled,
+  caption,
 }: StatsTableProps) {
   const [matchPercent, setMatchPercent] = useState<string>("all");
 
@@ -95,6 +99,7 @@ export default function StatsTable({
           </Select>
         </div>
       </div>
+      {caption && <p className="-mt-4 mb-4 text-xs text-gray-400">{caption}</p>}
       <div className="relative overflow-x-auto">
         <table className="w-full">
           <thead>

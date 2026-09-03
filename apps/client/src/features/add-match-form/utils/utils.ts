@@ -1,5 +1,13 @@
-import { MatchResponse, MatchType, Team } from "@repo/shared-types";
+import {
+  MatchResponse,
+  MatchSeason,
+  MatchType,
+  Team,
+} from "@repo/shared-types";
 import { PartialDuelFormData } from "../schemas/types";
+
+/** A preview is not stored, so it is in no Season; the football field never reads one. */
+const PREVIEW_SEASON: MatchSeason = { number: 0, isClosed: false };
 
 const generateRandomId = () => {
   const characters =
@@ -46,6 +54,7 @@ export const createFootballFieldMatch = (
       round: 0,
       teams: [],
       isCompleted: false,
+      season: PREVIEW_SEASON,
     };
   }
 
@@ -95,5 +104,6 @@ export const createFootballFieldMatch = (
     round: 0,
     teams: ["Home Team", "Away Team"],
     isCompleted: false,
+    season: PREVIEW_SEASON,
   };
 };

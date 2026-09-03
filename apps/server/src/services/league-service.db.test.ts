@@ -17,6 +17,7 @@ import { AuthorizationError } from "../utils/errors";
 import { LeagueService } from "./league-service";
 import { MatchService } from "./match/match-service";
 import { SeasonService } from "./season-service";
+import { transformLeagueFixtureToResponse } from "../utils/league-transforms";
 
 async function countFixtures(competitionId: string) {
   const fixturesByRound = await LeagueService.getLeagueFixtures(competitionId);
@@ -210,6 +211,22 @@ describe("Season filter on the League reads", () => {
     expect(seasonOne.map((player) => player.nickname).sort()).toEqual([
       "Ana",
       "Bo",
+    ]);
+  });
+
+  it("the fixtures read tags every Fixture with its Season, closed once the Season is a Past season", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition } = await createLeagueWithClosedSeason({
+      userId: user.id,
+      numberOfTeams: 2,
+    });
+
+    const seasonOne = transformLeagueFixtureToResponse(
+      await LeagueService.getLeagueFixtures(competition.id, 1),
+    );
+
+    expect(Object.values(seasonOne).flat()).toEqual([
+      expect.objectContaining({ season: { number: 1, isClosed: true } }),
     ]);
   });
 });

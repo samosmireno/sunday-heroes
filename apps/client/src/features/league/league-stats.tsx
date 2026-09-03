@@ -3,6 +3,7 @@ import Loading from "@/components/ui/loading";
 import { useLeagueStats } from "@/features/league/hooks/use-league-stats";
 import TopPerformers from "./top-performers";
 import PlayerStatsTable from "./player-stats-table";
+import { useCompetitionContext } from "@/context/competition-context";
 
 interface LeagueStatsProps {
   competitionId: string;
@@ -13,8 +14,9 @@ export default function LeagueStats({
   competitionId,
   votingEnabled,
 }: LeagueStatsProps) {
+  const { season } = useCompetitionContext();
   const { players, topScorer, topAssister, topRated, isLoading, error } =
-    useLeagueStats(competitionId);
+    useLeagueStats(competitionId, season);
 
   if (isLoading) {
     return (

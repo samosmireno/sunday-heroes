@@ -1,7 +1,9 @@
 import { createContext, useContext, ReactNode } from "react";
 import { CompetitionResponse } from "@repo/shared-types";
+import { SeasonSelectionState } from "@/features/competition/use-season-param";
 
-interface CompetitionContextType {
+/** The competition read and the season selection every view on the page follows. */
+interface CompetitionContextType extends SeasonSelectionState {
   competition: CompetitionResponse | null;
   isLoading: boolean;
   refetch: () => void;

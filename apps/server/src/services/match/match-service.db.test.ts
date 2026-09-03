@@ -106,4 +106,44 @@ describe("MatchService.getMatchesForUser", () => {
     });
     expect(all.totalCount).toBe(1);
   });
+
+  it("tags each Match with its Season so the user-wide list can show a Past season's Match as closed", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, seasonOneMatch } = await createDuelWithClosedSeason({
+      userId: user.id,
+    });
+    const seasonTwoMatch = await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-02-20",
+    });
+
+    const { matches } = await MatchService.getMatchesForUser(user.id, {
+      competitionId: competition.id,
+      season: "all",
+    });
+
+    expect(matches.map(({ id, season }) => ({ id, season }))).toEqual([
+      { id: seasonTwoMatch.id, season: { number: 2, isClosed: false } },
+      { id: seasonOneMatch.id, season: { number: 1, isClosed: true } },
+    ]);
+  });
+});
+
+describe("MatchService.getMatchById", () => {
+  it("tags the Match with its Season, closed after a rollover", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, seasonOneMatch } = await createDuelWithClosedSeason({
+      userId: user.id,
+    });
+    const seasonTwoMatch = await createDuelMatch({
+      competitionId: competition.id,
+    });
+
+    expect(
+      (await MatchService.getMatchById(seasonOneMatch.id))?.season,
+    ).toEqual({ number: 1, isClosed: true });
+    expect(
+      (await MatchService.getMatchById(seasonTwoMatch.id))?.season,
+    ).toEqual({ number: 2, isClosed: false });
+  });
 });

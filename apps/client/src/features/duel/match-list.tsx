@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MatchResponse, Role } from "@repo/shared-types";
+import { useCompetitionContext } from "@/context/competition-context";
+import { addMatchHint } from "@/features/competition/season-labels";
 
 interface MatchListProps {
   userRole: Role;
@@ -31,6 +33,12 @@ export default function MatchList({
   const { competitionId } = useParams<{
     competitionId: string;
   }>();
+  const {
+    season,
+    current: currentSeason,
+    isPast,
+    isAll,
+  } = useCompetitionContext();
 
   const sortedMatchIndexes = matches
     .map((match, index) => ({ match, index }))
@@ -69,15 +77,24 @@ export default function MatchList({
         >
           Match Results
         </h2>
-        {userRole !== Role.PLAYER && (
-          <Link to={`/add-match/${competitionId}`}>
-            <Button className="transform rounded bg-accent px-4 py-2 font-bold uppercase text-bg shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent">
-              Add Match
-            </Button>
-          </Link>
-        )}
+        {userRole !== Role.PLAYER &&
+          (isPast ? (
+            currentSeason !== undefined && (
+              <span className="text-xs text-gray-400">
+                {addMatchHint(currentSeason)}
+              </span>
+            )
+          ) : (
+            <Link to={`/add-match/${competitionId}`}>
+              <Button className="transform rounded bg-accent px-4 py-2 font-bold uppercase text-bg shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent">
+                Add Match
+              </Button>
+            </Link>
+          ))}
       </div>
+      {/* Keyed by season so a switch starts the carousel at the newest match again. */}
       <Carousel
+        key={String(season)}
         className="flex w-full max-w-xs flex-row items-center justify-center self-center py-2 sm:max-w-sm sm:py-4 md:max-w-xl"
         setApi={setApi}
       >
@@ -119,6 +136,7 @@ export default function MatchList({
                       refetchMatches={refetchMatches}
                       userRole={userRole}
                       videoUrl={match.videoUrl}
+                      seasonTag={isAll ? match.season.number : undefined}
                     />
                   </CarouselItem>
                 );
@@ -126,7 +144,7 @@ export default function MatchList({
           </CarouselContent>
         ) : (
           <div className="w-full rounded-lg bg-primary/20 py-4 text-center text-sm sm:text-base">
-            Add your first match
+            {isPast ? "No matches in this season" : "Add your first match"}
           </div>
         )}
 

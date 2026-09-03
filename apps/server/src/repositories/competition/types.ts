@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { MATCH_SEASON_SELECT } from "../match/types";
 
 export const COMPETITION_BASIC_INCLUDE = {
   matches: true,
@@ -104,6 +105,7 @@ export const COMPETITION_DETAILED_INCLUDE = {
         },
       },
       playerVotes: true,
+      season: MATCH_SEASON_SELECT,
     },
     orderBy: {
       date: "desc",

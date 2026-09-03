@@ -1,6 +1,15 @@
 import { Prisma } from "@prisma/client";
 
+/** What a Match read needs to tag the Match with its Season (number, open or closed). */
+export const MATCH_SEASON_SELECT = {
+  select: {
+    number: true,
+    endedAt: true,
+  },
+} satisfies Prisma.SeasonDefaultArgs;
+
 export const MATCH_DETAILED_INCLUDE = {
+  season: MATCH_SEASON_SELECT,
   matchPlayers: {
     include: {
       dashboardPlayer: {

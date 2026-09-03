@@ -1,5 +1,20 @@
-import { CurrentSeasonResponse, SeasonResponse } from "@repo/shared-types";
-import { SeasonWithCounts } from "../repositories/season/types";
+import {
+  CurrentSeasonResponse,
+  MatchSeason,
+  SeasonResponse,
+} from "@repo/shared-types";
+import {
+  isCurrentSeason,
+  SeasonWithCounts,
+} from "../repositories/season/types";
+
+/** The season tag a Match carries: its number, and whether that Season is closed. */
+export function transformMatchSeasonToResponse(season: {
+  number: number;
+  endedAt: Date | null;
+}): MatchSeason {
+  return { number: season.number, isClosed: !isCurrentSeason(season) };
+}
 
 export function transformSeasonToResponse(
   season: SeasonWithCounts,

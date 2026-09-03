@@ -17,6 +17,7 @@ import {
 } from "../repositories/competition/types";
 import { Competition } from "@prisma/client";
 import { calculatePlayerScore, calculatePlayerStats } from "./utils";
+import { transformMatchSeasonToResponse } from "./season-transforms";
 import { CreateCompetitionInput } from "../schemas/create-competition-request-schema";
 
 /** What a competition read must carry to place the user: the admin and the moderators. */
@@ -28,14 +29,14 @@ interface CompetitionWithRoles {
 /** PLAYER when there is no user, the rule every competition read shares. */
 export function getUserRole(
   competition: CompetitionWithRoles,
-  userId?: string
+  userId?: string,
 ): Role {
   if (competition.dashboard.adminId === userId) {
     return Role.ADMIN;
   }
 
   const moderator = competition.moderators.find(
-    (mod) => mod.dashboardPlayer.userId === userId
+    (mod) => mod.dashboardPlayer.userId === userId,
   );
 
   if (moderator) {
@@ -47,7 +48,7 @@ export function getUserRole(
 
 export function transformCompetitionToResponse(
   competition: CompetitionWithDetails,
-  userId?: string
+  userId?: string,
 ): CompetitionResponse {
   const matches: MatchResponse[] = competition.matches.map((match) => {
     return {
@@ -77,6 +78,7 @@ export function transformCompetitionToResponse(
         };
       }),
       videoUrl: match.videoUrl ?? undefined,
+      season: transformMatchSeasonToResponse(match.season),
     };
   });
 
@@ -96,7 +98,7 @@ export function transformCompetitionToResponse(
 export function transformCompetitionToInfoResponse(
   competition: CompetitionWithInfo,
   seasons: SeasonResponse[],
-  userId?: string
+  userId?: string,
 ): CompetitionInfo {
   return {
     id: competition.id,
@@ -112,7 +114,7 @@ export function transformCompetitionToSettingsResponse(
   competition: CompetitionWithSettings,
   userId: string,
   currentSeason: CurrentSeasonResponse,
-  seasons: SeasonResponse[]
+  seasons: SeasonResponse[],
 ): CompetitionSettings {
   return {
     id: competition.id,
@@ -130,7 +132,7 @@ export function transformCompetitionToSettingsResponse(
 }
 
 export function transformCompetitionToTeamsResponse(
-  competition: CompetitionWithTeamCompetitions
+  competition: CompetitionWithTeamCompetitions,
 ): CompetitionWithTeams {
   return {
     id: competition.id,
@@ -146,7 +148,7 @@ export function transformCompetitionToTeamsResponse(
 
 export function transformAddCompetitionRequestToService(
   competitionReq: CreateCompetitionInput,
-  dashboardId: string
+  dashboardId: string,
 ): Omit<Competition, "id"> {
   const competition: Omit<Competition, "id"> = {
     dashboardId,

@@ -1,5 +1,6 @@
 import { CompetitionType, MatchType, VotingStatus } from "./enums";
 import { PlayerResponse } from "./player";
+import { MatchSeason } from "./season";
 
 export type MatchResponse = {
   id: string;
@@ -14,6 +15,7 @@ export type MatchResponse = {
   teams: string[];
   players: PlayerResponse[];
   videoUrl?: string;
+  season: MatchSeason;
 };
 
 export type MatchPageResponse = {
@@ -34,6 +36,7 @@ export type MatchPageResponse = {
   pendingVotes: number;
   playerStats: PlayerResponse[];
   videoUrl?: string;
+  season: MatchSeason;
 };
 
 export interface LeagueMatchResponse {
@@ -57,4 +60,5 @@ export interface LeagueMatchResponse {
   votingStatus: string;
   isCompleted: boolean;
   videoUrl?: string;
+  season: MatchSeason;
 }
