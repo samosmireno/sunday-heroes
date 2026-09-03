@@ -22,6 +22,7 @@ function createCardProviders() {
           refetch: () => {},
           season: undefined,
           selection: undefined,
+          resolved: true,
           current: 2,
           seasons: [],
           selectedSeason: undefined,
