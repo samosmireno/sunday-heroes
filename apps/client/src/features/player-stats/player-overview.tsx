@@ -43,10 +43,7 @@ export default function PlayerOverview({
   }
 
   const { careerStats, recentForm } = playerStats;
-  const winRate =
-    careerStats.totalMatches > 0
-      ? ((careerStats.record.wins / careerStats.totalMatches) * 100).toFixed(1)
-      : "0.0";
+  const winRate = careerStats.winRate.toFixed(1);
 
   return (
     <div className="space-y-6">

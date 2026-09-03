@@ -52,8 +52,25 @@ function determineMatchWinner(match: MatchResponse): "home" | "away" | "draw" {
   return "draw";
 }
 
+/** A draw is worth this fraction of a win in a player's win rate. */
+export const DRAW_WIN_WEIGHT = 0.3;
+
+/** A player's running totals while their matches are being tallied. */
+type PlayerTally<T extends PlayerTotals> = T & { draws: number };
+
+/** Wins plus weighted draws, as a percentage of matches played, to two decimals. */
+export function calculateWinRate(
+  wins: number,
+  draws: number,
+  matches: number
+): number {
+  if (matches === 0) return 0;
+  const weightedWins = wins + draws * DRAW_WIN_WEIGHT;
+  return Number(((weightedWins / matches) * 100).toFixed(2));
+}
+
 export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
-  const playerMap = new Map<string, PlayerTotals>();
+  const playerMap = new Map<string, PlayerTally<PlayerTotals>>();
 
   matches.forEach((match) => {
     const matchWinner = determineMatchWinner(match);
@@ -64,6 +81,7 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
         nickname: player.nickname,
         matches: 0,
         wins: 0,
+        draws: 0,
         winRate: 0,
         goals: 0,
         assists: 0,
@@ -75,11 +93,13 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
       const hasWon =
         (player.isHome && matchWinner === "home") ||
         (!player.isHome && matchWinner === "away");
+      const hasDrawn = matchWinner === "draw";
 
       const updatedPlayer = {
         ...existingPlayer,
         matches: existingPlayer.matches + 1,
         wins: existingPlayer.wins + (hasWon ? 1 : 0),
+        draws: existingPlayer.draws + (hasDrawn ? 1 : 0),
         goals: existingPlayer.goals + player.goals,
         assists: existingPlayer.assists + player.assists,
         penaltyScored:
@@ -94,17 +114,16 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
     });
   });
 
-  const playerStats = Array.from(playerMap.values()).map((player) => ({
-    ...player,
-    rating:
-      player.matches > 0
-        ? Math.round((player.rating! / player.matches) * 100) / 100
-        : undefined,
-    winRate:
-      player.matches > 0
-        ? Number(((player.wins / player.matches) * 100).toFixed(2))
-        : 0,
-  }));
+  const playerStats = Array.from(playerMap.values()).map(
+    ({ draws, ...player }) => ({
+      ...player,
+      rating:
+        player.matches > 0
+          ? Math.round((player.rating! / player.matches) * 100) / 100
+          : undefined,
+      winRate: calculateWinRate(player.wins, draws, player.matches),
+    })
+  );
 
   return playerStats;
 }
@@ -112,7 +131,7 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
 export function calculateLeaguePlayerStats(
   matches: MatchResponse[]
 ): LeaguePlayerTotals[] {
-  const playerMap = new Map<string, LeaguePlayerTotals>();
+  const playerMap = new Map<string, PlayerTally<LeaguePlayerTotals>>();
 
   matches.forEach((match) => {
     const matchWinner = determineMatchWinner(match);
@@ -122,6 +141,7 @@ export function calculateLeaguePlayerStats(
         nickname: player.nickname,
         matches: 0,
         wins: 0,
+        draws: 0,
         winRate: 0,
         goals: 0,
         assists: 0,
@@ -133,11 +153,13 @@ export function calculateLeaguePlayerStats(
       const hasWon =
         (player.isHome && matchWinner === "home") ||
         (!player.isHome && matchWinner === "away");
+      const hasDrawn = matchWinner === "draw";
 
       const updatedPlayer = {
         ...existingPlayer,
         matches: existingPlayer.matches + 1,
         wins: existingPlayer.wins + (hasWon ? 1 : 0),
+        draws: existingPlayer.draws + (hasDrawn ? 1 : 0),
         goals: existingPlayer.goals + player.goals,
         assists: existingPlayer.assists + player.assists,
         penaltyScored:
@@ -149,17 +171,16 @@ export function calculateLeaguePlayerStats(
     });
   });
 
-  const playerStats = Array.from(playerMap.values()).map((player) => ({
-    ...player,
-    rating:
-      player.matches > 0
-        ? Math.round((player.rating! / player.matches) * 100) / 100
-        : undefined,
-    winRate:
-      player.matches > 0
-        ? Number(((player.wins / player.matches) * 100).toFixed(2))
-        : 0,
-  }));
+  const playerStats = Array.from(playerMap.values()).map(
+    ({ draws, ...player }) => ({
+      ...player,
+      rating:
+        player.matches > 0
+          ? Math.round((player.rating! / player.matches) * 100) / 100
+          : undefined,
+      winRate: calculateWinRate(player.wins, draws, player.matches),
+    })
+  );
 
   return playerStats;
 }

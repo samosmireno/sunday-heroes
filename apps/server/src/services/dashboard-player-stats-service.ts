@@ -12,6 +12,7 @@ import {
   transformMatchPlayerToPerformanceData,
   transformTopMatchPlayerToMatch,
 } from "../utils/player-stats-transforms";
+import { calculateWinRate } from "../utils/utils";
 
 export class DashboardPlayerStatsService {
   static async getPlayerStats(playerId: string): Promise<PlayerStatsOverview> {
@@ -39,6 +40,11 @@ export class DashboardPlayerStatsService {
         avgRating: careerStats.avgRating,
         totalCompetitions: careerStats.totalCompetitions,
         record: careerStats.record,
+        winRate: calculateWinRate(
+          careerStats.record.wins,
+          careerStats.record.draws,
+          careerStats.totalMatches
+        ),
         manOfTheMatchCount: careerStats.manOfTheMatchCount,
         goalConsistencyRate: careerStats.goalConsistencyRate,
         assistConsistencyRate: careerStats.assistConsistencyRate,
@@ -130,7 +136,14 @@ export class DashboardPlayerStatsService {
     const topTeammates =
       await DashboardPlayerStatsRepo.getTopTeammates(playerIds);
 
-    return topTeammates;
+    return topTeammates.map((teammate) => ({
+      ...teammate,
+      winRate: calculateWinRate(
+        teammate.record.wins,
+        teammate.record.draws,
+        teammate.matchesTogether
+      ),
+    }));
   }
 
   private static async getPlayerAndRelatedIds(

@@ -19,6 +19,7 @@ export interface PlayerStatsOverview {
       draws: number;
       losses: number;
     };
+    winRate: number;
     manOfTheMatchCount: number;
     goalConsistencyRate: number;
     assistConsistencyRate: number;

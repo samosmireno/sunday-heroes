@@ -47,3 +47,9 @@ _Avoid_: Game, scheduled match
 **Completed match**:
 A Match the admin has marked as completed. Only Completed matches count toward Standings and player stats; a Fixture that is not yet a Completed match is "not completed", whether or not a result has been entered.
 _Avoid_: Played match, finished match, unplayed (as a state)
+
+### Player stats
+
+**Win rate**:
+A player's wins plus 0.3 per draw, as a percentage of the matches counted: one Competition's matches in its stats table, every match in the career record, and the matches played together for a Top Teammate. A level score settled on penalties is a win or a loss, not a draw. Computed on the server, through one helper, whenever a response is built; never stored.
+_Avoid_: Win percentage

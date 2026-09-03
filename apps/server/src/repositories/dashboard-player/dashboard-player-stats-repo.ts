@@ -377,7 +377,6 @@ export class DashboardPlayerStatsRepo {
           wins: number;
           draws: number;
           losses: number;
-          winRate: number;
         }>
       >`
       WITH player_matches AS (
@@ -433,8 +432,7 @@ export class DashboardPlayerStatsRepo {
         ts."matchesTogether",
         ts.wins,
         ts.draws,
-        ts.losses,
-        ROUND((ts.wins::numeric / NULLIF(ts."matchesTogether", 0) * 100))::int as "winRate"
+        ts.losses
       FROM teammate_stats ts
       JOIN "DashboardPlayer" dp ON ts."dashboardPlayerId" = dp.id
       ORDER BY ts."matchesTogether" DESC, ts.wins DESC
@@ -451,7 +449,6 @@ export class DashboardPlayerStatsRepo {
           draws: row.draws,
           losses: row.losses,
         },
-        winRate: row.winRate,
       }));
     } catch (error) {
       throw PrismaErrorHandler.handle(
