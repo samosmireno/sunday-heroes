@@ -74,6 +74,11 @@ export interface SeasonSelectionState {
   showSelector: boolean;
 }
 
+/** The season selection a season-aware page holds: the state, and the setter its selector calls. */
+export type SeasonSelection = SeasonSelectionState & {
+  setSelection: (next: SeasonFilter) => void;
+};
+
 /**
  * The season selection in the URL: `?season=2`, `?season=all`, or absent for
  * the Current season. Selecting the Current season removes the param; any
@@ -83,7 +88,9 @@ export interface SeasonSelectionState {
  * out of the URL so the page shows the Current season and the back button
  * never returns to the bad URL.
  */
-export function useSeasonParam(seasons: SeasonResponse[] = NO_SEASONS) {
+export function useSeasonParam(
+  seasons: SeasonResponse[] = NO_SEASONS,
+): SeasonSelection {
   const [searchParams, setSearchParams] = useSearchParams();
   const raw = searchParams.get("season");
   const season = parseSeasonParam(raw);

@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import Header from "@/components/ui/header";
 import CompactPagination from "@/components/pagination/compact-pagination";
 import MatchesList from "@/features/matches/matches-list";
 import { useAuth } from "@/context/auth-context";
@@ -10,7 +9,7 @@ import { useUrlPagination } from "@/hooks/use-url-pagination";
 import { UserResponse } from "@repo/shared-types";
 import { useCompetitionInfo } from "@/features/competition/use-competition-info";
 import { useSeasonParam } from "@/features/competition/use-season-param";
-import SeasonSelect from "@/features/competition/season-select";
+import { seasonPageShell } from "@/features/competition/season-page-shell";
 import Loading from "@/components/ui/loading";
 
 /**
@@ -26,9 +25,8 @@ export default function MatchesPage() {
     competitionId,
     user.id,
   );
-  const { setSelection, ...seasonState } = useSeasonParam(info?.seasons);
-  const { season, selection, resolved, seasons, isAll, showSelector } =
-    seasonState;
+  const seasonSelection = useSeasonParam(info?.seasons);
+  const { season, resolved, isAll } = seasonSelection;
 
   const { matches, isLoading, isPending, isError, totalCount, totalPages } =
     useMatches({
@@ -52,31 +50,16 @@ export default function MatchesPage() {
   // Only a competition's list follows the season selection.
   const seasonAware = competitionId !== undefined;
 
-  const header = (
-    <Header
-      title="Matches"
-      subtitle={info?.name}
-      hasSidebar={true}
-      actions={
-        showSelector &&
-        selection !== undefined && (
-          <SeasonSelect
-            seasons={seasons}
-            value={selection}
-            onChange={setSelection}
-          />
-        )
-      }
-    />
-  );
+  const { header, settling } = seasonPageShell(seasonSelection, {
+    title: "Matches",
+    subtitle: info?.name,
+    hasSidebar: true,
+    isInfoLoading,
+  });
 
-  // The read has nothing yet, and that is no error while the page settles: the
-  // season list is not in yet (a `?season=` read waits on it), or a stale
-  // link's season is one the list does not know and is about to be dropped.
-  const seasonSettling =
-    seasonAware &&
-    (isInfoLoading || (season !== undefined && selection !== season));
-  if (isLoading || ((isPending || isError) && seasonSettling)) {
+  // The list has nothing yet, and that is no error while the page settles;
+  // the user-wide list has no season list to wait on, so it never settles.
+  if (isLoading || ((isPending || isError) && settling)) {
     // A season switch keeps the header and its selector in place.
     if (!info) {
       return <MatchesPageSkeleton />;

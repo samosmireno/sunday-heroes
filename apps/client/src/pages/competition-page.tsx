@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useCompetition } from "../features/competition/use-competition";
 import ErrorPage from "./error-page";
-import Header from "@/components/ui/header";
 import Loading from "@/components/ui/loading";
 import { CompetitionProvider } from "../context/competition-context";
 import DuelCompetitionPage from "./duel-competition-page";
@@ -11,7 +10,7 @@ import LeagueCompetitionPage from "./league-competition/league-competition-page"
 import CompetitionAdminPageSkeleton from "@/features/competition-admin/competition-admin-page-skeleton";
 import { useCompetitionInfo } from "@/features/competition/use-competition-info";
 import { useSeasonParam } from "@/features/competition/use-season-param";
-import SeasonSelect from "@/features/competition/season-select";
+import { seasonPageShell } from "@/features/competition/season-page-shell";
 import PastSeasonBanner from "@/features/competition/past-season-banner";
 
 function CompetitionPage() {
@@ -23,9 +22,9 @@ function CompetitionPage() {
     competitionId,
     user?.id,
   );
-  const { setSelection, ...seasonState } = useSeasonParam(info?.seasons);
-  const { selection, selectedSeason, current, seasons, isPast, showSelector } =
-    seasonState;
+  const seasonSelection = useSeasonParam(info?.seasons);
+  const { setSelection, ...seasonState } = seasonSelection;
+  const { selectedSeason, current, isPast } = seasonState;
   const { competition, isLoading, refetch } = useCompetition(
     competitionId,
     user?.id,
@@ -52,32 +51,14 @@ function CompetitionPage() {
     }
   };
 
-  const title = info?.name ?? competition?.name;
-  const header = title !== undefined && (
-    <Header
-      title={title}
-      hasSidebar={!!user}
-      actions={
-        showSelector &&
-        selection !== undefined && (
-          <SeasonSelect
-            seasons={seasons}
-            value={selection}
-            onChange={setSelection}
-          />
-        )
-      }
-    />
-  );
+  const { header, settling } = seasonPageShell(seasonSelection, {
+    title: info?.name ?? competition?.name,
+    hasSidebar: !!user,
+    isInfoLoading,
+  });
 
-  // The read has nothing yet, and that is no error while the page settles: the
-  // season list is not in yet (a `?season=` read waits on it), or a stale
-  // link's season is one the list does not know and is about to be dropped.
-  const seasonSettling =
-    isInfoLoading ||
-    (seasonState.season !== undefined &&
-      seasonState.selection !== seasonState.season);
-  if (isLoading || (!competition && seasonSettling)) {
+  // The read has nothing yet, and that is no error while the page settles.
+  if (isLoading || (!competition && settling)) {
     // A season switch keeps the header and its selector in place.
     if (!info) {
       return <CompetitionAdminPageSkeleton />;

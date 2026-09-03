@@ -16,8 +16,27 @@ interface MatchesListProps {
   showSeason?: boolean;
 }
 
-/** The columns of the table, for the expanded details row to span. */
-const COLUMN_COUNT = 7;
+/** A column of the table: its heading, and the classes that align it and hide it on narrow screens. */
+interface Column {
+  label: string;
+  className: string;
+}
+
+/**
+ * The table's columns in order, a Season column among them under All
+ * seasons. The heading row maps over them and the expanded details row spans
+ * their count, so the two cannot drift apart.
+ */
+const columnsOf = (showSeason: boolean): Column[] => [
+  { label: "Date", className: "text-left" },
+  { label: "Teams", className: "text-left" },
+  { label: "Result", className: "text-left" },
+  ...(showSeason ? [{ label: "Season", className: "text-left" }] : []),
+  { label: "Type", className: "hidden text-left xl:table-cell" },
+  { label: "Competition", className: "hidden text-left sm:table-cell" },
+  { label: "Voting Status", className: "hidden text-left xl:table-cell" },
+  { label: "Actions", className: "hidden text-right sm:table-cell" },
+];
 
 export default function MatchesList({
   matches,
@@ -25,7 +44,7 @@ export default function MatchesList({
 }: MatchesListProps) {
   const navigate = useNavigate();
   const [expandedMatchId, setExpandedMatchId] = useState<string | null>(null);
-  const columnCount = COLUMN_COUNT + (showSeason ? 1 : 0);
+  const columns = columnsOf(showSeason);
 
   const toggleExpand = (matchId: string) => {
     setExpandedMatchId(expandedMatchId === matchId ? null : matchId);
@@ -71,56 +90,15 @@ export default function MatchesList({
         <table className="min-w-full divide-y divide-accent/30">
           <thead>
             <tr className="border-b-2 border-accent/50">
-              <th
-                scope="col"
-                className="whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3"
-              >
-                Date
-              </th>
-              <th
-                scope="col"
-                className="whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3"
-              >
-                Teams
-              </th>
-              <th
-                scope="col"
-                className="whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3"
-              >
-                Result
-              </th>
-              {showSeason && (
+              {columns.map((column) => (
                 <th
+                  key={column.label}
                   scope="col"
-                  className="whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3"
+                  className={`whitespace-nowrap px-2 py-2 text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3 ${column.className}`}
                 >
-                  Season
+                  {column.label}
                 </th>
-              )}
-              <th
-                scope="col"
-                className="hidden whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3 xl:table-cell"
-              >
-                Type
-              </th>
-              <th
-                scope="col"
-                className="hidden whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent sm:table-cell md:px-4 md:py-3"
-              >
-                Competition
-              </th>
-              <th
-                scope="col"
-                className="hidden whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3 xl:table-cell"
-              >
-                Voting Status
-              </th>
-              <th
-                scope="col"
-                className="hidden whitespace-nowrap px-2 py-2 text-right text-xs font-bold uppercase tracking-wider text-accent sm:table-cell md:px-4 md:py-3"
-              >
-                Actions
-              </th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-accent/10">
@@ -244,7 +222,7 @@ export default function MatchesList({
                 {expandedMatchId === match.id && (
                   <tr>
                     <td
-                      colSpan={columnCount}
+                      colSpan={columns.length}
                       className="border-b border-accent/20 p-0"
                     >
                       <div className="transition-all">
