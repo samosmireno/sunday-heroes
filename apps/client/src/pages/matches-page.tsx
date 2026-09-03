@@ -8,16 +8,32 @@ import { useParams } from "react-router-dom";
 import MatchesPageSkeleton from "@/features/matches/matches-page-skeleton";
 import { useUrlPagination } from "@/hooks/use-url-pagination";
 import { UserResponse } from "@repo/shared-types";
+import { useCompetitionInfo } from "@/features/competition/use-competition-info";
+import { useSeasonParam } from "@/features/competition/use-season-param";
+import SeasonSelect from "@/features/competition/season-select";
+import Loading from "@/components/ui/loading";
 
+/**
+ * All Matches: one competition's list when the URL names a competition, and
+ * then it follows the season selector in its header; the user-wide list
+ * across competitions otherwise, which knows nothing of seasons.
+ */
 export default function MatchesPage() {
   const { user } = useAuth() as { user: UserResponse };
-  const { competitionId } = useParams() as { competitionId: string };
+  const { competitionId } = useParams<{ competitionId: string }>();
   const { currentPage, setPage, resetPage } = useUrlPagination();
+  const { competition: info, isLoading: isInfoLoading } = useCompetitionInfo(
+    competitionId,
+    user.id,
+  );
+  const { setSelection, ...seasonState } = useSeasonParam(info?.seasons);
+  const { season, selection, seasons, isAll, showSelector } = seasonState;
 
-  const { matches, isLoading, totalCount, totalPages } = useMatches({
+  const { matches, isLoading, isError, totalCount, totalPages } = useMatches({
     userId: user.id,
     competitionId,
     page: currentPage,
+    season,
   });
 
   useEffect(() => {
@@ -30,17 +46,52 @@ export default function MatchesPage() {
     }
   }, [isLoading, currentPage, totalPages, setPage]);
 
-  if (isLoading) {
-    return <MatchesPageSkeleton />;
+  // Only a competition's list follows the season selection.
+  const seasonAware = competitionId !== undefined;
+
+  const header = (
+    <Header
+      title="Matches"
+      subtitle={info?.name}
+      hasSidebar={true}
+      actions={
+        showSelector &&
+        selection !== undefined && (
+          <SeasonSelect
+            seasons={seasons}
+            value={selection}
+            onChange={setSelection}
+          />
+        )
+      }
+    />
+  );
+
+  // A stale link's season: the read failed for a Season the list does not
+  // know and the param is about to be dropped, or the list is not in yet.
+  const seasonSettling =
+    seasonAware &&
+    (isInfoLoading || (season !== undefined && selection !== season));
+  if (isLoading || (isError && seasonSettling)) {
+    // A season switch keeps the header and its selector in place.
+    if (!info) {
+      return <MatchesPageSkeleton />;
+    }
+    return (
+      <div className="relative flex-1 p-4 sm:p-5">
+        {header}
+        <Loading text="Loading matches..." />
+      </div>
+    );
   }
 
   return (
     <div className="relative flex-1 p-4 sm:p-5">
-      <Header title="Matches" hasSidebar={true} />
+      {header}
 
       <div className="relative m-0 min-h-[50vh] rounded-lg border-2 border-accent bg-panel-bg p-2 shadow-lg sm:p-4">
         {matches.length > 0 ? (
-          <MatchesList matches={matches} />
+          <MatchesList matches={matches} showSeason={seasonAware && isAll} />
         ) : (
           <div className="flex h-64 items-center justify-center">
             <p className="text-center text-sm text-gray-400 sm:text-base">

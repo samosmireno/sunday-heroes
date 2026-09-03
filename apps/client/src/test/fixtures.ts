@@ -6,10 +6,12 @@ import {
   CurrentSeasonResponse,
   LeagueMatchResponse,
   LeagueTeamResponse,
+  MatchPageResponse,
   MatchResponse,
   MatchType,
   Role,
   SeasonResponse,
+  VotingStatus,
 } from "@repo/shared-types";
 import { DuelFormData } from "@/features/add-match-form/schemas/types";
 
@@ -164,5 +166,29 @@ export function duelFormData(
         { nickname: "Bojan", goals: 1, assists: 0, position: 0 },
       ],
     },
+  };
+}
+
+/** One row of the All Matches list. */
+export function matchPageResponse(
+  overrides: Partial<MatchPageResponse> = {},
+): MatchPageResponse {
+  return {
+    id: "match-1",
+    date: "2026-09-06T12:00:00.000Z",
+    competitionId: "comp-1",
+    competitionName: "Zlatna lopta",
+    competitionType: CompetitionType.DUEL,
+    isAdmin: false,
+    teams: ["Home", "Away"],
+    scores: [2, 1],
+    matchType: MatchType.FIVE_A_SIDE,
+    votingEnabled: false,
+    votingStatus: VotingStatus.CLOSED,
+    playerCount: 10,
+    pendingVotes: 0,
+    playerStats: [],
+    season: { number: 1, isClosed: false },
+    ...overrides,
   };
 }

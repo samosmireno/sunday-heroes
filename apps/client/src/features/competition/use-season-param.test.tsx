@@ -178,6 +178,15 @@ describe("useSeasonParam", () => {
     expect(searchOf(result.current).get("season")).toBe("all");
     expect(result.current.isAll).toBe(true);
   });
+
+  it("selecting a season returns a paginated list to its first page", () => {
+    const { result } = renderSeasonParam("?page=3", threeSeasons);
+
+    act(() => result.current.setSelection(2));
+
+    expect(searchOf(result.current).get("season")).toBe("2");
+    expect(searchOf(result.current).has("page")).toBe(false);
+  });
 });
 
 describe("season helpers", () => {

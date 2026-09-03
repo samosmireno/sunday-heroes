@@ -70,7 +70,8 @@ export interface SeasonSelectionState {
 /**
  * The season selection in the URL: `?season=2`, `?season=all`, or absent for
  * the Current season. Selecting the Current season removes the param; any
- * change drops `?round=` (rounds are per season) and keeps everything else.
+ * change drops `?round=` and `?page=` (rounds and list pages are per season)
+ * and keeps everything else.
  * Once the season list has arrived, an unknown or malformed value is replaced
  * out of the URL so the page shows the Current season and the back button
  * never returns to the bad URL.
@@ -109,7 +110,9 @@ export function useSeasonParam(seasons: SeasonResponse[] = NO_SEASONS) {
       const params = new URLSearchParams(searchParams);
       if (next === current) params.delete("season");
       else params.set("season", String(next));
+      // Positions inside a season's list do not carry over to another season.
       params.delete("round");
+      params.delete("page");
       setSearchParams(params);
     },
     [searchParams, setSearchParams, current],

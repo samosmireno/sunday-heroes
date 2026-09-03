@@ -7,14 +7,24 @@ import { formatDate } from "@/utils/string";
 import { convertMatchType } from "@/utils/string";
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { seasonName } from "@/features/competition/season-labels";
 
 interface MatchesListProps {
   matches: MatchPageResponse[];
+  /** Under All seasons, a Season column says which season each match belongs to. */
+  showSeason?: boolean;
 }
 
-export default function MatchesList({ matches }: MatchesListProps) {
+/** The columns of the table, for the expanded details row to span. */
+const COLUMN_COUNT = 7;
+
+export default function MatchesList({
+  matches,
+  showSeason = false,
+}: MatchesListProps) {
   const navigate = useNavigate();
   const [expandedMatchId, setExpandedMatchId] = useState<string | null>(null);
+  const columnCount = COLUMN_COUNT + (showSeason ? 1 : 0);
 
   const toggleExpand = (matchId: string) => {
     setExpandedMatchId(expandedMatchId === matchId ? null : matchId);
@@ -78,6 +88,14 @@ export default function MatchesList({ matches }: MatchesListProps) {
               >
                 Result
               </th>
+              {showSeason && (
+                <th
+                  scope="col"
+                  className="whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3"
+                >
+                  Season
+                </th>
+              )}
               <th
                 scope="col"
                 className="hidden whitespace-nowrap px-2 py-2 text-left text-xs font-bold uppercase tracking-wider text-accent md:px-4 md:py-3 xl:table-cell"
@@ -135,6 +153,13 @@ export default function MatchesList({ matches }: MatchesListProps) {
                       )}
                     </div>
                   </td>
+                  {showSeason && (
+                    <td className="whitespace-nowrap px-2 py-3 text-sm md:px-4 md:py-4">
+                      <span className="rounded bg-bg/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent/80">
+                        {seasonName(match.season.number)}
+                      </span>
+                    </td>
+                  )}
                   <td className="hidden whitespace-nowrap px-2 py-3 text-sm text-gray-300 md:px-4 md:py-4 xl:table-cell">
                     {convertMatchType(match.matchType)}
                   </td>
@@ -213,7 +238,10 @@ export default function MatchesList({ matches }: MatchesListProps) {
 
                 {expandedMatchId === match.id && (
                   <tr>
-                    <td colSpan={6} className="border-b border-accent/20 p-0">
+                    <td
+                      colSpan={columnCount}
+                      className="border-b border-accent/20 p-0"
+                    >
                       <div className="transition-all">
                         <MatchDetails match={match} />
                       </div>
