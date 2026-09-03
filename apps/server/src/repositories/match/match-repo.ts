@@ -100,13 +100,17 @@ export class MatchRepo {
 
   static async findByCompetitionId(
     competitionId: string,
-    options?: { limit?: number; offset?: number },
+    options?: {
+      limit?: number;
+      offset?: number;
+      where?: Prisma.MatchWhereInput;
+    },
     tx?: Prisma.TransactionClient
   ): Promise<MatchWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.match.findMany({
-        where: { competitionId },
+        where: { ...options?.where, competitionId },
         include: MATCH_DETAILED_INCLUDE,
         orderBy: { date: "desc" },
         take: options?.limit,
@@ -119,15 +123,16 @@ export class MatchRepo {
 
   static async countByCompetitionId(
     competitionId: string,
+    where: Prisma.MatchWhereInput = {},
     tx?: Prisma.TransactionClient
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.match.count({
-        where: { competitionId },
+        where: { ...where, competitionId },
       });
     } catch (error) {
-      throw PrismaErrorHandler.handle(error, "MatchRepo.findByCompetitionId");
+      throw PrismaErrorHandler.handle(error, "MatchRepo.countByCompetitionId");
     }
   }
 

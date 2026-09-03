@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addPlayersToFixture,
   createLeague,
+  createLeagueWithClosedSeason,
   createUserWithDashboard,
   markCompleted,
   setFixtureScore,
@@ -9,6 +10,7 @@ import {
 import { SeasonRepo } from "../repositories/season/season-repo";
 import { LeagueService } from "./league-service";
 import { MatchService } from "./match/match-service";
+import { SeasonService } from "./season-service";
 
 async function countFixtures(competitionId: string) {
   const fixturesByRound = await LeagueService.getLeagueFixtures(competitionId);
@@ -108,6 +110,52 @@ describe("Fixture leaf-state factories", () => {
       isCompleted: true,
     });
     expect(match?.players.map((player) => player.nickname).sort()).toEqual([
+      "Ana",
+      "Bo",
+    ]);
+  });
+});
+
+describe("Season filter on the League reads", () => {
+  it("getLeagueFixtures shows the selected season's Fixtures, the Current season by default", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition } = await createLeagueWithClosedSeason({
+      userId: user.id,
+      numberOfTeams: 4,
+    });
+
+    expect(await LeagueService.getLeagueFixtures(competition.id)).toEqual({});
+    expect(
+      Object.values(
+        await LeagueService.getLeagueFixtures(competition.id, 1),
+      ).flat(),
+    ).toHaveLength(6);
+    expect(
+      Object.values(
+        await LeagueService.getLeagueFixtures(competition.id, "all"),
+      ).flat(),
+    ).toHaveLength(6);
+  });
+
+  it("getPlayerStats counts the selected season's matches, the Current season by default", async () => {
+    const { user } = await createUserWithDashboard();
+    const { fixtures } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 2,
+    });
+    const fixtureId = fixtures[0].match.id;
+    await addPlayersToFixture(fixtureId, [
+      { nickname: "Ana", isHome: true, goals: 2 },
+      { nickname: "Bo", isHome: false },
+    ]);
+    await setFixtureScore(fixtureId, 2, 0);
+    await markCompleted(fixtureId);
+    const competitionId = fixtures[0].match.competitionId;
+    await SeasonService.startNewSeason(competitionId, user.id);
+
+    expect(await LeagueService.getPlayerStats(competitionId)).toEqual([]);
+    const seasonOne = await LeagueService.getPlayerStats(competitionId, 1);
+    expect(seasonOne.map((player) => player.nickname).sort()).toEqual([
       "Ana",
       "Bo",
     ]);

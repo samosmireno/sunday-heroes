@@ -1,7 +1,10 @@
 import { Season } from "@prisma/client";
 
-export interface SeasonWithCounts extends Season {
+export interface SeasonWithMatchCount extends Season {
   matchCount: number;
+}
+
+export interface SeasonWithCounts extends SeasonWithMatchCount {
   completedMatchCount: number;
 }
 

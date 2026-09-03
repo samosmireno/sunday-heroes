@@ -21,6 +21,8 @@ import {
 } from "../utils/errors";
 import { MatchRepo } from "../repositories/match/match-repo";
 import { SeasonRepo } from "../repositories/season/season-repo";
+import { SeasonService } from "./season-service";
+import { SeasonQuery } from "../schemas/season-schemas";
 
 interface MatchStats {
   points: number;
@@ -328,8 +330,15 @@ export class LeagueService {
     };
   }
 
-  static async getLeagueFixtures(competitionId: string) {
-    const fixtures = await MatchRepo.findByCompetitionId(competitionId);
+  /** The selected season's Fixtures by round, the Current season by default. */
+  static async getLeagueFixtures(competitionId: string, season?: SeasonQuery) {
+    const seasonWhere = await SeasonService.resolveSeasonFilter(
+      competitionId,
+      season
+    );
+    const fixtures = await MatchRepo.findByCompetitionId(competitionId, {
+      where: seasonWhere,
+    });
 
     const fixturesByRound = fixtures.reduce(
       (acc, match) => {
@@ -344,9 +353,16 @@ export class LeagueService {
     return fixturesByRound;
   }
 
-  static async getPlayerStats(competitionId: string) {
-    const competition =
-      await CompetitionRepo.findByIdWithDetails(competitionId);
+  /** Player totals over the selected season's matches, Current by default. */
+  static async getPlayerStats(competitionId: string, season?: SeasonQuery) {
+    const seasonWhere = await SeasonService.resolveSeasonFilter(
+      competitionId,
+      season
+    );
+    const competition = await CompetitionRepo.findByIdWithDetails(
+      competitionId,
+      seasonWhere
+    );
     if (!competition) {
       throw new NotFoundError("Competition");
     }

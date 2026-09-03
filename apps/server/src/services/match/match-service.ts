@@ -11,6 +11,8 @@ import { CompetitionType } from "@prisma/client";
 import { ConflictError, NotFoundError } from "../../utils/errors";
 import { CompetitionRepo } from "../../repositories/competition/competition-repo";
 import { MatchRepo } from "../../repositories/match/match-repo";
+import { SeasonService } from "../season-service";
+import { SeasonQuery } from "../../schemas/season-schemas";
 
 export class MatchService {
   static async getMatchById(id: string) {
@@ -28,10 +30,16 @@ export class MatchService {
     return competition?.type || null;
   }
 
+  /**
+   * The paginated All Matches read. Within a Competition the list and its
+   * count follow the season selection (the Current season by default); the
+   * user-wide read spans competitions and takes no season.
+   */
   static async getMatchesForUser(
     userId: string,
     options: {
       competitionId?: string;
+      season?: SeasonQuery;
       limit?: number;
       offset?: number;
     } = {}
@@ -41,17 +49,25 @@ export class MatchService {
       throw new NotFoundError("Dashboard");
     }
 
-    const { competitionId, limit = 10, offset = 0 } = options;
+    const { competitionId, season, limit = 10, offset = 0 } = options;
 
     let totalCount: number;
     let matches: MatchWithDetails[];
 
     if (competitionId) {
+      const seasonWhere = await SeasonService.resolveSeasonFilter(
+        competitionId,
+        season
+      );
       matches = await MatchRepo.findByCompetitionId(competitionId, {
         limit,
         offset,
+        where: seasonWhere,
       });
-      totalCount = await MatchRepo.countByCompetitionId(competitionId);
+      totalCount = await MatchRepo.countByCompetitionId(
+        competitionId,
+        seasonWhere
+      );
     } else {
       const matchIds = await MatchRepo.findByUserWithDeduplication(
         userId,

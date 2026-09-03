@@ -1,7 +1,9 @@
 import {
   CompetitionInfo,
   CompetitionResponse,
+  CompetitionSettings,
   CompetitionType,
+  CurrentSeasonResponse,
   MatchResponse,
   MatchType,
   Role,
@@ -35,6 +37,34 @@ export function seasonResponse(
     endedAt: null,
     matchCount: 0,
     completedMatchCount: 0,
+    ...overrides,
+  };
+}
+
+export function currentSeasonResponse(
+  overrides: Partial<CurrentSeasonResponse> = {},
+): CurrentSeasonResponse {
+  return {
+    ...seasonResponse(),
+    notCompletedCount: 0,
+    openVotingCount: 0,
+    ...overrides,
+  };
+}
+
+export function competitionSettings(
+  overrides: Partial<CompetitionSettings> = {},
+): CompetitionSettings {
+  const currentSeason = overrides.currentSeason ?? currentSeasonResponse();
+  return {
+    id: "comp-1",
+    name: "Sunday League",
+    type: CompetitionType.LEAGUE,
+    votingEnabled: false,
+    userRole: Role.ADMIN,
+    moderators: [],
+    currentSeason,
+    seasons: [currentSeason],
     ...overrides,
   };
 }

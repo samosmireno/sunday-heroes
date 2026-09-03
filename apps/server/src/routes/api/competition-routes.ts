@@ -8,6 +8,7 @@ import {
   getCompetitionTeams,
   getDetailedCompetitions,
   resetCompetition,
+  startNewSeason,
 } from "../../handlers/competition";
 import {
   addModeratorToCompetition,
@@ -32,6 +33,7 @@ router.post(
   createCompetition
 );
 router.post("/:id/reset", authenticateToken, resetCompetition);
+router.post("/:id/seasons", authenticateToken, startNewSeason);
 router.delete("/:id", authenticateToken, deleteCompetition);
 
 router.post("/:id/moderators", authenticateToken, addModeratorToCompetition);

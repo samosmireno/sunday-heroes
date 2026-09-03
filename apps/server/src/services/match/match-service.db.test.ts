@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   createDuel,
   createDuelMatch,
+  createDuelWithClosedSeason,
   createUserWithDashboard,
 } from "../../../test/factories";
 import { SeasonRepo } from "../../repositories/season/season-repo";
@@ -56,5 +57,53 @@ describe("Duel Match creation", () => {
     expect(await SeasonRepo.listWithCounts(competition.id)).toEqual([
       expect.objectContaining({ number: 1, matchCount: 1 }),
     ]);
+  });
+
+  it("stamps a Match created after a rollover with Season 2", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, currentSeason } = await createDuelWithClosedSeason({
+      userId: user.id,
+    });
+
+    const created = await createDuelMatch({ competitionId: competition.id });
+
+    expect(created.seasonId).toBe(currentSeason.id);
+    expect(await SeasonRepo.listWithCounts(competition.id)).toEqual([
+      expect.objectContaining({ number: 1, matchCount: 1 }),
+      expect.objectContaining({ number: 2, matchCount: 1 }),
+    ]);
+  });
+});
+
+describe("MatchService.getMatchesForUser", () => {
+  it("lists and counts the selected season's matches of a Competition, the Current season by default", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, seasonOneMatch } = await createDuelWithClosedSeason({
+      userId: user.id,
+    });
+
+    const current = await MatchService.getMatchesForUser(user.id, {
+      competitionId: competition.id,
+    });
+    expect(current).toMatchObject({
+      matches: [],
+      totalCount: 0,
+      totalPages: 0,
+    });
+
+    const seasonOne = await MatchService.getMatchesForUser(user.id, {
+      competitionId: competition.id,
+      season: 1,
+    });
+    expect(seasonOne.matches.map((match) => match.id)).toEqual([
+      seasonOneMatch.id,
+    ]);
+    expect(seasonOne).toMatchObject({ totalCount: 1, totalPages: 1 });
+
+    const all = await MatchService.getMatchesForUser(user.id, {
+      competitionId: competition.id,
+      season: "all",
+    });
+    expect(all.totalCount).toBe(1);
   });
 });

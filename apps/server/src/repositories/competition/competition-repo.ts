@@ -28,15 +28,23 @@ export class CompetitionRepo {
     }
   }
 
+  /** `matchWhere` narrows the included matches, e.g. to one Season. */
   static async findByIdWithDetails(
     id: string,
+    matchWhere: Prisma.MatchWhereInput = {},
     tx?: Prisma.TransactionClient
   ): Promise<CompetitionWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.competition.findUnique({
         where: { id },
-        include: COMPETITION_DETAILED_INCLUDE,
+        include: {
+          ...COMPETITION_DETAILED_INCLUDE,
+          matches: {
+            ...COMPETITION_DETAILED_INCLUDE.matches,
+            where: matchWhere,
+          },
+        },
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(

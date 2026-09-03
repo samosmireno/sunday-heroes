@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { LeagueService } from "../services/league-service";
 import { extractUserId } from "../utils/request-utils";
+import { getSeasonQuery } from "../schemas/season-schemas";
 import { sendSuccess } from "../utils/response-utils";
 import { CreateLeagueRequest } from "../schemas/league-schemas";
 import { TeamService } from "../services/team-service";
@@ -64,7 +65,12 @@ export const getLeagueFixtures = async (
       throw new BadRequestError("Competition ID is required");
     }
 
-    const fixtures = await LeagueService.getLeagueFixtures(competitionId);
+    const season = getSeasonQuery(req);
+
+    const fixtures = await LeagueService.getLeagueFixtures(
+      competitionId,
+      season,
+    );
     const fixtureResponse: Record<number, any[]> =
       transformLeagueFixtureToResponse(fixtures);
 
@@ -105,7 +111,9 @@ export const getPlayerStats = async (
       throw new BadRequestError("Competition ID is required");
     }
 
-    const stats = await LeagueService.getPlayerStats(competitionId);
+    const season = getSeasonQuery(req);
+
+    const stats = await LeagueService.getPlayerStats(competitionId, season);
     sendSuccess(res, stats);
   } catch (error) {
     next(error);

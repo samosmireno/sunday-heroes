@@ -23,6 +23,8 @@ import { CreateCompetitionInput } from "../schemas/create-competition-request-sc
 import { TeamService } from "./team-service";
 import { AuthorizationError, NotFoundError } from "../utils/errors";
 import { DashboardPlayerService } from "./dashboard-player-service";
+import { SeasonService } from "./season-service";
+import { SeasonQuery } from "../schemas/season-schemas";
 
 export class CompetitionService {
   static async getAllCompetitions() {
@@ -35,9 +37,20 @@ export class CompetitionService {
     return competition;
   }
 
-  static async getCompetitionStats(competitionId: string, userId?: string) {
-    const competition =
-      await CompetitionRepo.findByIdWithDetails(competitionId);
+  /** Matches and player stats follow the selected season, Current by default. */
+  static async getCompetitionStats(
+    competitionId: string,
+    userId?: string,
+    season?: SeasonQuery
+  ) {
+    const seasonWhere = await SeasonService.resolveSeasonFilter(
+      competitionId,
+      season
+    );
+    const competition = await CompetitionRepo.findByIdWithDetails(
+      competitionId,
+      seasonWhere
+    );
     if (!competition) {
       throw new NotFoundError("Competition");
     }

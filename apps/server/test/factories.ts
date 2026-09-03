@@ -9,10 +9,23 @@ import { MatchType as PrismaMatchType } from "@prisma/client";
 import { CompetitionType, MatchType, Team } from "@repo/shared-types";
 import prisma from "../src/repositories/prisma-client";
 import { createMatchRequest } from "../src/schemas/create-match-request-schema";
+import { CompetitionModeratorService } from "../src/services/competition-moderator-service";
 import { CompetitionService } from "../src/services/competition-service";
 import { LeagueService } from "../src/services/league-service";
 import { MatchService } from "../src/services/match/match-service";
+import { SeasonService } from "../src/services/season-service";
 import { TeamService } from "../src/services/team-service";
+
+/** A registered user who owns no dashboard: a player wherever they appear. */
+export async function createUser(options: { givenName?: string } = {}) {
+  return prisma.user.create({
+    data: {
+      email: `${options.givenName?.toLowerCase() ?? "user"}-${randomUUID()}@example.test`,
+      givenName: options.givenName ?? "Player",
+      isRegistered: true,
+    },
+  });
+}
 
 export async function createUserWithDashboard(
   options: { email?: string } = {},
@@ -30,6 +43,30 @@ export async function createUserWithDashboard(
   });
 
   return { user, dashboard };
+}
+
+/**
+ * A new user made moderator of the Competition through the moderator service,
+ * via the dashboard player that links the user to the dashboard.
+ */
+export async function addModerator(options: {
+  competitionId: string;
+  dashboardId: string;
+}) {
+  const user = await createUser({ givenName: "Moderator" });
+  const dashboardPlayer = await prisma.dashboardPlayer.create({
+    data: {
+      dashboardId: options.dashboardId,
+      userId: user.id,
+      nickname: `Moderator ${user.id.slice(0, 8)}`,
+    },
+  });
+  await CompetitionModeratorService.addModeratorToCompetition(
+    options.competitionId,
+    dashboardPlayer.id,
+  );
+
+  return { user, dashboardPlayer };
 }
 
 /** The fields every create-competition request needs. */
@@ -100,6 +137,46 @@ export async function createLeague(options: {
     },
     options.userId,
   );
+}
+
+/**
+ * A Duel whose Season 1 holds one Match and is closed through Start new season,
+ * so Season 2 is the Current season.
+ */
+export async function createDuelWithClosedSeason(options: {
+  userId: string;
+  name?: string;
+  votingEnabled?: boolean;
+}) {
+  const duel = await createDuel(options);
+  const seasonOneMatch = await createDuelMatch({
+    competitionId: duel.competition.id,
+  });
+  const currentSeason = await SeasonService.startNewSeason(
+    duel.competition.id,
+    options.userId,
+  );
+
+  return { ...duel, seasonOneMatch, currentSeason };
+}
+
+/**
+ * A League whose Season 1 holds its initial Fixtures and is closed through
+ * Start new season, so Season 2 is the Current season and has no Match yet.
+ */
+export async function createLeagueWithClosedSeason(options: {
+  userId: string;
+  name?: string;
+  numberOfTeams?: number;
+  isRoundRobin?: boolean;
+}) {
+  const league = await createLeague(options);
+  const currentSeason = await SeasonService.startNewSeason(
+    league.competition.id,
+    options.userId,
+  );
+
+  return { ...league, currentSeason };
 }
 
 export const defaultDuelPlayers: createMatchRequest["players"] = [
@@ -198,6 +275,11 @@ export async function setFixtureScore(
     where: { id: matchId },
     data: { homeTeamScore, awayTeamScore },
   });
+}
+
+/** Gives a Fixture the date League completion requires. */
+export async function setFixtureDate(matchId: string, date: Date) {
+  return prisma.match.update({ where: { id: matchId }, data: { date } });
 }
 
 /**

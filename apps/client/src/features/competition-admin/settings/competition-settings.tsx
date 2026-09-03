@@ -27,7 +27,7 @@ export default function CompetitionSettingsList({
 
   return (
     <div className="relative space-y-6">
-      <SeasonCard currentSeason={competition.currentSeason} />
+      <SeasonCard competition={competition} />
 
       <Card className="border-2 border-red-500/50 bg-panel-bg">
         <CardHeader>

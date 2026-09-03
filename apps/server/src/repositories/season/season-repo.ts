@@ -1,7 +1,7 @@
 import { Prisma, Season } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
-import { SeasonWithCounts } from "./types";
+import { SeasonWithCounts, SeasonWithMatchCount } from "./types";
 
 export class SeasonRepo {
   /** The Current season (see `isCurrentSeason`). */
@@ -16,6 +16,66 @@ export class SeasonRepo {
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "SeasonRepo.findCurrent");
+    }
+  }
+
+  /** The Current season with the number of Matches it holds. */
+  static async findCurrentWithMatchCount(
+    competitionId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<SeasonWithMatchCount | null> {
+    try {
+      const prismaClient = tx || prisma;
+      const season = await prismaClient.season.findFirst({
+        where: { competitionId, endedAt: null },
+        include: { _count: { select: { matches: true } } },
+      });
+      if (!season) return null;
+
+      const { _count, ...rest } = season;
+      return { ...rest, matchCount: _count.matches };
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "SeasonRepo.findCurrentWithMatchCount",
+      );
+    }
+  }
+
+  /** Season numbers are per Competition. */
+  static async findByNumber(
+    competitionId: string,
+    number: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Season | null> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.season.findUnique({
+        where: { competitionId_number: { competitionId, number } },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "SeasonRepo.findByNumber");
+    }
+  }
+
+  /**
+   * Closes the Season if it is still open and returns how many rows that
+   * touched: 1, or 0 when it was already closed (a concurrent rollover won).
+   */
+  static async close(
+    seasonId: string,
+    endedAt: Date,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    try {
+      const prismaClient = tx || prisma;
+      const result = await prismaClient.season.updateMany({
+        where: { id: seasonId, endedAt: null },
+        data: { endedAt },
+      });
+      return result.count;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "SeasonRepo.close");
     }
   }
 

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   createDuel,
   createDuelMatch,
+  createDuelWithClosedSeason,
   createLeague,
   createUserWithDashboard,
   markCompleted,
@@ -102,5 +103,38 @@ describe("CompetitionService.getCompetitionInfo", () => {
         completedMatchCount: 0,
       },
     ]);
+  });
+});
+
+describe("CompetitionService.getCompetitionStats", () => {
+  it("scopes matches and player stats to the Current season unless a season is selected", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, seasonOneMatch } = await createDuelWithClosedSeason({
+      userId: user.id,
+    });
+
+    const current = await CompetitionService.getCompetitionStats(
+      competition.id,
+      user.id,
+    );
+    expect(current.matches).toEqual([]);
+    expect(current.playerStats).toEqual([]);
+
+    const seasonOne = await CompetitionService.getCompetitionStats(
+      competition.id,
+      user.id,
+      1,
+    );
+    expect(seasonOne.matches.map((match) => match.id)).toEqual([
+      seasonOneMatch.id,
+    ]);
+    expect(seasonOne.playerStats).toHaveLength(4);
+
+    const all = await CompetitionService.getCompetitionStats(
+      competition.id,
+      user.id,
+      "all",
+    );
+    expect(all.matches).toHaveLength(1);
   });
 });

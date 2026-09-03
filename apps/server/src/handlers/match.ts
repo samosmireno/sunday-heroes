@@ -5,9 +5,10 @@ import { MatchAuthService } from "../services/match/match-auth-service";
 import { sendSuccess } from "../utils/response-utils";
 import {
   extractUserId,
-  getRequiredQuery,
   getOptionalNumberParam,
+  parseQuery,
 } from "../utils/request-utils";
+import { matchesQuerySchema } from "../schemas/season-schemas";
 import { AuthorizationError, BadRequestError } from "../utils/errors";
 import logger from "../logger";
 
@@ -33,13 +34,16 @@ export const getMatchesWithStats = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = getRequiredQuery(req, "userId");
+    const { userId, competitionId, season } = parseQuery(
+      matchesQuerySchema,
+      req.query,
+    );
     const page = getOptionalNumberParam(req, "page", 1);
     const limit = getOptionalNumberParam(req, "limit", 10);
-    const competitionId = req.query.competitionId?.toString();
 
     const result = await MatchService.getMatchesForUser(userId, {
       competitionId,
+      season,
       limit,
       offset: (page - 1) * limit,
     });

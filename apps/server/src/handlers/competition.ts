@@ -3,8 +3,11 @@ import { CompetitionService } from "../services/competition-service";
 import { CompetitionType } from "@repo/shared-types";
 import { sendSuccess } from "../utils/response-utils";
 import { extractUserId, getRequiredQuery } from "../utils/request-utils";
+import { getSeasonQuery } from "../schemas/season-schemas";
 import { createCompetitionRequest } from "../schemas/create-competition-request-schema";
 import { TeamService } from "../services/team-service";
+import { SeasonService } from "../services/season-service";
+import { transformSeasonToResponse } from "../utils/season-transforms";
 import { BadRequestError } from "../utils/errors";
 import logger from "../logger";
 
@@ -45,10 +48,12 @@ export const getCompetitionStats = async (
   try {
     const competitionId = getRequiredQuery(req, "compId");
     const userId = req.query["userId"] as string;
+    const season = getSeasonQuery(req);
 
     const competition = await CompetitionService.getCompetitionStats(
       competitionId,
       userId,
+      season,
     );
     sendSuccess(res, competition);
   } catch (error) {
@@ -180,6 +185,33 @@ export const resetCompetition = async (
 
     logger.info({ userId, competitionId }, "Competition reset");
     sendSuccess(res, resetCompetition);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const startNewSeason = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = extractUserId(req);
+    const competitionId = req.params.id;
+
+    logger.info({ userId, competitionId }, "Start new season attempt");
+
+    if (!competitionId) {
+      throw new BadRequestError("Competition ID is required");
+    }
+
+    const season = await SeasonService.startNewSeason(competitionId, userId);
+
+    logger.info(
+      { userId, competitionId, seasonNumber: season.number },
+      "New season started",
+    );
+    sendSuccess(res, transformSeasonToResponse(season), 201);
   } catch (error) {
     next(error);
   }
