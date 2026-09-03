@@ -50,7 +50,7 @@ export function useAddMatch(
       matchService.createMatch(data, competitionId, competitionType),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["competition", competitionId],
+        queryKey: ["competition", { compId: competitionId }],
       });
       queryClient.invalidateQueries({ queryKey: ["matches"] });
       navigate(`/competition/${competitionId}`);

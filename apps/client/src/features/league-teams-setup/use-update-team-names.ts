@@ -27,7 +27,7 @@ export function useUpdateTeamNames() {
     },
     onSuccess: (_, { competitionId }) => {
       queryClient.invalidateQueries({
-        queryKey: ["competition", competitionId],
+        queryKey: ["competition", { compId: competitionId }],
       });
       navigate(`/competition/${competitionId}`);
     },

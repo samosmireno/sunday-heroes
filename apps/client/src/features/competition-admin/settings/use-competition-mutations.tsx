@@ -19,7 +19,7 @@ export function useResetCompetition(competitionId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["competition", competitionId],
+        queryKey: ["competition", { compId: competitionId }],
       });
       toast.success("Competition has been reset successfully");
       navigate("/competitions");

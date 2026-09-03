@@ -55,7 +55,7 @@ export function useEditMatch(
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["match", matchId] });
       queryClient.invalidateQueries({
-        queryKey: ["competition", competitionId],
+        queryKey: ["competition", { compId: competitionId }],
       });
       queryClient.invalidateQueries({ queryKey: ["matches"] });
       navigate(`/competition/${competitionId}`);
