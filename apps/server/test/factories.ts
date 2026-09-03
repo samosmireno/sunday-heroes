@@ -123,6 +123,7 @@ export async function createLeague(options: {
   numberOfTeams?: number;
   /** true means a double round-robin; the request field keeps its historical name. */
   isRoundRobin?: boolean;
+  matchType?: PrismaMatchType;
 }) {
   return LeagueService.createLeague(
     {
@@ -131,7 +132,7 @@ export async function createLeague(options: {
         name: options.name ?? "League",
         type: CompetitionType.LEAGUE,
       }),
-      matchType: PrismaMatchType.FIVE_A_SIDE,
+      matchType: options.matchType ?? PrismaMatchType.FIVE_A_SIDE,
       numberOfTeams: options.numberOfTeams ?? 4,
       isRoundRobin: options.isRoundRobin ?? false,
     },
@@ -169,6 +170,7 @@ export async function createLeagueWithClosedSeason(options: {
   name?: string;
   numberOfTeams?: number;
   isRoundRobin?: boolean;
+  matchType?: PrismaMatchType;
 }) {
   const league = await createLeague(options);
   const currentSeason = await SeasonService.startNewSeason(

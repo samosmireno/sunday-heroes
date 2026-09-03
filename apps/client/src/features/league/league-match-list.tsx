@@ -6,6 +6,7 @@ import { useLeagueFixtures } from "@/features/league/hooks/use-league-fixtures";
 import { useMatchDetails } from "./hooks/use-match-details";
 import LeagueMatchCard from "./league-match-card";
 import LeagueMatchDetails from "./league-match-details";
+import SeasonBeingSetUp from "./season-being-set-up";
 import { useCompleteMatch } from "@/features/league/hooks/use-complete-match";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -73,9 +74,7 @@ export default function LeagueMatchList({
   }
 
   if (rounds.length === 0) {
-    return (
-      <div className="py-8 text-center text-gray-400">No matches found.</div>
-    );
+    return <SeasonBeingSetUp competitionId={competitionId} />;
   }
 
   return (

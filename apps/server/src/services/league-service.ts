@@ -3,6 +3,7 @@ import { TeamService } from "./team-service";
 import { MatchWithDetails, MatchWithTeams } from "../repositories/match/types";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import { MatchType, Prisma, VotingStatus } from "@prisma/client";
+import { UpdateTeamNamesResponse } from "@repo/shared-types";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
 import prisma from "../repositories/prisma-client";
 import { MatchTeamRepo } from "../repositories/match-team-repo";
@@ -373,6 +374,10 @@ export class LeagueService {
     return await TeamCompetitionRepo.getAllTeamsInCompetition(competitionId);
   }
 
+  /**
+   * Teams setup: renames or merges the teams and, when the Current season has
+   * no Match yet, generates its Fixtures in the same transaction.
+   */
   static async updateTeamNames(
     competitionId: string,
     teamUpdates: {
@@ -380,7 +385,7 @@ export class LeagueService {
       name: string;
     }[],
     userId: string
-  ) {
+  ): Promise<UpdateTeamNamesResponse> {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       competitionId,
       userId
@@ -393,26 +398,77 @@ export class LeagueService {
 
     const dashboardId =
       await DashboardService.getDashboardIdFromCompetitionId(competitionId);
-    const results = [];
 
-    await prisma.$transaction(async (tx) => {
+    const fixturesGenerated = await prisma.$transaction(async (tx) => {
       for (const update of teamUpdates) {
-        const result = await this.handleTeamNameUpdate(
+        await this.handleTeamNameUpdate(
           update.id,
           update.name.trim(),
           competitionId,
           dashboardId,
           tx
         );
-        results.push(result);
       }
+
+      return this.generateCurrentSeasonFixtures(competitionId, tx);
     });
 
     return {
       success: true,
       updatedTeams: teamUpdates.length,
       updates: teamUpdates,
+      fixturesGenerated,
     };
+  }
+
+  /**
+   * Season N's Fixtures come from Teams setup: generated once, while the
+   * Current season holds no Match, for the team set as it stands after the
+   * renames and merges, with the previous Season's match type and the
+   * League's round-robin format. Returns how many Fixtures were generated.
+   */
+  private static async generateCurrentSeasonFixtures(
+    competitionId: string,
+    tx: Prisma.TransactionClient
+  ): Promise<number> {
+    const currentSeason = await SeasonRepo.findCurrentWithMatchCount(
+      competitionId,
+      tx
+    );
+    if (!currentSeason) {
+      throw new NotFoundError("Season");
+    }
+    if (currentSeason.matchCount > 0) {
+      return 0;
+    }
+
+    // No Match in any Season leaves nothing to copy the match type from. Only
+    // Reset competition gets a League here; regenerating Season 1 after it is #23.
+    const matchType = await MatchRepo.findLatestMatchType(competitionId, tx);
+    if (!matchType) {
+      return 0;
+    }
+
+    const competition = await CompetitionRepo.findById(competitionId, tx);
+    if (!competition) {
+      throw new NotFoundError("Competition");
+    }
+
+    const teamCompetitions =
+      await TeamCompetitionRepo.getAllTeamsInCompetition(competitionId, tx);
+    const teams = teamCompetitions.map(({ team }) => ({
+      id: team.id,
+      name: team.name,
+    }));
+
+    const fixtures = await this.generateLeagueFixtures(
+      competitionId,
+      teams,
+      competition.isRoundRobin ?? false,
+      matchType,
+      tx
+    );
+    return fixtures.length;
   }
 
   private static async handleTeamNameUpdate(

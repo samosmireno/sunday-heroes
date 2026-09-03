@@ -1,4 +1,4 @@
-import { Match, Prisma, VotingStatus } from "@prisma/client";
+import { Match, MatchType, Prisma, VotingStatus } from "@prisma/client";
 import prisma from "../prisma-client";
 import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 import { config } from "../../config/config";
@@ -148,6 +148,28 @@ export class MatchRepo {
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "MatchRepo.countBySeasonId");
+    }
+  }
+
+  /**
+   * The match type of the Competition's most recent Match, by Season number;
+   * null when the Competition has no Match in any Season. Match type is not
+   * stored on the Competition, so a new Season's Fixtures copy it from here.
+   */
+  static async findLatestMatchType(
+    competitionId: string,
+    tx?: Prisma.TransactionClient
+  ): Promise<MatchType | null> {
+    try {
+      const prismaClient = tx || prisma;
+      const match = await prismaClient.match.findFirst({
+        where: { competitionId },
+        orderBy: [{ season: { number: "desc" } }, { createdAt: "desc" }],
+        select: { matchType: true },
+      });
+      return match?.matchType ?? null;
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "MatchRepo.findLatestMatchType");
     }
   }
 

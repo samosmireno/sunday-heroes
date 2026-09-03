@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Header from "@/components/ui/header";
 import CompetitionListSkeleton from "../features/competition-list/competition-list-skeleton";
 import { TeamNamesFormData } from "@/features/league-teams-setup/schemas";
@@ -7,13 +7,11 @@ import { TeamSetupError } from "@/features/league-teams-setup/team-setup-error";
 import { TeamNamesForm } from "@/features/league-teams-setup/team-names-form";
 import SubmitSpinner from "@/components/ui/submit-spinner";
 import { useCompetitionTeams } from "@/features/competition/use-competition-teams";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function LeagueTeamSetupPage() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { competitionId } = useParams() as { competitionId: string };
   const { competition, isLoading } = useCompetitionTeams(competitionId);
+  // The hook refreshes the reads and lands on the League page on success.
   const updateTeamNames = useUpdateTeamNames();
 
   const handleSubmit = (data: TeamNamesFormData) => {
@@ -24,17 +22,7 @@ export default function LeagueTeamSetupPage() {
       name: data[`team${index}`] || team.name,
     }));
 
-    updateTeamNames.mutate(
-      { competitionId, teamUpdates },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["competitionTeams", competitionId],
-          });
-          navigate(`/competition/${competitionId}`);
-        },
-      },
-    );
+    updateTeamNames.mutate({ competitionId, teamUpdates });
   };
 
   if (isLoading) {
