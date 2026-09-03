@@ -354,7 +354,10 @@ export class LeagueService {
     });
   }
 
-  /** Player totals over the selected season's matches, Current by default. */
+  /**
+   * Player totals over the selected season's Completed matches, Current by
+   * default. A Fixture with goals entered but not completed counts for nothing.
+   */
   static async getPlayerStats(competitionId: string, season?: SeasonQuery) {
     const seasonWhere = await SeasonService.resolveSeasonFilter(
       competitionId,
@@ -362,7 +365,7 @@ export class LeagueService {
     );
     const competition = await CompetitionRepo.findByIdWithDetails(
       competitionId,
-      seasonWhere
+      { ...seasonWhere, isCompleted: true }
     );
     if (!competition) {
       throw new NotFoundError("Competition");

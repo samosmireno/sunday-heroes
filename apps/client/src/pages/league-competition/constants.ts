@@ -3,7 +3,10 @@ import { Role, SeasonFilter, SeasonResponse } from "@repo/shared-types";
 import LeagueTable from "@/features/league/league-table";
 import LeagueMatchList from "@/features/league/league-match-list";
 import LeagueStats from "@/features/league/league-stats";
-import { seasonCaption } from "@/features/competition/season-labels";
+import {
+  leagueStatsCaption,
+  seasonCaption,
+} from "@/features/competition/season-labels";
 
 export interface LeagueTabProps {
   competitionId: string;
@@ -45,5 +48,6 @@ export const TAB_CONFIG: LeagueTab[] = [
     label: "Stats",
     component: LeagueStats,
     title: "Player Stats",
+    caption: leagueStatsCaption,
   },
 ];

@@ -4,6 +4,7 @@ import {
   addMatchHint,
   allSeasonsOptionLabel,
   duelStatsCaption,
+  leagueStatsCaption,
   pastSeasonBanner,
   seasonCaption,
   seasonOptionLabel,
@@ -72,6 +73,40 @@ describe("seasonCaption", () => {
 
   it("counts the Seasons under All seasons", () => {
     expect(seasonCaption("all", seasons)).toBe("All seasons · 3 seasons");
+  });
+});
+
+describe("leagueStatsCaption", () => {
+  const seasons = [
+    seasonResponse({
+      number: 1,
+      startedAt: "2024-09-08T10:00:00.000Z",
+      endedAt: "2025-03-02T10:00:00.000Z",
+      matchCount: 12,
+      completedMatchCount: 12,
+    }),
+    seasonResponse({ ...pastSeason, matchCount: 16, completedMatchCount: 15 }),
+    seasonResponse({ ...currentSeason, matchCount: 6, completedMatchCount: 1 }),
+  ];
+
+  it("names the Season and how many of its matches the totals cover", () => {
+    expect(leagueStatsCaption(2, seasons)).toBe(
+      "Season 2 · 15 completed matches",
+    );
+  });
+
+  it("sums the Completed matches of every Season under All seasons", () => {
+    expect(leagueStatsCaption("all", seasons)).toBe(
+      "All seasons · 28 completed matches",
+    );
+  });
+
+  it("counts one completed match in the singular", () => {
+    expect(leagueStatsCaption(3, seasons)).toBe("Season 3 · 1 completed match");
+  });
+
+  it("names the Season alone until the list carries it", () => {
+    expect(leagueStatsCaption(2, [])).toBe("Season 2");
   });
 });
 

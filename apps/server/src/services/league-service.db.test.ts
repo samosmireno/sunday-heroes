@@ -283,6 +283,43 @@ describe("Season filter on the League reads", () => {
     ]);
   });
 
+  it("getPlayerStats counts Completed matches only: a not-completed Fixture with goals entered contributes nothing", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition, fixtures } = await createLeague({
+      userId: user.id,
+      numberOfTeams: 4,
+    });
+    const [completed, notCompleted] = fixtures;
+    await addPlayersToFixture(completed.match.id, [
+      { nickname: "Ana", isHome: true, goals: 2 },
+      { nickname: "Bo", isHome: false },
+    ]);
+    await setFixtureScore(completed.match.id, 2, 0);
+    await markCompleted(completed.match.id);
+    // A Fixture with players, goals and a score typed in, never completed.
+    await addPlayersToFixture(notCompleted.match.id, [
+      { nickname: "Ana", isHome: true, goals: 3, assists: 1 },
+      { nickname: "Cal", isHome: false, goals: 1 },
+    ]);
+    await setFixtureScore(notCompleted.match.id, 3, 1);
+
+    const totals = await LeagueService.getPlayerStats(competition.id);
+
+    expect(
+      totals
+        .map(({ nickname, matches, goals, assists }) => ({
+          nickname,
+          matches,
+          goals,
+          assists,
+        }))
+        .sort((a, b) => a.nickname.localeCompare(b.nickname)),
+    ).toEqual([
+      { nickname: "Ana", matches: 1, goals: 2, assists: 0 },
+      { nickname: "Bo", matches: 1, goals: 0, assists: 0 },
+    ]);
+  });
+
   it("the fixtures read tags every Fixture with its Season, closed once the Season is a Past season", async () => {
     const { user } = await createUserWithDashboard();
     const { competition } = await createLeagueWithClosedSeason({

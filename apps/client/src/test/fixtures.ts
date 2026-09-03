@@ -5,6 +5,7 @@ import {
   CompetitionType,
   CurrentSeasonResponse,
   LeagueMatchResponse,
+  LeaguePlayerTotals,
   LeagueTeamResponse,
   MatchPageResponse,
   MatchResponse,
@@ -51,6 +52,24 @@ export function leagueTeamResponse(
     points: 0,
     goalDifference: 0,
     team: { id, name },
+    ...overrides,
+  };
+}
+
+/** A League player's totals as the stats read lists them; at zero unless overridden. */
+export function leaguePlayerTotals(
+  overrides: Partial<LeaguePlayerTotals> = {},
+): LeaguePlayerTotals {
+  const nickname = overrides.nickname ?? "Ana";
+  return {
+    id: `player-${nickname.toLowerCase()}`,
+    nickname,
+    matches: 0,
+    wins: 0,
+    winRate: 0,
+    goals: 0,
+    assists: 0,
+    teamName: "Lions",
     ...overrides,
   };
 }

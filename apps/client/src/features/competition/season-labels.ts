@@ -66,6 +66,27 @@ export function seasonCaption(
     : seasonName(selection);
 }
 
+/**
+ * Which matches the League Stats totals cover: the selection's Completed
+ * matches from the season list, summed under All seasons. `Season 2 · 15
+ * completed matches`; the Season alone until the list carries it.
+ */
+export function leagueStatsCaption(
+  selection: SeasonFilter,
+  seasons: SeasonResponse[],
+): string {
+  const completed = (count: number) =>
+    count === 1 ? "1 completed match" : `${count} completed matches`;
+  if (selection === "all") {
+    const total = seasons.reduce((sum, s) => sum + s.completedMatchCount, 0);
+    return `${ALL_SEASONS_LABEL} · ${completed(total)}`;
+  }
+  const season = seasons.find((s) => s.number === selection);
+  return season
+    ? `${seasonName(selection)} · ${completed(season.completedMatchCount)}`
+    : seasonName(selection);
+}
+
 /** Which matches the Duel stats table's percentage filter counts. */
 export function duelStatsCaption(
   selection: SeasonFilter,
