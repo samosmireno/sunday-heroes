@@ -2,19 +2,23 @@ import { QueryClient, QueryKey } from "@tanstack/react-query";
 import { SeasonParam } from "./use-season-param";
 
 /**
- * The query keys of every read that carries a Competition id or a Season, and
- * the invalidation that follows a write to the Competition. One shape per
- * read, in one place: a renamed key or a new season-carrying read is a change
- * here rather than a hunt through the mutation hooks.
+ * The query keys of the Competition family: the Competition's own reads, the
+ * League page's tabs and the match lists, along with the invalidation that
+ * follows a write to the Competition. One shape per read, in one place: a
+ * renamed key or a new season-carrying read is a change here rather than a
+ * hunt through the mutation hooks.
  *
  * Three key conventions coexist, one per read family, and each is reproduced
  * verbatim; normalising them is a separate change. Every `*Prefix` is the
  * competition-wide head of its key: the partial key an invalidation targets so
  * that the read is caught whichever user or season it was cached under.
  *
- * The reads outside the family (player, dashboard, player stats, voting,
- * invitation) have one reader each and no invalidator, and keep their keys
- * inline.
+ * The family is closed, and the reads outside it keep their keys inline: each
+ * has one reader and no invalidator, so no second place has to agree on its
+ * shape. That includes two searches that carry a Competition id without
+ * belonging to the family, `playerSuggestions` in the match form's player list
+ * and `user-search` in the moderators panel, as well as the player, dashboard,
+ * player stats, voting and invitation reads.
  */
 
 /** The scope of one match list: a user's, or one Competition's, one page at a time. */
