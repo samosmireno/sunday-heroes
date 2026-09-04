@@ -15,6 +15,8 @@ import {
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
 import prisma from "../repositories/prisma-client";
 import { MatchTeamRepo } from "../repositories/match-team-repo";
+import { MatchPlayerRepo } from "../repositories/match-player/match-player-repo";
+import { TeamRosterRepo } from "../repositories/team-roster-repo";
 import { CreateLeagueRequest } from "../schemas/league-schemas";
 import { TeamRepo } from "../repositories/team/team-repo";
 import { DashboardService } from "./dashboard-service";
@@ -546,6 +548,10 @@ export class LeagueService {
     );
 
     if (existingTeam && existingTeam.id !== teamId) {
+      // The merge moves this Competition, and only this Competition, onto the
+      // team it found: the same Team row can be in another League of the
+      // dashboard, and that League's standings, fixtures and rosters are not
+      // this save's to rewrite. The old row goes only once nothing holds it.
       await TeamCompetitionRepo.updateTeamId(
         teamId,
         existingTeam.id,
@@ -553,9 +559,30 @@ export class LeagueService {
         tx,
       );
 
-      await MatchTeamRepo.updateTeamReferences(teamId, existingTeam.id, tx);
+      await MatchTeamRepo.updateTeamReferences(
+        teamId,
+        existingTeam.id,
+        competitionId,
+        tx,
+      );
+      await MatchPlayerRepo.updateTeamReferences(
+        teamId,
+        existingTeam.id,
+        competitionId,
+        tx,
+      );
+      await TeamRosterRepo.updateTeamReferences(
+        teamId,
+        existingTeam.id,
+        competitionId,
+        tx,
+      );
 
-      await TeamRepo.delete(teamId, tx);
+      const stillInACompetition =
+        await TeamCompetitionRepo.countCompetitionsForTeam(teamId, tx);
+      if (stillInACompetition === 0) {
+        await TeamRepo.delete(teamId, tx);
+      }
 
       return {
         action: "merged",

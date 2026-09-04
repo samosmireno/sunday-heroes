@@ -138,6 +138,22 @@ export class TeamCompetitionRepo {
     }
   }
 
+  /** How many Competitions hold this Team: a dashboard may share one across its Leagues. */
+  static async countCompetitionsForTeam(
+    teamId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    try {
+      const prismaClient = tx || prisma;
+      return await prismaClient.teamCompetition.count({ where: { teamId } });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.countCompetitionsForTeam",
+      );
+    }
+  }
+
   /** Just the ids, for callers that only need to know which Teams are in the Competition. */
   static async getTeamIdsInCompetition(
     competitionId: string,

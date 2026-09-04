@@ -136,4 +136,29 @@ export class TeamRosterRepo {
       throw PrismaErrorHandler.handle(error, "TeamRosterRepo.isPlayerOnTeam");
     }
   }
+
+  /**
+   * Repoints one Competition's rosters from one team to another, for a merge
+   * in Teams setup. Rosters are per Competition already, so the other
+   * Competitions of a shared Team keep theirs.
+   */
+  static async updateTeamReferences(
+    oldTeamId: string,
+    newTeamId: string,
+    competitionId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<void> {
+    try {
+      const prismaClient = tx || prisma;
+      await prismaClient.teamRoster.updateMany({
+        where: { teamId: oldTeamId, competitionId },
+        data: { teamId: newTeamId },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamRosterRepo.updateTeamReferences",
+      );
+    }
+  }
 }

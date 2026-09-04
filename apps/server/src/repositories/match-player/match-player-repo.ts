@@ -202,4 +202,29 @@ export class MatchPlayerRepo {
       throw PrismaErrorHandler.handle(error, "MatchPlayerRepo.isPlayerInMatch");
     }
   }
+
+  /**
+   * Repoints one Competition's match players from one team to another, for a
+   * merge in Teams setup. Scoped like the match-team rewrite: the same Team
+   * can be in another Competition of the dashboard.
+   */
+  static async updateTeamReferences(
+    oldTeamId: string,
+    newTeamId: string,
+    competitionId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<void> {
+    try {
+      const prismaClient = tx || prisma;
+      await prismaClient.matchPlayer.updateMany({
+        where: { teamId: oldTeamId, match: { competitionId } },
+        data: { teamId: newTeamId },
+      });
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "MatchPlayerRepo.updateTeamReferences",
+      );
+    }
+  }
 }

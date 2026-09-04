@@ -231,15 +231,21 @@ export class MatchTeamRepo {
     }
   }
 
+  /**
+   * Repoints one Competition's matches from one team to another. Scoped on
+   * purpose: a Team can be in several Competitions of a dashboard, and a merge
+   * in one of them must leave the others' matches alone.
+   */
   static async updateTeamReferences(
     oldTeamId: string,
     newTeamId: string,
+    competitionId: string,
     tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
       await prismaClient.matchTeam.updateMany({
-        where: { teamId: oldTeamId },
+        where: { teamId: oldTeamId, match: { competitionId } },
         data: { teamId: newTeamId },
       });
     } catch (error) {

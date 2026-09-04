@@ -15,6 +15,7 @@ import {
 import { MatchRepo } from "../repositories/match/match-repo";
 import { MatchWithDetails } from "../repositories/match/types";
 import { SeasonRepo } from "../repositories/season/season-repo";
+import { TeamRepo } from "../repositories/team/team-repo";
 import {
   AuthorizationError,
   ConflictError,
@@ -629,37 +630,37 @@ const AT_ZERO: StandingsFigures = {
 const total = (rows: LeagueTeamResponse[], field: "points" | "played") =>
   rows.reduce((sum, row) => sum + row[field], 0);
 
-describe("Teams setup on a dashboard with two Leagues", () => {
-  /** Every team of a League, by id, under its current name. */
-  async function teamsOf(competitionId: string) {
-    const teamCompetitions = await LeagueService.getLeagueTeams(competitionId);
-    return teamCompetitions
-      .map(({ team }) => ({ id: team.id, name: team.name }))
-      .sort((a, b) => a.id.localeCompare(b.id));
-  }
+/** Every team of a League, by id, under its current name. */
+async function teamsOf(competitionId: string) {
+  const teamCompetitions = await LeagueService.getLeagueTeams(competitionId);
+  return teamCompetitions
+    .map(({ team }) => ({ id: team.id, name: team.name }))
+    .sort((a, b) => a.id.localeCompare(b.id));
+}
 
+/** The League keeps its own four team rows, and its Fixtures still reference them. */
+async function expectOwnTeams(
+  league: { competition: { id: string }; teams: { id: string }[] },
+  names: string[],
+) {
+  const ids = league.teams.map((team) => team.id).sort();
+  const after = await teamsOf(league.competition.id);
+  expect(after.map((team) => team.id)).toEqual(ids);
+  expect(after.map((team) => team.name).sort()).toEqual([...names].sort());
+  expectRoundRobin(
+    await LeagueService.getLeagueFixtures(league.competition.id),
+    ids,
+    1,
+  );
+}
+
+describe("Teams setup on a dashboard with two Leagues", () => {
   /** Two Leagues of one admin, both holding "Team 1" … "Team 4" from creation. */
   async function createTwoLeagues() {
     const { user } = await createUserWithDashboard();
     const first = await createLeague({ userId: user.id, name: "First" });
     const second = await createLeague({ userId: user.id, name: "Second" });
     return { user, first, second };
-  }
-
-  /** The League keeps its own four team rows, and its Fixtures still reference them. */
-  async function expectOwnTeams(
-    league: { competition: { id: string }; teams: { id: string }[] },
-    names: string[],
-  ) {
-    const ids = league.teams.map((team) => team.id).sort();
-    const after = await teamsOf(league.competition.id);
-    expect(after.map((team) => team.id)).toEqual(ids);
-    expect(after.map((team) => team.name).sort()).toEqual([...names].sort());
-    expectRoundRobin(
-      await LeagueService.getLeagueFixtures(league.competition.id),
-      ids,
-      1,
-    );
   }
 
   /** The Teams setup save that names three teams and leaves "Team 4" as it is. */
@@ -824,6 +825,136 @@ describe("Teams setup on a dashboard with two Leagues", () => {
       "Founders 3",
       placeholderTeamName(4),
     ]);
+  });
+});
+
+/**
+ * Naming a team after a team another League of the dashboard already holds is
+ * how one Team comes to be in several Leagues: the merge repoints this
+ * League's slot at that Team and drops the placeholder. The other League is a
+ * bystander throughout, including in whatever this League does to the shared
+ * team afterwards.
+ */
+describe("A Team shared by two Leagues", () => {
+  const NAMES_A = ["Lions", "Tigers", "Bears", "Wolves"];
+  const NAMES_B = ["Lions", "Pumas", "Hawks", "Foxes"];
+
+  async function teamNamesOf(competitionId: string) {
+    const teamCompetitions = await LeagueService.getLeagueTeams(competitionId);
+    return teamCompetitions.map(({ team }) => team.name).sort();
+  }
+
+  function saveOf(teams: { id: string }[], names: string[]) {
+    return names.map((name, index) => ({ id: teams[index].id, name }));
+  }
+
+  /** League A on real names, League B sharing A's "Lions". */
+  async function shareLions() {
+    const { user } = await createUserWithDashboard();
+    const a = await createLeague({ userId: user.id, name: "A" });
+    const b = await createLeague({ userId: user.id, name: "B" });
+    await LeagueService.updateTeamNames(
+      a.competition.id,
+      saveOf(a.teams, NAMES_A),
+      user.id,
+    );
+    await LeagueService.updateTeamNames(
+      b.competition.id,
+      saveOf(b.teams, NAMES_B),
+      user.id,
+    );
+    return { user, a, b, lions: a.teams[0].id };
+  }
+
+  it("puts one Team row in both Leagues, each keeping its own standings row", async () => {
+    const { a, b, lions } = await shareLions();
+
+    expect((await teamsOf(a.competition.id)).map((team) => team.id)).toContain(
+      lions,
+    );
+    expect((await teamsOf(b.competition.id)).map((team) => team.id)).toContain(
+      lions,
+    );
+    expect(await teamNamesOf(a.competition.id)).toEqual([...NAMES_A].sort());
+    expect(await teamNamesOf(b.competition.id)).toEqual([...NAMES_B].sort());
+
+    const standings = await Promise.all([
+      LeagueService.getLeagueStandings(a.competition.id),
+      LeagueService.getLeagueStandings(b.competition.id),
+    ]);
+    for (const table of standings) {
+      expect(table).toHaveLength(4);
+      expect(table.filter((row) => row.id === lions)).toHaveLength(1);
+    }
+  });
+
+  it("keeps the other League's teams, fixtures and standings when this one merges the shared team away", async () => {
+    const { user, a, b, lions } = await shareLions();
+    const c = await createLeague({ userId: user.id, name: "C" });
+    await LeagueService.updateTeamNames(
+      c.competition.id,
+      saveOf(c.teams, ["Eagles", "Sharks", "Ravens", "Owls"]),
+      user.id,
+    );
+    const eagles = c.teams[0].id;
+
+    // B sends its shared Lions slot onto League C's Eagles.
+    await LeagueService.updateTeamNames(
+      b.competition.id,
+      [{ id: lions, name: "Eagles" }],
+      user.id,
+    );
+
+    expect((await teamsOf(b.competition.id)).map((team) => team.id)).toContain(
+      eagles,
+    );
+    // A is a bystander: same four teams, same fixtures, Lions still its own.
+    await expectOwnTeams(a, NAMES_A);
+    expect(await teamNamesOf(a.competition.id)).toEqual([...NAMES_A].sort());
+    expect(
+      await LeagueService.getLeagueStandings(a.competition.id),
+    ).toHaveLength(4);
+    expect(await teamNamesOf(c.competition.id)).toEqual(
+      ["Eagles", "Owls", "Ravens", "Sharks"].sort(),
+    );
+  });
+
+  it("merges the shared team onto a name the other League also holds, without touching that League's matches", async () => {
+    const { user, a, b, lions } = await shareLions();
+
+    // "Tigers" is League A's, and A plays Lions against Tigers: rewriting A's
+    // match rows as well as B's would collide on (matchId, teamId).
+    await LeagueService.updateTeamNames(
+      b.competition.id,
+      [{ id: lions, name: "Tigers" }],
+      user.id,
+    );
+
+    const tigers = a.teams[1].id;
+    expect((await teamsOf(b.competition.id)).map((team) => team.id)).toContain(
+      tigers,
+    );
+    await expectOwnTeams(a, NAMES_A);
+  });
+
+  it("deletes the merged-away Team row once no League holds it", async () => {
+    const { user } = await createUserWithDashboard();
+    const a = await createLeague({ userId: user.id, name: "A" });
+    const b = await createLeague({ userId: user.id, name: "B" });
+    await LeagueService.updateTeamNames(
+      a.competition.id,
+      saveOf(a.teams, NAMES_A),
+      user.id,
+    );
+    const merged = b.teams[0].id;
+
+    await LeagueService.updateTeamNames(
+      b.competition.id,
+      saveOf(b.teams, NAMES_B),
+      user.id,
+    );
+
+    expect(await TeamRepo.findById(merged)).toBeNull();
   });
 });
 
