@@ -17,7 +17,7 @@ router.post(
   "/",
   authenticateToken,
   validateRequestBody(submitVotesSchema),
-  submitVotes
+  submitVotes,
 );
 
 export default router;

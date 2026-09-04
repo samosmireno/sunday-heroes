@@ -9,7 +9,7 @@ export const updateTeamNamesSchema = z.object({
           .string()
           .min(1, "Team name is required")
           .max(30, "Team name too long"),
-      })
+      }),
     )
     .min(1, "At least one team update is required"),
 });

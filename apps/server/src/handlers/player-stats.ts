@@ -6,7 +6,7 @@ import { sendSuccess } from "../utils/response-utils";
 export const getPlayerStats = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const playerId = req.params.playerId;
@@ -25,7 +25,7 @@ export const getPlayerStats = async (
 export const getTopMatches = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const playerId = req.params.playerId;
@@ -45,7 +45,7 @@ export const getTopMatches = async (
 export const getTopCompetitions = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const playerId = req.params.playerId;
@@ -65,7 +65,7 @@ export const getTopCompetitions = async (
 export const getPerformanceChart = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const playerId = req.params.playerId;
@@ -80,7 +80,7 @@ export const getPerformanceChart = async (
       await DashboardPlayerStatsService.getPerformanceChart(
         playerId,
         competitionId,
-        range
+        range,
       );
     sendSuccess(res, performanceChart);
   } catch (error) {
@@ -91,7 +91,7 @@ export const getPerformanceChart = async (
 export const getTopTeammates = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const playerId = req.params.playerId;
@@ -111,7 +111,7 @@ export const getTopTeammates = async (
 export const getStatsByCompetition = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const playerId = req.params.playerId;

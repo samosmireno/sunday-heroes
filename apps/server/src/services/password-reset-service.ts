@@ -21,19 +21,19 @@ export class PasswordResetService {
 
     if (!user) {
       throw new NotFoundError(
-        "If an account exists, you will receive a reset email"
+        "If an account exists, you will receive a reset email",
       );
     }
 
     if (!user.password) {
       throw new BadRequestError(
-        "This account uses Google login. Please sign in with Google."
+        "This account uses Google login. Please sign in with Google.",
       );
     }
 
     const resetToken = this.generateResetToken();
     const resetTokenExpiresAt = new Date(
-      Date.now() + this.RESET_TOKEN_EXPIRY_MS
+      Date.now() + this.RESET_TOKEN_EXPIRY_MS,
     );
 
     await UserRepo.update(user.id, {
@@ -45,7 +45,7 @@ export class PasswordResetService {
   }
 
   static async validateResetToken(
-    token: string
+    token: string,
   ): Promise<{ userId: string; email: string }> {
     const user = await UserRepo.findByResetToken(token);
 
@@ -69,7 +69,7 @@ export class PasswordResetService {
 
   static async resetPassword(
     token: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<void> {
     const { userId } = await this.validateResetToken(token);
 

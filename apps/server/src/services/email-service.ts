@@ -28,7 +28,7 @@ export class EmailService {
       homeScore: number;
       awayScore: number;
     },
-    reminder: boolean = false
+    reminder: boolean = false,
   ): Promise<boolean> {
     const votingUrl = `${config.client}/vote/${matchId}?voterId=${playerId}`;
 
@@ -57,7 +57,7 @@ export class EmailService {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
-                      }
+                      },
                     )}
                   </p>
                 </div>
@@ -93,7 +93,7 @@ export class EmailService {
         "Failed to send voting invitation email",
         500,
         error instanceof Error ? error.message : "Unknown error",
-        true
+        true,
       );
     }
   }
@@ -105,7 +105,7 @@ export class EmailService {
       dashboardName: string;
       playerNickname: string;
       inviterName: string;
-    }
+    },
   ): Promise<boolean> {
     const inviteUrl = `${config.client}/invite/${inviteToken}`;
 
@@ -160,14 +160,14 @@ export class EmailService {
         "Failed to send dashboard invitation email",
         500,
         error instanceof Error ? error.message : "Unknown error",
-        true
+        true,
       );
     }
   }
 
   static async sendPasswordResetEmail(
     email: string,
-    resetToken: string
+    resetToken: string,
   ): Promise<boolean> {
     const resetUrl = `${config.client}/reset-password?token=${resetToken}`;
 
@@ -223,7 +223,7 @@ export class EmailService {
         "Failed to send password reset email",
         500,
         error instanceof Error ? error.message : "Unknown error",
-        true
+        true,
       );
     }
   }
@@ -237,7 +237,7 @@ export class EmailService {
         "Failed to verify email connection",
         500,
         error instanceof Error ? error.message : "Unknown error",
-        true
+        true,
       );
     }
   }

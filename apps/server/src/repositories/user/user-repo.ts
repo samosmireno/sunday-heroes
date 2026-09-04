@@ -6,7 +6,7 @@ import { USER_WITH_DASHBOARD_INCLUDE, UserWithDashboard } from "./types";
 export class UserRepo {
   static async findById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<User | null> {
     try {
       const prismaClient = tx || prisma;
@@ -18,7 +18,7 @@ export class UserRepo {
 
   static async findDashboardIdById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<string | null> {
     try {
       const prismaClient = tx || prisma;
@@ -41,7 +41,7 @@ export class UserRepo {
 
   static async findByIdWithDashboard(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<UserWithDashboard | null> {
     try {
       const prismaClient = tx || prisma;
@@ -56,7 +56,7 @@ export class UserRepo {
 
   static async findByEmail(
     email: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<User | null> {
     try {
       const prismaClient = tx || prisma;
@@ -79,7 +79,7 @@ export class UserRepo {
 
   static async findByRole(
     role: Role,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<User[]> {
     try {
       const prismaClient = tx || prisma;
@@ -100,7 +100,7 @@ export class UserRepo {
 
   static async getUserRole(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Role | null> {
     try {
       const prismaClient = tx || prisma;
@@ -116,7 +116,7 @@ export class UserRepo {
 
   static async getDashboardId(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<string | null> {
     try {
       const prismaClient = tx || prisma;
@@ -136,7 +136,7 @@ export class UserRepo {
 
   static async create(
     data: Omit<User, "id">,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<User> {
     try {
       const prismaClient = tx || prisma;
@@ -149,7 +149,7 @@ export class UserRepo {
   static async update(
     id: string,
     data: Partial<User>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<User> {
     try {
       const prismaClient = tx || prisma;
@@ -161,7 +161,7 @@ export class UserRepo {
 
   static async delete(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<User> {
     try {
       const prismaClient = tx || prisma;

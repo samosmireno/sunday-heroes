@@ -70,7 +70,7 @@ export class UserService {
   static async updateUser(
     id: string,
     requestingUserId: string,
-    data: Partial<User>
+    data: Partial<User>,
   ) {
     const user = await UserRepo.findById(id);
     if (!user) {
@@ -86,7 +86,7 @@ export class UserService {
       id === requestingUserId || requestingUser.role === "ADMIN";
     if (!canUpdate) {
       throw new AuthorizationError(
-        "You are not authorized to update this user"
+        "You are not authorized to update this user",
       );
     }
 
@@ -110,7 +110,7 @@ export class UserService {
 
     if (requestingUser.role !== "ADMIN") {
       throw new AuthorizationError(
-        "You are not authorized to delete this user"
+        "You are not authorized to delete this user",
       );
     }
 

@@ -12,7 +12,7 @@ export type TeamCompetitionWithDetails = Prisma.TeamCompetitionGetPayload<{
 export class TeamCompetitionRepo {
   static async getTeamsFromCompetitionId(
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
@@ -30,7 +30,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.getTeamsFromCompetitionId"
+        "TeamCompetitionRepo.getTeamsFromCompetitionId",
       );
     }
   }
@@ -38,7 +38,7 @@ export class TeamCompetitionRepo {
   static async getTeamCompetitionStats(
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<TeamCompetition | null> {
     try {
       const prismaClient = tx || prisma;
@@ -53,7 +53,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.getTeamCompetitionStats"
+        "TeamCompetitionRepo.getTeamCompetitionStats",
       );
     }
   }
@@ -69,7 +69,7 @@ export class TeamCompetitionRepo {
       goalsFor?: number;
       goalsAgainst?: number;
     },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<TeamCompetition> {
     try {
       const prismaClient = tx || prisma;
@@ -77,7 +77,7 @@ export class TeamCompetitionRepo {
       const current = await this.getTeamCompetitionStats(
         teamId,
         competitionId,
-        tx
+        tx,
       );
       if (!current) {
         throw new NotFoundError("Team competition record not found");
@@ -102,7 +102,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.incrementTeamStats"
+        "TeamCompetitionRepo.incrementTeamStats",
       );
     }
   }
@@ -110,7 +110,7 @@ export class TeamCompetitionRepo {
   static async resetTeamStats(
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<TeamCompetition> {
     try {
       const prismaClient = tx || prisma;
@@ -133,14 +133,14 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.resetTeamStats"
+        "TeamCompetitionRepo.resetTeamStats",
       );
     }
   }
 
   static async getAllTeamsInCompetition(
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -162,14 +162,14 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.getAllTeamsInCompetition"
+        "TeamCompetitionRepo.getAllTeamsInCompetition",
       );
     }
   }
 
   static async getTeamCompetitionsForLeague(
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -182,7 +182,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.getTeamCompetitionsForLeague"
+        "TeamCompetitionRepo.getTeamCompetitionsForLeague",
       );
     }
   }
@@ -190,7 +190,7 @@ export class TeamCompetitionRepo {
   static async createTeamCompetition(
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<TeamCompetition> {
     try {
       const prismaClient = tx || prisma;
@@ -209,7 +209,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.createTeamCompetition"
+        "TeamCompetitionRepo.createTeamCompetition",
       );
     }
   }
@@ -217,7 +217,7 @@ export class TeamCompetitionRepo {
   static async deleteTeamFromCompetition(
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -232,7 +232,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.deleteTeamFromCompetition"
+        "TeamCompetitionRepo.deleteTeamFromCompetition",
       );
     }
   }
@@ -240,7 +240,7 @@ export class TeamCompetitionRepo {
   static async addTeamToCompetition(
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<TeamCompetition> {
     try {
       const prismaClient = tx || prisma;
@@ -259,14 +259,14 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.addTeamToCompetition"
+        "TeamCompetitionRepo.addTeamToCompetition",
       );
     }
   }
 
   static async bulkResetStats(
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -284,7 +284,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.bulkResetStats"
+        "TeamCompetitionRepo.bulkResetStats",
       );
     }
   }
@@ -292,7 +292,7 @@ export class TeamCompetitionRepo {
   static async findByTeamAndCompetition(
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<TeamCompetition | null> {
     try {
       const prismaClient = tx || prisma;
@@ -310,7 +310,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.findByTeamAndCompetition"
+        "TeamCompetitionRepo.findByTeamAndCompetition",
       );
     }
   }
@@ -319,7 +319,7 @@ export class TeamCompetitionRepo {
     oldTeamId: string,
     newTeamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -337,7 +337,7 @@ export class TeamCompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamCompetitionRepo.updateTeamId"
+        "TeamCompetitionRepo.updateTeamId",
       );
     }
   }

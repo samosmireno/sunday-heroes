@@ -3,11 +3,11 @@ import { CompetitionAuthRepo } from "../../repositories/competition/competition-
 export class MatchAuthService {
   static async canUserCreateMatch(
     competitionId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     return await CompetitionAuthRepo.isUserAdminOrModerator(
       competitionId,
-      userId
+      userId,
     );
   }
 }

@@ -5,7 +5,7 @@ import { ErrorResponse, ValidationErrorResponse } from "@repo/shared-types";
 export const sendSuccess = <T>(
   res: Response,
   data: T,
-  statusCode = 200
+  statusCode = 200,
 ): void => {
   res.status(statusCode).json(data);
 };
@@ -15,7 +15,7 @@ export const sendError = (
   message: string,
   statusCode = 400,
   details?: any,
-  code?: string
+  code?: string,
 ): void => {
   const errorResponse: ErrorResponse = {
     error: message,
@@ -28,7 +28,7 @@ export const sendError = (
 export const sendValidationError = (
   res: Response,
   error: ZodError,
-  statusCode = 400
+  statusCode = 400,
 ): void => {
   const validationErrors = error.errors.map((err) => ({
     field: err.path.join("."),

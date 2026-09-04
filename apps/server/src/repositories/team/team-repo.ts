@@ -7,7 +7,7 @@ import { NotFoundError } from "../../utils/errors";
 export class TeamRepo {
   static async findById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Team | null> {
     try {
       const prismaClient = tx || prisma;
@@ -20,7 +20,7 @@ export class TeamRepo {
   static async findByName(
     name: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Team | null> {
     try {
       const prismaClient = tx || prisma;
@@ -52,7 +52,7 @@ export class TeamRepo {
 
   static async findByCompetitionId(
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<TeamInCompetition[]> {
     try {
       const prismaClient = tx || prisma;
@@ -72,7 +72,7 @@ export class TeamRepo {
 
   static async create(
     data: Omit<Team, "id">,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Team> {
     try {
       const prismaClient = tx || prisma;
@@ -85,7 +85,7 @@ export class TeamRepo {
   static async update(
     id: string,
     data: Partial<Team>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Team> {
     try {
       const prismaClient = tx || prisma;
@@ -97,7 +97,7 @@ export class TeamRepo {
 
   static async delete(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Team> {
     try {
       const prismaClient = tx || prisma;
@@ -109,7 +109,7 @@ export class TeamRepo {
 
   static async deleteMany(
     ids: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -126,7 +126,7 @@ export class TeamRepo {
   static async checkNameUnique(
     name: string,
     excludeId?: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
@@ -146,7 +146,7 @@ export class TeamRepo {
     name: string,
     competitionId: string,
     excludeTeamId?: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
@@ -172,14 +172,14 @@ export class TeamRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamRepo.checkNameUniqueInCompetition"
+        "TeamRepo.checkNameUniqueInCompetition",
       );
     }
   }
 
   static async getTeamIDFromName(
     teamName: string,
-    competitionId: string
+    competitionId: string,
   ): Promise<string> {
     try {
       const team = await this.findByName(teamName, competitionId);
@@ -195,7 +195,7 @@ export class TeamRepo {
   static async findByNameInDashboard(
     name: string,
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Team | null> {
     try {
       const prismaClient = tx || prisma;

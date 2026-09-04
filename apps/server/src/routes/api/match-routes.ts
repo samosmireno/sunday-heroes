@@ -19,13 +19,13 @@ router.post(
   "/",
   authenticateToken,
   validateRequestBody(createMatchRequestSchema),
-  createMatch
+  createMatch,
 );
 router.patch(
   "/:id",
   authenticateToken,
   validateRequestBody(createMatchRequestSchema),
-  updateMatch
+  updateMatch,
 );
 router.delete("/:id", authenticateToken, deleteMatch);
 

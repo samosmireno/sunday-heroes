@@ -5,7 +5,7 @@ import { MatchPlayerWithDetails, MatchPlayerWithUserDetails } from "./types";
 
 export class MatchPlayerRepo {
   static async getAllMatchPlayers(
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<MatchPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -17,14 +17,14 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.getAllMatchPlayers"
+        "MatchPlayerRepo.getAllMatchPlayers",
       );
     }
   }
 
   static async getMatchPlayerById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<MatchPlayerWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -37,14 +37,14 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.getMatchPlayerById"
+        "MatchPlayerRepo.getMatchPlayerById",
       );
     }
   }
 
   static async getMatchPlayersFromMatch(
     matchId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<MatchPlayerWithUserDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -59,14 +59,14 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.getMatchPlayersFromMatch"
+        "MatchPlayerRepo.getMatchPlayersFromMatch",
       );
     }
   }
 
   static async createMatchPlayer(
     matchPlayer: Omit<MatchPlayer, "id">,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<MatchPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -76,14 +76,14 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.createMatchPlayer"
+        "MatchPlayerRepo.createMatchPlayer",
       );
     }
   }
 
   static async createMatchPlayers(
     matchPlayers: Omit<MatchPlayer, "id">[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -93,7 +93,7 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.createMatchPlayers"
+        "MatchPlayerRepo.createMatchPlayers",
       );
     }
   }
@@ -101,7 +101,7 @@ export class MatchPlayerRepo {
   static async updateMatchPlayer(
     id: string,
     data: Partial<MatchPlayer>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<MatchPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -109,14 +109,14 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.updateMatchPlayer"
+        "MatchPlayerRepo.updateMatchPlayer",
       );
     }
   }
 
   static async updateMatchPlayersStats(
     updates: Array<{ id: string; updates: Partial<any> }>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -126,20 +126,20 @@ export class MatchPlayerRepo {
           prismaClient.matchPlayer.update({
             where: { id },
             data,
-          })
-        )
+          }),
+        ),
       );
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.updateMatchPlayersStats"
+        "MatchPlayerRepo.updateMatchPlayersStats",
       );
     }
   }
 
   static async deleteMatchPlayer(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<MatchPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -147,14 +147,14 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.deleteMatchPlayer"
+        "MatchPlayerRepo.deleteMatchPlayer",
       );
     }
   }
 
   static async deleteMatchPlayersByIds(
     ids: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -164,14 +164,14 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.deleteMatchPlayersByIds"
+        "MatchPlayerRepo.deleteMatchPlayersByIds",
       );
     }
   }
 
   static async deleteMatchPlayersFromMatch(
     matchId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -179,7 +179,7 @@ export class MatchPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "MatchPlayerRepo.deleteMatchPlayersFromMatch"
+        "MatchPlayerRepo.deleteMatchPlayersFromMatch",
       );
     }
   }
@@ -187,7 +187,7 @@ export class MatchPlayerRepo {
   static async isPlayerInMatch(
     playerId: string,
     matchId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;

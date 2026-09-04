@@ -19,7 +19,7 @@ export class VoteService {
     matchId: string,
     voterId: string,
     votes: { playerId: string; points: number }[],
-    requestingUserId: string
+    requestingUserId: string,
   ) {
     const match = await MatchRepo.findById(matchId);
     if (!match) {
@@ -28,41 +28,41 @@ export class VoteService {
 
     if (match.votingStatus !== "OPEN") {
       throw new VotingError(
-        "Voting is not open for this match. Please check the match details."
+        "Voting is not open for this match. Please check the match details.",
       );
     }
 
     if (match.votingEndsAt && match.votingEndsAt < new Date()) {
       throw new VotingError(
-        "Voting has ended for this match. You cannot submit votes."
+        "Voting has ended for this match. You cannot submit votes.",
       );
     }
 
     const isParticipant = await MatchPlayerRepo.isPlayerInMatch(
       voterId,
-      matchId
+      matchId,
     );
     if (!isParticipant) {
       throw new VotingError(
-        "You have not played in this match. Only players who participated can vote."
+        "You have not played in this match. Only players who participated can vote.",
       );
     }
 
     const canVote = await this.canUserSubmitVotesForPlayer(
       matchId,
       voterId,
-      requestingUserId
+      requestingUserId,
     );
     if (!canVote) {
       throw new AuthorizationError(
-        "You are not authorized to submit votes for this player"
+        "You are not authorized to submit votes for this player",
       );
     }
 
     const existingVotes = await VoteRepo.findByVoterAndMatch(voterId, matchId);
     if (existingVotes.length > 0) {
       throw new VotingError(
-        "You have already submitted votes for this match. You cannot vote again."
+        "You have already submitted votes for this match. You cannot vote again.",
       );
     }
 
@@ -93,11 +93,11 @@ export class VoteService {
 
     const isParticipant = await MatchPlayerRepo.isPlayerInMatch(
       voterId,
-      matchId
+      matchId,
     );
     if (!isParticipant) {
       throw new VotingError(
-        "You have not played in this match. Only players who participated can vote."
+        "You have not played in this match. Only players who participated can vote.",
       );
     }
 
@@ -129,7 +129,7 @@ export class VoteService {
 
   static async hasPlayerVoted(
     voterId: string,
-    matchId: string
+    matchId: string,
   ): Promise<boolean> {
     const count = await VoteRepo.countByVoterAndMatch(voterId, matchId);
     return count > 0;
@@ -148,7 +148,7 @@ export class VoteService {
     }
 
     const competition = await CompetitionRepo.findByIdWithSettings(
-      competitionInfo.id
+      competitionInfo.id,
     );
 
     if (!competition) {
@@ -158,14 +158,14 @@ export class VoteService {
     const matchVoteResponse = transformMatchServiceToPendingVotes(
       match,
       competition,
-      userId
+      userId,
     );
     return matchVoteResponse;
   }
 
   static async getVoterVotes(
     voterId: string,
-    options?: { limit?: number; offset?: number }
+    options?: { limit?: number; offset?: number },
   ) {
     return await VoteRepo.findByVoterId(voterId, options);
   }
@@ -173,11 +173,11 @@ export class VoteService {
   static async deleteMatchVotes(matchId: string, requestingUserId: string) {
     const canDelete = await this.canUserModifyMatchVotes(
       matchId,
-      requestingUserId
+      requestingUserId,
     );
     if (!canDelete) {
       throw new AuthorizationError(
-        "You are not authorized to delete votes for this match"
+        "You are not authorized to delete votes for this match",
       );
     }
 
@@ -187,7 +187,7 @@ export class VoteService {
   private static async canUserSubmitVotesForPlayer(
     matchId: string,
     voterId: string,
-    requestingUserId: string
+    requestingUserId: string,
   ): Promise<boolean> {
     const voterUser = await DashboardPlayerRepo.findById(voterId);
     if (voterUser?.userId === requestingUserId) {
@@ -199,7 +199,7 @@ export class VoteService {
 
   private static async canUserModifyMatchVotes(
     matchId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     const competition = await CompetitionRepo.findByMatchId(matchId);
     if (!competition) return false;
@@ -211,7 +211,7 @@ export class VoteService {
   }
 
   private static validateVoteData(
-    votes: { playerId: string; points: number }[]
+    votes: { playerId: string; points: number }[],
   ): void {
     if (!votes || votes.length !== 3) {
       throw new VotingError("You must vote for exactly 3 players");
@@ -220,7 +220,7 @@ export class VoteService {
     const points = votes.map((v) => v.points).sort((a, b) => b - a);
     if (points[0] !== 3 || points[1] !== 2 || points[2] !== 1) {
       throw new VotingError(
-        "Votes must be 3, 2, and 1 points for the top three players"
+        "Votes must be 3, 2, and 1 points for the top three players",
       );
     }
 
@@ -228,14 +228,14 @@ export class VoteService {
     const uniquePlayerIds = [...new Set(playerIds)];
     if (uniquePlayerIds.length !== 3) {
       throw new VotingError(
-        "You cannot vote for the same player multiple times"
+        "You cannot vote for the same player multiple times",
       );
     }
   }
 
   static async calculateAndStoreMatchRatings(
     matchId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     const transaction = tx || prisma;
 
@@ -256,7 +256,7 @@ export class VoteService {
 
   private static async markManOfTheMatch(
     matchId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     const transaction = tx || prisma;
 
@@ -289,7 +289,7 @@ export class VoteService {
 
   private static async checkAndCloseVoting(
     matchId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     const pendingVoters = await this.getPendingVoters(matchId);
 

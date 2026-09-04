@@ -27,19 +27,22 @@ export class MatchCreationService {
 
     const matchToAdd = transformAddMatchRequestToService(
       data,
-      competitionVoting
+      competitionVoting,
     );
 
     return await prisma.$transaction(async (tx) => {
       // A new Match always lands in the Current season.
-      const currentSeason = await SeasonRepo.findCurrent(data.competitionId, tx);
+      const currentSeason = await SeasonRepo.findCurrent(
+        data.competitionId,
+        tx,
+      );
       if (!currentSeason) {
         throw new NotFoundError("Season");
       }
 
       const match = await MatchRepo.create(
         { ...matchToAdd, seasonId: currentSeason.id },
-        tx
+        tx,
       );
 
       await this.createMatchTeams(match.id, hometeamID, awayteamID, tx);
@@ -49,14 +52,14 @@ export class MatchCreationService {
         dashboardId,
         hometeamID,
         awayteamID,
-        tx
+        tx,
       );
 
       await MatchVotingService.handleMatchVoting(
         match,
         data,
         dashboardPlayers,
-        tx
+        tx,
       );
 
       return match;
@@ -86,7 +89,7 @@ export class MatchCreationService {
       await LeagueService.recalculateLeagueStandings(
         match,
         data.homeTeamScore,
-        data.awayTeamScore
+        data.awayTeamScore,
       );
     }
 
@@ -99,7 +102,7 @@ export class MatchCreationService {
         dashboardId,
         hometeamID,
         awayteamID,
-        tx
+        tx,
       );
 
       await DashboardPlayerService.cleanupUnusedPlayers(tx);
@@ -108,7 +111,7 @@ export class MatchCreationService {
         match,
         data,
         dashboardPlayers,
-        tx
+        tx,
       );
 
       return match;
@@ -119,7 +122,7 @@ export class MatchCreationService {
     matchId: string,
     hometeamId: string,
     awayteamId: string,
-    tx: Prisma.TransactionClient
+    tx: Prisma.TransactionClient,
   ) {
     const matchTeamsData = [
       {

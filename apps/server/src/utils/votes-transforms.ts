@@ -6,7 +6,7 @@ import { CompetitionWithSettings } from "../repositories/competition/types";
 export function transformMatchServiceToPendingVotes(
   match: MatchWithVotes,
   competition: CompetitionWithSettings,
-  userId: string
+  userId: string,
 ): MatchVotes {
   const players = match.matchPlayers.flatMap((player) => ({
     playerId: player.dashboardPlayerId,

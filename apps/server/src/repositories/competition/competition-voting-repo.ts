@@ -5,7 +5,7 @@ import { PrismaErrorHandler } from "../../utils/prisma-error-handler";
 export class CompetitionVotingRepo {
   static async getVotingSettings(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<{
     votingEnabled: boolean;
     votingPeriodDays: number | null;
@@ -23,14 +23,14 @@ export class CompetitionVotingRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionVotingRepo.getVotingSettings"
+        "CompetitionVotingRepo.getVotingSettings",
       );
     }
   }
 
   static async getVotingStatus(
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<VotingStatus | undefined> {
     try {
       const prismaClient = tx || prisma;
@@ -46,7 +46,7 @@ export class CompetitionVotingRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionVotingRepo.getVotingStatus"
+        "CompetitionVotingRepo.getVotingStatus",
       );
     }
   }

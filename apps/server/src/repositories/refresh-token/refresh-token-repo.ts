@@ -6,7 +6,7 @@ import { REFRESH_TOKEN_WITH_USER_INCLUDE, RefreshTokenWithUser } from "./types";
 export class RefreshTokenRepo {
   static async findById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken | null> {
     try {
       const prismaClient = tx || prisma;
@@ -18,7 +18,7 @@ export class RefreshTokenRepo {
 
   static async findByIdWithUser(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshTokenWithUser | null> {
     try {
       const prismaClient = tx || prisma;
@@ -29,7 +29,7 @@ export class RefreshTokenRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "RefreshTokenRepo.findByIdWithUser"
+        "RefreshTokenRepo.findByIdWithUser",
       );
     }
   }
@@ -47,7 +47,7 @@ export class RefreshTokenRepo {
 
   static async findByToken(
     token: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken | null> {
     try {
       const prismaClient = tx || prisma;
@@ -61,7 +61,7 @@ export class RefreshTokenRepo {
 
   static async findByTokenWithUser(
     token: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshTokenWithUser | null> {
     try {
       const prismaClient = tx || prisma;
@@ -72,14 +72,14 @@ export class RefreshTokenRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "RefreshTokenRepo.findByTokenWithUser"
+        "RefreshTokenRepo.findByTokenWithUser",
       );
     }
   }
 
   static async findByUserId(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken[]> {
     try {
       const prismaClient = tx || prisma;
@@ -94,7 +94,7 @@ export class RefreshTokenRepo {
 
   static async findActiveByUserId(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken[]> {
     try {
       const prismaClient = tx || prisma;
@@ -108,13 +108,13 @@ export class RefreshTokenRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "RefreshTokenRepo.findActiveByUserId"
+        "RefreshTokenRepo.findActiveByUserId",
       );
     }
   }
 
   static async findExpired(
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken[]> {
     try {
       const prismaClient = tx || prisma;
@@ -130,7 +130,7 @@ export class RefreshTokenRepo {
 
   static async countByUserId(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -157,7 +157,7 @@ export class RefreshTokenRepo {
 
   static async getUserIdByToken(
     token: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<string | null> {
     try {
       const prismaClient = tx || prisma;
@@ -169,14 +169,14 @@ export class RefreshTokenRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "RefreshTokenRepo.getUserIdByToken"
+        "RefreshTokenRepo.getUserIdByToken",
       );
     }
   }
 
   static async isTokenValid(
     token: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
@@ -195,7 +195,7 @@ export class RefreshTokenRepo {
 
   static async create(
     data: Omit<RefreshToken, "id">,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken> {
     try {
       const prismaClient = tx || prisma;
@@ -208,7 +208,7 @@ export class RefreshTokenRepo {
   static async update(
     id: string,
     data: Partial<RefreshToken>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken> {
     try {
       const prismaClient = tx || prisma;
@@ -221,7 +221,7 @@ export class RefreshTokenRepo {
   static async updateByToken(
     token: string,
     data: Partial<RefreshToken>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken> {
     try {
       const prismaClient = tx || prisma;
@@ -233,7 +233,7 @@ export class RefreshTokenRepo {
 
   static async updateLastUsed(
     token: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken> {
     try {
       const prismaClient = tx || prisma;
@@ -248,7 +248,7 @@ export class RefreshTokenRepo {
 
   static async delete(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken> {
     try {
       const prismaClient = tx || prisma;
@@ -260,7 +260,7 @@ export class RefreshTokenRepo {
 
   static async deleteByToken(
     token: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<RefreshToken | null> {
     try {
       const prismaClient = tx || prisma;
@@ -283,7 +283,7 @@ export class RefreshTokenRepo {
 
   static async deleteByUserId(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -296,7 +296,7 @@ export class RefreshTokenRepo {
   }
 
   static async deleteExpired(
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;

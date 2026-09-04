@@ -20,7 +20,7 @@ export function transformDashboardCompetitionsToDetailedResponse(
   },
   playerCounts: Record<string, number>,
   userRoles: Record<string, Role>,
-  comps: CompetitionListSelect[]
+  comps: CompetitionListSelect[],
 ): DetailedCompetitionResponse[] {
   const competitions = comps.map((comp) => ({
     id: comp.id,
@@ -39,14 +39,14 @@ export function transformDashboardCompetitionsToDetailedResponse(
 
 export function extractDashboardData(
   competitions: CompetitionBasic[],
-  matches: CompetitionMatch[]
+  matches: CompetitionMatch[],
 ): DashboardResponse {
   const activeCompetitions = competitions.length;
 
   const completedMatches = matches.filter((m) => m.date !== null).length;
 
   const uniquePlayers = new Set(
-    matches.flatMap((m) => m.matchPlayers.map((mp) => mp.dashboardPlayerId))
+    matches.flatMap((m) => m.matchPlayers.map((mp) => mp.dashboardPlayerId)),
   );
 
   const totalPlayers = uniquePlayers.size;
@@ -65,7 +65,7 @@ export function extractDashboardData(
   const dashboardMatches = transformDashboardMatchesToResponse(matches);
   const dashboardCompetitions = transformDashboardCompetitionsToResponse(
     competitions,
-    matches
+    matches,
   );
 
   const votingEnabled = competitions.some((comp) => comp.votingEnabled);
@@ -82,7 +82,7 @@ export function extractDashboardData(
 }
 
 function transformDashboardMatchesToResponse(
-  matches: CompetitionMatch[]
+  matches: CompetitionMatch[],
 ): DashboardMatchResponse[] {
   return matches
     .filter((m) => m.date !== null)
@@ -108,14 +108,14 @@ function transformDashboardMatchesToResponse(
 
 function transformDashboardCompetitionsToResponse(
   comps: CompetitionBasic[],
-  matches: CompetitionMatch[]
+  matches: CompetitionMatch[],
 ): DashboardCompetitionResponse[] {
   const grouped = new Map<string, number>();
 
   for (const match of matches) {
     grouped.set(
       match.competition.id,
-      (grouped.get(match.competition.id) ?? 0) + 1
+      (grouped.get(match.competition.id) ?? 0) + 1,
     );
   }
 

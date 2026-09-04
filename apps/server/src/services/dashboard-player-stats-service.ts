@@ -18,7 +18,7 @@ export class DashboardPlayerStatsService {
   static async getPlayerStats(playerId: string): Promise<PlayerStatsOverview> {
     const { player, playerIds } = await this.getPlayerAndRelatedIds(
       playerId,
-      true
+      true,
     );
 
     const [careerStats, recentForm] = await Promise.all([
@@ -43,7 +43,7 @@ export class DashboardPlayerStatsService {
         winRate: calculateWinRate(
           careerStats.record.wins,
           careerStats.record.draws,
-          careerStats.totalMatches
+          careerStats.totalMatches,
         ),
         manOfTheMatchCount: careerStats.manOfTheMatchCount,
         goalConsistencyRate: careerStats.goalConsistencyRate,
@@ -69,7 +69,7 @@ export class DashboardPlayerStatsService {
   }
 
   static async getTopCompetitions(
-    playerId: string
+    playerId: string,
   ): Promise<TopCompetitionsResponse> {
     const { playerIds } = await this.getPlayerAndRelatedIds(playerId);
 
@@ -79,18 +79,19 @@ export class DashboardPlayerStatsService {
     const topGoals = competitionStats.find(
       (stat) =>
         stat.totalGoals ===
-        Math.max(...competitionStats.map((s) => s.totalGoals))
+        Math.max(...competitionStats.map((s) => s.totalGoals)),
     );
 
     const topAssists = competitionStats.find(
       (stat) =>
         stat.totalAssists ===
-        Math.max(...competitionStats.map((s) => s.totalAssists))
+        Math.max(...competitionStats.map((s) => s.totalAssists)),
     );
 
     const topRating = competitionStats.find(
       (stat) =>
-        stat.avgRating === Math.max(...competitionStats.map((s) => s.avgRating))
+        stat.avgRating ===
+        Math.max(...competitionStats.map((s) => s.avgRating)),
     );
 
     return {
@@ -103,14 +104,14 @@ export class DashboardPlayerStatsService {
   static async getPerformanceChart(
     playerId: string,
     competitionId: string,
-    range?: number
+    range?: number,
   ): Promise<PerformanceChartResponse> {
     const { playerIds } = await this.getPlayerAndRelatedIds(playerId);
 
     const matchPlayers = await DashboardPlayerStatsRepo.getPerformanceData(
       playerIds,
       competitionId,
-      range
+      range,
     );
 
     return {
@@ -121,7 +122,7 @@ export class DashboardPlayerStatsService {
   }
 
   static async getStatsByCompetition(
-    playerId: string
+    playerId: string,
   ): Promise<import("@repo/shared-types").PlayerCompetitionStats[]> {
     const { playerIds } = await this.getPlayerAndRelatedIds(playerId);
 
@@ -141,14 +142,14 @@ export class DashboardPlayerStatsService {
       winRate: calculateWinRate(
         teammate.record.wins,
         teammate.record.draws,
-        teammate.matchesTogether
+        teammate.matchesTogether,
       ),
     }));
   }
 
   private static async getPlayerAndRelatedIds(
     playerId: string,
-    includeUserDetails: boolean = false
+    includeUserDetails: boolean = false,
   ): Promise<{ player: any; playerIds: string[] }> {
     const player = includeUserDetails
       ? await DashboardPlayerRepo.findByIdWithUserDetails(playerId)
@@ -161,7 +162,7 @@ export class DashboardPlayerStatsService {
     let playerIds: string[] = [playerId];
     if (player.userId) {
       const relatedIds = await DashboardPlayerRepo.findDashboardPlayerIdsByUser(
-        player.userId
+        player.userId,
       );
       playerIds = relatedIds || [playerId];
     }

@@ -39,7 +39,7 @@ export class MatchService {
       season?: SeasonQuery;
       limit?: number;
       offset?: number;
-    } = {}
+    } = {},
   ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
     if (!dashboardId) {
@@ -54,7 +54,7 @@ export class MatchService {
     if (competitionId) {
       const seasonWhere = await SeasonService.resolveSeasonFilter(
         competitionId,
-        season
+        season,
       );
       matches = await MatchRepo.findByCompetitionId(competitionId, {
         limit,
@@ -63,7 +63,7 @@ export class MatchService {
       });
       totalCount = await MatchRepo.countByCompetitionId(
         competitionId,
-        seasonWhere
+        seasonWhere,
       );
     } else {
       const matchIds = await MatchRepo.findByUserWithDeduplication(
@@ -72,14 +72,14 @@ export class MatchService {
         {
           limit,
           offset,
-        }
+        },
       );
 
       matches = await MatchRepo.findByIdsWithDetails(matchIds);
 
       totalCount = await MatchRepo.countByUserWithDeduplication(
         userId,
-        dashboardId
+        dashboardId,
       );
     }
 
@@ -101,7 +101,7 @@ export class MatchService {
   private static async findForWrite(
     matchId: string,
     userId: string,
-    action: "update" | "delete"
+    action: "update" | "delete",
   ): Promise<MatchWithTeams> {
     const match = await MatchRepo.findByIdWithTeams(matchId);
     if (!match) {
@@ -110,11 +110,11 @@ export class MatchService {
 
     const isAuthorized = await CompetitionAuthRepo.isUserAdminOrModerator(
       match.competitionId,
-      userId
+      userId,
     );
     if (!isAuthorized) {
       throw new AuthorizationError(
-        `User is not authorized to ${action} this match`
+        `User is not authorized to ${action} this match`,
       );
     }
 
@@ -126,7 +126,7 @@ export class MatchService {
   static async updateMatch(
     matchId: string,
     data: createMatchRequest,
-    userId: string
+    userId: string,
   ) {
     const match = await this.findForWrite(matchId, userId, "update");
     return MatchCreationService.updateMatch(match, data);
@@ -137,7 +137,7 @@ export class MatchService {
 
     if (match.competition.type !== CompetitionType.DUEL) {
       throw new ConflictError(
-        "Cannot delete match in a league/knockout competition"
+        "Cannot delete match in a league/knockout competition",
       );
     }
 

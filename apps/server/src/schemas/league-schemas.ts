@@ -13,7 +13,7 @@ export const createLeagueRequestSchema = createCompetitionRequestSchema.and(
       .min(2, "At least 2 team names are required")
       .optional(),
     isRoundRobin: z.boolean().optional(),
-  })
+  }),
 );
 
 export const addTeamSchema = z.object({

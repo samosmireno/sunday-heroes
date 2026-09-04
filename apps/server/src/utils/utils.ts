@@ -10,12 +10,12 @@ import { VotingStatus } from "@prisma/client";
 
 export function calculatePlayerScore(
   received_votes: PlayerVote[],
-  match_votes: PlayerVote[]
+  match_votes: PlayerVote[],
 ) {
   if (received_votes.length > 0 && match_votes.length > 0) {
     const votePointsSum = received_votes.reduce(
       (sum, vote) => sum + vote.points,
-      0
+      0,
     );
 
     const score =
@@ -62,7 +62,7 @@ type PlayerTally<T extends PlayerTotals> = T & { draws: number };
 export function calculateWinRate(
   wins: number,
   draws: number,
-  matches: number
+  matches: number,
 ): number {
   if (matches === 0) return 0;
   const weightedWins = wins + draws * DRAW_WIN_WEIGHT;
@@ -122,14 +122,14 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
           ? Math.round((player.rating! / player.matches) * 100) / 100
           : undefined,
       winRate: calculateWinRate(player.wins, draws, player.matches),
-    })
+    }),
   );
 
   return playerStats;
 }
 
 export function calculateLeaguePlayerStats(
-  matches: MatchResponse[]
+  matches: MatchResponse[],
 ): LeaguePlayerTotals[] {
   const playerMap = new Map<string, PlayerTally<LeaguePlayerTotals>>();
 
@@ -179,7 +179,7 @@ export function calculateLeaguePlayerStats(
           ? Math.round((player.rating! / player.matches) * 100) / 100
           : undefined,
       winRate: calculateWinRate(player.wins, draws, player.matches),
-    })
+    }),
   );
 
   return playerStats;
@@ -193,7 +193,7 @@ export function calculatePendingVotes(match: MatchWithDetails): number {
     return 0;
 
   const playerIds = match.matchPlayers.map(
-    (player) => player.dashboardPlayerId
+    (player) => player.dashboardPlayerId,
   );
   const votedPlayerIds = new Set(match.playerVotes.map((vote) => vote.voterId));
 

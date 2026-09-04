@@ -665,12 +665,10 @@ describe("Teams setup on a dashboard with two Leagues", () => {
   /** The Teams setup save that names three teams and leaves "Team 4" as it is. */
   function nameThree(teams: { id: string }[], prefix: string) {
     return [
-      ...teams
-        .slice(0, 3)
-        .map((team, index) => ({
-          id: team.id,
-          name: `${prefix} ${index + 1}`,
-        })),
+      ...teams.slice(0, 3).map((team, index) => ({
+        id: team.id,
+        name: `${prefix} ${index + 1}`,
+      })),
       { id: teams[3].id, name: "Team 4" },
     ];
   }

@@ -42,7 +42,7 @@ export const createMatchRequestSchema = z.object({
         .min(0),
       position: z.coerce.number().min(0),
       isHome: z.boolean(),
-    })
+    }),
   ),
   videoUrl: z.string().optional(),
 });

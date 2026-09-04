@@ -13,7 +13,7 @@ import {
 export class InvitationRepo {
   static async findById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation | null> {
     try {
       const prismaClient = tx || prisma;
@@ -27,7 +27,7 @@ export class InvitationRepo {
 
   static async findByIdWithDetails(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<InvitationWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -38,13 +38,13 @@ export class InvitationRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "InvitationRepo.findByIdWithDetails"
+        "InvitationRepo.findByIdWithDetails",
       );
     }
   }
 
   static async findAll(
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation[]> {
     try {
       const prismaClient = tx || prisma;
@@ -58,7 +58,7 @@ export class InvitationRepo {
 
   static async findByToken(
     inviteToken: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<InvitationWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -74,7 +74,7 @@ export class InvitationRepo {
   static async findByDashboardPlayerId(
     dashboardPlayerId: string,
     options?: { activeOnly?: boolean },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation[]> {
     try {
       const prismaClient = tx || prisma;
@@ -94,7 +94,7 @@ export class InvitationRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "InvitationRepo.findByDashboardPlayerId"
+        "InvitationRepo.findByDashboardPlayerId",
       );
     }
   }
@@ -102,7 +102,7 @@ export class InvitationRepo {
   static async findByEmail(
     email: string,
     options?: { activeOnly?: boolean },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation[]> {
     try {
       const prismaClient = tx || prisma;
@@ -126,7 +126,7 @@ export class InvitationRepo {
 
   static async findByDashboardId(
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<InvitationWithBasic[]> {
     try {
       const prismaClient = tx || prisma;
@@ -142,14 +142,14 @@ export class InvitationRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "InvitationRepo.findByDashboardId"
+        "InvitationRepo.findByDashboardId",
       );
     }
   }
 
   static async findByUserId(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<InvitationWithDashboard[]> {
     try {
       const prismaClient = tx || prisma;
@@ -165,7 +165,7 @@ export class InvitationRepo {
 
   static async countByDashboardId(
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -179,14 +179,14 @@ export class InvitationRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "InvitationRepo.countByDashboardId"
+        "InvitationRepo.countByDashboardId",
       );
     }
   }
 
   static async countByUserId(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -200,7 +200,7 @@ export class InvitationRepo {
 
   static async isTokenActive(
     inviteToken: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
@@ -227,7 +227,7 @@ export class InvitationRepo {
       email?: string;
       expiresAt: Date;
     },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;
@@ -240,7 +240,7 @@ export class InvitationRepo {
   static async update(
     id: string,
     data: Partial<DashboardInvitation>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;
@@ -256,7 +256,7 @@ export class InvitationRepo {
   static async updateByToken(
     inviteToken: string,
     data: Partial<DashboardInvitation>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;
@@ -271,7 +271,7 @@ export class InvitationRepo {
 
   static async delete(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;
@@ -283,7 +283,7 @@ export class InvitationRepo {
 
   static async deleteByToken(
     inviteToken: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;
@@ -298,7 +298,7 @@ export class InvitationRepo {
   static async markAsUsed(
     inviteToken: string,
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardInvitation> {
     try {
       const prismaClient = tx || prisma;

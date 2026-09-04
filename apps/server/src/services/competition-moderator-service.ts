@@ -9,27 +9,27 @@ import {
 export class CompetitionModeratorService {
   static async addModeratorToCompetition(
     competitionId: string,
-    userId: string
+    userId: string,
   ) {
     const isModerator = await CompetitionModeratorRepo.isUserModerator(
       competitionId,
-      userId
+      userId,
     );
     if (isModerator) {
       throw new ConflictError(
-        "User is already a moderator of this competition"
+        "User is already a moderator of this competition",
       );
     }
 
     await CompetitionModeratorRepo.addModeratorToCompetition(
       competitionId,
-      userId
+      userId,
     );
   }
 
   static async removeModeratorFromCompetition(
     moderatorId: string,
-    adminId: string
+    adminId: string,
   ) {
     const competitionId =
       await CompetitionModeratorRepo.getCompetitionIdByModeratorId(moderatorId);
@@ -39,7 +39,7 @@ export class CompetitionModeratorService {
 
     const isAdmin = await CompetitionAuthRepo.isUserAdmin(
       competitionId,
-      adminId
+      adminId,
     );
     if (!isAdmin) {
       throw new AuthorizationError("User is not an admin of this competition");

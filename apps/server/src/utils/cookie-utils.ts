@@ -10,7 +10,7 @@ export class CookieUtils {
   static setAuthCookies(
     res: Response,
     accessToken: string,
-    refreshToken: string
+    refreshToken: string,
   ) {
     res.cookie("access-token", accessToken, {
       ...this.COOKIE_OPTIONS,

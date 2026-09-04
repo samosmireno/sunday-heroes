@@ -11,7 +11,7 @@ import {
 export class DashboardRepo {
   static async findById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Dashboard | null> {
     try {
       const prismaClient = tx || prisma;
@@ -23,7 +23,7 @@ export class DashboardRepo {
 
   static async findByIdWithBasic(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardWithBasic | null> {
     try {
       const prismaClient = tx || prisma;
@@ -38,7 +38,7 @@ export class DashboardRepo {
 
   static async findByIdWithDetails(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -49,14 +49,14 @@ export class DashboardRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardRepo.findByIdWithDetails"
+        "DashboardRepo.findByIdWithDetails",
       );
     }
   }
 
   static async findByAdminIdWithDetails(
     adminId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -71,7 +71,7 @@ export class DashboardRepo {
 
   static async findByAdminId(
     adminId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Dashboard | null> {
     const prismaClient = tx || prisma;
     const dashboard = await prismaClient.dashboard.findUnique({
@@ -82,7 +82,7 @@ export class DashboardRepo {
 
   static async findByCompetitionId(
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Dashboard | null> {
     try {
       const prismaClient = tx || prisma;
@@ -96,7 +96,7 @@ export class DashboardRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardRepo.findByCompetitionId"
+        "DashboardRepo.findByCompetitionId",
       );
     }
   }
@@ -114,7 +114,7 @@ export class DashboardRepo {
 
   static async create(
     data: Omit<Dashboard, "id">,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Dashboard> {
     try {
       const prismaClient = tx || prisma;
@@ -127,7 +127,7 @@ export class DashboardRepo {
   static async update(
     id: string,
     data: Partial<Dashboard>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Dashboard> {
     try {
       const prismaClient = tx || prisma;
@@ -139,7 +139,7 @@ export class DashboardRepo {
 
   static async delete(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Dashboard> {
     try {
       const prismaClient = tx || prisma;

@@ -7,7 +7,7 @@ export class TeamRosterRepo {
     teamId: string,
     dashboardPlayerId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<TeamRoster> {
     try {
       const prismaClient = tx || prisma;
@@ -27,7 +27,7 @@ export class TeamRosterRepo {
     teamId: string,
     dashboardPlayerId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -43,7 +43,7 @@ export class TeamRosterRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamRosterRepo.removePlayerFromTeam"
+        "TeamRosterRepo.removePlayerFromTeam",
       );
     }
   }
@@ -51,7 +51,7 @@ export class TeamRosterRepo {
   static async getTeamRoster(
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -72,7 +72,7 @@ export class TeamRosterRepo {
   static async getPlayerTeamInCompetition(
     dashboardPlayerId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -88,7 +88,7 @@ export class TeamRosterRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamRosterRepo.getPlayerTeamInCompetition"
+        "TeamRosterRepo.getPlayerTeamInCompetition",
       );
     }
   }
@@ -96,7 +96,7 @@ export class TeamRosterRepo {
   static async getTeamPlayerCount(
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -109,7 +109,7 @@ export class TeamRosterRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "TeamRosterRepo.getTeamPlayerCount"
+        "TeamRosterRepo.getTeamPlayerCount",
       );
     }
   }
@@ -118,7 +118,7 @@ export class TeamRosterRepo {
     dashboardPlayerId: string,
     teamId: string,
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;

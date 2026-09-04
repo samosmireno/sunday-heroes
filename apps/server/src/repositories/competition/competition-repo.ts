@@ -18,7 +18,7 @@ import {
 export class CompetitionRepo {
   static async findById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Competition | null> {
     try {
       const prismaClient = tx || prisma;
@@ -32,7 +32,7 @@ export class CompetitionRepo {
   static async findByIdWithDetails(
     id: string,
     matchWhere: Prisma.MatchWhereInput = {},
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<CompetitionWithDetails | null> {
     try {
       const prismaClient = tx || prisma;
@@ -49,14 +49,14 @@ export class CompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionRepo.findByIdWithDetails"
+        "CompetitionRepo.findByIdWithDetails",
       );
     }
   }
 
   static async findByIdWithInfo(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<CompetitionWithInfo | null> {
     try {
       const prismaClient = tx || prisma;
@@ -67,14 +67,14 @@ export class CompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionRepo.findByIdWithInfo"
+        "CompetitionRepo.findByIdWithInfo",
       );
     }
   }
 
   static async findByIdWithSettings(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<CompetitionWithSettings | null> {
     try {
       const prismaClient = tx || prisma;
@@ -87,14 +87,14 @@ export class CompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionRepo.findByIdWithDetails"
+        "CompetitionRepo.findByIdWithDetails",
       );
     }
   }
 
   static async findByIdWithTeams(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<CompetitionWithTeamCompetitions | null> {
     try {
       const prismaClient = tx || prisma;
@@ -107,7 +107,7 @@ export class CompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionRepo.findByIdWithDetails"
+        "CompetitionRepo.findByIdWithDetails",
       );
     }
   }
@@ -137,7 +137,7 @@ export class CompetitionRepo {
     options?: {
       votingEnabled?: boolean;
     },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<CompetitionWithMatches[]> {
     try {
       const prismaClient = tx || prisma;
@@ -152,7 +152,7 @@ export class CompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionRepo.findByDashboardId"
+        "CompetitionRepo.findByDashboardId",
       );
     }
   }
@@ -168,7 +168,7 @@ export class CompetitionRepo {
 
   static async findByMatchId(
     matchId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Competition | null> {
     try {
       const prismaClient = tx || prisma;
@@ -188,7 +188,7 @@ export class CompetitionRepo {
 
   static async findCompetitionIdsForUser(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
@@ -215,14 +215,14 @@ export class CompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionRepo.findCompetitionIdsForUser"
+        "CompetitionRepo.findCompetitionIdsForUser",
       );
     }
   }
 
   static async findCompetitionIdsForUserIncludingAdmin(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
@@ -268,7 +268,7 @@ export class CompetitionRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionRepo.findCompetitionIdsForUser"
+        "CompetitionRepo.findCompetitionIdsForUser",
       );
     }
   }
@@ -276,7 +276,7 @@ export class CompetitionRepo {
   static async getUserRolesForCompetitions(
     userId: string,
     competitionIds: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Record<string, Role>> {
     const prismaClient = tx || prisma;
 
@@ -299,7 +299,7 @@ export class CompetitionRepo {
         rolesMap[competition.id] = Role.ADMIN;
       } else if (
         competition.moderators.some(
-          (mod) => mod.dashboardPlayer?.userId === userId
+          (mod) => mod.dashboardPlayer?.userId === userId,
         )
       ) {
         rolesMap[competition.id] = Role.MODERATOR;
@@ -313,7 +313,7 @@ export class CompetitionRepo {
 
   static async create(
     data: Omit<Competition, "id">,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Competition> {
     try {
       const prismaClient = tx || prisma;
@@ -326,7 +326,7 @@ export class CompetitionRepo {
   static async update(
     id: string,
     data: Partial<Competition>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Competition> {
     try {
       const prismaClient = tx || prisma;
@@ -338,7 +338,7 @@ export class CompetitionRepo {
 
   static async delete(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<Competition> {
     try {
       const prismaClient = tx || prisma;

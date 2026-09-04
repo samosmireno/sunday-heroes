@@ -6,7 +6,7 @@ import {
 } from "@repo/shared-types";
 
 export const transformTopMatchPlayerToMatch = (
-  matchPlayer: MatchPlayerWithMatchDetails | null
+  matchPlayer: MatchPlayerWithMatchDetails | null,
 ): TopMatchResponse | null => {
   if (!matchPlayer) return null;
 
@@ -23,7 +23,7 @@ export const transformTopMatchPlayerToMatch = (
   else result = "L";
 
   const opponentTeam = matchPlayer.match.matchTeams.find(
-    (mt) => mt.isHome !== matchPlayer.isHome
+    (mt) => mt.isHome !== matchPlayer.isHome,
   );
 
   return {
@@ -48,7 +48,7 @@ export const transformTopMatchPlayerToMatch = (
 };
 
 export const transformMatchPlayerToPerformanceData = (
-  matchPlayers: MatchPlayerWithMatchDetails[]
+  matchPlayers: MatchPlayerWithMatchDetails[],
 ): PerformanceDataPoint[] => {
   return matchPlayers.reverse().map((mp) => {
     const playerScore = mp.isHome
@@ -64,7 +64,7 @@ export const transformMatchPlayerToPerformanceData = (
     else result = "L";
 
     const opponentTeam = mp.match.matchTeams.find(
-      (mt) => mt.isHome !== mp.isHome
+      (mt) => mt.isHome !== mp.isHome,
     );
 
     return {

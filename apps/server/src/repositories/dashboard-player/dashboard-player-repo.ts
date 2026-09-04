@@ -14,7 +14,7 @@ import { UserRepo } from "../user/user-repo";
 export class DashboardPlayerRepo {
   static async findById(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayer | null> {
     try {
       const prismaClient = tx || prisma;
@@ -26,7 +26,7 @@ export class DashboardPlayerRepo {
 
   static async findByIdWithUserDetails(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerBasic | null> {
     try {
       const prismaClient = tx || prisma;
@@ -37,14 +37,14 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByIdWithUserDetails"
+        "DashboardPlayerRepo.findByIdWithUserDetails",
       );
     }
   }
 
   static async findDashboardIdsByUser(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     const prismaClient = tx || prisma;
 
@@ -71,7 +71,7 @@ export class DashboardPlayerRepo {
 
   static async findDashboardPlayerIdsByUser(
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     const prismaClient = tx || prisma;
 
@@ -92,7 +92,7 @@ export class DashboardPlayerRepo {
 
   static async findByIdWithAdmin(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerWithAdmin | null> {
     try {
       const prismaClient = tx || prisma;
@@ -103,13 +103,13 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByIdWithAdmin"
+        "DashboardPlayerRepo.findByIdWithAdmin",
       );
     }
   }
 
   static async findAll(
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayer[]> {
     try {
       const prismaClient = tx || prisma;
@@ -124,7 +124,7 @@ export class DashboardPlayerRepo {
   static async findByDashboardId(
     dashboardId: string,
     options?: { limit?: number; offset?: number },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -138,7 +138,7 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByDashboardId"
+        "DashboardPlayerRepo.findByDashboardId",
       );
     }
   }
@@ -146,7 +146,7 @@ export class DashboardPlayerRepo {
   static async findByNickname(
     nickname: string,
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerBasic | null> {
     try {
       const prismaClient = tx || prisma;
@@ -162,7 +162,7 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByNickname"
+        "DashboardPlayerRepo.findByNickname",
       );
     }
   }
@@ -170,7 +170,7 @@ export class DashboardPlayerRepo {
   static async findByNicknames(
     nicknames: string[],
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerBasic[]> {
     try {
       const prismaClient = tx || prisma;
@@ -184,7 +184,7 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByNicknames"
+        "DashboardPlayerRepo.findByNicknames",
       );
     }
   }
@@ -192,7 +192,7 @@ export class DashboardPlayerRepo {
   static async findByUserId(
     userId: string,
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayer | null> {
     try {
       const prismaClient = tx || prisma;
@@ -205,7 +205,7 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByUserId"
+        "DashboardPlayerRepo.findByUserId",
       );
     }
   }
@@ -214,7 +214,7 @@ export class DashboardPlayerRepo {
     searchTerm: string,
     dashboardId: string,
     options?: { limit?: number; offset?: number },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerBasic[]> {
     try {
       const prismaClient = tx || prisma;
@@ -235,7 +235,7 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByNameSearch"
+        "DashboardPlayerRepo.findByNameSearch",
       );
     }
   }
@@ -244,7 +244,7 @@ export class DashboardPlayerRepo {
     searchTerm: string,
     dashboardId: string,
     options?: { limit?: number; offset?: number },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -265,7 +265,7 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByNameSearch"
+        "DashboardPlayerRepo.findByNameSearch",
       );
     }
   }
@@ -273,7 +273,7 @@ export class DashboardPlayerRepo {
   static async findInCompetitions(
     competitionIds: string[],
     options?: { search?: string; limit?: number; offset?: number },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -301,14 +301,14 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findInCompetitions"
+        "DashboardPlayerRepo.findInCompetitions",
       );
     }
   }
 
   static async countInCompetitions(
     competitionIds: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -328,7 +328,7 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findInCompetitions"
+        "DashboardPlayerRepo.findInCompetitions",
       );
     }
   }
@@ -337,7 +337,7 @@ export class DashboardPlayerRepo {
     searchTerm: string,
     competitionId: string,
     options?: { limit?: number; offset?: number },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayerBasic[]> {
     try {
       const prismaClient = tx || prisma;
@@ -364,14 +364,14 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.findByNameSearchInCompetition"
+        "DashboardPlayerRepo.findByNameSearchInCompetition",
       );
     }
   }
 
   static async countByDashboardId(
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -381,7 +381,7 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.countByDashboardId"
+        "DashboardPlayerRepo.countByDashboardId",
       );
     }
   }
@@ -389,7 +389,7 @@ export class DashboardPlayerRepo {
   static async countByNameSearch(
     searchTerm: string,
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -405,14 +405,14 @@ export class DashboardPlayerRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerRepo.countByNameSearch"
+        "DashboardPlayerRepo.countByNameSearch",
       );
     }
   }
 
   static async create(
     data: Omit<DashboardPlayer, "id">,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -424,7 +424,7 @@ export class DashboardPlayerRepo {
 
   static async createMany(
     data: Omit<DashboardPlayer, "id">[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -437,7 +437,7 @@ export class DashboardPlayerRepo {
   static async update(
     id: string,
     data: Partial<DashboardPlayer>,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -449,7 +449,7 @@ export class DashboardPlayerRepo {
 
   static async delete(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<DashboardPlayer> {
     try {
       const prismaClient = tx || prisma;
@@ -461,7 +461,7 @@ export class DashboardPlayerRepo {
 
   static async deleteMany(
     ids: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<{ count: number }> {
     try {
       const prismaClient = tx || prisma;

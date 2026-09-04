@@ -45,12 +45,12 @@ export class InvitationService {
 
     const dashboardPlayer = await this.validateCreatePermissions(
       dashboardPlayerId,
-      invitedById
+      invitedById,
     );
 
     const existingToken = await this.handleExistingInvitations(
       dashboardPlayerId,
-      email
+      email,
     );
     if (existingToken) return existingToken;
 
@@ -64,7 +64,7 @@ export class InvitationService {
   }
 
   static async validateInvitation(
-    token: string
+    token: string,
   ): Promise<InvitationResponse | null> {
     const invitation = await InvitationRepo.findByToken(token);
 
@@ -86,21 +86,21 @@ export class InvitationService {
     await this.executeInvitationAcceptance(
       token,
       userId,
-      invitation.dashboardPlayer.id
+      invitation.dashboardPlayer.id,
     );
   }
 
   static async getInvitationsByDashboard(
     dashboardId: string,
-    requestingUserId: string
+    requestingUserId: string,
   ) {
     const canAccess = await this.canUserAccessDashboard(
       dashboardId,
-      requestingUserId
+      requestingUserId,
     );
     if (!canAccess) {
       throw new AuthorizationError(
-        "User is not authorized to access this dashboard"
+        "User is not authorized to access this dashboard",
       );
     }
 
@@ -108,14 +108,14 @@ export class InvitationService {
   }
 
   static async getInvitationsByUser(
-    userId: string
+    userId: string,
   ): Promise<InvitationWithDashboard[]> {
     return await InvitationRepo.findByUserId(userId);
   }
 
   static async deleteInvitation(
     invitationId: string,
-    requestingUserId: string
+    requestingUserId: string,
   ): Promise<void> {
     const invitation = await InvitationRepo.findByIdWithDetails(invitationId);
     if (!invitation) {
@@ -124,11 +124,11 @@ export class InvitationService {
 
     const canDelete = await this.canUserDeleteInvitation(
       invitation,
-      requestingUserId
+      requestingUserId,
     );
     if (!canDelete) {
       throw new AuthorizationError(
-        "User is not authorized to delete this invitation"
+        "User is not authorized to delete this invitation",
       );
     }
 
@@ -138,25 +138,25 @@ export class InvitationService {
   static async handleInvitationForGoogle(
     inviteToken: string,
     user: User,
-    res: Response
+    res: Response,
   ) {
     try {
       const invitation = await this.validateInvitation(inviteToken);
 
       if (!invitation) {
         return res.redirect(
-          `${config.google.redirectClientUrl}?error=invalid_invitation`
+          `${config.google.redirectClientUrl}?error=invalid_invitation`,
         );
       }
 
       await this.acceptInvitation(inviteToken, user.id);
       const userInfo = AuthService.createUserResponse(user);
       const encodedUser = encodeURIComponent(
-        AuthService.encodeUserInfo(userInfo)
+        AuthService.encodeUserInfo(userInfo),
       );
 
       return res.redirect(
-        `${config.google.redirectClientUrl}?user=${encodedUser}&invitation=accepted&dashboard=${invitation.dashboardPlayer.dashboard.id}`
+        `${config.google.redirectClientUrl}?user=${encodedUser}&invitation=accepted&dashboard=${invitation.dashboardPlayer.dashboard.id}`,
       );
     } catch (error) {
       throw new InvitationError("Failed to handle invitation");
@@ -165,7 +165,7 @@ export class InvitationService {
 
   static async handleInvitationForAuth(
     inviteToken: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     try {
       const invitation = await this.validateInvitation(inviteToken);
@@ -183,7 +183,7 @@ export class InvitationService {
 
   private static async validateCreatePermissions(
     dashboardPlayerId: string,
-    invitedById: string
+    invitedById: string,
   ) {
     const dashboardPlayer =
       await DashboardPlayerRepo.findByIdWithAdmin(dashboardPlayerId);
@@ -194,13 +194,13 @@ export class InvitationService {
 
     if (dashboardPlayer.dashboard.adminId !== invitedById) {
       throw new AuthorizationError(
-        "Only dashboard admin can create invitations"
+        "Only dashboard admin can create invitations",
       );
     }
 
     if (dashboardPlayer.userId) {
       throw new ConflictError(
-        "Dashboard player already has a user associated with it"
+        "Dashboard player already has a user associated with it",
       );
     }
 
@@ -209,11 +209,11 @@ export class InvitationService {
 
   private static async handleExistingInvitations(
     dashboardPlayerId: string,
-    email?: string
+    email?: string,
   ): Promise<string | null> {
     const existingInvitations = await InvitationRepo.findByDashboardPlayerId(
       dashboardPlayerId,
-      { activeOnly: true }
+      { activeOnly: true },
     );
 
     if (existingInvitations.length > 0) {
@@ -268,7 +268,7 @@ export class InvitationService {
   private static async sendInvitationEmail(
     email: string,
     token: string,
-    dashboardPlayer: any
+    dashboardPlayer: any,
   ) {
     await EmailService.sendDashboardInvitation(email, token, {
       dashboardName: dashboardPlayer.dashboard.name,
@@ -279,11 +279,11 @@ export class InvitationService {
 
   private static async validateUserEligibility(
     userId: string,
-    invitation: InvitationResponse
+    invitation: InvitationResponse,
   ) {
     const existingPlayer = await DashboardPlayerService.getPlayerInDashboard(
       invitation.dashboardPlayer.dashboard.id,
-      userId
+      userId,
     );
 
     if (existingPlayer) {
@@ -294,7 +294,7 @@ export class InvitationService {
   private static async executeInvitationAcceptance(
     token: string,
     userId: string,
-    playerId: string
+    playerId: string,
   ): Promise<void> {
     await prisma.$transaction(async (tx) => {
       await InvitationRepo.markAsUsed(token, userId, tx);
@@ -305,7 +305,7 @@ export class InvitationService {
 
   private static async canUserAccessDashboard(
     dashboardId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     const dashboard = await DashboardRepo.findById(dashboardId);
     if (!dashboard) return false;
@@ -314,14 +314,14 @@ export class InvitationService {
 
     const player = await DashboardPlayerService.getPlayerInDashboard(
       dashboardId,
-      userId
+      userId,
     );
     return player !== null;
   }
 
   private static async canUserDeleteInvitation(
     invitation: InvitationWithDetails,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     return (
       invitation.invitedById === userId ||
@@ -330,7 +330,7 @@ export class InvitationService {
   }
 
   private static mapToInvitationResponse(
-    invitation: InvitationWithDetails
+    invitation: InvitationWithDetails,
   ): InvitationResponse {
     return {
       id: invitation.id,

@@ -23,13 +23,13 @@ router.post(
   "/",
   authenticateToken,
   validateRequestBody(createLeagueRequestSchema),
-  createLeague
+  createLeague,
 );
 
 router.post(
   "/:competitionId/matches/:matchId/complete",
   authenticateToken,
-  completeLeagueMatch
+  completeLeagueMatch,
 );
 
 router.get("/:id/standings", getLeagueStandings);
@@ -41,14 +41,14 @@ router.post(
   "/:id/teams",
   authenticateToken,
   validateRequestBody(addTeamSchema),
-  addTeamToLeague
+  addTeamToLeague,
 );
 
 router.patch(
   "/:id/team-names",
   authenticateToken,
   validateRequestBody(updateTeamNamesSchema),
-  updateTeamNames
+  updateTeamNames,
 );
 
 export default router;

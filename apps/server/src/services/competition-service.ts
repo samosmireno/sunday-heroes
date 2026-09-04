@@ -42,15 +42,15 @@ export class CompetitionService {
   static async getCompetitionStats(
     competitionId: string,
     userId?: string,
-    season?: SeasonQuery
+    season?: SeasonQuery,
   ) {
     const seasonWhere = await SeasonService.resolveSeasonFilter(
       competitionId,
-      season
+      season,
     );
     const competition = await CompetitionRepo.findByIdWithDetails(
       competitionId,
-      seasonWhere
+      seasonWhere,
     );
     if (!competition) {
       throw new NotFoundError("Competition");
@@ -69,7 +69,7 @@ export class CompetitionService {
     return transformCompetitionToInfoResponse(
       competition,
       seasons.map(transformSeasonToResponse),
-      userId
+      userId,
     );
   }
 
@@ -99,7 +99,7 @@ export class CompetitionService {
           currentSeason.matchCount - currentSeason.completedMatchCount,
         openVotingCount,
       }),
-      seasons.map(transformSeasonToResponse)
+      seasons.map(transformSeasonToResponse),
     );
   }
 
@@ -118,7 +118,7 @@ export class CompetitionService {
       limit?: number;
       type?: CompetitionType;
       search?: string;
-    } = {}
+    } = {},
   ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
     if (!dashboardId) {
@@ -143,7 +143,7 @@ export class CompetitionService {
 
     const userRoles = await CompetitionRepo.getUserRolesForCompetitions(
       userId,
-      competitionIds
+      competitionIds,
     );
 
     const response = transformDashboardCompetitionsToDetailedResponse(
@@ -151,7 +151,7 @@ export class CompetitionService {
       teamCounts,
       playerCounts,
       userRoles,
-      competitions
+      competitions,
     );
 
     return {
@@ -168,10 +168,10 @@ export class CompetitionService {
    */
   static async createCompetition(
     data: CreateCompetitionInput,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     const dashboardId = await DashboardService.getDashboardIdFromUserId(
-      data.userId
+      data.userId,
     );
     if (!dashboardId) {
       throw new NotFoundError("Dashboard");
@@ -179,18 +179,21 @@ export class CompetitionService {
 
     const competitionToAdd = transformAddCompetitionRequestToService(
       data,
-      dashboardId
+      dashboardId,
     );
 
     const createWithSeason = async (client: Prisma.TransactionClient) => {
-      const competition = await CompetitionRepo.create(competitionToAdd, client);
+      const competition = await CompetitionRepo.create(
+        competitionToAdd,
+        client,
+      );
       await SeasonRepo.create(
         {
           competitionId: competition.id,
           number: 1,
           startedAt: competition.createdAt,
         },
-        client
+        client,
       );
       return competition;
     };
@@ -208,11 +211,11 @@ export class CompetitionService {
   static async resetCompetition(competitionId: string, userId: string) {
     const isAuthorized = await this.canUserModifyCompetition(
       competitionId,
-      userId
+      userId,
     );
     if (!isAuthorized) {
       throw new AuthorizationError(
-        "User is not authorized to reset this competition"
+        "User is not authorized to reset this competition",
       );
     }
 
@@ -229,7 +232,7 @@ export class CompetitionService {
       if (isLeague && !competition.matchType) {
         const matchType = await MatchRepo.findLatestMatchType(
           competitionId,
-          tx
+          tx,
         );
         if (matchType) {
           await CompetitionRepo.update(competitionId, { matchType }, tx);
@@ -240,7 +243,7 @@ export class CompetitionService {
       await SeasonRepo.deleteByCompetitionId(competitionId, tx);
       await SeasonRepo.create(
         { competitionId, number: 1, startedAt: new Date() },
-        tx
+        tx,
       );
 
       if (isLeague) {
@@ -254,11 +257,11 @@ export class CompetitionService {
   static async deleteCompetition(competitionId: string, userId: string) {
     const isAuthorized = await this.canUserModifyCompetition(
       competitionId,
-      userId
+      userId,
     );
     if (!isAuthorized) {
       throw new AuthorizationError(
-        "User is not authorized to delete this competition"
+        "User is not authorized to delete this competition",
       );
     }
     await TeamService.deleteTeamsOnlyInCompetition(competitionId);
@@ -270,7 +273,7 @@ export class CompetitionService {
 
   static async isUserAdmin(
     competitionId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     const adminId = await CompetitionAuthRepo.getDashboardAdmin(competitionId);
     return adminId === userId;
@@ -278,7 +281,7 @@ export class CompetitionService {
 
   static async isUserModerator(
     competitionId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     const moderatorIds = await CompetitionAuthRepo.getModerators(competitionId);
 
@@ -287,7 +290,7 @@ export class CompetitionService {
 
   static async isUserAdminOrModerator(
     competitionId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     const [adminId, moderatorIds] = await Promise.all([
       CompetitionAuthRepo.getDashboardAdmin(competitionId),
@@ -299,7 +302,7 @@ export class CompetitionService {
 
   static async canUserModifyCompetition(
     competitionId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     return this.isUserAdmin(competitionId, userId);
   }

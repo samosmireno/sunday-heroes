@@ -10,7 +10,7 @@ import { AggregateCompetition } from "@repo/shared-types";
 export class DashboardPlayerStatsRepo {
   static async getPlayerCareerStats(
     playerIds: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -122,7 +122,7 @@ export class DashboardPlayerStatsRepo {
       });
 
       const uniqueCompetitions = new Set(
-        competitionCount.map((mp) => mp.match.competitionId)
+        competitionCount.map((mp) => mp.match.competitionId),
       );
 
       const totalMatches = aggregations._count.id;
@@ -147,7 +147,7 @@ export class DashboardPlayerStatsRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerStatsRepo.getPlayerCareerStats"
+        "DashboardPlayerStatsRepo.getPlayerCareerStats",
       );
     }
   }
@@ -155,7 +155,7 @@ export class DashboardPlayerStatsRepo {
   static async getRecentForm(
     playerIds: string[],
     limit: number = 5,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -218,7 +218,7 @@ export class DashboardPlayerStatsRepo {
         else result = "L";
 
         const opponentTeam = mp.match.matchTeams.find(
-          (mt) => mt.isHome !== mp.isHome
+          (mt) => mt.isHome !== mp.isHome,
         );
 
         return {
@@ -236,14 +236,14 @@ export class DashboardPlayerStatsRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerStatsRepo.getRecentForm"
+        "DashboardPlayerStatsRepo.getRecentForm",
       );
     }
   }
 
   static async getTopMatches(
     playerIds: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -286,14 +286,14 @@ export class DashboardPlayerStatsRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerStatsRepo.getTopMatches"
+        "DashboardPlayerStatsRepo.getTopMatches",
       );
     }
   }
 
   static async getCompetitionStats(
     playerIds: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<AggregateCompetition[]> {
     try {
       const prismaClient = tx || prisma;
@@ -319,7 +319,7 @@ export class DashboardPlayerStatsRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerStatsRepo.getTopCompetitions"
+        "DashboardPlayerStatsRepo.getTopCompetitions",
       );
     }
   }
@@ -328,7 +328,7 @@ export class DashboardPlayerStatsRepo {
     playerIds: string[],
     competitionId: string,
     range?: number,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<MatchPlayerWithMatchDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -354,7 +354,7 @@ export class DashboardPlayerStatsRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerStatsRepo.getPerformanceData"
+        "DashboardPlayerStatsRepo.getPerformanceData",
       );
     }
   }
@@ -362,7 +362,7 @@ export class DashboardPlayerStatsRepo {
   static async getTopTeammates(
     playerIds: string[],
     limit: number = 5,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -453,14 +453,14 @@ export class DashboardPlayerStatsRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerStatsRepo.getTopTeammates"
+        "DashboardPlayerStatsRepo.getTopTeammates",
       );
     }
   }
 
   static async getPlayerCompetitionStats(
     playerIds: string[],
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     try {
       const prismaClient = tx || prisma;
@@ -539,7 +539,7 @@ export class DashboardPlayerStatsRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "DashboardPlayerStatsRepo.getPlayerCompetitionStats"
+        "DashboardPlayerStatsRepo.getPlayerCompetitionStats",
       );
     }
   }

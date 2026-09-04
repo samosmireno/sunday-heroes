@@ -11,7 +11,7 @@ import {
 export const authenticateToken = (
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const authenticatedReq = req as AuthenticatedRequest;

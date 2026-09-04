@@ -21,7 +21,7 @@ const result = spawnSync(
     stdio: "inherit",
     env: { ...process.env, DATABASE_URL: url },
     shell: process.platform === "win32",
-  }
+  },
 );
 
 process.exit(result.status ?? 1);

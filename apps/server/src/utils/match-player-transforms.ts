@@ -5,7 +5,7 @@ export function transformAddMatchRequestToMatchPlayer(
   player: DuelPlayerRequest,
   matchId: string,
   dashboardPlayerId: string,
-  teamId: string
+  teamId: string,
 ): Omit<MatchPlayer, "id"> {
   const matchPlayerForService: Omit<MatchPlayer, "id"> = {
     createdAt: new Date(Date.now()),

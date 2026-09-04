@@ -12,7 +12,7 @@ export class CompetitionQueryRepo {
   static async findByType(
     type: CompetitionType,
     options?: { limit?: number; offset?: number },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<CompetitionWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -31,7 +31,7 @@ export class CompetitionQueryRepo {
   static async findByNameSearch(
     searchTerm: string,
     options?: { limit?: number; offset?: number },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<CompetitionWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -50,7 +50,7 @@ export class CompetitionQueryRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionQueryRepo.findByNameSearch"
+        "CompetitionQueryRepo.findByNameSearch",
       );
     }
   }
@@ -58,7 +58,7 @@ export class CompetitionQueryRepo {
   static async findByPlayerId(
     playerId: string,
     options?: { limit?: number; offset?: number },
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<CompetitionWithDetails[]> {
     try {
       const prismaClient = tx || prisma;
@@ -82,7 +82,7 @@ export class CompetitionQueryRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionQueryRepo.findByPlayerId"
+        "CompetitionQueryRepo.findByPlayerId",
       );
     }
   }
@@ -96,7 +96,7 @@ export class CompetitionQueryRepo {
       limit?: number;
       offset?: number;
     } = {},
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<{ competitions: CompetitionListSelect[]; totalCount: number }> {
     try {
       const prismaClient = tx || prisma;
@@ -143,7 +143,7 @@ export class CompetitionQueryRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionQueryRepo.findByUserWithFilters"
+        "CompetitionQueryRepo.findByUserWithFilters",
       );
     }
   }
@@ -189,11 +189,11 @@ export class CompetitionQueryRepo {
     ]);
 
     const matchCounts = Object.fromEntries(
-      matchCountsRaw.map((m) => [m.competitionId, m._count.competitionId])
+      matchCountsRaw.map((m) => [m.competitionId, m._count.competitionId]),
     );
 
     const teamCounts = Object.fromEntries(
-      teamCountsRaw.map((t) => [t.competitionId, t._count.competitionId])
+      teamCountsRaw.map((t) => [t.competitionId, t._count.competitionId]),
     );
 
     const playerCounts: Record<string, number> = {};
@@ -211,7 +211,7 @@ export class CompetitionQueryRepo {
 
   static async countByDashboardId(
     dashboardId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
@@ -221,7 +221,7 @@ export class CompetitionQueryRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionQueryRepo.countByDashboardId"
+        "CompetitionQueryRepo.countByDashboardId",
       );
     }
   }

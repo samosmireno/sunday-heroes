@@ -6,7 +6,7 @@ export class CompetitionModeratorRepo {
   static async addModeratorToCompetition(
     competitionId: string,
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -19,14 +19,14 @@ export class CompetitionModeratorRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionModeratorRepo.addModeratorToCompetition"
+        "CompetitionModeratorRepo.addModeratorToCompetition",
       );
     }
   }
 
   static async removeModeratorFromCompetition(
     id: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     try {
       const prismaClient = tx || prisma;
@@ -38,14 +38,14 @@ export class CompetitionModeratorRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionModeratorRepo.removeModeratorFromCompetition"
+        "CompetitionModeratorRepo.removeModeratorFromCompetition",
       );
     }
   }
 
   static async getModeratorsByCompetitionId(
     competitionId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
@@ -57,14 +57,14 @@ export class CompetitionModeratorRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionModeratorRepo.getModeratorsByCompetitionId"
+        "CompetitionModeratorRepo.getModeratorsByCompetitionId",
       );
     }
   }
 
   static async getCompetitionIdByModeratorId(
     moderatorId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<string | null> {
     try {
       const prismaClient = tx || prisma;
@@ -76,7 +76,7 @@ export class CompetitionModeratorRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionModeratorRepo.getCompetitionIdByModeratorId"
+        "CompetitionModeratorRepo.getCompetitionIdByModeratorId",
       );
     }
   }
@@ -84,7 +84,7 @@ export class CompetitionModeratorRepo {
   static async isUserModerator(
     competitionId: string,
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ): Promise<boolean> {
     try {
       const prismaClient = tx || prisma;
@@ -98,7 +98,7 @@ export class CompetitionModeratorRepo {
     } catch (error) {
       throw PrismaErrorHandler.handle(
         error,
-        "CompetitionModeratorRepo.isUserModerator"
+        "CompetitionModeratorRepo.isUserModerator",
       );
     }
   }

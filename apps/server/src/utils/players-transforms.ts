@@ -3,7 +3,7 @@ import { DashboardPlayerWithDetails } from "../repositories/dashboard-player/typ
 import { calculatePlayerScore } from "./utils";
 
 export function transformDashboardPlayersToResponse(
-  players: DashboardPlayerWithDetails[]
+  players: DashboardPlayerWithDetails[],
 ): PlayerListResponse[] {
   const playerList: PlayerListResponse[] = players.map((player) => {
     const uniqueCompetitionMap = new Map();
@@ -23,11 +23,11 @@ export function transformDashboardPlayersToResponse(
       totalMatches: player.matchPlayers.length,
       totalGoals: player.matchPlayers.reduce(
         (sum: number, matchPlayer) => sum + (matchPlayer.goals || 0),
-        0
+        0,
       ),
       totalAssists: player.matchPlayers.reduce(
         (sum: number, matchPlayer) => sum + (matchPlayer.assists || 0),
-        0
+        0,
       ),
       averageRating: player.matchPlayers.length
         ? player.matchPlayers.reduce(
@@ -36,9 +36,9 @@ export function transformDashboardPlayersToResponse(
               (matchPlayer.rating ??
                 calculatePlayerScore(
                   matchPlayer.receivedVotes,
-                  matchPlayer.match.playerVotes
+                  matchPlayer.match.playerVotes,
                 )),
-            0
+            0,
           ) / player.matchPlayers.length
         : null,
       isRegistered: player.user ? player.user.isRegistered : false,
@@ -52,7 +52,7 @@ export function transformDashboardPlayersToResponse(
           id: competition?.id || "",
           name: competition?.name || "",
           matches: player.matchPlayers.filter(
-            (mp) => mp.match.competition.id === comp.id
+            (mp) => mp.match.competition.id === comp.id,
           ).length,
           goals: player.matchPlayers
             .filter((mp) => mp.match.competition.id === comp.id)
@@ -70,12 +70,12 @@ export function transformDashboardPlayersToResponse(
                       (mp.rating ??
                         calculatePlayerScore(
                           mp.receivedVotes,
-                          mp.match.playerVotes
+                          mp.match.playerVotes,
                         )),
-                    0
+                    0,
                   ) /
                 player.matchPlayers.filter(
-                  (mp) => mp.match.competition.id === comp.id
+                  (mp) => mp.match.competition.id === comp.id,
                 ).length
               : null,
         };

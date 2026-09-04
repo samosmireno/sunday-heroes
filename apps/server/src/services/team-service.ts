@@ -17,16 +17,16 @@ export class TeamService {
     name: string,
     competitionId: string,
     userId: string,
-    tx?: Prisma.TransactionClient
+    tx?: Prisma.TransactionClient,
   ) {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       competitionId,
       userId,
-      tx
+      tx,
     );
     if (!hasPermission) {
       throw new AuthorizationError(
-        "User not authorized to create teams in this competition"
+        "User not authorized to create teams in this competition",
       );
     }
 
@@ -34,11 +34,11 @@ export class TeamService {
       name,
       competitionId,
       undefined,
-      tx
+      tx,
     );
     if (!isUnique) {
       throw new ConflictError(
-        `Team name "${name}" already exists in this competition`
+        `Team name "${name}" already exists in this competition`,
       );
     }
 
@@ -52,15 +52,15 @@ export class TeamService {
     teamId: string,
     nickname: string,
     competitionId: string,
-    userId: string
+    userId: string,
   ) {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       competitionId,
-      userId
+      userId,
     );
     if (!hasPermission) {
       throw new AuthorizationError(
-        "User not authorized to manage teams in this competition"
+        "User not authorized to manage teams in this competition",
       );
     }
 
@@ -76,7 +76,7 @@ export class TeamService {
 
     const player = await DashboardPlayerRepo.findByNickname(
       nickname,
-      dashboardId
+      dashboardId,
     );
     if (!player) {
       throw new NotFoundError("Dashboard player");
@@ -84,28 +84,28 @@ export class TeamService {
 
     const existingTeam = await TeamRosterRepo.getPlayerTeamInCompetition(
       player.id,
-      competitionId
+      competitionId,
     );
     if (existingTeam) {
       throw new ConflictError(
-        `Player "${nickname}" is already on a team in this competition`
+        `Player "${nickname}" is already on a team in this competition`,
       );
     }
 
     const currentPlayerCount = await TeamRosterRepo.getTeamPlayerCount(
       teamId,
-      competitionId
+      competitionId,
     );
     if (currentPlayerCount >= 16) {
       throw new ConflictError(
-        `Team "${team.name}" already has the maximum number of players (16)`
+        `Team "${team.name}" already has the maximum number of players (16)`,
       );
     }
 
     return await TeamRosterRepo.addPlayerToTeam(
       teamId,
       player.id,
-      competitionId
+      competitionId,
     );
   }
 
@@ -113,26 +113,26 @@ export class TeamService {
     teamId: string,
     playerId: string,
     competitionId: string,
-    userId: string
+    userId: string,
   ) {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       competitionId,
-      userId
+      userId,
     );
     if (!hasPermission) {
       throw new AuthorizationError(
-        "User not authorized to manage teams in this competition"
+        "User not authorized to manage teams in this competition",
       );
     }
 
     const isOnTeam = await TeamRosterRepo.isPlayerOnTeam(
       playerId,
       teamId,
-      competitionId
+      competitionId,
     );
     if (!isOnTeam) {
       throw new NotFoundError(
-        `Player with ID ${playerId} is not on team with ID ${teamId}`
+        `Player with ID ${playerId} is not on team with ID ${teamId}`,
       );
     }
 
@@ -150,15 +150,15 @@ export class TeamService {
   static async deleteTeam(
     teamId: string,
     competitionId: string,
-    userId: string
+    userId: string,
   ) {
     const hasPermission = await CompetitionAuthRepo.isUserAdminOrModerator(
       competitionId,
-      userId
+      userId,
     );
     if (!hasPermission) {
       throw new AuthorizationError(
-        "User not authorized to delete teams in this competition"
+        "User not authorized to delete teams in this competition",
       );
     }
 

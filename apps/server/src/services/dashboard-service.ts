@@ -14,7 +14,7 @@ export class DashboardService {
       await CompetitionRepo.findCompetitionIdsForUserIncludingAdmin(userId);
 
     const competitions = await CompetitionRepo.findCompetitionsByIds(
-      competitionIdsForUser
+      competitionIdsForUser,
     );
 
     const competitionIds = competitions.map((c) => c.id);
@@ -28,7 +28,7 @@ export class DashboardService {
     const existingDashboard = await DashboardRepo.findByAdminId(userId);
     if (existingDashboard) {
       throw new ConflictError(
-        "User already has a dashboard. Only one dashboard per user is allowed."
+        "User already has a dashboard. Only one dashboard per user is allowed.",
       );
     }
 
@@ -42,7 +42,7 @@ export class DashboardService {
   static async updateDashboard(
     dashboardId: string,
     userId: string,
-    data: { name?: string }
+    data: { name?: string },
   ) {
     const dashboard = await DashboardRepo.findById(dashboardId);
     if (!dashboard) {
@@ -78,7 +78,7 @@ export class DashboardService {
   }
 
   static async getDashboardIdFromCompetitionId(
-    competitionId: string
+    competitionId: string,
   ): Promise<string> {
     const dashboard = await DashboardRepo.findByCompetitionId(competitionId);
     if (!dashboard) {
@@ -89,14 +89,14 @@ export class DashboardService {
 
   static async canUserAccessDashboard(
     dashboardId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     const dashboard = await DashboardRepo.findByIdWithBasic(dashboardId);
     if (!dashboard) return false;
 
     const isAdmin = dashboard.adminId === userId;
     const isPlayer = dashboard.dashboardPlayers.some(
-      (player) => player.userId === userId
+      (player) => player.userId === userId,
     );
 
     return isAdmin || isPlayer;
