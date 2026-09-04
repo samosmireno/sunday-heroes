@@ -9,6 +9,7 @@ import {
   SeasonParam,
   withSeasonQuery,
 } from "@/features/competition/use-season-param";
+import { leagueKeys } from "@/features/competition/query-keys";
 import { groupFixtures } from "../group-fixtures";
 
 /**
@@ -51,7 +52,7 @@ export const useLeagueFixtures = (
   );
 
   const leagueFixturesQuery = useQuery({
-    queryKey: ["leagueFixtures", competitionId, season],
+    queryKey: leagueKeys.fixtures(competitionId, season),
     queryFn: () => fetchLeagueFixtures(competitionId, season),
     select: regroup,
     enabled: !!competitionId,

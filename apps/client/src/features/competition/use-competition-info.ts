@@ -4,11 +4,12 @@ import { config } from "../../config/config";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../hooks/use-error-handler/types";
+import { competitionKeys } from "./query-keys";
 
 /**
  * The header read of every season-aware page: name, type, the user's role and
  * the season list. Keyed per user, so two users never share a cached role,
- * with `["competitionInfo", compId]` as the prefix a competition-wide
+ * with `competitionKeys.infoPrefix` as the prefix a competition-wide
  * invalidation can target. Without a competition there is nothing to read.
  */
 export const useCompetitionInfo = (
@@ -43,7 +44,7 @@ export const useCompetitionInfo = (
     }
   };
   const competitionQuery = useQuery({
-    queryKey: ["competitionInfo", compId, userId],
+    queryKey: competitionKeys.info(compId, userId),
     queryFn: compId ? () => fetchCompetitionInfo(compId, userId) : skipToken,
   });
 

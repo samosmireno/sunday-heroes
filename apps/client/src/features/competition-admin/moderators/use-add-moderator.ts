@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/config/axios-config";
 import { config } from "@/config/config";
 import { toast } from "sonner";
+import { competitionKeys } from "@/features/competition/query-keys";
 
 export function useAddModerator(competitionId: string) {
   const queryClient = useQueryClient();
@@ -16,7 +17,7 @@ export function useAddModerator(competitionId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["competitionSettings", competitionId],
+        queryKey: competitionKeys.settingsPrefix(competitionId),
       });
     },
   });

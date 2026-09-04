@@ -8,6 +8,7 @@ import {
   SeasonParam,
   withSeasonQuery,
 } from "@/features/competition/use-season-param";
+import { leagueKeys } from "@/features/competition/query-keys";
 
 /** The selected season's Standings; `season` is the URL value, passed through verbatim. */
 export const useLeagueStandings = (
@@ -39,7 +40,7 @@ export const useLeagueStandings = (
   };
 
   const leagueStandingsQuery = useQuery({
-    queryKey: ["leagueStandings", competitionId, season],
+    queryKey: leagueKeys.standings(competitionId, season),
     queryFn: () => fetchLeagueStandings(competitionId, season),
     enabled: !!competitionId,
     staleTime: 0,

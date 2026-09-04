@@ -83,4 +83,47 @@ describe("useEditMatch", () => {
       ).toBe(3),
     );
   });
+
+  it("shows the edited values when the form is reopened straight after an edit", async () => {
+    // The form's own read is cached for minutes, so only an invalidation
+    // brings the edited score back into a form reopened right after the save.
+    vi.spyOn(axiosInstance, "get")
+      .mockResolvedValueOnce(
+        axiosResponse(matchResponse({ id: matchId, homeTeamScore: 2 })),
+      )
+      .mockResolvedValue(
+        axiosResponse(matchResponse({ id: matchId, homeTeamScore: 3 })),
+      );
+    vi.spyOn(axiosInstance, "patch").mockResolvedValue(
+      axiosResponse({ id: matchId }),
+    );
+    const wrapper = createTestProviders();
+
+    const firstOpen = renderHook(
+      () => useEditMatch(CompetitionType.DUEL, competitionId, matchId),
+      { wrapper },
+    );
+    await waitFor(() =>
+      expect(
+        firstOpen.result.current.form.getValues("match.homeTeamScore"),
+      ).toBe(2),
+    );
+    act(() =>
+      firstOpen.result.current.handleSubmit(duelFormData({ homeTeamScore: 3 })),
+    );
+    await waitFor(() =>
+      expect(firstOpen.result.current.isSubmitting).toBe(false),
+    );
+    firstOpen.unmount();
+
+    const reopened = renderHook(
+      () => useEditMatch(CompetitionType.DUEL, competitionId, matchId),
+      { wrapper },
+    );
+    await waitFor(() =>
+      expect(
+        reopened.result.current.form.getValues("match.homeTeamScore"),
+      ).toBe(3),
+    );
+  });
 });

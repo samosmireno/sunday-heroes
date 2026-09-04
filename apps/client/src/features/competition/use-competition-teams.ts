@@ -4,6 +4,7 @@ import { config } from "../../config/config";
 import { useQuery } from "@tanstack/react-query";
 import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../hooks/use-error-handler/types";
+import { competitionKeys } from "./query-keys";
 
 export const useCompetitionTeams = (compId: string) => {
   const { handleError } = useErrorHandler();
@@ -32,7 +33,7 @@ export const useCompetitionTeams = (compId: string) => {
     }
   };
   const competitionQuery = useQuery({
-    queryKey: ["competitionTeams", compId],
+    queryKey: competitionKeys.teams(compId),
     queryFn: () => fetchCompetitionTeams(compId),
     enabled: !!compId,
   });

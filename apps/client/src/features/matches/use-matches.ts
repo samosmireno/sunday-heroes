@@ -4,20 +4,10 @@ import { config } from "../../config/config";
 import { MatchPageResponse } from "@repo/shared-types";
 import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../hooks/use-error-handler/types";
-import {
-  SeasonParam,
-  seasonQuery,
-} from "@/features/competition/use-season-param";
+import { seasonQuery } from "@/features/competition/use-season-param";
+import { MatchListScope, matchKeys } from "@/features/competition/query-keys";
 
-interface MatchQueryParams {
-  userId: string;
-  competitionId?: string;
-  page: number;
-  /** The selected season as the URL holds it, passed through verbatim. */
-  season?: SeasonParam;
-}
-
-interface MatchesReadParams extends MatchQueryParams {
+interface MatchesReadParams extends MatchListScope {
   /**
    * Whether the read may go. The page holds it back while the client cannot
    * yet vouch for `season` (a `?season=` value before the season list is in),
@@ -33,7 +23,7 @@ interface MatchesResult {
 }
 
 /** One list, paged: the same user, competition and season. */
-const sameList = (a: MatchQueryParams, b: MatchQueryParams) =>
+const sameList = (a: MatchListScope, b: MatchListScope) =>
   a.userId === b.userId &&
   a.competitionId === b.competitionId &&
   a.season === b.season;
@@ -56,7 +46,7 @@ export const useMatches = ({
   // without a competition, so the user-wide read never sends or keys on one,
   // and never waits on one either.
   const seasonScoped = competitionId !== undefined;
-  const scope: MatchQueryParams = {
+  const scope: MatchListScope = {
     userId,
     competitionId,
     page,
@@ -64,7 +54,7 @@ export const useMatches = ({
   };
 
   const fetchMatches = async (
-    context: QueryFunctionContext<[string, MatchQueryParams]>,
+    context: QueryFunctionContext<[string, MatchListScope]>,
   ): Promise<MatchesResult> => {
     try {
       const [, { userId, competitionId, page, season }] = context.queryKey;
@@ -102,9 +92,9 @@ export const useMatches = ({
     MatchesResult,
     AxiosError,
     MatchesResult,
-    [string, MatchQueryParams]
+    [string, MatchListScope]
   >({
-    queryKey: ["matches", scope],
+    queryKey: matchKeys.list(scope),
     queryFn: fetchMatches,
     enabled: !seasonScoped || enabled,
     placeholderData: (prevData, prevQuery) =>

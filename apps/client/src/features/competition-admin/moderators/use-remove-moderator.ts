@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/config/axios-config";
 import { config } from "@/config/config";
 import { toast } from "sonner";
+import { competitionKeys } from "@/features/competition/query-keys";
 import { AppError } from "@/hooks/use-error-handler/types";
 
 export function useRemoveModerator(competitionId: string) {
@@ -16,7 +17,7 @@ export function useRemoveModerator(competitionId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["competitionSettings", competitionId],
+        queryKey: competitionKeys.settingsPrefix(competitionId),
       });
 
       toast.success("Moderator removed successfully");

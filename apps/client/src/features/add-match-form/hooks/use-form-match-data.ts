@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { transformResponseToForm } from "../utils/match-transform";
 import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
 import { AppError } from "@/hooks/use-error-handler/types";
+import { matchKeys } from "@/features/competition/query-keys";
 
 export const useFormMatchData = (matchId: string | undefined) => {
   const { handleError } = useErrorHandler();
@@ -28,7 +29,7 @@ export const useFormMatchData = (matchId: string | undefined) => {
     error,
     isError,
   } = useQuery({
-    queryKey: ["match-form-data", matchId],
+    queryKey: matchKeys.formData(matchId),
     queryFn: () => fetchMatchData(matchId!),
     select: transformResponseToForm,
     enabled: Boolean(matchId),

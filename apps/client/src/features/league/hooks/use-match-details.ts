@@ -4,6 +4,7 @@ import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
 import { MatchResponse } from "@repo/shared-types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { leagueKeys } from "@/features/competition/query-keys";
 
 export const useMatchDetails = (matchId: string) => {
   const { handleError } = useErrorHandler();
@@ -25,7 +26,7 @@ export const useMatchDetails = (matchId: string) => {
   };
 
   const leagueFixturesQuery = useQuery({
-    queryKey: ["leagueFixtures", matchId],
+    queryKey: leagueKeys.matchDetails(matchId),
     queryFn: () => fetchMatchDetails(matchId),
     enabled: !!matchId,
     staleTime: 0,

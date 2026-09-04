@@ -8,6 +8,7 @@ import { CompetitionType } from "@repo/shared-types";
 import { AppError } from "@/hooks/use-error-handler/types";
 import { createMatchFormSchema } from "../schemas/schema-factory";
 import { MatchFormData } from "../schemas/types";
+import { competitionKeys, matchKeys } from "@/features/competition/query-keys";
 
 export function useAddMatch(
   competitionType: CompetitionType = CompetitionType.DUEL,
@@ -50,9 +51,9 @@ export function useAddMatch(
       matchService.createMatch(data, competitionId, competitionType),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["competition", { compId: competitionId }],
+        queryKey: competitionKeys.detailPrefix(competitionId),
       });
-      queryClient.invalidateQueries({ queryKey: ["matches"] });
+      queryClient.invalidateQueries({ queryKey: matchKeys.all() });
       navigate(`/competition/${competitionId}`);
     },
     onError: (error) => {

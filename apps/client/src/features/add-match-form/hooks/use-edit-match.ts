@@ -10,6 +10,7 @@ import { CompetitionType } from "@repo/shared-types";
 import { AppError } from "@/hooks/use-error-handler/types";
 import { createMatchFormSchema } from "../schemas/schema-factory";
 import { MatchFormData } from "../schemas/types";
+import { competitionKeys, matchKeys } from "@/features/competition/query-keys";
 
 export function useEditMatch(
   competitionType: CompetitionType = CompetitionType.DUEL,
@@ -53,11 +54,13 @@ export function useEditMatch(
     mutationFn: (data: MatchFormData) =>
       matchService.updateMatch(matchId, data, competitionId, competitionType),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["match", matchId] });
+      // The form's own read is cached for minutes, so without this a
+      // reopened edit form would still show the pre-edit values.
+      queryClient.invalidateQueries({ queryKey: matchKeys.formData(matchId) });
       queryClient.invalidateQueries({
-        queryKey: ["competition", { compId: competitionId }],
+        queryKey: competitionKeys.detailPrefix(competitionId),
       });
-      queryClient.invalidateQueries({ queryKey: ["matches"] });
+      queryClient.invalidateQueries({ queryKey: matchKeys.all() });
       navigate(`/competition/${competitionId}`);
     },
     onError: (error) => {

@@ -1,8 +1,4 @@
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/config/axios-config";
 import { config } from "@/config/config";
@@ -13,29 +9,7 @@ import {
   SeasonResponse,
 } from "@repo/shared-types";
 import { AppError } from "@/hooks/use-error-handler/types";
-
-/**
- * Every read that describes a Competition's seasons, by key prefix: after a
- * Start new season or a Reset competition the Current season, its Standings,
- * Fixtures, stats and match lists all change.
- */
-export function invalidateCompetitionReads(
-  queryClient: QueryClient,
-  competitionId: string,
-) {
-  const keys = [
-    ["competitionInfo", competitionId],
-    ["competitionSettings", competitionId],
-    ["competition", { compId: competitionId }],
-    ["leagueStandings", competitionId],
-    ["leagueFixtures", competitionId],
-    ["leagueStats", { competitionId }],
-    ["matches"],
-  ];
-  return Promise.all(
-    keys.map((queryKey) => queryClient.invalidateQueries({ queryKey })),
-  );
-}
+import { invalidateCompetitionReads } from "@/features/competition/query-keys";
 
 /** Start new season: a League admin goes on to Teams setup, a Duel admin stays. */
 export function useStartNewSeason(

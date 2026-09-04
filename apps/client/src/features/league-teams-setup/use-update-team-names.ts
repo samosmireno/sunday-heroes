@@ -4,6 +4,10 @@ import { UpdateTeamNamesResponse } from "@repo/shared-types";
 import axiosInstance from "@/config/axios-config";
 import { useErrorHandler } from "@/hooks/use-error-handler/use-error-handler";
 import { AppError } from "@/hooks/use-error-handler/types";
+import {
+  competitionKeys,
+  invalidateCompetitionReads,
+} from "@/features/competition/query-keys";
 
 interface TeamUpdate {
   id: string;
@@ -16,9 +20,9 @@ interface UpdateTeamNamesData {
 }
 
 /**
- * The Teams setup save. On success every read the save can change is
- * refreshed (the team names, the info read the router gates on, and the
- * Fixtures the save may have generated) before landing on the League page.
+ * The Teams setup save. On success every read of the Competition is refreshed
+ * (the team names, the info read the router gates on, and the Fixtures the
+ * save may have generated) before landing on the League page.
  */
 export function useUpdateTeamNames() {
   const navigate = useNavigate();
@@ -34,17 +38,11 @@ export function useUpdateTeamNames() {
     },
     onSuccess: async (_, { competitionId }) => {
       await Promise.all([
+        invalidateCompetitionReads(queryClient, competitionId),
+        // The team names are the one read of the family that only this save
+        // changes, so they are not on the shared list.
         queryClient.invalidateQueries({
-          queryKey: ["competition", { compId: competitionId }],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["competitionTeams", competitionId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["competitionInfo", competitionId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["leagueFixtures", competitionId],
+          queryKey: competitionKeys.teams(competitionId),
         }),
       ]);
       navigate(`/competition/${competitionId}`);

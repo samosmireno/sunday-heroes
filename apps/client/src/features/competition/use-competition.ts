@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useErrorHandler } from "../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../hooks/use-error-handler/types";
 import { SeasonParam, seasonQuery } from "./use-season-param";
+import { competitionKeys } from "./query-keys";
 
 interface CompetitionReadOptions {
   /**
@@ -59,7 +60,7 @@ export const useCompetition = (
     }
   };
   const competitionQuery = useQuery({
-    queryKey: ["competition", { compId, userId, season }],
+    queryKey: competitionKeys.detail(compId, userId, season),
     queryFn: () => fetchCompetition(compId, userId, season),
     enabled: !!compId && enabled,
     staleTime: 5 * 60 * 1000,

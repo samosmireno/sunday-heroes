@@ -9,6 +9,7 @@ import {
   SeasonParam,
   withSeasonQuery,
 } from "@/features/competition/use-season-param";
+import { leagueKeys } from "@/features/competition/query-keys";
 
 /** Player totals over the selected season; `season` is the URL value, passed through verbatim. */
 export const useLeagueStats = (competitionId: string, season?: SeasonParam) => {
@@ -36,7 +37,7 @@ export const useLeagueStats = (competitionId: string, season?: SeasonParam) => {
   };
 
   const leagueStatsQuery = useQuery({
-    queryKey: ["leagueStats", { competitionId, season }],
+    queryKey: leagueKeys.stats(competitionId, season),
     queryFn: () => fetchLeagueStats(competitionId, season),
     enabled: !!competitionId,
     staleTime: 5 * 60 * 1000,

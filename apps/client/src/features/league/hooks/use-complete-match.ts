@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../../../config/axios-config";
 import { useErrorHandler } from "../../../hooks/use-error-handler/use-error-handler";
-import { invalidateCompetitionReads } from "@/features/competition-admin/settings/use-competition-mutations";
+import {
+  invalidateCompetitionReads,
+  leagueKeys,
+} from "@/features/competition/query-keys";
 
 export const useCompleteMatch = (competitionId: string) => {
   const queryClient = useQueryClient();
@@ -21,7 +24,9 @@ export const useCompleteMatch = (competitionId: string) => {
       invalidateCompetitionReads(queryClient, competitionId);
       // The match-details read is keyed on the match, not the Competition,
       // so the shared helper does not reach it.
-      queryClient.invalidateQueries({ queryKey: ["leagueFixtures", matchId] });
+      queryClient.invalidateQueries({
+        queryKey: leagueKeys.matchDetails(matchId),
+      });
     },
     onError: (error) => {
       handleError(error, {
