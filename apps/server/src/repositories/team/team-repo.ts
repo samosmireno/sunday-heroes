@@ -192,6 +192,12 @@ export class TeamRepo {
     }
   }
 
+  /**
+   * The oldest Team of that name anywhere in the dashboard, `id` breaking a
+   * tie: a League's placeholder teams are created in one transaction and can
+   * share a millisecond, so `createdAt` alone would leave the winner to the
+   * database's row order.
+   */
   static async findByNameInDashboard(
     name: string,
     dashboardId: string,
@@ -208,6 +214,7 @@ export class TeamRepo {
             },
           },
         },
+        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(error, "TeamRepo.findByNameInDashboard");

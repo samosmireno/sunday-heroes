@@ -384,7 +384,9 @@ export class LeagueService {
   /**
    * Teams setup: renames or merges the teams and, when the Current season has
    * no Match yet, generates its Fixtures in the same transaction. A name left
-   * as it is (a placeholder the admin did not touch) is skipped.
+   * as it is (a placeholder the admin did not touch) is skipped. Every id in
+   * the save must be a Team of this Competition; a foreign id is refused
+   * before the transaction opens, so there is nothing to roll back.
    */
   static async updateTeamNames(
     competitionId: string,
@@ -402,6 +404,18 @@ export class LeagueService {
       throw new AuthorizationError(
         "User is not authorized to update team names in this competition",
       );
+    }
+
+    // Not found rather than forbidden, and on purpose: from this
+    // Competition's point of view the Team does not exist, and the answer must
+    // not tell an admin of one Competition whether the id exists in another.
+    const ownTeamIds = new Set(
+      await TeamCompetitionRepo.getTeamIdsInCompetition(competitionId),
+    );
+    for (const update of teamUpdates) {
+      if (!ownTeamIds.has(update.id)) {
+        throw new NotFoundError("Team");
+      }
     }
 
     const dashboardId =
@@ -488,13 +502,17 @@ export class LeagueService {
    * two Leagues in one dashboard share the `Team N` placeholders, and the
    * lookup would merge this League's team onto the other League's team of
    * that name. A case-only edit renames in place for the same reason.
+   *
+   * Past that, this Competition is asked before the dashboard is: a name
+   * another team of this Competition already holds is a conflict, whichever
+   * other League happens to hold it too.
    */
   private static async handleTeamNameUpdate(
     teamId: string,
     newName: string,
     competitionId: string,
     dashboardId: string,
-    tx: any,
+    tx: Prisma.TransactionClient,
   ) {
     const team = await TeamRepo.findById(teamId, tx);
     if (!team) {
@@ -509,6 +527,18 @@ export class LeagueService {
       return { action: "renamed", teamId, newName };
     }
 
+    const uniqueInCompetition = await TeamRepo.checkNameUniqueInCompetition(
+      newName,
+      competitionId,
+      teamId,
+      tx,
+    );
+    if (!uniqueInCompetition) {
+      throw new ConflictError(
+        `Team with name "${newName}" already exists in this competition`,
+      );
+    }
+
     const existingTeam = await TeamRepo.findByNameInDashboard(
       newName,
       dashboardId,
@@ -516,18 +546,6 @@ export class LeagueService {
     );
 
     if (existingTeam && existingTeam.id !== teamId) {
-      const existingInCompetition =
-        await TeamCompetitionRepo.findByTeamAndCompetition(
-          existingTeam.id,
-          competitionId,
-          tx,
-        );
-
-      if (existingInCompetition) {
-        throw new ConflictError(
-          `Team with name "${newName}" already exists in this competition`,
-        );
-      }
       await TeamCompetitionRepo.updateTeamId(
         teamId,
         existingTeam.id,

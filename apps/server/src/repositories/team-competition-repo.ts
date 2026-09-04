@@ -138,6 +138,26 @@ export class TeamCompetitionRepo {
     }
   }
 
+  /** Just the ids, for callers that only need to know which Teams are in the Competition. */
+  static async getTeamIdsInCompetition(
+    competitionId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<string[]> {
+    try {
+      const prismaClient = tx || prisma;
+      const teamCompetitions = await prismaClient.teamCompetition.findMany({
+        where: { competitionId },
+        select: { teamId: true },
+      });
+      return teamCompetitions.map(({ teamId }) => teamId);
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "TeamCompetitionRepo.getTeamIdsInCompetition",
+      );
+    }
+  }
+
   static async getAllTeamsInCompetition(
     competitionId: string,
     tx?: Prisma.TransactionClient,

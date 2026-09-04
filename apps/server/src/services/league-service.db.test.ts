@@ -1,5 +1,5 @@
 import { MatchType } from "@prisma/client";
-import { LeagueTeamResponse } from "@repo/shared-types";
+import { LeagueTeamResponse, placeholderTeamName } from "@repo/shared-types";
 import { describe, expect, it } from "vitest";
 import {
   addModerator,
@@ -669,9 +669,12 @@ describe("Teams setup on a dashboard with two Leagues", () => {
         id: team.id,
         name: `${prefix} ${index + 1}`,
       })),
-      { id: teams[3].id, name: "Team 4" },
+      { id: teams[3].id, name: placeholderTeamName(4) },
     ];
   }
+
+  /** The four names a freshly created League starts on. */
+  const PLACEHOLDERS = [1, 2, 3, 4].map(placeholderTeamName);
 
   it("leaves an untouched placeholder alone instead of merging it onto the other League's team of that name", async () => {
     const { user, first, second } = await createTwoLeagues();
@@ -732,6 +735,95 @@ describe("Teams setup on a dashboard with two Leagues", () => {
 
     await expectOwnTeams(second, upperNames);
     await expectOwnTeams(first, upperNames);
+  });
+
+  it("refuses a save carrying a Team id from the dashboard's other League, and leaves both Leagues as they were", async () => {
+    const { user, first, second } = await createTwoLeagues();
+    const firstBefore = await teamsOf(first.competition.id);
+    const secondBefore = await teamsOf(second.competition.id);
+
+    await expect(
+      LeagueService.updateTeamNames(
+        second.competition.id,
+        [
+          ...second.teams.slice(0, 3).map((team, index) => ({
+            id: team.id,
+            name: `Newcomers ${index + 1}`,
+          })),
+          { id: first.teams[0].id, name: "Poached" },
+        ],
+        user.id,
+      ),
+    ).rejects.toThrow(NotFoundError);
+
+    expect(await teamsOf(first.competition.id)).toEqual(firstBefore);
+    expect(await teamsOf(second.competition.id)).toEqual(secondBefore);
+    await expectOwnTeams(first, PLACEHOLDERS);
+    await expectOwnTeams(second, PLACEHOLDERS);
+  });
+
+  // Both Leagues are on the same placeholders, so the dashboard-wide lookup
+  // has two "Team 4"s to choose from. Own Competition is asked first, so the
+  // answer is the conflict either way round, not a merge onto whichever team
+  // the UUID order surfaced.
+  it.each([
+    ["the older League", "first"],
+    ["the younger League", "second"],
+  ] as const)(
+    "refuses a rename onto another placeholder of %s with a conflict, changing nothing",
+    async (_label, which) => {
+      const leagues = await createTwoLeagues();
+      const { user } = leagues;
+      const league = leagues[which];
+
+      await expect(
+        LeagueService.updateTeamNames(
+          league.competition.id,
+          [{ id: league.teams[0].id, name: placeholderTeamName(4) }],
+          user.id,
+        ),
+      ).rejects.toThrow(ConflictError);
+
+      await expectOwnTeams(leagues.first, PLACEHOLDERS);
+      await expectOwnTeams(leagues.second, PLACEHOLDERS);
+    },
+  );
+
+  it("still merges onto the other League's team when the new name is one only that League holds", async () => {
+    const { user, first, second } = await createTwoLeagues();
+    await LeagueService.updateTeamNames(
+      first.competition.id,
+      nameThree(first.teams, "Founders"),
+      user.id,
+    );
+    const founder = first.teams[0];
+
+    await LeagueService.updateTeamNames(
+      second.competition.id,
+      [{ id: second.teams[0].id, name: "Founders 1" }],
+      user.id,
+    );
+
+    const survivors = [
+      founder.id,
+      ...second.teams.slice(1).map((team) => team.id),
+    ];
+    const after = await teamsOf(second.competition.id);
+    expect(after.map((team) => team.id).sort()).toEqual([...survivors].sort());
+    expect(after.find((team) => team.id === founder.id)?.name).toBe(
+      "Founders 1",
+    );
+    expectRoundRobin(
+      await LeagueService.getLeagueFixtures(second.competition.id),
+      survivors,
+      1,
+    );
+    await expectOwnTeams(first, [
+      "Founders 1",
+      "Founders 2",
+      "Founders 3",
+      placeholderTeamName(4),
+    ]);
   });
 });
 
