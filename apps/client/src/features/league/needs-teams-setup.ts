@@ -1,15 +1,15 @@
-import { CompetitionType, Role, SeasonResponse } from "@repo/shared-types";
+import {
+  CompetitionType,
+  isPlaceholderTeamName,
+  Role,
+  SeasonResponse,
+} from "@repo/shared-types";
 import { currentSeasonOf } from "@/features/competition/use-season-param";
-
-/** The names League creation gives its teams before Teams setup. */
-const PLACEHOLDER_NAMES = [/^team-\d+$/i, /^Team \d+$/i];
 
 type Team = { id: string; name: string };
 
 function hasCustomTeamNames(teams: Team[]): boolean {
-  return teams.some(
-    (team) => !PLACEHOLDER_NAMES.some((pattern) => pattern.test(team.name)),
-  );
+  return teams.some((team) => !isPlaceholderTeamName(team.name));
 }
 
 /**

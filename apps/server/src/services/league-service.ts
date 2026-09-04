@@ -9,6 +9,7 @@ import { CompetitionAuthRepo } from "../repositories/competition/competition-aut
 import { MatchType, Prisma, VotingStatus } from "@prisma/client";
 import {
   LeagueTeamResponse,
+  placeholderTeamName,
   UpdateTeamNamesResponse,
 } from "@repo/shared-types";
 import { TeamCompetitionRepo } from "../repositories/team-competition-repo";
@@ -51,7 +52,7 @@ export class LeagueService {
 
       const teams = [];
       for (let i = 0; i < request.numberOfTeams; i++) {
-        const teamName = `Team ${i + 1}`;
+        const teamName = placeholderTeamName(i + 1);
 
         const team = await TeamService.createTeamInCompetition(
           teamName,
