@@ -3,35 +3,13 @@ import { act, renderHook } from "@testing-library/react";
 import { ReactNode } from "react";
 import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
 import { SeasonResponse } from "@repo/shared-types";
-import { seasonResponse } from "@/test/fixtures";
+import { seasonResponse, threeSeasons } from "@/test/fixtures";
 import {
   currentSeasonOf,
   seasonQuery,
   useSeasonParam,
   withSeasonQuery,
 } from "./use-season-param";
-
-/** Seasons 1 and 2 are Past seasons; Season 3 is the Current season. */
-const threeSeasons: SeasonResponse[] = [
-  seasonResponse({
-    number: 1,
-    startedAt: "2024-09-08T10:00:00.000Z",
-    endedAt: "2025-03-02T10:00:00.000Z",
-    matchCount: 10,
-  }),
-  seasonResponse({
-    number: 2,
-    startedAt: "2025-03-02T10:00:00.000Z",
-    endedAt: "2025-09-14T10:00:00.000Z",
-    matchCount: 25,
-  }),
-  seasonResponse({
-    number: 3,
-    startedAt: "2025-09-14T10:00:00.000Z",
-    endedAt: null,
-    matchCount: 4,
-  }),
-];
 
 /**
  * The hook at a competition URL, with the location alongside so a test can
@@ -65,7 +43,7 @@ describe("useSeasonParam", () => {
       season: undefined,
       selection: 3,
       current: 3,
-      selectedMatchCount: 4,
+      selectedMatchCount: 10,
       isPast: false,
       isAll: false,
       showSelector: true,
@@ -78,7 +56,7 @@ describe("useSeasonParam", () => {
     expect(result.current).toMatchObject({
       season: 2,
       selection: 2,
-      selectedMatchCount: 25,
+      selectedMatchCount: 12,
       isPast: true,
       isAll: false,
     });
@@ -91,7 +69,7 @@ describe("useSeasonParam", () => {
     expect(result.current).toMatchObject({
       season: "all",
       selection: "all",
-      selectedMatchCount: 39,
+      selectedMatchCount: 42,
       isPast: false,
       isAll: true,
       selectedSeason: undefined,

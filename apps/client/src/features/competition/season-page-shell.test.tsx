@@ -2,16 +2,9 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { SeasonResponse } from "@repo/shared-types";
 import { createTestProviders } from "@/test/harness";
-import { seasonResponse } from "@/test/fixtures";
+import { seasonResponse, threeSeasons } from "@/test/fixtures";
 import { useSeasonParam } from "./use-season-param";
 import { isSeasonSettling, seasonPageShell } from "./season-page-shell";
-
-/** Seasons 1 and 2 are Past seasons; Season 3 is the Current season. */
-const threeSeasons: SeasonResponse[] = [
-  seasonResponse({ number: 1, endedAt: "2025-03-02T10:00:00.000Z" }),
-  seasonResponse({ number: 2, endedAt: "2025-09-14T10:00:00.000Z" }),
-  seasonResponse({ number: 3, endedAt: null }),
-];
 
 /** The shell's header as a page renders it, over the selection the URL and the season list give. */
 function PageHeader({

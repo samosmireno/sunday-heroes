@@ -1,17 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
-import { ReactNode } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
-import { SeasonResponse } from "@repo/shared-types";
-import { axiosResponse, createTestProviders } from "@/test/harness";
+import {
+  axiosNotFound,
+  axiosResponse,
+  createTestProviders,
+} from "@/test/harness";
 import {
   competitionInfo,
   competitionResponse,
   matchResponse,
-  seasonResponse,
+  threeSeasons,
 } from "@/test/fixtures";
 import { useCompetitionInfo } from "./use-competition-info";
 import { SeasonParam, useSeasonParam } from "./use-season-param";
@@ -106,41 +108,6 @@ describe("useCompetition", () => {
   });
 });
 
-/** Seasons 1 and 2 are Past seasons; Season 3 is the Current season. */
-const threeSeasons: SeasonResponse[] = [
-  seasonResponse({ number: 1, endedAt: "2025-03-02T10:00:00.000Z" }),
-  seasonResponse({ number: 2, endedAt: "2025-09-14T10:00:00.000Z" }),
-  seasonResponse({ number: 3, endedAt: null }),
-];
-
-/**
- * The app's providers with the router opened at the competition URL, so the
- * hook's first render sees the link's `?season=` the way the page does.
- */
-function atCompetitionUrl(search: string) {
-  const Providers = createTestProviders();
-  return ({ children }: { children: ReactNode }) => (
-    <Providers>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Navigate to={`/competition/${competitionId}${search}`} replace />
-          }
-        />
-        <Route path="/competition/:competitionId" element={children} />
-      </Routes>
-    </Providers>
-  );
-}
-
-/** The 404 the server answers a Season it does not have with, as the error handler reads it. */
-const seasonNotFound = () =>
-  Object.assign(new Error("Request failed with status code 404"), {
-    status: 404,
-    response: { data: { resource: "Season" } },
-  });
-
 /**
  * The server as the competition page sees it: the info read with three
  * Seasons, and the stats read refusing a season the list does not have.
@@ -156,7 +123,7 @@ function stubServer() {
       season !== null &&
       !threeSeasons.some((s) => String(s.number) === season)
     ) {
-      throw seasonNotFound();
+      throw axiosNotFound("Season");
     }
     return axiosResponse(competitionResponse());
   });
@@ -189,7 +156,9 @@ describe("useCompetition at a competition URL", () => {
       const toastError = vi.spyOn(toast, "error");
 
       const page = renderHook(useCompetitionPageReads, {
-        wrapper: atCompetitionUrl(`?season=${stale}`),
+        wrapper: createTestProviders({
+          at: `/competition/${competitionId}?season=${stale}`,
+        }),
       });
       await waitFor(() =>
         expect(page.result.current.read.competition).toBeDefined(),
@@ -209,7 +178,9 @@ describe("useCompetition at a competition URL", () => {
     const get = stubServer();
 
     const page = renderHook(useCompetitionPageReads, {
-      wrapper: atCompetitionUrl("?season=2"),
+      wrapper: createTestProviders({
+        at: `/competition/${competitionId}?season=2`,
+      }),
     });
     await waitFor(() =>
       expect(page.result.current.read.competition).toBeDefined(),

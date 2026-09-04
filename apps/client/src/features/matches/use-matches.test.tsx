@@ -1,16 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
-import { ReactNode } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import { toast } from "sonner";
-import { MatchPageResponse, SeasonResponse } from "@repo/shared-types";
-import { axiosResponse, createTestProviders } from "@/test/harness";
+import { MatchPageResponse } from "@repo/shared-types";
+import {
+  axiosNotFound,
+  axiosResponse,
+  createTestProviders,
+} from "@/test/harness";
 import {
   competitionInfo,
   matchPageResponse,
-  seasonResponse,
+  threeSeasons,
 } from "@/test/fixtures";
 import { useCompetitionInfo } from "@/features/competition/use-competition-info";
 import {
@@ -220,42 +223,6 @@ describe("useMatches", () => {
   });
 });
 
-/** Seasons 1 and 2 are Past seasons; Season 3 is the Current season. */
-const threeSeasons: SeasonResponse[] = [
-  seasonResponse({ number: 1, endedAt: "2025-03-02T10:00:00.000Z" }),
-  seasonResponse({ number: 2, endedAt: "2025-09-14T10:00:00.000Z" }),
-  seasonResponse({ number: 3, endedAt: null }),
-];
-
-/**
- * The app's providers with the router opened at the competition's All
- * Matches URL, so the hook's first render sees the link's `?season=` the way
- * the page does.
- */
-function atMatchesUrl(search: string) {
-  const Providers = createTestProviders();
-  return ({ children }: { children: ReactNode }) => (
-    <Providers>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Navigate to={`/matches/${competitionId}${search}`} replace />
-          }
-        />
-        <Route path="/matches/:competitionId" element={children} />
-      </Routes>
-    </Providers>
-  );
-}
-
-/** The 404 the server answers a resource it does not have with, as the error handler reads it. */
-const notFound = (resource: string) =>
-  Object.assign(new Error("Request failed with status code 404"), {
-    status: 404,
-    response: { data: { resource } },
-  });
-
 /**
  * The server as All Matches sees it: the info read with three Seasons, and
  * the matches read refusing a season the list does not have.
@@ -271,7 +238,7 @@ function stubServer() {
       season !== null &&
       !threeSeasons.some((s) => String(s.number) === season)
     ) {
-      throw notFound("Season");
+      throw axiosNotFound("Season");
     }
     return matchesPage([matchPageResponse()], 1);
   });
@@ -281,7 +248,7 @@ function stubServer() {
 function stubServerWithoutCompetition() {
   return vi.spyOn(axios, "get").mockImplementation(async (url: string) => {
     if (new URL(url).pathname.endsWith("/competitions/info")) {
-      throw notFound("Competition");
+      throw axiosNotFound("Competition");
     }
     return matchesPage([matchPageResponse()], 1);
   });
@@ -331,7 +298,9 @@ describe("useMatches at a competition's All Matches URL", () => {
       const toastError = vi.spyOn(toast, "error");
 
       const page = renderHook(useMatchesPageReads, {
-        wrapper: atMatchesUrl(`?season=${stale}`),
+        wrapper: createTestProviders({
+          at: `/matches/${competitionId}?season=${stale}`,
+        }),
       });
       await waitFor(() =>
         expect(page.result.current.read.matches).toHaveLength(1),
@@ -351,7 +320,9 @@ describe("useMatches at a competition's All Matches URL", () => {
     const get = stubServer();
 
     const page = renderHook(useMatchesPageReads, {
-      wrapper: atMatchesUrl("?season=2"),
+      wrapper: createTestProviders({
+        at: `/matches/${competitionId}?season=2`,
+      }),
     });
     await waitFor(() =>
       expect(page.result.current.read.matches).toHaveLength(1),
@@ -370,7 +341,9 @@ describe("useMatches at a competition's All Matches URL", () => {
     const toastError = vi.spyOn(toast, "error");
 
     const page = renderHook(useMatchesPageReads, {
-      wrapper: atMatchesUrl("?season=2"),
+      wrapper: createTestProviders({
+        at: `/matches/${competitionId}?season=2`,
+      }),
     });
     await waitFor(() => expect(page.result.current.infoError).not.toBeNull());
 

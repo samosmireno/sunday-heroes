@@ -106,6 +106,28 @@ export function seasonResponse(
   };
 }
 
+/** Seasons 1 and 2 are Past seasons; Season 3 is the Current season. */
+export const threeSeasons: SeasonResponse[] = [
+  seasonResponse({
+    number: 1,
+    startedAt: "2024-09-08T10:00:00.000Z",
+    endedAt: "2025-03-02T10:00:00.000Z",
+    matchCount: 20,
+  }),
+  seasonResponse({
+    number: 2,
+    startedAt: "2025-03-02T10:00:00.000Z",
+    endedAt: "2025-09-14T10:00:00.000Z",
+    matchCount: 12,
+  }),
+  seasonResponse({
+    number: 3,
+    startedAt: "2025-09-14T10:00:00.000Z",
+    endedAt: null,
+    matchCount: 10,
+  }),
+];
+
 export function currentSeasonResponse(
   overrides: Partial<CurrentSeasonResponse> = {},
 ): CurrentSeasonResponse {

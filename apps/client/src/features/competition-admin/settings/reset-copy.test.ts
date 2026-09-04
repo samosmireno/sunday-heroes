@@ -1,25 +1,15 @@
 import { CompetitionType } from "@repo/shared-types";
 import { describe, expect, it } from "vitest";
-import { competitionSettings, seasonResponse } from "@/test/fixtures";
+import {
+  competitionSettings,
+  seasonResponse,
+  threeSeasons,
+} from "@/test/fixtures";
 import {
   resetCompetitionCardCopy,
   resetCompetitionDialogCopy,
   resetCounts,
 } from "./reset-copy";
-
-const threeSeasons = [
-  seasonResponse({
-    number: 1,
-    endedAt: "2025-12-01T10:00:00.000Z",
-    matchCount: 20,
-  }),
-  seasonResponse({
-    number: 2,
-    endedAt: "2026-05-01T10:00:00.000Z",
-    matchCount: 12,
-  }),
-  seasonResponse({ number: 3, matchCount: 10 }),
-];
 
 const league = competitionSettings({
   name: "Sunday League",
