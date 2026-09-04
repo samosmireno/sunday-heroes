@@ -1,0 +1,5 @@
+# Revisions to skip when reading `git blame`. Enable with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: format the repo with prettier (#34)
+21a35d81b5509fd0612fd6510284d72c89db7d51
