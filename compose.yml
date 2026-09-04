@@ -1,6 +1,10 @@
 # Disposable Postgres for the test harness. `docker compose up -d` is the only
 # local setup step; `npm test` applies the migrations and truncates between tests.
 # Published on 5433 so it never collides with a native Postgres on 5432.
+# The explicit project name keeps every checkout — a git worktree included —
+# addressing the same containers instead of one project per directory name.
+name: sunday-heroes
+
 services:
   postgres:
     image: postgres:16

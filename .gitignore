@@ -5,6 +5,7 @@ node_modules
 .next
 dist
 dist-ssr
+*.tsbuildinfo
 *.local
 .env
 .cache

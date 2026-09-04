@@ -37,6 +37,8 @@ docker compose up -d   # disposable Postgres 16 on localhost:5433; the only setu
 npm test               # server (Vitest: unit + db projects) and client (Vitest) through Turbo
 ```
 
+`compose.yml` sets `name: sunday-heroes`, so every checkout of the repo — a git worktree included — addresses the same project and the same container on 5433, rather than one project per directory name.
+
 The server's `db` tests apply the real migrations to the compose database and truncate every table before each test; the harness refuses any database host other than localhost. Both apps commit an `.env.test` with dummy values (`apps/server/.env.test`, `apps/client/.env.test`), so tests never depend on a developer's gitignored `.env`; Vitest runs Vite in mode `test`, which loads the client file on top of `.env`. CI (`.github/workflows/ci.yml`) runs lint, type checks and tests on every push to `main` and every pull request.
 
 ## Migrations

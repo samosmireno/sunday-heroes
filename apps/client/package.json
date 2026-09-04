@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "build:vercel": "tsc -b && vite build --outDir ../../dist",
     "lint": "eslint .",
+    "check-types": "tsc -b --noEmit",
     "preview": "vite preview",
     "test": "vitest run",
     "test:ui": "vitest --ui",
