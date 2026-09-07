@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import prisma from "../repositories/prisma-client";
+import { MatchRepo } from "../repositories/match/match-repo";
 import {
   createDuel,
   createDuelMatch,
@@ -8,9 +9,9 @@ import {
   createUser,
   createUserWithDashboard,
   defaultDuelPlayers,
+  duelLineup,
   findPlayerId,
 } from "../../test/factories";
-import { createMatchRequest } from "../schemas/create-match-request-schema";
 import { AuthorizationError, VotingError } from "../utils/errors";
 import { CompetitionService } from "./competition-service";
 import { EmailService } from "./email-service";
@@ -18,6 +19,7 @@ import { MatchVotingService } from "./match/match-voting-service";
 import { SeasonService } from "./season-service";
 import { calculatePlayerScore } from "../utils/utils";
 import { VoteService } from "./vote-service";
+import { VotingEligibilityService } from "./voting-eligibility-service";
 
 describe("Voting is not a Match write (ADR 0002)", () => {
   // Creating a Match with voting enabled sends the invitation to every player
@@ -460,23 +462,6 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     vi.restoreAllMocks();
   });
 
-  /** A Duel lineup from nicknames, numbered per side as the form numbers them. */
-  function lineup(
-    home: string[],
-    away: string[],
-  ): createMatchRequest["players"] {
-    const side = (nicknames: string[], isHome: boolean) =>
-      nicknames.map((nickname, index) => ({
-        nickname,
-        goals: 0,
-        assists: 0,
-        position: index + 1,
-        isHome,
-      }));
-
-    return [...side(home, true), ...side(away, false)];
-  }
-
   /** A full ballot from `voterId`: the other three participants, ranked by nickname. */
   async function ballot(matchId: string, voterId: string) {
     const others = await prisma.matchPlayer.findMany({
@@ -537,12 +522,12 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     for (let i = 0; i < 3; i++) {
       await createDuelMatch({
         competitionId: competition.id,
-        players: lineup(["Ana"], ["Cal"]),
+        players: duelLineup(["Ana"], ["Cal"]),
       });
     }
     const match = await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
     const [ana, bea] = await Promise.all([
       findPlayerId(dashboard.id, "Ana"),
@@ -567,16 +552,16 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     for (let i = 0; i < 3; i++) {
       await createDuelMatch({
         competitionId: competition.id,
-        players: lineup(["Ana"], ["Cal"]),
+        players: duelLineup(["Ana"], ["Cal"]),
       });
     }
     const first = await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
     const second = await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
     const voterId = bea.dashboardPlayer.id;
 
@@ -590,7 +575,7 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     // The sixth match arms the gate, and Bea is on two.
     await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana"], ["Cal"]),
+      players: duelLineup(["Ana"], ["Cal"]),
     });
 
     await expectGateRefusal(submitBallot(second.id, voterId, bea.user.id));
@@ -611,11 +596,11 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     // Season 1: Ana plays both matches and qualifies; Eve plays one.
     await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
     await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana", "Eve"], ["Cal", "Fay"]),
+      players: duelLineup(["Ana", "Eve"], ["Cal", "Fay"]),
     });
     await SeasonService.startNewSeason(competition.id, user.id);
 
@@ -623,11 +608,11 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     // this Season with her qualification earned in the closed one.
     const anasMatch = await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
     const evesMatch = await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Eve", "Bea"], ["Fay", "Dan"]),
+      players: duelLineup(["Eve", "Bea"], ["Fay", "Dan"]),
     });
 
     // Four Completed matches against a threshold of 2, with Ana qualified: armed.
@@ -684,12 +669,12 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     for (let i = 0; i < 3; i++) {
       await createDuelMatch({
         competitionId: competition.id,
-        players: lineup(["Ana"], ["Cal"]),
+        players: duelLineup(["Ana"], ["Cal"]),
       });
     }
     const armedMatch = await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
     const voterId = bea.dashboardPlayer.id;
     await expectGateRefusal(submitBallot(armedMatch.id, voterId, bea.user.id));
@@ -700,7 +685,7 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     await CompetitionService.resetCompetition(competition.id, user.id);
     const resetMatch = await createDuelMatch({
       competitionId: competition.id,
-      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
 
     await expect(
@@ -718,23 +703,6 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
     vi.restoreAllMocks();
   });
 
-  /** A Duel lineup from nicknames, numbered per side as the form numbers them. */
-  function sides(
-    home: string[],
-    away: string[],
-  ): createMatchRequest["players"] {
-    const side = (nicknames: string[], isHome: boolean) =>
-      nicknames.map((nickname, index) => ({
-        nickname,
-        goals: 0,
-        assists: 0,
-        position: index + 1,
-        isHome,
-      }));
-
-    return [...side(home, true), ...side(away, false)];
-  }
-
   /**
    * A Duel with a threshold of 2, armed by four Completed matches: Ana played
    * every one of them and is an Eligible voter, Bea only the last and is not.
@@ -749,12 +717,12 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
     for (let i = 0; i < 3; i++) {
       await createDuelMatch({
         competitionId: competition.id,
-        players: sides(["Ana"], ["Cal"]),
+        players: duelLineup(["Ana"], ["Cal"]),
       });
     }
     const match = await createDuelMatch({
       competitionId: competition.id,
-      players: sides(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
     const [ana, bea] = await Promise.all([
       findPlayerId(dashboard.id, "Ana"),
@@ -835,7 +803,7 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
     });
     const match = await createDuelMatch({
       competitionId: competition.id,
-      players: sides(["Ana", "Bea"], ["Cal", "Dan"]),
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
     });
 
     const status = await VoteService.getVotingStatus(
@@ -870,5 +838,254 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
     );
 
     expect(status.seasonNumber).toBe(2);
+  });
+});
+
+describe("Voting closes when every Eligible voter has voted", () => {
+  beforeEach(() => {
+    vi.spyOn(EmailService, "sendVotingInvitation").mockResolvedValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /** A full ballot from `voterId`: the other three participants, ranked by nickname. */
+  async function submitBallot(
+    matchId: string,
+    voterId: string,
+    requestingUserId: string,
+  ) {
+    const others = await prisma.matchPlayer.findMany({
+      where: { matchId, dashboardPlayerId: { not: voterId } },
+      select: { id: true, dashboardPlayer: { select: { nickname: true } } },
+    });
+    const ranked = others.sort((a, b) =>
+      a.dashboardPlayer.nickname.localeCompare(b.dashboardPlayer.nickname),
+    );
+
+    return VoteService.submitVotes(
+      matchId,
+      voterId,
+      [
+        { playerId: ranked[0].id, points: 3 },
+        { playerId: ranked[1].id, points: 2 },
+        { playerId: ranked[2].id, points: 1 },
+      ],
+      requestingUserId,
+    );
+  }
+
+  async function votingStatusOf(matchId: string) {
+    const match = await prisma.match.findUniqueOrThrow({
+      where: { id: matchId },
+      select: { votingStatus: true },
+    });
+    return match.votingStatus;
+  }
+
+  async function findPlayerIds(dashboardId: string, nicknames: string[]) {
+    return Promise.all(
+      nicknames.map((nickname) => findPlayerId(dashboardId, nickname)),
+    );
+  }
+
+  async function distinctVoterCount(matchId: string) {
+    const voters = await prisma.playerVote.findMany({
+      where: { matchId },
+      select: { voterId: true },
+      distinct: ["voterId"],
+    });
+    return voters.length;
+  }
+
+  /**
+   * A Duel with a threshold of 2 whose gate is armed, and one match still open
+   * on it: Ana and Cal played all four Completed matches and are Eligible
+   * voters, Bea and Dan only this one and are not. Two of the four
+   * participants can vote, which is the whole point — closure has to notice.
+   */
+  async function armedDuelMidVote() {
+    const { user, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 2,
+    });
+    for (let i = 0; i < 3; i++) {
+      await createDuelMatch({
+        competitionId: competition.id,
+        players: duelLineup(["Ana"], ["Cal"]),
+      });
+    }
+    const match = await createDuelMatch({
+      competitionId: competition.id,
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const [ana, cal] = await findPlayerIds(dashboard.id, ["Ana", "Cal"]);
+
+    return { admin: user, dashboard, competition, match, ana, cal };
+  }
+
+  it("closes on the last Eligible voter's submit while ineligible participants have not voted", async () => {
+    const { admin, match, ana, cal } = await armedDuelMidVote();
+
+    await submitBallot(match.id, ana, admin.id);
+    // Cal is still outstanding and Eligible: closing here would be a voter early.
+    expect(await votingStatusOf(match.id)).toBe("OPEN");
+
+    await submitBallot(match.id, cal, admin.id);
+
+    // Bea and Dan have not voted and never can, so every Eligible voter has
+    // voted and the match is finished on two ballots out of four participants.
+    expect(await votingStatusOf(match.id)).toBe("CLOSED");
+    expect(await distinctVoterCount(match.id)).toBe(2);
+  });
+
+  it("rates the closing Eligible voter's own ballot into the match it closed", async () => {
+    const { admin, match, ana, cal } = await armedDuelMidVote();
+
+    await submitBallot(match.id, ana, admin.id);
+    await submitBallot(match.id, cal, admin.id);
+
+    // The stored ratings have to be the ones the whole committed ballot set
+    // produces, Cal's closing ballot included: both repo reads behind the
+    // closure check take the submit's transaction, so they see the ballot it
+    // is in the middle of writing. Unthread either one and Cal counts as
+    // pending, the match never closes, and nothing is rated at all.
+    const allVotes = await prisma.playerVote.findMany({
+      where: { matchId: match.id },
+    });
+    const matchPlayers = await prisma.matchPlayer.findMany({
+      where: { matchId: match.id },
+      select: { id: true, rating: true },
+    });
+    expect(allVotes).toHaveLength(6);
+    for (const matchPlayer of matchPlayers) {
+      expect(matchPlayer.rating).toBe(
+        calculatePlayerScore(
+          allVotes.filter((vote) => vote.matchPlayerId === matchPlayer.id),
+          allVotes,
+        ),
+      );
+    }
+  });
+
+  it("closes inside the submit transaction, so a failed close takes the ballot with it", async () => {
+    const { admin, match, ana, cal } = await armedDuelMidVote();
+    await submitBallot(match.id, ana, admin.id);
+
+    // Fail the write that closes the match, once the setup that opens voting
+    // is safely done. Placement is what this pins: run the closure check after
+    // the transaction commits instead of inside it and Cal's ballot survives a
+    // failed close, leaving a match that is open, unrated, and can never close
+    // again because every Eligible voter has already voted.
+    vi.spyOn(MatchRepo, "updateVotingStatus").mockRejectedValue(
+      new Error("closing write failed"),
+    );
+
+    await expect(submitBallot(match.id, cal, admin.id)).rejects.toThrow();
+
+    expect(await votingStatusOf(match.id)).toBe("OPEN");
+    expect(await distinctVoterCount(match.id)).toBe(1);
+    const matchPlayers = await prisma.matchPlayer.findMany({
+      where: { matchId: match.id },
+      select: { rating: true },
+    });
+    expect(matchPlayers.every((player) => player.rating === null)).toBe(true);
+  });
+
+  it("leaves a match armed mid-voting open, with nothing left to arrive", async () => {
+    const { user, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 3,
+    });
+    // Five Completed matches against a threshold of 3: one short of arming,
+    // so the match under test opens while the runway is still on.
+    for (let i = 0; i < 4; i++) {
+      await createDuelMatch({
+        competitionId: competition.id,
+        players: duelLineup(["Ana"], ["Cal"]),
+      });
+    }
+    const match = await createDuelMatch({
+      competitionId: competition.id,
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const [ana, bea, cal, dan] = await findPlayerIds(dashboard.id, [
+      "Ana",
+      "Bea",
+      "Cal",
+      "Dan",
+    ]);
+    // On the runway everyone may vote, and three of the four do.
+    await submitBallot(match.id, ana, user.id);
+    await submitBallot(match.id, cal, user.id);
+    await submitBallot(match.id, dan, user.id);
+    expect(await votingStatusOf(match.id)).toBe("OPEN");
+
+    // Some other match completes and the gate arms. Bea, the only outstanding
+    // voter, goes ineligible: every Eligible voter has now voted, but the
+    // closure check only runs on a submit and no further submit is coming, so
+    // the match strands open until the nightly cron collects it at the
+    // deadline. Accepted and bounded — arming is monotonic and fires once in a
+    // Competition's life.
+    await createDuelMatch({
+      competitionId: competition.id,
+      players: duelLineup(["Ana"], ["Cal"]),
+    });
+
+    expect(await votingStatusOf(match.id)).toBe("OPEN");
+    // And it reads honestly: nothing more can arrive.
+    const eligibility = await VotingEligibilityService.load(competition.id);
+    expect(eligibility.for(bea).canVote).toBe(false);
+    expect(await VoteService.getPendingVoters(match.id, eligibility)).toEqual(
+      [],
+    );
+  });
+
+  it("waits for every participant on the runway, qualified or not", async () => {
+    const { user, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 3,
+    });
+    // Three Completed matches against a threshold of 3: Ana and Cal are
+    // qualified, but six are needed to arm, so the gate is still on the runway.
+    for (let i = 0; i < 2; i++) {
+      await createDuelMatch({
+        competitionId: competition.id,
+        players: duelLineup(["Ana"], ["Cal"]),
+      });
+    }
+    const match = await createDuelMatch({
+      competitionId: competition.id,
+      players: duelLineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const [ana, bea, cal, dan] = await findPlayerIds(dashboard.id, [
+      "Ana",
+      "Bea",
+      "Cal",
+      "Dan",
+    ]);
+    const eligibility = await VotingEligibilityService.load(competition.id);
+    expect(eligibility.armed).toBe(false);
+    expect(eligibility.for(ana).qualified).toBe(true);
+    expect(eligibility.for(bea).qualified).toBe(false);
+
+    await submitBallot(match.id, ana, user.id);
+    await submitBallot(match.id, cal, user.id);
+    // Both qualified players are in. A filter on `qualified` rather than
+    // `canVote` would close here and take the runway away from Bea and Dan.
+    expect(await votingStatusOf(match.id)).toBe("OPEN");
+
+    await submitBallot(match.id, bea, user.id);
+    expect(await votingStatusOf(match.id)).toBe("OPEN");
+
+    await submitBallot(match.id, dan, user.id);
+    expect(await votingStatusOf(match.id)).toBe("CLOSED");
   });
 });

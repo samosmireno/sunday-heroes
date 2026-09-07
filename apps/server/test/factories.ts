@@ -209,6 +209,27 @@ export async function createLeagueWithClosedSeason(options: {
   return { ...league, currentSeason };
 }
 
+/**
+ * A Duel lineup from nicknames, numbered per side as the form numbers them.
+ * Every player is on nothing — a lineup is for tests about who played, and a
+ * test that cares about goals writes the players out longhand instead.
+ */
+export function duelLineup(
+  home: string[],
+  away: string[],
+): createMatchRequest["players"] {
+  const side = (nicknames: string[], isHome: boolean) =>
+    nicknames.map((nickname, index) => ({
+      nickname,
+      goals: 0,
+      assists: 0,
+      position: index + 1,
+      isHome,
+    }));
+
+  return [...side(home, true), ...side(away, false)];
+}
+
 export const defaultDuelPlayers: createMatchRequest["players"] = [
   { nickname: "Ana", goals: 1, assists: 0, position: 1, isHome: true },
   { nickname: "Bea", goals: 1, assists: 1, position: 2, isHome: true },

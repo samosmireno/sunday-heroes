@@ -14,6 +14,7 @@ import { Prisma } from "@prisma/client";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import { calculatePlayerScore } from "../utils/utils";
 import { VotingEligibilityService } from "./voting-eligibility-service";
+import { VotingEligibility } from "../utils/voting-eligibility";
 
 export class VoteService {
   static async submitVotes(
@@ -97,7 +98,7 @@ export class VoteService {
 
       await VoteRepo.createMany(voteData, tx);
 
-      await this.checkAndCloseVoting(matchId, tx);
+      await this.checkAndCloseVoting(matchId, eligibility, tx);
 
       return { success: true, message: "Votes submitted successfully" };
     });
@@ -148,6 +149,28 @@ export class VoteService {
   }
 
   /**
+   * Who is still to vote: the participants the Voting gate lets vote, minus
+   * those who already have. Once a gate is armed an ineligible participant's
+   * ballot is never coming, so counting them here would hold a finished match
+   * open until its deadline.
+   *
+   * `eligibility` is a **required parameter with no default**. A default that
+   * loaded its own is exactly how the N+1 gets reintroduced by the next caller
+   * — the unit of computation is the Competition, and a caller that already
+   * holds the answer must hand it down rather than pay for it again.
+   *
+   * Filtering on `canVote` and not on `qualified` is what keeps the runway
+   * intact: before a gate arms, `canVote` is true for everyone, so this is the
+   * whole squad and closure waits for every participant exactly as it did.
+   *
+   * **An empty list is not by itself a reason to close.** It says "nobody may
+   * still vote", which an armed Competition also answers for a match no
+   * participant is Eligible on — one that has had no ballot cast and never
+   * will. `checkAndCloseVoting` may treat empty as finished only because it
+   * runs inside `submitVotes`, after a ballot the gate has just accepted. A
+   * caller reaching this from anywhere else — `closeExpiredVoting` being the
+   * obvious candidate — must decide for itself what an unvoted match deserves.
+   *
    * Both reads take the caller's transaction, so a submit sees the ballot it is
    * in the middle of writing and the count means the same thing to every caller,
    * inside a transaction or not. Reading them off a separate connection instead
@@ -157,17 +180,20 @@ export class VoteService {
    */
   static async getPendingVoters(
     matchId: string,
+    eligibility: VotingEligibility,
     tx?: Prisma.TransactionClient,
   ): Promise<string[]> {
     const matchPlayers = await MatchPlayerRepo.getMatchPlayersFromMatch(
       matchId,
       tx,
     );
-    const allPlayerIds = matchPlayers.map((mp) => mp.dashboardPlayerId);
+    const eligiblePlayerIds = matchPlayers
+      .map((mp) => mp.dashboardPlayerId)
+      .filter((id) => eligibility.for(id).canVote);
 
     const votedPlayerIds = await VoteRepo.getDistinctVotersByMatch(matchId, tx);
 
-    return allPlayerIds.filter((id) => !votedPlayerIds.includes(id));
+    return eligiblePlayerIds.filter((id) => !votedPlayerIds.includes(id));
   }
 
   static async hasPlayerVoted(
@@ -351,11 +377,19 @@ export class VoteService {
     });
   }
 
+  /**
+   * Voting closes when every **Eligible voter** has voted, not when every
+   * participant has. The caller passes the eligibility it already loaded: on
+   * the submit path that is the same object the gate refused an ineligible
+   * voter with moments earlier, so one load answers both questions and the
+   * two can never disagree about who the electorate is.
+   */
   private static async checkAndCloseVoting(
     matchId: string,
+    eligibility: VotingEligibility,
     tx?: Prisma.TransactionClient,
   ): Promise<void> {
-    const pendingVoters = await this.getPendingVoters(matchId, tx);
+    const pendingVoters = await this.getPendingVoters(matchId, eligibility, tx);
 
     if (pendingVoters.length === 0) {
       await this.calculateAndStoreMatchRatings(matchId, tx);
