@@ -62,6 +62,10 @@ _Avoid_: Qualified player, verified voter, regular, member
 The state of a Competition in which only Eligible voters may vote. It arms once the Competition has at least twice its Voting threshold in Completed matches and at least one Eligible voter exists — both, not either. Before it arms, during the runway, every participant votes as though there were no threshold, and those matches count toward qualification like any other, so nobody is grandfathered in.
 _Avoid_: Voting lock, restriction, gating (as a state)
 
+**Man of the match**:
+Every player holding the highest rating in a Match, decided when that Match's voting closes and counted into career totals from then on. **Shared, not broken**: two players on the same top rating are both man of the match, and nothing picks between them. A top rating of 0 crowns nobody — a Match that closed with no votes has no man of the match, rather than a whole squad joint-top on nothing. Being unable to vote is no bar to winning it: the Voting gate decides who votes, never who is voted for.
+_Avoid_: Best player, player of the match, star man
+
 ### Player stats
 
 **Win rate**:
