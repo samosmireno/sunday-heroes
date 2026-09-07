@@ -46,12 +46,24 @@ The promise this feature makes to existing users:
 
 > **No Competition acquires a threshold, no vote already cast is discarded, and no rating that any vote produced is ever changed.**
 
+_The third clause has one exception, taken deliberately and after the fact: §3.3._
+
 Three of the changes below are **not** threshold-specific — they fix behaviour for every Competition, including the ones with `votingThreshold` null. Gating them behind the flag was explicitly rejected: it would preserve a live bug for most of the fleet and make the League and Duel tables disagree with the dashboard for precisely the competitions _not_ using the feature.
 
 Two deltas will therefore be visible on deploy. Name them in the release note so they are not mistaken for a regression:
 
 1. **Voteless matches stop crowning the whole squad.** A match that closed with no votes stored `rating` 0 for everyone, and `markManOfTheMatch` then flagged `isMotm` on every player. Career MOTM counts fall to the truth.
 2. **Competition-table rating averages stop counting voteless matches.** They move _up_, into agreement with the dashboard's SQL `AVG`, which already skipped them.
+
+_A third delta followed, after the feature had shipped._
+[#58](https://github.com/samosmireno/sunday-heroes/issues/58). #57 fixed the
+closing-ballot bug in `calculateAndStoreMatchRatings`, but the rows it had
+already written stayed wrong, and `20260907170352_closing_ballot_rating_repair`
+recomputed them: ratings on matches that closed on their last ballot move, and
+the crown moves with them wherever the missing ballot was the one that decided
+it. Its defence is §3.3 and its release note is
+`docs/releases/2026-09-07-closing-ballot-rating-repair.md`, which names it the
+way this section asks.
 
 ---
 
@@ -106,6 +118,64 @@ Both columns, so that afterwards there is **one** representation of "never rated
 The second `AND` clause makes the statement self-limiting and its row count meaningful: matches in voting-disabled competitions never had `calculateAndStoreMatchRatings` run, so their rows are already `rating: null, isMotm: false` and are skipped.
 
 This does **not** conflict with "nothing is ever revoked retroactively" — that rule protects the gate. A legitimately cast vote stands and qualification is never clawed back; it was never a promise to preserve rows that no vote produced.
+
+### 3.3 `closing_ballot_rating_repair` — the second one-off repair
+
+Added after the feature shipped, for
+[#58](https://github.com/samosmireno/sunday-heroes/issues/58), in the shape §3.2
+set: a migration of its own, written by hand after `--create-only`, no schema
+change, self-limiting, a no-op when replayed.
+
+> On every `MatchPlayer` of a **CLOSED** Match holding `PlayerVote` rows:
+> recompute `rating` from all of them, then set `isMotm` from the recomputed
+> maximum — true for **every** player holding it, false for everyone else, and
+> nobody when that maximum is 0.
+
+Two statements, because the crown has to be recomputed across the whole match
+rather than stamped on the new winner. `markManOfTheMatch` only ever sets the
+flag and never clears it, so a match whose maximum moved is carrying a stale
+crown on a player who no longer holds it, and those rows feed career MOTM totals
+through `dashboard-player-stats-repo.ts:65` exactly as the voteless-match bug
+did. A tie stays shared: `CONTEXT.md` made that normative under **Man of the
+match** while this ticket was open.
+
+The arithmetic is `calculatePlayerScore` operation for operation, in `float8` —
+deliberately **not** `ROUND(numeric, 2)`. They are not the same computation and
+they disagree wherever the division lands on a half: 5 points of 24 cast is
+0.625, which the service rounds up to 0.63 and an exact decimal division rounds
+down to 0.62. The stored column wins on read (`player.rating ??
+calculatePlayerScore(...)`), so a repair that wrote the other number would be a
+quieter version of the same bug. The two were swept against each other over
+every (points received, votes cast) pair up to 900 votes cast — 135,750 of them,
+every reachable squad size many times over — and never disagreed;
+`test/closing-ballot-rating-repair.db.test.ts` pins the equivalence against the
+migration file itself, including the 0.625 pair that discriminates the two.
+
+Two kinds of match are deliberately out of scope. One still **OPEN**: rating it
+mid-vote would crown whoever leads, and because the close that follows only adds
+flags, that crown would never come off. One with no ballots: §3.2 owns those
+rows and has already cleared them.
+
+Rehearsed against the 2026-09-03 production dump, restored into a scratch
+database brought up to production's current state first, so the counts are the
+ones the deploy will produce: **135 rows on the rating statement, 0 on the
+crown**, across 21 of the 94 matches holding ballots; a replay touches neither.
+No crown moved, because on every one of those matches the missing ballot changed
+the numbers without changing who led. Seven of the 135 are one match's unrated
+rows — it had stored ratings for the three players who received votes and null
+for the other seven — which is where the second statement's `best > 0` guard
+earns itself and why the first statement has to run before it: those nulls are
+what a `MAX` over a match would otherwise compare against. All 1,063 repaired
+rows were checked against `calculatePlayerScore` afterwards, and the biggest
+mover was worked through by hand: 12 ballots, ratings that had been divided by
+33 instead of 36.
+
+The promise in §2 survives for the reason it did in §3.2, and it is the same
+reason. That promise protects the gate — no Competition acquires a threshold, no
+ballot is retroactively refused, no qualification is clawed back. It was never a
+promise to preserve arithmetic that was wrong when it was written. These ratings
+are not a judgement anyone made; they are a division by the wrong denominator,
+and every vote that produced them survives to be divided again.
 
 ---
 

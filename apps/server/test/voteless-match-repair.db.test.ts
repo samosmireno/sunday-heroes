@@ -3,8 +3,6 @@
  * The SQL is read from the migration file itself, so this test pins what ships
  * rather than a copy of it.
  */
-import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import prisma from "../src/repositories/prisma-client";
 import { EmailService } from "../src/services/email-service";
@@ -15,18 +13,10 @@ import {
   createRegisteredPlayer,
   createUserWithDashboard,
 } from "./factories";
+import { migrationSql } from "./migrations";
 
-const MIGRATIONS = join(__dirname, "..", "prisma", "migrations");
-
-function repairSql(): string {
-  const dir = readdirSync(MIGRATIONS).find((name) =>
-    name.endsWith("_voteless_match_repair"),
-  );
-  if (!dir) throw new Error("no voteless_match_repair migration on disk");
-  return readFileSync(join(MIGRATIONS, dir, "migration.sql"), "utf8");
-}
-
-const runRepair = () => prisma.$executeRawUnsafe(repairSql());
+const runRepair = () =>
+  prisma.$executeRawUnsafe(migrationSql("_voteless_match_repair"));
 
 const ratingsFor = (matchId: string) =>
   prisma.matchPlayer.findMany({

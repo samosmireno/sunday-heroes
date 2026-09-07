@@ -15,6 +15,13 @@ today has no Voting threshold, and there is no way for one to acquire a
 threshold afterwards: it is chosen when the Competition is created and never
 changed.
 
+That promise is about the threshold, and it holds. One thing did move alongside
+it, for a reason of its own: ratings on matches that closed on their last ballot
+had been worked out from one ballot fewer than was cast, and they have been
+recomputed. No vote was discarded there either — the same ballots were added up
+correctly. [The closing ballot counts](./2026-09-07-closing-ballot-rating-repair.md)
+is the note for it.
+
 ## Setting one
 
 The threshold sits in the Voting section of the create-competition form, beside
