@@ -4,9 +4,9 @@ import {
   createDuel,
   createDuelMatch,
   createUserWithDashboard,
+  findPlayerId,
 } from "../../test/factories";
 import { createMatchRequest } from "../schemas/create-match-request-schema";
-import prisma from "../repositories/prisma-client";
 import { SeasonService } from "./season-service";
 import { VotingEligibilityService } from "./voting-eligibility-service";
 
@@ -16,13 +16,6 @@ function pair(home: string, away: string): createMatchRequest["players"] {
     { nickname: home, goals: 0, assists: 0, position: 1, isHome: true },
     { nickname: away, goals: 0, assists: 0, position: 1, isHome: false },
   ];
-}
-
-async function playerId(dashboardId: string, nickname: string) {
-  const player = await prisma.dashboardPlayer.findFirstOrThrow({
-    where: { dashboardId, nickname },
-  });
-  return player.id;
 }
 
 describe("VotingEligibilityService.load", () => {
@@ -35,7 +28,7 @@ describe("VotingEligibilityService.load", () => {
 
     expect(eligibility.armed).toBe(false);
     expect(eligibility.currentSeasonNumber).toBe(1);
-    expect(eligibility.for(await playerId(dashboard.id, "Ana"))).toEqual({
+    expect(eligibility.for(await findPlayerId(dashboard.id, "Ana"))).toEqual({
       canVote: true,
       qualified: false,
       armed: false,
@@ -62,8 +55,8 @@ describe("VotingEligibilityService.load", () => {
 
     const eligibility = await VotingEligibilityService.load(competition.id);
     const [ana, bea] = await Promise.all([
-      playerId(dashboard.id, "Ana"),
-      playerId(dashboard.id, "Bea"),
+      findPlayerId(dashboard.id, "Ana"),
+      findPlayerId(dashboard.id, "Bea"),
     ]);
 
     expect(eligibility.armed).toBe(true);
@@ -105,8 +98,8 @@ describe("VotingEligibilityService.load", () => {
 
     const eligibility = await VotingEligibilityService.load(competition.id);
     const [ana, bea] = await Promise.all([
-      playerId(dashboard.id, "Ana"),
-      playerId(dashboard.id, "Bea"),
+      findPlayerId(dashboard.id, "Ana"),
+      findPlayerId(dashboard.id, "Bea"),
     ]);
 
     expect(eligibility.currentSeasonNumber).toBe(2);
@@ -162,7 +155,7 @@ describe("VotingEligibilityService.loadMany", () => {
       ungated.competition.id,
       unknownId,
     ]);
-    const bea = await playerId(dashboard.id, "Bea");
+    const bea = await findPlayerId(dashboard.id, "Bea");
 
     expect([...eligibilities.keys()]).toEqual([
       gated.competition.id,

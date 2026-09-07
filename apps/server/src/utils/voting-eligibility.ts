@@ -54,18 +54,45 @@ export class VotingEligibility {
    */
   private readonly currentSeasonCounts: ReadonlyMap<string, number>;
 
-  constructor(args: {
-    threshold: number | null;
-    armed: boolean;
-    currentSeasonNumber: number | null;
-    qualifiedPlayerIds: ReadonlySet<string>;
-    currentSeasonCounts: ReadonlyMap<string, number>;
-  }) {
-    this.threshold = args.threshold;
-    this.armed = args.armed;
-    this.currentSeasonNumber = args.currentSeasonNumber;
-    this.qualifiedPlayerIds = args.qualifiedPlayerIds;
-    this.currentSeasonCounts = args.currentSeasonCounts;
+  /**
+   * Derives from the raw input rather than taking already-derived state, so
+   * there is exactly one way to build one of these and the invariant holds by
+   * construction: a caller cannot hand in `armed: true` with nothing in
+   * `qualifiedPlayerIds`, a Competition whose gate is shut against every
+   * player, which the rule itself can never produce.
+   */
+  constructor({
+    threshold,
+    completedMatchCount,
+    currentSeason,
+    participations,
+  }: VotingEligibilityInput) {
+    const qualifiedPlayerIds = new Set<string>();
+    const currentSeasonCounts = new Map<string, number>();
+
+    for (const participation of participations) {
+      if (threshold !== null && participation.count >= threshold) {
+        qualifiedPlayerIds.add(participation.dashboardPlayerId);
+      }
+      if (
+        currentSeason !== null &&
+        participation.seasonId === currentSeason.id
+      ) {
+        currentSeasonCounts.set(
+          participation.dashboardPlayerId,
+          participation.count,
+        );
+      }
+    }
+
+    this.threshold = threshold;
+    this.armed =
+      threshold !== null &&
+      completedMatchCount >= 2 * threshold &&
+      qualifiedPlayerIds.size > 0;
+    this.currentSeasonNumber = currentSeason?.number ?? null;
+    this.qualifiedPlayerIds = qualifiedPlayerIds;
+    this.currentSeasonCounts = currentSeasonCounts;
   }
 
   /** Total: any id, always a valid record. */
@@ -99,34 +126,5 @@ export class VotingEligibility {
 export function buildVotingEligibility(
   input: VotingEligibilityInput,
 ): VotingEligibility {
-  const { threshold, completedMatchCount, currentSeason, participations } =
-    input;
-
-  const qualifiedPlayerIds = new Set<string>();
-  const currentSeasonCounts = new Map<string, number>();
-
-  for (const participation of participations) {
-    if (threshold !== null && participation.count >= threshold) {
-      qualifiedPlayerIds.add(participation.dashboardPlayerId);
-    }
-    if (currentSeason !== null && participation.seasonId === currentSeason.id) {
-      currentSeasonCounts.set(
-        participation.dashboardPlayerId,
-        participation.count,
-      );
-    }
-  }
-
-  const armed =
-    threshold !== null &&
-    completedMatchCount >= 2 * threshold &&
-    qualifiedPlayerIds.size > 0;
-
-  return new VotingEligibility({
-    threshold,
-    armed,
-    currentSeasonNumber: currentSeason?.number ?? null,
-    qualifiedPlayerIds,
-    currentSeasonCounts,
-  });
+  return new VotingEligibility(input);
 }

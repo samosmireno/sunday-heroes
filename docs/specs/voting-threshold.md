@@ -178,7 +178,7 @@ VotingEligibilityService.loadMany(competitionIds: string[]): Promise<Map<string,
 VotingEligibilityService.load(competitionId: string): Promise<VotingEligibility>  // one-liner over loadMany
 ```
 
-`loadMany` is the real one, because `sendReminderEmails` walks `MatchRepo.findMatchesExpiringSoon()` over every expiring match **in the system** — an unbounded fan-out across competitions. Both aggregates take `IN (...)` without changing shape, so it is three queries regardless of how many competitions come back.
+`loadMany` is the real one, because `sendReminderEmails` walks `MatchRepo.findMatchesExpiringSoon()` over every expiring match **in the system** — an unbounded fan-out across competitions. Both aggregates take `IN (...)` without changing shape, so it is four queries — the two aggregates, the thresholds and the Current seasons — regardless of how many competitions come back.
 
 Fire in `Promise.all`: the new repo's two aggregates, `CompetitionRepo` for the thresholds, `SeasonRepo` for the Current seasons.
 

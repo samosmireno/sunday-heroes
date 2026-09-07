@@ -13,6 +13,14 @@ export type CreateCompetitionFormValues = z.infer<
 export const VOTING_THRESHOLD_MIN = 1;
 export const VOTING_THRESHOLD_MAX = 50;
 
+/**
+ * A League's team count bounds, named for the same reason: the threshold
+ * readout derives the per-player ceiling from this field and must agree with
+ * the schema about which values are real.
+ */
+export const LEAGUE_TEAMS_MIN = 3;
+export const LEAGUE_TEAMS_MAX = 16;
+
 export const CreateCompetitionFormSchema = z
   .object({
     name: z.string().min(1).max(30).trim(),
@@ -36,8 +44,8 @@ export const CreateCompetitionFormSchema = z
     isRoundRobin: z.boolean().default(false).optional(),
     numberOfTeams: z.coerce
       .number()
-      .min(3, "Minimum 3 teams required")
-      .max(16, "Maximum 16 teams allowed")
+      .min(LEAGUE_TEAMS_MIN, `Minimum ${LEAGUE_TEAMS_MIN} teams required`)
+      .max(LEAGUE_TEAMS_MAX, `Maximum ${LEAGUE_TEAMS_MAX} teams allowed`)
       .nonnegative()
       .optional(),
     matchType: z.nativeEnum(MatchType).optional(),

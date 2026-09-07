@@ -9,6 +9,7 @@ import {
   defaultDuelPlayers,
 } from "../../test/factories";
 import { EmailService } from "./email-service";
+import { MatchVotingService } from "./match/match-voting-service";
 import { calculatePlayerScore } from "../utils/utils";
 import { VoteService } from "./vote-service";
 
@@ -336,6 +337,44 @@ describe("The closing ballot counts toward the ratings it closes", () => {
     };
   }
 
+  /** Every participant's `MatchPlayer` id, by nickname, for a ballot written by name. */
+  async function ballotIds(matchId: string): Promise<Record<string, string>> {
+    const matchPlayers = await prisma.matchPlayer.findMany({
+      where: { matchId },
+      select: { id: true, dashboardPlayer: { select: { nickname: true } } },
+    });
+
+    return Object.fromEntries(
+      matchPlayers.map((matchPlayer) => [
+        matchPlayer.dashboardPlayer.nickname,
+        matchPlayer.id,
+      ]),
+    );
+  }
+
+  /**
+   * A ballot written out by name, for the tests where the voters have to
+   * disagree — `castBallot` ranks whoever is left in squad order, so every
+   * voter it casts for puts the same player top.
+   */
+  async function castRankedBallot(
+    matchId: string,
+    voterId: string,
+    points: Record<string, number>,
+    ids: Record<string, string>,
+    adminUserId: string,
+  ) {
+    return VoteService.submitVotes(
+      matchId,
+      voterId,
+      Object.entries(points).map(([nickname, value]) => ({
+        playerId: ids[nickname],
+        points: value,
+      })),
+      adminUserId,
+    );
+  }
+
   it("rates the closing voter's own ballot into the match it closed", async () => {
     const { admin, match, voters } = await votingDuelMatch();
 
@@ -350,11 +389,23 @@ describe("The closing ballot counts toward the ratings it closes", () => {
     expect(stored.ratings).toEqual(expected.ratings);
   });
 
-  it("crowns the player the complete ballot set puts top", async () => {
+  it("crowns the player the complete ballot set puts top, not the one three ballots did", async () => {
     const { admin, match, voters } = await votingDuelMatch();
+    const ids = await ballotIds(match.id);
 
-    for (const voter of voters) {
-      await castBallot(match.id, voter, admin.id);
+    // Chosen so the crown actually moves. After three ballots Bea leads on 6
+    // points to Ana's 5; Dan's closing ballot puts Ana on 8 to Bea's 7. Reading
+    // the match off a separate connection crowned Bea — the wrong player, and
+    // permanently, because a CLOSED match is never recomputed.
+    const ballots: Record<string, number>[] = [
+      { Bea: 3, Cal: 2, Dan: 1 },
+      { Ana: 3, Cal: 2, Dan: 1 },
+      { Bea: 3, Ana: 2, Dan: 1 },
+      { Ana: 3, Cal: 2, Bea: 1 },
+    ];
+
+    for (const [index, voter] of voters.entries()) {
+      await castRankedBallot(match.id, voter, ballots[index], ids, admin.id);
     }
 
     const expected = await expectedRatings(match.id);
@@ -364,21 +415,32 @@ describe("The closing ballot counts toward the ratings it closes", () => {
       .filter(([, rating]) => rating === best)
       .map(([matchPlayerId]) => matchPlayerId);
 
-    expect(stored.motm.map((matchPlayer) => matchPlayer.id)).toEqual(winners);
+    expect(winners).toEqual([ids.Ana]);
+    expect(stored.motm.map((matchPlayer) => matchPlayer.id)).toEqual([ids.Ana]);
   });
 
-  it("rates on the deadline path from every committed vote", async () => {
+  it("rates on the nightly cron's path from every committed vote", async () => {
     const { admin, match, voters } = await votingDuelMatch();
 
-    // Half the squad votes and the deadline arrives: the nightly cron closes it
-    // outside any transaction, so this path always saw the whole vote set.
+    // Half the squad votes, then the deadline passes and the cron collects it.
+    // This path opens no transaction, so it always saw the whole vote set — the
+    // test guards that the `tx || prisma` fallback keeps it that way.
     await castBallot(match.id, voters[0], admin.id);
     await castBallot(match.id, voters[1], admin.id);
-    await VoteService.calculateAndStoreMatchRatings(match.id);
+    await prisma.match.update({
+      where: { id: match.id },
+      data: { votingEndsAt: new Date(Date.now() - 1000) },
+    });
+
+    await MatchVotingService.closeExpiredVoting();
 
     const expected = await expectedRatings(match.id);
     const stored = await storedRatings(match.id);
     expect(expected.voteCount).toBe(6);
     expect(stored.ratings).toEqual(expected.ratings);
+    expect(
+      (await prisma.match.findUniqueOrThrow({ where: { id: match.id } }))
+        .votingStatus,
+    ).toBe("CLOSED");
   });
 });

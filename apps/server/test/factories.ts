@@ -323,3 +323,18 @@ export async function markCompleted(matchId: string) {
     data: { isCompleted: true },
   });
 }
+
+/**
+ * The id of a dashboard player a factory created, by nickname. Factories name
+ * their players rather than returning them, so a test that needs one id back
+ * looks it up here instead of keeping its own copy of this query.
+ */
+export async function findPlayerId(
+  dashboardId: string,
+  nickname: string,
+): Promise<string> {
+  const player = await prisma.dashboardPlayer.findFirstOrThrow({
+    where: { dashboardId, nickname },
+  });
+  return player.id;
+}

@@ -1,4 +1,10 @@
 import { CompetitionType } from "@repo/shared-types";
+import {
+  LEAGUE_TEAMS_MAX,
+  LEAGUE_TEAMS_MIN,
+  VOTING_THRESHOLD_MAX,
+  VOTING_THRESHOLD_MIN,
+} from "./create-competition-schema";
 
 /**
  * Everything the Voting threshold readout says, derived from what the admin has
@@ -9,6 +15,19 @@ import { CompetitionType } from "@repo/shared-types";
  * Pure and React-free on purpose — the arithmetic is the part worth pinning
  * down in tests, and none of it needs a form to be exercised.
  */
+
+/**
+ * The form values the readout is derived from, exactly as react-hook-form hands
+ * them over: a number input's value is the raw string the DOM holds, and `""`
+ * is the untouched state, so the two counts arrive as something still to be
+ * read rather than as numbers.
+ */
+export interface VotingThresholdFormValues {
+  threshold: unknown;
+  competitionType: CompetitionType | undefined;
+  numberOfTeams: unknown;
+  doubleRoundRobin: boolean | undefined;
+}
 
 /** A League's per-player ceiling, and how the chosen threshold sits against it. */
 export interface LeagueCeiling {
@@ -22,6 +41,8 @@ export interface LeagueCeiling {
 
 export type VotingThresholdAdvisory =
   | { kind: "no-threshold" }
+  /** A value typed but outside what the form will accept: say nothing. */
+  | { kind: "out-of-range" }
   | {
       kind: "threshold";
       threshold: number;
@@ -76,15 +97,27 @@ export function exceedsCeiling(
 }
 
 /**
- * A whole match count, or `null`. The form's number inputs hand react-hook-form
- * the raw string the DOM holds — `""` while untouched — so every watched value
- * arrives here as something that still has to be read.
+ * A whole number within `min`-`max`, or `null` for anything else — empty,
+ * fractional, or out of range. Out of range matters as much as empty: the
+ * schema refuses a threshold outside 1-50 and a team count outside 3-16, and a
+ * readout describing a rule the form will not create is worse than no readout,
+ * so those values fall back to `null` and the field's own error message is
+ * left to say what is wrong.
  */
-function matchCount(value: unknown): number | null {
-  if (value === "" || value === null || value === undefined) return null;
+/** Nothing typed yet. A number input holds `""` until the admin touches it. */
+function isBlank(value: unknown): boolean {
+  return value === "" || value === null || value === undefined;
+}
+
+function wholeNumberWithin(
+  value: unknown,
+  min: number,
+  max: number,
+): number | null {
+  if (isBlank(value)) return null;
 
   const parsed = Number(value);
-  if (!Number.isInteger(parsed) || parsed < 1) return null;
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) return null;
 
   return parsed;
 }
@@ -94,14 +127,18 @@ export function votingThresholdAdvisory({
   competitionType,
   numberOfTeams,
   doubleRoundRobin,
-}: {
-  threshold: unknown;
-  competitionType: CompetitionType | undefined;
-  numberOfTeams: unknown;
-  doubleRoundRobin: boolean | undefined;
-}): VotingThresholdAdvisory {
-  const chosen = matchCount(threshold);
-  if (chosen === null) return { kind: "no-threshold" };
+}: VotingThresholdFormValues): VotingThresholdAdvisory {
+  if (isBlank(threshold)) return { kind: "no-threshold" };
+
+  const chosen = wholeNumberWithin(
+    threshold,
+    VOTING_THRESHOLD_MIN,
+    VOTING_THRESHOLD_MAX,
+  );
+  // Typed, but not a threshold the form will create — 0, 51, 2.5. The field's
+  // own error message already says so, and "no threshold, everyone can vote"
+  // would contradict it under a field that is refusing the value.
+  if (chosen === null) return { kind: "out-of-range" };
 
   return {
     kind: "threshold",
@@ -109,9 +146,7 @@ export function votingThresholdAdvisory({
     runwayEnd: runwayEnd(chosen),
     firstGatedMatch: runwayEnd(chosen) + 1,
     pooledExample: chosen > 1 ? chosen - 1 : null,
-    ceiling: leagueCeiling({
-      chosen,
-      competitionType,
+    ceiling: leagueCeiling(chosen, competitionType, {
       numberOfTeams,
       doubleRoundRobin,
     }),
@@ -123,20 +158,21 @@ export function votingThresholdAdvisory({
  * a Knockout's bracket is not a round robin, so the reachability question does
  * not arise for either.
  */
-function leagueCeiling({
-  chosen,
-  competitionType,
-  numberOfTeams,
-  doubleRoundRobin,
-}: {
-  chosen: number;
-  competitionType: CompetitionType | undefined;
-  numberOfTeams: unknown;
-  doubleRoundRobin: boolean | undefined;
-}): LeagueCeiling | null {
+function leagueCeiling(
+  chosen: number,
+  competitionType: CompetitionType | undefined,
+  {
+    numberOfTeams,
+    doubleRoundRobin,
+  }: Pick<VotingThresholdFormValues, "numberOfTeams" | "doubleRoundRobin">,
+): LeagueCeiling | null {
   if (competitionType !== CompetitionType.LEAGUE) return null;
 
-  const teams = matchCount(numberOfTeams);
+  const teams = wholeNumberWithin(
+    numberOfTeams,
+    LEAGUE_TEAMS_MIN,
+    LEAGUE_TEAMS_MAX,
+  );
   if (teams === null) return null;
 
   const isDouble = doubleRoundRobin === true;

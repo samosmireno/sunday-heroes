@@ -6,20 +6,12 @@ import {
   createLeague,
   createUserWithDashboard,
   defaultDuelPlayers,
+  findPlayerId,
   markCompleted,
 } from "../../../test/factories";
 import { SeasonService } from "../../services/season-service";
-import prisma from "../prisma-client";
 import { SeasonRepo } from "../season/season-repo";
 import { VotingEligibilityRepo } from "./voting-eligibility-repo";
-
-/** The dashboard player a factory created by nickname. */
-async function playerId(dashboardId: string, nickname: string) {
-  const player = await prisma.dashboardPlayer.findFirstOrThrow({
-    where: { dashboardId, nickname },
-  });
-  return player.id;
-}
 
 describe("VotingEligibilityRepo.participationCounts", () => {
   it("groups Completed matches per competition, player and Season", async () => {
@@ -43,8 +35,8 @@ describe("VotingEligibilityRepo.participationCounts", () => {
     ]);
 
     const [ana, dan] = await Promise.all([
-      playerId(dashboard.id, "Ana"),
-      playerId(dashboard.id, "Dan"),
+      findPlayerId(dashboard.id, "Ana"),
+      findPlayerId(dashboard.id, "Dan"),
     ]);
 
     // Counts never pool across Seasons: Ana's three matches arrive as 2 + 1.
@@ -90,7 +82,7 @@ describe("VotingEligibilityRepo.participationCounts", () => {
     expect(rows).toHaveLength(2);
     expect(rows).toContainEqual({
       competitionId: competition.id,
-      dashboardPlayerId: await playerId(dashboard.id, "Ana"),
+      dashboardPlayerId: await findPlayerId(dashboard.id, "Ana"),
       seasonId: fixtures[0].match.seasonId,
       count: 1,
     });
@@ -127,7 +119,7 @@ describe("VotingEligibilityRepo.participationCounts", () => {
     expect(byCompetition.has(empty.competition.id)).toBe(false);
 
     // A player's row belongs to the Competition they played it in, not to both.
-    const ana = await playerId(dashboard.id, "Ana");
+    const ana = await findPlayerId(dashboard.id, "Ana");
     expect(
       rows.filter((row) => row.dashboardPlayerId === ana).map((r) => r.count),
     ).toEqual([1, 1]);

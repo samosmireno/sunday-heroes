@@ -31,6 +31,10 @@ export class VotingEligibilityService {
    * loads inside its `setImmediate`, `submitVotes` loads before opening its
    * transaction). Do not add a `tx?` parameter here.
    *
+   * Both of those callers, and every other one named above, are still to be
+   * built: #50 and #52-#55 wire this service up. Nothing in production
+   * reaches it yet, so grepping for a caller finds only the tests.
+   *
    * **No cache either.** Eligibility is live at submit time, and completing a
    * match, adding a player and Reset competition would each need invalidation.
    * The returned object is the memo: hold it and pass it down.

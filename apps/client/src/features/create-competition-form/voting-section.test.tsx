@@ -219,10 +219,21 @@ describe("VotingSection: the threshold readout", () => {
 
     expect(
       screen.getByText(
-        /the competition has 10 completed matches in total, across every season, and at least one player has reached 5 in a single season/,
+        /the competition has at least 10 completed matches in total, across every season, and at least one player has reached 5 in a single season/,
       ),
     ).toBeTruthy();
     expect(screen.getByText(/deliberate, not a bug/)).toBeTruthy();
+  });
+
+  it("says nothing at all about a threshold above the allowed maximum", () => {
+    fillVotingDuel();
+
+    fireEvent.change(threshold(), { target: { value: "51" } });
+
+    // Neither readout: the field is refusing 51, and the off-state sentence
+    // would tell the admin everyone can vote while the form disagrees.
+    expect(screen.queryByText(/No threshold\./)).toBeNull();
+    expect(screen.queryByText(/Matches 1–102/)).toBeNull();
   });
 
   it("goes back to the off-state sentence when the field is cleared", () => {

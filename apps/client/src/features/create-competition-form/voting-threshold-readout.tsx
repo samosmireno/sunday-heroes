@@ -1,17 +1,9 @@
-import { CompetitionType } from "@repo/shared-types";
 import {
   LeagueCeiling,
   VotingThresholdAdvisory,
   votingThresholdAdvisory,
+  VotingThresholdFormValues,
 } from "./voting-threshold-advisory";
-
-interface VotingThresholdReadoutProps {
-  /** The watched field value: a raw string while the admin is typing. */
-  threshold: unknown;
-  competitionType: CompetitionType | undefined;
-  numberOfTeams: unknown;
-  doubleRoundRobin: boolean | undefined;
-}
 
 /**
  * What the Voting threshold the admin has typed will actually do, restated with
@@ -29,8 +21,12 @@ interface VotingThresholdReadoutProps {
  * later while happily permitting values it will leave unreachable. A confirm
  * step is the same error said more quietly.
  */
-export function VotingThresholdReadout(props: VotingThresholdReadoutProps) {
+export function VotingThresholdReadout(props: VotingThresholdFormValues) {
   const advisory = votingThresholdAdvisory(props);
+
+  // A value the form will not accept gets no readout at all: the field's error
+  // message is the only honest thing to say about it.
+  if (advisory.kind === "out-of-range") return null;
 
   return (
     <div className="mt-3 space-y-3 rounded-md border border-accent/20 bg-bg/30 p-3">
@@ -87,9 +83,9 @@ function ThresholdReadout({
 
       <p className="text-xs leading-relaxed text-gray-400">
         The threshold starts applying only once both of these are true: the
-        competition has {runwayEnd} completed matches in total, across every
-        season, and at least one player has reached {threshold} in a single
-        season. If match {firstGatedMatch} arrives with nobody there yet,
+        competition has at least {runwayEnd} completed matches in total, across
+        every season, and at least one player has reached {threshold} in a
+        single season. If match {firstGatedMatch} arrives with nobody there yet,
         everyone keeps voting — that is deliberate, not a bug.
       </p>
 

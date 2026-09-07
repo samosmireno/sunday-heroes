@@ -67,19 +67,47 @@ describe("votingThresholdAdvisory", () => {
     });
   });
 
-  it("reads anything that is not a whole match count as no threshold", () => {
-    expect(votingThresholdAdvisory({ ...duel, threshold: "0" })).toEqual({
-      kind: "no-threshold",
-    });
-    expect(votingThresholdAdvisory({ ...duel, threshold: "-3" })).toEqual({
-      kind: "no-threshold",
-    });
-    expect(votingThresholdAdvisory({ ...duel, threshold: "2.5" })).toEqual({
-      kind: "no-threshold",
-    });
-    expect(votingThresholdAdvisory({ ...duel, threshold: "many" })).toEqual({
-      kind: "no-threshold",
-    });
+  it("says nothing about a value the form will not accept", () => {
+    // Not the off-state: the field is refusing these, and "no threshold,
+    // everyone can vote" under a field in error describes a rule the admin
+    // cannot create. Only an untouched field is the off-state.
+    for (const threshold of ["0", "-3", "2.5", "many", "51"]) {
+      expect(votingThresholdAdvisory({ ...duel, threshold })).toEqual({
+        kind: "out-of-range",
+      });
+    }
+  });
+
+  it("reads an untouched field as no threshold", () => {
+    for (const threshold of ["", null, undefined]) {
+      expect(votingThresholdAdvisory({ ...duel, threshold })).toEqual({
+        kind: "no-threshold",
+      });
+    }
+  });
+
+  it("accepts the whole range the schema allows", () => {
+    for (const threshold of ["1", "50"]) {
+      expect(votingThresholdAdvisory({ ...duel, threshold })).toMatchObject({
+        kind: "threshold",
+        threshold: Number(threshold),
+      });
+    }
+  });
+
+  it("ignores a team count outside what a League can have", () => {
+    // 2 teams and 17 teams are both refused by the schema, so there is no
+    // fixture list to derive a ceiling from.
+    for (const numberOfTeams of ["2", "17"]) {
+      expect(
+        votingThresholdAdvisory({
+          ...duel,
+          competitionType: CompetitionType.LEAGUE,
+          threshold: "5",
+          numberOfTeams,
+        }),
+      ).toMatchObject({ ceiling: null });
+    }
   });
 
   it("derives the runway from the number the admin typed", () => {
