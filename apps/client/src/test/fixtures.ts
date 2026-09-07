@@ -10,6 +10,7 @@ import {
   MatchPageResponse,
   MatchResponse,
   MatchType,
+  PlayerResponse,
   Role,
   SeasonResponse,
   VotingStatus,
@@ -211,6 +212,23 @@ export function duelFormData(
 }
 
 /** One row of the All Matches list. */
+/** One player's line in a Match's expanded detail table. */
+export function playerResponse(
+  overrides: Partial<PlayerResponse> = {},
+): PlayerResponse {
+  return {
+    id: "player-1",
+    nickname: "Ana",
+    isHome: true,
+    goals: 0,
+    assists: 0,
+    position: 1,
+    rating: 0,
+    manOfTheMatch: false,
+    ...overrides,
+  };
+}
+
 export function matchPageResponse(
   overrides: Partial<MatchPageResponse> = {},
 ): MatchPageResponse {

@@ -19,11 +19,6 @@ export function MatchDetails({ match }: MatchDetailsProps) {
     (player) => player.isHome === false,
   );
 
-  const topPlayer = match.playerStats.find(
-    (player) =>
-      player.rating === Math.max(...match.playerStats.map((p) => p.rating)),
-  );
-
   const activePlayers = activeTab === 0 ? homeTeamPlayers : awayTeamPlayers;
   const sortedPlayers = [...activePlayers].sort((a, b) => b.rating - a.rating);
 
@@ -80,8 +75,20 @@ export function MatchDetails({ match }: MatchDetailsProps) {
                     className="flex items-center bg-transparent hover:cursor-pointer hover:bg-accent/20"
                     onClick={() => navigate(`/player-stats/${player.id}`)}
                   >
-                    {topPlayer?.id === player.id && topPlayer.rating !== 0 && (
-                      <Medal size={14} className="mr-1.5 text-amber-400" />
+                    {/*
+                      The server's decision, not a second guess at it. Picking
+                      the top rating here returned the first player holding it,
+                      so a shared crown showed one medal — and which player got
+                      it came down to array order. Two players on the same top
+                      rating are both man of the match (CONTEXT.md), and a top
+                      rating of 0 crowns nobody, which the flag already carries.
+                    */}
+                    {player.manOfTheMatch && (
+                      <Medal
+                        size={14}
+                        aria-label="Man of the match"
+                        className="mr-1.5 text-amber-400"
+                      />
                     )}
                     {player.nickname}
                   </Button>
