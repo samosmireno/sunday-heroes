@@ -9,6 +9,7 @@ import {
   defaultDuelPlayers,
 } from "../../test/factories";
 import { EmailService } from "./email-service";
+import { calculatePlayerScore } from "../utils/utils";
 import { VoteService } from "./vote-service";
 
 describe("Voting is not a Match write (ADR 0002)", () => {
@@ -237,5 +238,147 @@ describe("Voting closes on the votes just cast", () => {
     expect(votingStatus).toBe("OPEN");
     expect(players.filter((player) => player.rating !== null)).toHaveLength(0);
     expect(players.filter((player) => player.isMotm)).toHaveLength(0);
+  });
+});
+
+describe("The closing ballot counts toward the ratings it closes", () => {
+  beforeEach(() => {
+    vi.spyOn(EmailService, "sendVotingInvitation").mockResolvedValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const squad = defaultDuelPlayers.map((player) => player.nickname);
+  const bySquadOrder = (a: { nickname: string }, b: { nickname: string }) =>
+    squad.indexOf(a.nickname) - squad.indexOf(b.nickname);
+
+  async function votingDuelMatch() {
+    const { user } = await createUserWithDashboard();
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+    });
+    const match = await createDuelMatch({ competitionId: competition.id });
+    const matchPlayers = await prisma.matchPlayer.findMany({
+      where: { matchId: match.id },
+      select: {
+        dashboardPlayerId: true,
+        dashboardPlayer: { select: { nickname: true } },
+      },
+    });
+    const voters = matchPlayers
+      .sort((a, b) => bySquadOrder(a.dashboardPlayer, b.dashboardPlayer))
+      .map((matchPlayer) => matchPlayer.dashboardPlayerId);
+
+    return { admin: user, match, voters };
+  }
+
+  async function castBallot(
+    matchId: string,
+    voterId: string,
+    adminUserId: string,
+  ) {
+    const ranked = (await VoteService.getVotingStatus(matchId, voterId)).players
+      .filter((player) => player.canVoteFor)
+      .sort(bySquadOrder);
+
+    return VoteService.submitVotes(
+      matchId,
+      voterId,
+      [
+        { playerId: ranked[0].id, points: 3 },
+        { playerId: ranked[1].id, points: 2 },
+        { playerId: ranked[2].id, points: 1 },
+      ],
+      adminUserId,
+    );
+  }
+
+  /**
+   * What every stored rating should be: `calculatePlayerScore` over the whole
+   * committed ballot set. Recomputed rather than hardcoded so the assertion
+   * survives a change to the scoring formula and still pins the vote set.
+   */
+  async function expectedRatings(matchId: string) {
+    const allVotes = await prisma.playerVote.findMany({ where: { matchId } });
+    const matchPlayers = await prisma.matchPlayer.findMany({
+      where: { matchId },
+      select: { id: true },
+    });
+
+    return {
+      voteCount: allVotes.length,
+      ratings: new Map(
+        matchPlayers.map((matchPlayer) => [
+          matchPlayer.id,
+          calculatePlayerScore(
+            allVotes.filter((vote) => vote.matchPlayerId === matchPlayer.id),
+            allVotes,
+          ),
+        ]),
+      ),
+    };
+  }
+
+  async function storedRatings(matchId: string) {
+    const matchPlayers = await prisma.matchPlayer.findMany({
+      where: { matchId },
+      select: { id: true, rating: true, isMotm: true },
+    });
+
+    return {
+      ratings: new Map(
+        matchPlayers.map((matchPlayer) => [matchPlayer.id, matchPlayer.rating]),
+      ),
+      motm: matchPlayers.filter((matchPlayer) => matchPlayer.isMotm),
+    };
+  }
+
+  it("rates the closing voter's own ballot into the match it closed", async () => {
+    const { admin, match, voters } = await votingDuelMatch();
+
+    for (const voter of voters) {
+      await castBallot(match.id, voter, admin.id);
+    }
+
+    const expected = await expectedRatings(match.id);
+    const stored = await storedRatings(match.id);
+    // Every participant voted, so the whole squad's ballots are in.
+    expect(expected.voteCount).toBe(voters.length * 3);
+    expect(stored.ratings).toEqual(expected.ratings);
+  });
+
+  it("crowns the player the complete ballot set puts top", async () => {
+    const { admin, match, voters } = await votingDuelMatch();
+
+    for (const voter of voters) {
+      await castBallot(match.id, voter, admin.id);
+    }
+
+    const expected = await expectedRatings(match.id);
+    const stored = await storedRatings(match.id);
+    const best = Math.max(...expected.ratings.values());
+    const winners = [...expected.ratings]
+      .filter(([, rating]) => rating === best)
+      .map(([matchPlayerId]) => matchPlayerId);
+
+    expect(stored.motm.map((matchPlayer) => matchPlayer.id)).toEqual(winners);
+  });
+
+  it("rates on the deadline path from every committed vote", async () => {
+    const { admin, match, voters } = await votingDuelMatch();
+
+    // Half the squad votes and the deadline arrives: the nightly cron closes it
+    // outside any transaction, so this path always saw the whole vote set.
+    await castBallot(match.id, voters[0], admin.id);
+    await castBallot(match.id, voters[1], admin.id);
+    await VoteService.calculateAndStoreMatchRatings(match.id);
+
+    const expected = await expectedRatings(match.id);
+    const stored = await storedRatings(match.id);
+    expect(expected.voteCount).toBe(6);
+    expect(stored.ratings).toEqual(expected.ratings);
   });
 });

@@ -252,7 +252,13 @@ export class VoteService {
   ): Promise<void> {
     const transaction = tx || prisma;
 
-    const match = await MatchRepo.findByIdWithDetails(matchId);
+    // Read on the caller's connection. A submit-time close runs inside the
+    // transaction that just wrote the closing voter's ballot, and reading
+    // without `tx` here left that ballot out of every rating and out of the
+    // man-of-the-match decision — permanently, because `closeExpiredVoting`
+    // skips a match that is already CLOSED. `closeExpiredVoting` passes no
+    // `tx` and falls back to `prisma`, exactly as before.
+    const match = await MatchRepo.findByIdWithDetails(matchId, tx);
     if (!match) return;
 
     // No votes means nothing was rated. `null` is "never rated", `0` is "rated
