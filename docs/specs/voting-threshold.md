@@ -361,7 +361,9 @@ The in-band signal works identically on old and new data, which is why it was ch
 | `votes-transforms.ts:6` `transformMatchServiceToPendingVotes(match, competition, userId)` | takes `eligibility: VotingEligibility`; sets `eligibility` on each `PendingVote` from `player.dashboardPlayerId`                                                                                              |
 | `dashboard-transforms.ts:40` `extractDashboardData(competitions, matches)`                | takes `eligibilities: Map<competitionId, VotingEligibility>`; the `pendingVotes` reduce (line 54) filters participants by `canVote`                                                                           |
 
-`transformMatchesToMatchesResponse` needs the viewer's `dashboardPlayerId`, not their `userId`. `MatchService.getMatchesForUser` (`match-service.ts:35`) already resolves `dashboardId`, so add one `DashboardPlayerRepo.findByUserId(userId, dashboardId)` there and pass the id down. Keep the existing `userId` parameter — `isAdmin` still compares against `dashboard.adminId`.
+`transformMatchesToMatchesResponse` needs the viewer's `dashboardPlayerId`, not their `userId`. It keeps the `userId` parameter either way — `isAdmin` still compares against `dashboard.adminId`.
+
+> **Superseded by [#59](https://github.com/samosmireno/sunday-heroes/issues/59).** This section said to resolve the id once per page, with one `DashboardPlayerRepo.findByUserId(userId, dashboardId)` in `MatchService.getMatchesForUser`. That holds only while every viewer of All Matches is the dashboard admin, which was itself the bug #59 fixed: the user-wide list spans dashboards, and one account is a different dashboard player on each. The transform now reads the viewer off each Match's own `matchPlayers` — no lookup, and the answer belongs to the Match it was read from.
 
 `transformDashboardCompetitionsToDetailedResponse` hardcodes `pendingVotes: comp.votingEnabled ? 0 : undefined` and needs no change.
 

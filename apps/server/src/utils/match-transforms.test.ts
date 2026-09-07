@@ -78,19 +78,32 @@ const ADMIN = "user-admin";
 const ANA = "player-ana";
 const BEA = "player-bea";
 const CAL = "player-cal";
+// The accounts behind two of the players. Cal is an unregistered player: a
+// nickname on the dashboard with nobody signed in behind it.
+const ANA_USER = "user-ana";
+const BEA_USER = "user-bea";
+// An account on none of the page's matches.
+const STRANGER = "user-dee";
 
 /** One Duel Match with Ana and Bea at home, Cal away, and whoever has voted. */
 function matchOnThePage(
-  options: { voted?: string[]; competitionId?: string } = {},
+  options: {
+    voted?: string[];
+    competitionId?: string;
+    admin?: string;
+    /** Bea's row: the same account is a different player on each dashboard. */
+    bea?: { id: string; userId: string | null };
+  } = {},
 ): MatchWithDetails {
   const player = (
     id: string,
     nickname: string,
     isHome: boolean,
     position: number,
+    userId: string | null,
   ) => ({
     dashboardPlayerId: id,
-    dashboardPlayer: { id, nickname },
+    dashboardPlayer: { id, nickname, userId },
     isHome,
     goals: 1,
     assists: 0,
@@ -116,9 +129,15 @@ function matchOnThePage(
     season: { number: 1, endedAt: null },
     matchTeams: [{ team: { name: "Home" } }, { team: { name: "Away" } }],
     matchPlayers: [
-      player(ANA, "Ana", true, 1),
-      player(BEA, "Bea", true, 2),
-      player(CAL, "Cal", false, 1),
+      player(ANA, "Ana", true, 1, ANA_USER),
+      player(
+        options.bea?.id ?? BEA,
+        "Bea",
+        true,
+        2,
+        options.bea === undefined ? BEA_USER : options.bea.userId,
+      ),
+      player(CAL, "Cal", false, 1, null),
     ],
     playerVotes: (options.voted ?? []).map((voterId) => ({ voterId })),
     competition: {
@@ -126,7 +145,7 @@ function matchOnThePage(
       name: "Zlatna lopta",
       type: CompetitionType.DUEL,
       votingEnabled: true,
-      dashboard: { adminId: ADMIN },
+      dashboard: { adminId: options.admin ?? ADMIN },
     },
   } as unknown as MatchWithDetails;
 }
@@ -141,10 +160,9 @@ function eligibilitiesOf(
 describe("transformMatchesToMatchesResponse", () => {
   it("puts the viewer's own standing on every match of the page", () => {
     const [response] = transformMatchesToMatchesResponse(
-      ADMIN,
+      BEA_USER,
       [matchOnThePage()],
       eligibilitiesOf(gate(5, [ANA])),
-      BEA,
     );
 
     expect(response.viewerEligibility).toEqual({
@@ -157,12 +175,11 @@ describe("transformMatchesToMatchesResponse", () => {
     });
   });
 
-  it("answers for a viewer who is nobody on this dashboard, rather than leaving the record off", () => {
+  it("answers for a viewer who is nobody on this match, rather than leaving the record off", () => {
     const [response] = transformMatchesToMatchesResponse(
       ADMIN,
       [matchOnThePage()],
       eligibilitiesOf(gate(5, [ANA])),
-      null,
     );
 
     // An admin who has never been put on a match has played nothing, which is
@@ -177,16 +194,14 @@ describe("transformMatchesToMatchesResponse", () => {
 
   it("says whether the viewer was on the match", () => {
     const [played] = transformMatchesToMatchesResponse(
-      ADMIN,
+      BEA_USER,
       [matchOnThePage()],
       eligibilitiesOf(gate(5, [ANA])),
-      BEA,
     );
     const [watched] = transformMatchesToMatchesResponse(
-      ADMIN,
+      STRANGER,
       [matchOnThePage()],
       eligibilitiesOf(gate(5, [ANA])),
-      "player-dee",
     );
 
     expect(played.viewerPlayed).toBe(true);
@@ -194,13 +209,54 @@ describe("transformMatchesToMatchesResponse", () => {
   });
 
   it("puts nobody on a match they were never on", () => {
-    // A viewer who is nobody on this dashboard played nothing anywhere, so the
-    // question of whether they played this match answers itself.
+    // A viewer who is on none of this Match's players played nothing here, so
+    // the question of whether they played it answers itself.
     const [response] = transformMatchesToMatchesResponse(
       ADMIN,
       [matchOnThePage()],
       eligibilitiesOf(gate(5, [ANA])),
-      null,
+    );
+
+    expect(response.viewerPlayed).toBe(false);
+  });
+
+  it("reads the viewer's player off each Match, so a page can span dashboards", () => {
+    // The user-wide list carries every Match this account played, wherever it
+    // was played, and one account is a different dashboard player on each
+    // dashboard. One identity resolved for the whole page is wrong on all but
+    // one of them: here it qualifies on both, under two different rows.
+    const elsewhere = "competition-2";
+    const beaElsewhere = "player-bea-elsewhere";
+    const eligibilities = new Map([
+      [COMPETITION, gate(5, [BEA])],
+      [elsewhere, gate(5, [beaElsewhere])],
+    ]);
+
+    const [here, there] = transformMatchesToMatchesResponse(
+      BEA_USER,
+      [
+        matchOnThePage(),
+        matchOnThePage({
+          competitionId: elsewhere,
+          bea: { id: beaElsewhere, userId: BEA_USER },
+        }),
+      ],
+      eligibilities,
+    );
+
+    expect(here.viewerPlayed).toBe(true);
+    expect(here.viewerEligibility.qualified).toBe(true);
+    expect(there.viewerPlayed).toBe(true);
+    expect(there.viewerEligibility.qualified).toBe(true);
+  });
+
+  it("leaves an unregistered player nobody: a nickname with no account behind it", () => {
+    // Cal has no `userId`. Nothing may match him, and least of all a viewer
+    // whose own account is unset on some other row.
+    const [response] = transformMatchesToMatchesResponse(
+      STRANGER,
+      [matchOnThePage({ bea: { id: BEA, userId: null } })],
+      eligibilitiesOf(gate(5, [ANA])),
     );
 
     expect(response.viewerPlayed).toBe(false);
@@ -214,10 +270,9 @@ describe("transformMatchesToMatchesResponse", () => {
     ]);
 
     const [gated, ungated] = transformMatchesToMatchesResponse(
-      ADMIN,
+      BEA_USER,
       [matchOnThePage(), matchOnThePage({ competitionId: other })],
       eligibilities,
-      BEA,
     );
 
     expect(gated.viewerEligibility.canVote).toBe(false);
@@ -226,10 +281,9 @@ describe("transformMatchesToMatchesResponse", () => {
 
   it("counts as pending only the non-voters the gate would accept", () => {
     const [response] = transformMatchesToMatchesResponse(
-      ADMIN,
+      ANA_USER,
       [matchOnThePage({ voted: [ANA] })],
       eligibilitiesOf(gate(5, [ANA, BEA])),
-      ANA,
     );
 
     // Ana has voted, Bea still may, Cal never will.
@@ -237,11 +291,11 @@ describe("transformMatchesToMatchesResponse", () => {
   });
 
   it("is byte-identical to the pre-gate response for a Competition with no threshold", () => {
+    // An admin who also plays: one response carrying both identities.
     const [response] = transformMatchesToMatchesResponse(
-      ADMIN,
-      [matchOnThePage({ voted: [ANA] })],
+      BEA_USER,
+      [matchOnThePage({ voted: [ANA], admin: BEA_USER })],
       eligibilitiesOf(gate(null)),
-      BEA,
     );
 
     expect(response).toEqual({

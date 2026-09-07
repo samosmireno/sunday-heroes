@@ -75,12 +75,29 @@ export class DashboardService {
     return await DashboardRepo.delete(dashboardId);
   }
 
+  /**
+   * The Dashboard this user administers, for the paths that require one. A
+   * user who administers none is an error here — see
+   * `findAdministeredDashboardId` for the reads where owning no Dashboard is
+   * an ordinary answer rather than a failure.
+   */
   static async getDashboardIdFromUserId(userId: string): Promise<string> {
     const dashboard = await DashboardRepo.findByAdminId(userId);
     if (!dashboard) {
       throw new NotFoundError("Dashboard");
     }
     return dashboard.id;
+  }
+
+  /**
+   * The Dashboard this user administers, or null for one who administers none
+   * — a PLAYER or MODERATOR who is only ever a player on somebody else's.
+   */
+  static async findAdministeredDashboardId(
+    userId: string,
+  ): Promise<string | null> {
+    const dashboard = await DashboardRepo.findByAdminId(userId);
+    return dashboard?.id ?? null;
   }
 
   static async getDashboardIdFromCompetitionId(

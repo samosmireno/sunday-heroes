@@ -259,36 +259,55 @@ export class MatchRepo {
     });
   }
 
+  /**
+   * The user-wide All Matches read: every Match the user played in, wherever
+   * it was played, and — for a user who administers a Dashboard — every dated
+   * Match on it. `dashboardId` is null for a user who administers none, and
+   * then the played branch is the whole of what they see.
+   */
+  private static matchesForUserWhere(
+    userId: string,
+    dashboardId: string | null,
+  ): Prisma.MatchWhereInput {
+    const played: Prisma.MatchWhereInput = {
+      matchPlayers: {
+        some: {
+          dashboardPlayer: {
+            userId,
+          },
+        },
+      },
+    };
+
+    if (!dashboardId) {
+      return played;
+    }
+
+    return {
+      OR: [
+        played,
+        {
+          competition: {
+            dashboardId,
+          },
+          date: {
+            not: null,
+          },
+        },
+      ],
+    };
+  }
+
   static async findByUserWithDeduplication(
     userId: string,
-    dashboardId: string,
+    dashboardId: string | null,
     options?: { limit?: number; offset?: number },
     tx?: Prisma.TransactionClient,
   ): Promise<string[]> {
     try {
       const prismaClient = tx || prisma;
       const matches = await prismaClient.match.findMany({
-        where: {
-          OR: [
-            {
-              matchPlayers: {
-                some: {
-                  dashboardPlayer: {
-                    userId,
-                  },
-                },
-              },
-            },
-            {
-              competition: {
-                dashboardId,
-              },
-              date: {
-                not: null,
-              },
-            },
-          ],
-        },
+        where: this.matchesForUserWhere(userId, dashboardId),
         orderBy: { date: "desc" },
         take: options?.limit,
         skip: options?.offset,
@@ -305,33 +324,13 @@ export class MatchRepo {
 
   static async countByUserWithDeduplication(
     userId: string,
-    dashboardId: string,
+    dashboardId: string | null,
     tx?: Prisma.TransactionClient,
   ): Promise<number> {
     try {
       const prismaClient = tx || prisma;
       return await prismaClient.match.count({
-        where: {
-          OR: [
-            {
-              matchPlayers: {
-                some: {
-                  dashboardPlayer: {
-                    userId,
-                  },
-                },
-              },
-            },
-            {
-              competition: {
-                dashboardId,
-              },
-              date: {
-                not: null,
-              },
-            },
-          ],
-        },
+        where: this.matchesForUserWhere(userId, dashboardId),
       });
     } catch (error) {
       throw PrismaErrorHandler.handle(

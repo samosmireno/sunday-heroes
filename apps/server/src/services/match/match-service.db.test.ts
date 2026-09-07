@@ -9,6 +9,7 @@ import {
   createUser,
   createUserWithDashboard,
   defaultDuelPlayers,
+  duelLineup,
   findPlayerId,
   setFixtureDate,
   setFixtureScore,
@@ -226,6 +227,143 @@ describe("MatchService.getMatchesForUser and the Voting gate", () => {
     // Four participants, nobody has voted, and Eve's vote can never arrive.
     expect(match.playerCount).toBe(4);
     expect(match.pendingVotes).toBe(3);
+  });
+});
+
+/**
+ * Issue #59: the read resolved the viewer's *own* Dashboard and threw
+ * `NotFoundError("Dashboard")` for anyone who owned none, so a plain player
+ * could not load All Matches at all — and every viewer who could was the
+ * admin, which left the Voting gate's affordances unreachable.
+ */
+describe("MatchService.getMatchesForUser for a viewer who administers no dashboard", () => {
+  /** A registered account behind an existing player of `nickname`. */
+  async function signIn(dashboardId: string, nickname: string) {
+    const user = await createUser({ givenName: nickname });
+    await prisma.dashboardPlayer.update({
+      where: { id: await findPlayerId(dashboardId, nickname) },
+      data: { userId: user.id },
+    });
+    return user;
+  }
+
+  it("gives a player the matches they played, and none of the rest of the dashboard", async () => {
+    const { user: admin, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({ userId: admin.id });
+
+    const played = await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-01-10",
+    });
+    // The same dashboard, a match Ana was not on.
+    await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-01-11",
+      players: duelLineup(["Bea", "Cal"], ["Dan", "Eve"]),
+    });
+
+    const player = await signIn(dashboard.id, "Ana");
+    const { matches, totalCount } = await MatchService.getMatchesForUser(
+      player.id,
+    );
+
+    expect(matches.map((match) => match.id)).toEqual([played.id]);
+    expect(totalCount).toBe(1);
+    // Nothing on this page is theirs to administer, which is what makes the
+    // gate's blocked affordance reachable at all.
+    expect(matches[0].isAdmin).toBe(false);
+    expect(matches[0].viewerPlayed).toBe(true);
+  });
+
+  it("carries a player's matches from every dashboard they play on", async () => {
+    const one = await createUserWithDashboard();
+    const two = await createUserWithDashboard();
+    const first = await createDuel({ userId: one.user.id, name: "Duel A" });
+    const second = await createDuel({ userId: two.user.id, name: "Duel B" });
+
+    const here = await createDuelMatch({
+      competitionId: first.competition.id,
+      date: "2026-01-10",
+    });
+    const there = await createDuelMatch({
+      competitionId: second.competition.id,
+      date: "2026-01-11",
+    });
+
+    // One account, a different dashboard-player row on each dashboard.
+    const player = await createUser({ givenName: "Ana" });
+    for (const dashboardId of [one.dashboard.id, two.dashboard.id]) {
+      await prisma.dashboardPlayer.update({
+        where: { id: await findPlayerId(dashboardId, "Ana") },
+        data: { userId: player.id },
+      });
+    }
+
+    const { matches } = await MatchService.getMatchesForUser(player.id);
+
+    expect(matches.map((match) => match.id)).toEqual([there.id, here.id]);
+    // The viewer is found on both, each under its own dashboard's row: one
+    // identity resolved for the whole page would miss one of them.
+    expect(matches.every((match) => match.viewerPlayed)).toBe(true);
+  });
+
+  it("gives a player the whole competition's list, not only their own matches", async () => {
+    const { user: admin, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({ userId: admin.id });
+
+    const played = await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-01-10",
+    });
+    const watched = await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-01-11",
+      players: duelLineup(["Bea", "Cal"], ["Dan", "Eve"]),
+    });
+
+    const player = await signIn(dashboard.id, "Ana");
+    const { matches, totalCount } = await MatchService.getMatchesForUser(
+      player.id,
+      { competitionId: competition.id },
+    );
+
+    expect(matches.map((match) => match.id)).toEqual([watched.id, played.id]);
+    expect(totalCount).toBe(2);
+  });
+
+  it("refuses a competition on a dashboard the viewer belongs to no part of", async () => {
+    const { user: admin } = await createUserWithDashboard();
+    const { competition } = await createDuel({ userId: admin.id });
+    await createDuelMatch({ competitionId: competition.id });
+
+    const stranger = await createUser({ givenName: "Stranger" });
+
+    await expect(
+      MatchService.getMatchesForUser(stranger.id, {
+        competitionId: competition.id,
+      }),
+    ).rejects.toThrow(AuthorizationError);
+  });
+
+  it("still gives an admin every dated match on the dashboard they administer", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition } = await createDuel({ userId: user.id });
+    const first = await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-01-10",
+    });
+    const second = await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-01-11",
+    });
+
+    const { matches, totalCount } = await MatchService.getMatchesForUser(
+      user.id,
+    );
+
+    expect(matches.map((match) => match.id)).toEqual([second.id, first.id]);
+    expect(totalCount).toBe(2);
+    expect(matches.every((match) => match.isAdmin)).toBe(true);
   });
 });
 

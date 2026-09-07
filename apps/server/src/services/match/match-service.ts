@@ -17,7 +17,6 @@ import {
   NotFoundError,
 } from "../../utils/errors";
 import { CompetitionAuthRepo } from "../../repositories/competition/competition-auth-repo";
-import { DashboardPlayerRepo } from "../../repositories/dashboard-player/dashboard-player-repo";
 import { MatchRepo } from "../../repositories/match/match-repo";
 import { VotingEligibilityService } from "../voting-eligibility-service";
 import { SeasonService } from "../season-service";
@@ -33,6 +32,12 @@ export class MatchService {
    * The paginated All Matches read. Within a Competition the list and its
    * count follow the season selection (the Current season by default); the
    * user-wide read spans competitions and takes no season.
+   *
+   * The two branches admit their viewer differently, and neither of them by
+   * ownership of a Dashboard. A Competition's list is the whole Competition,
+   * open to anyone on the Dashboard it lives on. The user-wide list is every
+   * Match the viewer played, wherever it was played, and for an admin the
+   * Dashboard they administer on top of that.
    */
   static async getMatchesForUser(
     userId: string,
@@ -43,17 +48,28 @@ export class MatchService {
       offset?: number;
     } = {},
   ) {
-    const dashboardId = await DashboardService.getDashboardIdFromUserId(userId);
-    if (!dashboardId) {
-      throw new NotFoundError("Dashboard");
-    }
-
     const { competitionId, season, limit = 10, offset = 0 } = options;
 
     let totalCount: number;
     let matches: MatchWithDetails[];
 
     if (competitionId) {
+      // Membership of the Competition's own Dashboard is what admits the
+      // viewer. This read used to resolve the viewer's *own* Dashboard and so
+      // admitted only its admin, which was never the intent and left the page
+      // unreachable for a plain player (#59).
+      const dashboardId =
+        await DashboardService.getDashboardIdFromCompetitionId(competitionId);
+      const canAccess = await DashboardService.canUserAccessDashboard(
+        dashboardId,
+        userId,
+      );
+      if (!canAccess) {
+        throw new AuthorizationError(
+          "User is not a member of this competition's dashboard",
+        );
+      }
+
       const seasonWhere = await SeasonService.resolveSeasonFilter(
         competitionId,
         season,
@@ -68,9 +84,14 @@ export class MatchService {
         seasonWhere,
       );
     } else {
+      // Null for a viewer who administers no Dashboard, which leaves the read
+      // as the matches they played and nothing else.
+      const administeredDashboardId =
+        await DashboardService.findAdministeredDashboardId(userId);
+
       const matchIds = await MatchRepo.findByUserWithDeduplication(
         userId,
-        dashboardId,
+        administeredDashboardId,
         {
           limit,
           offset,
@@ -81,19 +102,16 @@ export class MatchService {
 
       totalCount = await MatchRepo.countByUserWithDeduplication(
         userId,
-        dashboardId,
+        administeredDashboardId,
       );
     }
 
     // One eligibility load for the page, over its distinct Competitions —
-    // never one per match. The viewer is identified twice over: by account for
-    // the admin check, and by the dashboard player the Voting gate knows,
-    // which is null for an admin who has never been put on a match.
-    const [eligibilities, viewer] = await Promise.all([
-      VotingEligibilityService.loadMany([
-        ...new Set(matches.map((match) => match.competitionId)),
-      ]),
-      DashboardPlayerRepo.findByUserId(userId, dashboardId),
+    // never one per match. The transform takes the viewer's dashboard-player
+    // identity off each Match's own players, so the page needs no lookup of
+    // its own and stays right across dashboards.
+    const eligibilities = await VotingEligibilityService.loadMany([
+      ...new Set(matches.map((match) => match.competitionId)),
     ]);
 
     return {
@@ -101,7 +119,6 @@ export class MatchService {
         userId,
         matches,
         eligibilities,
-        viewer?.id ?? null,
       ),
       totalCount: totalCount,
       totalPages: Math.ceil(totalCount / limit),

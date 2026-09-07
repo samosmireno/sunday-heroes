@@ -64,8 +64,15 @@ export function transformMatchServiceToResponse(
 /**
  * The All Matches page. Two identities are in play and they are not the same
  * one: `userId` is the account, which is what the admin check compares against
- * the dashboard's admin; `viewerDashboardPlayerId` is who the viewer is *on
- * this dashboard*, which is what the Voting gate knows about.
+ * the dashboard's admin; the Voting gate instead knows the viewer as a
+ * dashboard player, and one account is a different player on every dashboard
+ * it plays on.
+ *
+ * That second identity is read off each Match's own players rather than
+ * resolved once for the page, because the page spans dashboards: a viewer's
+ * user-wide list carries every Match they played, wherever it was played. The
+ * Match already carries the row — no lookup, and the answer belongs to this
+ * Match and no other.
  *
  * `eligibilities` is keyed by Competition and holds one loaded answer for each
  * distinct Competition on the page — loaded once by the caller, never once per
@@ -75,9 +82,16 @@ export function transformMatchesToMatchesResponse(
   userId: string,
   matches: MatchWithDetails[],
   eligibilities: Map<string, VotingEligibility>,
-  viewerDashboardPlayerId: string | null,
 ): MatchPageResponse[] {
   return matches.map((match) => {
+    // Who the viewer is on this Match's dashboard, and null for one who was
+    // never on the Match: a viewer who did not play it is nobody the gate has
+    // an opinion about here.
+    const viewerDashboardPlayerId =
+      match.matchPlayers.find(
+        (player) => player.dashboardPlayer.userId === userId,
+      )?.dashboardPlayerId ?? null;
+
     const homeTeamPlayers: PlayerResponse[] = match.matchPlayers
       .filter((player) => player.isHome)
       .map((player) => ({
@@ -131,13 +145,9 @@ export function transformMatchesToMatchesResponse(
       pendingVotes: calculatePendingVotes(match, eligibility),
       viewerEligibility: eligibility.for(viewerDashboardPlayerId),
       // The blocked vote affordance is scoped to a match the viewer played,
-      // and this is the only place that knows. A viewer who is nobody on this
-      // dashboard played nothing anywhere, so `null` answers false here.
-      viewerPlayed:
-        viewerDashboardPlayerId !== null &&
-        match.matchPlayers.some(
-          (player) => player.dashboardPlayerId === viewerDashboardPlayerId,
-        ),
+      // and this is the only place that knows. Having found the viewer among
+      // this Match's players is the whole of that question.
+      viewerPlayed: viewerDashboardPlayerId !== null,
       playerStats: [...homeTeamPlayers, ...awayTeamPlayers],
       competitionId: match.competition.id,
       competitionName: match.competition.name,
