@@ -7,6 +7,7 @@ import {
 import { PlayerVote } from "@prisma/client";
 import { config } from "../config/config";
 import { VotingStatus } from "@prisma/client";
+import { VotingEligibility } from "./voting-eligibility";
 
 export function calculatePlayerScore(
   received_votes: PlayerVote[],
@@ -210,17 +211,36 @@ export function calculateLeaguePlayerStats(
   return playerStats;
 }
 
-export function calculatePendingVotes(match: MatchWithDetails): number {
+/**
+ * The ballots this match is still waiting for: participants who have not voted
+ * **and whose vote the Voting gate would accept**.
+ *
+ * This is the closure condition's twin, computed a second time without the
+ * write. Unfiltered it advertises votes that can never arrive — "2 votes
+ * pending" for two players the gate has shut out, while closure had already
+ * judged the electorate complete — and a stranded match (armed mid-voting,
+ * every Eligible voter done) would sit at a count that never falls. Filtered,
+ * it reads as the truth: voting open, nothing more can arrive, waiting for the
+ * deadline.
+ *
+ * During the runway, and in a Competition with no Voting threshold, `for()`
+ * answers `canVote` for everyone and the count is exactly what it was.
+ */
+export function calculatePendingVotes(
+  match: MatchWithDetails,
+  eligibility: VotingEligibility,
+): number {
   if (
     match.votingStatus !== VotingStatus.OPEN ||
     match.competition.votingEnabled === false
   )
     return 0;
 
-  const playerIds = match.matchPlayers.map(
-    (player) => player.dashboardPlayerId,
-  );
   const votedPlayerIds = new Set(match.playerVotes.map((vote) => vote.voterId));
 
-  return playerIds.filter((id) => !votedPlayerIds.has(id)).length;
+  return match.matchPlayers.filter(
+    (player) =>
+      !votedPlayerIds.has(player.dashboardPlayerId) &&
+      eligibility.for(player.dashboardPlayerId).canVote,
+  ).length;
 }

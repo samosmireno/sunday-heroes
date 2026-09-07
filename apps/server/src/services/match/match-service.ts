@@ -17,7 +17,9 @@ import {
   NotFoundError,
 } from "../../utils/errors";
 import { CompetitionAuthRepo } from "../../repositories/competition/competition-auth-repo";
+import { DashboardPlayerRepo } from "../../repositories/dashboard-player/dashboard-player-repo";
 import { MatchRepo } from "../../repositories/match/match-repo";
+import { VotingEligibilityService } from "../voting-eligibility-service";
 import { SeasonService } from "../season-service";
 import { SeasonQuery } from "../../schemas/season-schemas";
 
@@ -83,8 +85,24 @@ export class MatchService {
       );
     }
 
+    // One eligibility load for the page, over its distinct Competitions —
+    // never one per match. The viewer is identified twice over: by account for
+    // the admin check, and by the dashboard player the Voting gate knows,
+    // which is null for an admin who has never been put on a match.
+    const [eligibilities, viewer] = await Promise.all([
+      VotingEligibilityService.loadMany([
+        ...new Set(matches.map((match) => match.competitionId)),
+      ]),
+      DashboardPlayerRepo.findByUserId(userId, dashboardId),
+    ]);
+
     return {
-      matches: transformMatchesToMatchesResponse(userId, matches),
+      matches: transformMatchesToMatchesResponse(
+        userId,
+        matches,
+        eligibilities,
+        viewer?.id ?? null,
+      ),
       totalCount: totalCount,
       totalPages: Math.ceil(totalCount / limit),
     };

@@ -1,5 +1,5 @@
 import { CompetitionType, MatchType, Team } from "@repo/shared-types";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   addPlayersToFixture,
   createDuel,
@@ -9,15 +9,18 @@ import {
   createUser,
   createUserWithDashboard,
   defaultDuelPlayers,
+  findPlayerId,
   setFixtureDate,
   setFixtureScore,
 } from "../../../test/factories";
+import prisma from "../../repositories/prisma-client";
 import { SeasonRepo } from "../../repositories/season/season-repo";
 import { createMatchRequest } from "../../schemas/create-match-request-schema";
 import { AuthorizationError, ConflictError } from "../../utils/errors";
 import { CompetitionService } from "../competition-service";
 import { LeagueService } from "../league-service";
 import { SeasonService } from "../season-service";
+import { VotingEligibilityService } from "../voting-eligibility-service";
 import { MatchService } from "./match-service";
 
 describe("Duel Match creation", () => {
@@ -136,6 +139,93 @@ describe("MatchService.getMatchesForUser", () => {
       { id: seasonTwoMatch.id, season: { number: 2, isClosed: false } },
       { id: seasonOneMatch.id, season: { number: 1, isClosed: true } },
     ]);
+  });
+});
+
+describe("MatchService.getMatchesForUser and the Voting gate", () => {
+  it("loads eligibility once for the whole page, over its distinct Competitions", async () => {
+    const { user } = await createUserWithDashboard();
+    const { competition: first } = await createDuel({
+      userId: user.id,
+      name: "Duel A",
+    });
+    const { competition: second } = await createDuel({
+      userId: user.id,
+      name: "Duel B",
+    });
+    await createDuelMatch({ competitionId: first.id, date: "2026-01-10" });
+    await createDuelMatch({ competitionId: first.id, date: "2026-01-11" });
+    await createDuelMatch({ competitionId: second.id, date: "2026-01-12" });
+
+    const loadMany = vi.spyOn(VotingEligibilityService, "loadMany");
+    try {
+      const { matches } = await MatchService.getMatchesForUser(user.id);
+
+      expect(matches).toHaveLength(3);
+      // Three matches, two Competitions, one load: the unit of computation is
+      // the Competition, so the page never fans out per match.
+      expect(loadMany).toHaveBeenCalledTimes(1);
+      expect([...loadMany.mock.calls[0][0]].sort()).toEqual(
+        [first.id, second.id].sort(),
+      );
+    } finally {
+      loadMany.mockRestore();
+    }
+  });
+
+  it("carries the viewer's standing and counts only the votes that can still arrive", async () => {
+    const { user, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 2,
+    });
+
+    // Four Completed matches among Ana, Bea, Cal and Dan: the Competition
+    // passes 2X and all four of them qualify, so the gate arms.
+    for (const date of [
+      "2026-01-10",
+      "2026-01-11",
+      "2026-01-12",
+      "2026-01-13",
+    ]) {
+      await createDuelMatch({ competitionId: competition.id, date });
+    }
+
+    // A fifth match brings in Eve, one Completed match into a Season that
+    // asks for two. She is on the ballot but may not vote yet.
+    const withEve = await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-01-14",
+      players: [
+        ...defaultDuelPlayers.slice(0, 3),
+        { nickname: "Eve", goals: 0, assists: 0, position: 2, isHome: false },
+      ],
+    });
+
+    // The viewer is Eve: the dashboard player row is what the gate knows.
+    await prisma.dashboardPlayer.update({
+      where: { id: await findPlayerId(dashboard.id, "Eve") },
+      data: { userId: user.id },
+    });
+
+    const { matches } = await MatchService.getMatchesForUser(user.id, {
+      competitionId: competition.id,
+    });
+    const match = matches.find((m) => m.id === withEve.id)!;
+
+    expect(match.viewerEligibility).toEqual({
+      canVote: false,
+      qualified: false,
+      armed: true,
+      threshold: 2,
+      matchesThisSeason: 1,
+      remaining: 1,
+    });
+    expect(match.votingStatus).toBe("OPEN");
+    // Four participants, nobody has voted, and Eve's vote can never arrive.
+    expect(match.playerCount).toBe(4);
+    expect(match.pendingVotes).toBe(3);
   });
 });
 

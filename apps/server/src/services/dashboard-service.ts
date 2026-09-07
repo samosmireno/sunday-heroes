@@ -2,6 +2,7 @@ import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { DashboardRepo } from "../repositories/dashboard/dashboard-repo";
 import { MatchRepo } from "../repositories/match/match-repo";
 import { extractDashboardData } from "../utils/dashboard-transforms";
+import { VotingEligibilityService } from "./voting-eligibility-service";
 import {
   AuthorizationError,
   ConflictError,
@@ -21,7 +22,12 @@ export class DashboardService {
 
     const matches = await MatchRepo.findMatchesForCompetitions(competitionIds);
 
-    return extractDashboardData(competitions, matches);
+    // One load for the whole dashboard, over the Competitions its matches
+    // belong to — never one per match.
+    const eligibilities =
+      await VotingEligibilityService.loadMany(competitionIds);
+
+    return extractDashboardData(competitions, matches, eligibilities);
   }
 
   static async createDashboard(userId: string, name: string) {

@@ -13,6 +13,7 @@ import {
   PlayerResponse,
   Role,
   SeasonResponse,
+  VoterEligibility,
   VotingStatus,
 } from "@repo/shared-types";
 import { DuelFormData } from "@/features/add-match-form/schemas/types";
@@ -246,8 +247,43 @@ export function matchPageResponse(
     votingStatus: VotingStatus.CLOSED,
     playerCount: 10,
     pendingVotes: 0,
+    viewerEligibility: voterEligibility(),
     playerStats: [],
     season: { number: 1, isClosed: false },
     ...overrides,
   };
+}
+
+/**
+ * Where a viewer stands with a Competition's Voting gate. The default is a
+ * Competition with no Voting threshold, which is what every surface renders as
+ * it always has.
+ */
+export function voterEligibility(
+  overrides: Partial<VoterEligibility> = {},
+): VoterEligibility {
+  return {
+    canVote: true,
+    qualified: false,
+    armed: false,
+    threshold: null,
+    matchesThisSeason: 0,
+    remaining: 0,
+    ...overrides,
+  };
+}
+
+/** A viewer the armed Voting gate has shut out, `played` of `threshold` this Season. */
+export function blockedEligibility(
+  threshold: number,
+  played: number,
+): VoterEligibility {
+  return voterEligibility({
+    canVote: false,
+    qualified: false,
+    armed: true,
+    threshold,
+    matchesThisSeason: played,
+    remaining: Math.max(0, threshold - played),
+  });
 }

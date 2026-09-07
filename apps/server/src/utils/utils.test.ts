@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { VotingStatus } from "@prisma/client";
 import { MatchResponse, MatchType, PlayerResponse } from "@repo/shared-types";
+import { MatchWithDetails } from "../repositories/match/types";
+import { buildVotingEligibility } from "./voting-eligibility";
 import {
   calculateLeaguePlayerStats,
+  calculatePendingVotes,
   calculatePlayerStats,
   calculateWinRate,
   DRAW_WIN_WEIGHT,
@@ -239,5 +243,111 @@ describe("calculateLeaguePlayerStats", () => {
     ]);
 
     expect(row).not.toHaveProperty("ratedMatches");
+  });
+});
+
+const SEASON = "season-1";
+
+/**
+ * Enough of a Match for `calculatePendingVotes`: who played, who has already
+ * voted, and whether the Match is taking votes at all.
+ */
+function matchTakingVotes(options: {
+  players: string[];
+  voted?: string[];
+  votingStatus?: VotingStatus;
+  votingEnabled?: boolean;
+}): MatchWithDetails {
+  return {
+    votingStatus: options.votingStatus ?? VotingStatus.OPEN,
+    competition: { votingEnabled: options.votingEnabled ?? true },
+    matchPlayers: options.players.map((dashboardPlayerId) => ({
+      dashboardPlayerId,
+    })),
+    playerVotes: (options.voted ?? []).map((voterId) => ({ voterId })),
+  } as unknown as MatchWithDetails;
+}
+
+/**
+ * A gate armed at `threshold`, with everyone named in `qualified` past it. The
+ * lifetime count is well over `2 * threshold`, so arming turns on whether
+ * anybody qualified — which is what these tests vary.
+ */
+function gate(threshold: number | null, qualified: string[] = []) {
+  return buildVotingEligibility({
+    threshold,
+    completedMatchCount: 100,
+    currentSeason: { id: SEASON, number: 1 },
+    participations: qualified.map((dashboardPlayerId) => ({
+      dashboardPlayerId,
+      seasonId: SEASON,
+      count: threshold ?? 0,
+    })),
+  });
+}
+
+describe("calculatePendingVotes", () => {
+  it("counts every non-voter in a Competition with no Voting threshold", () => {
+    const match = matchTakingVotes({
+      players: ["ana", "bea", "cal"],
+      voted: ["ana"],
+    });
+
+    expect(calculatePendingVotes(match, gate(null))).toBe(2);
+  });
+
+  it("counts every non-voter during the runway, before the gate arms", () => {
+    const runway = buildVotingEligibility({
+      threshold: 5,
+      completedMatchCount: 9, // one short of 2X
+      currentSeason: { id: SEASON, number: 1 },
+      participations: [
+        { dashboardPlayerId: "ana", seasonId: SEASON, count: 5 },
+      ],
+    });
+
+    const match = matchTakingVotes({
+      players: ["ana", "bea", "cal"],
+      voted: ["ana"],
+    });
+
+    expect(runway.armed).toBe(false);
+    expect(calculatePendingVotes(match, runway)).toBe(2);
+  });
+
+  it("leaves out non-voters the armed gate would refuse", () => {
+    const match = matchTakingVotes({
+      players: ["ana", "bea", "cal"],
+      voted: ["ana"],
+    });
+
+    // Bea may still vote; Cal never will, so Cal is not pending.
+    expect(calculatePendingVotes(match, gate(5, ["ana", "bea"]))).toBe(1);
+  });
+
+  it("reads zero on a stranded match: open, with every Eligible voter done", () => {
+    const match = matchTakingVotes({
+      players: ["ana", "bea", "cal"],
+      voted: ["ana"],
+    });
+
+    expect(calculatePendingVotes(match, gate(5, ["ana"]))).toBe(0);
+  });
+
+  it("counts nothing once voting is closed or was never enabled", () => {
+    const players = ["ana", "bea"];
+
+    expect(
+      calculatePendingVotes(
+        matchTakingVotes({ players, votingStatus: VotingStatus.CLOSED }),
+        gate(null),
+      ),
+    ).toBe(0);
+    expect(
+      calculatePendingVotes(
+        matchTakingVotes({ players, votingEnabled: false }),
+        gate(null),
+      ),
+    ).toBe(0);
   });
 });

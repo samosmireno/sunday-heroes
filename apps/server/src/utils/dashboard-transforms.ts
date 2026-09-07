@@ -10,6 +10,7 @@ import {
   CompetitionListSelect,
 } from "../repositories/competition/types";
 import { CompetitionMatch } from "../repositories/match/types";
+import { VotingEligibility } from "./voting-eligibility";
 
 export function transformDashboardCompetitionsToDetailedResponse(
   matchCounts: {
@@ -37,9 +38,14 @@ export function transformDashboardCompetitionsToDetailedResponse(
   return competitions;
 }
 
+/**
+ * `eligibilities` holds one loaded answer per Competition, keyed by
+ * Competition id, covering every Competition the matches belong to.
+ */
 export function extractDashboardData(
   competitions: CompetitionBasic[],
   matches: CompetitionMatch[],
+  eligibilities: Map<string, VotingEligibility>,
 ): DashboardResponse {
   const activeCompetitions = competitions.length;
 
@@ -51,13 +57,20 @@ export function extractDashboardData(
 
   const totalPlayers = uniquePlayers.size;
 
+  // A vote the Voting gate would refuse is not pending, it is impossible, so
+  // the count follows the gate exactly as the match page's does. During the
+  // runway everyone passes the filter and the number is unchanged.
   const pendingVotes = matches.reduce((sum, match) => {
     if (match.votingStatus !== "OPEN") return sum;
 
-    const playerIds = match.matchPlayers.map((mp) => mp.dashboardPlayerId);
+    const eligibility = eligibilities.get(match.competition.id)!;
     const votedIds = new Set(match.playerVotes.map((v) => v.voterId));
 
-    const pending = playerIds.filter((id) => !votedIds.has(id)).length;
+    const pending = match.matchPlayers.filter(
+      (mp) =>
+        !votedIds.has(mp.dashboardPlayerId) &&
+        eligibility.for(mp.dashboardPlayerId).canVote,
+    ).length;
 
     return sum + pending;
   }, 0);

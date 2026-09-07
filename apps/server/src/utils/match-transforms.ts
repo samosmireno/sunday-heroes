@@ -7,6 +7,7 @@ import {
 import { MatchWithDetails } from "../repositories/match/types";
 import { Match, VotingStatus } from "@prisma/client";
 import { calculatePendingVotes, calculatePlayerScore } from "./utils";
+import { VotingEligibility } from "./voting-eligibility";
 import { transformMatchSeasonToResponse } from "./season-transforms";
 import { createMatchRequest } from "../schemas/create-match-request-schema";
 
@@ -60,9 +61,29 @@ export function transformMatchServiceToResponse(
   return transformedData;
 }
 
+/**
+ * A viewer who is nobody on this dashboard — an admin who has never been put
+ * on a match — has played nothing anywhere, which is exactly what a total
+ * `for()` answers for an id it has never seen. No dashboard player carries
+ * this id, so the record it produces is the honest one.
+ */
+const VIEWER_IS_NOT_A_PLAYER = "";
+
+/**
+ * The All Matches page. Two identities are in play and they are not the same
+ * one: `userId` is the account, which is what the admin check compares against
+ * the dashboard's admin; `viewerDashboardPlayerId` is who the viewer is *on
+ * this dashboard*, which is what the Voting gate knows about.
+ *
+ * `eligibilities` is keyed by Competition and holds one loaded answer for each
+ * distinct Competition on the page — loaded once by the caller, never once per
+ * match.
+ */
 export function transformMatchesToMatchesResponse(
   userId: string,
   matches: MatchWithDetails[],
+  eligibilities: Map<string, VotingEligibility>,
+  viewerDashboardPlayerId: string | null,
 ): MatchPageResponse[] {
   return matches.map((match) => {
     const homeTeamPlayers: PlayerResponse[] = match.matchPlayers
@@ -97,6 +118,10 @@ export function transformMatchesToMatchesResponse(
 
     const teamNames = match.matchTeams.map((teamMatch) => teamMatch.team.name);
 
+    // Keyed for every Competition on the page by construction: the caller
+    // builds the map from these very matches.
+    const eligibility = eligibilities.get(match.competitionId)!;
+
     const res = {
       id: match.id,
       date: match.date?.toISOString().split("T")[0],
@@ -111,7 +136,10 @@ export function transformMatchesToMatchesResponse(
       votingStatus: match.votingStatus as MatchPageResponse["votingStatus"],
       votingEndsAt: match.votingEndsAt?.toDateString(),
       playerCount: match.matchPlayers.length,
-      pendingVotes: calculatePendingVotes(match),
+      pendingVotes: calculatePendingVotes(match, eligibility),
+      viewerEligibility: eligibility.for(
+        viewerDashboardPlayerId ?? VIEWER_IS_NOT_A_PLAYER,
+      ),
       playerStats: [...homeTeamPlayers, ...awayTeamPlayers],
       competitionId: match.competition.id,
       competitionName: match.competition.name,

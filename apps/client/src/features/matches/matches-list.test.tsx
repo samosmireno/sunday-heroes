@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { VotingStatus } from "@repo/shared-types";
 import { createTestProviders } from "@/test/harness";
-import { matchPageResponse } from "@/test/fixtures";
+import {
+  blockedEligibility,
+  matchPageResponse,
+  voterEligibility,
+} from "@/test/fixtures";
 import MatchesList from "./matches-list";
 
 const twoSeasons = [
@@ -58,5 +63,67 @@ describe("MatchesList", () => {
 
     expect(screen.getByText("Season 1 · closed")).toBeDefined();
     expect(screen.queryByText("Season 2 · closed")).toBeNull();
+  });
+});
+
+/** An open match, with the viewer standing wherever the Voting gate puts them. */
+function openMatch(viewerEligibility = voterEligibility()) {
+  return matchPageResponse({
+    votingEnabled: true,
+    votingStatus: VotingStatus.OPEN,
+    pendingVotes: 2,
+    viewerEligibility,
+  });
+}
+
+describe("MatchesList and the Voting gate", () => {
+  it("keeps the vote affordance, disabled with the viewer's count, for a blocked voter", () => {
+    render(<MatchesList matches={[openMatch(blockedEligibility(5, 3))]} />, {
+      wrapper: createTestProviders(),
+    });
+
+    const blocked = screen.getByRole("button", {
+      name: "You cannot vote on this match yet",
+    });
+    expect(blocked.hasAttribute("disabled")).toBe(true);
+    expect(blocked.textContent).toContain("3/5 to vote");
+    expect(screen.queryByRole("button", { name: "Vote on this match" })).toBe(
+      null,
+    );
+  });
+
+  it("spells the per-Season rule out in the tooltip", () => {
+    render(<MatchesList matches={[openMatch(blockedEligibility(5, 3))]} />, {
+      wrapper: createTestProviders(),
+    });
+
+    // The title rides on the wrapper: a disabled button has no pointer events.
+    const title = screen
+      .getByRole("button", { name: "You cannot vote on this match yet" })
+      .closest("span")
+      ?.getAttribute("title");
+
+    expect(title).toContain("5 matches played within a single season");
+    expect(title).toContain("3 this season");
+    expect(title).toContain("do not add up across seasons");
+  });
+
+  it("leaves the Voting Status badge to the Competition, not the viewer", () => {
+    render(<MatchesList matches={[openMatch(blockedEligibility(5, 3))]} />, {
+      wrapper: createTestProviders(),
+    });
+
+    expect(screen.getByText("2 pending votes")).toBeDefined();
+  });
+
+  it("renders the cell exactly as before during the runway", () => {
+    render(<MatchesList matches={[openMatch()]} />, {
+      wrapper: createTestProviders(),
+    });
+
+    expect(
+      screen.getByRole("button", { name: "Vote on this match" }),
+    ).toBeDefined();
+    expect(screen.queryByText(/to vote/)).toBeNull();
   });
 });

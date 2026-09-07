@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckSquare, ChevronDown, ChevronUp, Shield } from "lucide-react";
+import {
+  CheckSquare,
+  ChevronDown,
+  ChevronUp,
+  Lock,
+  Shield,
+} from "lucide-react";
 import { MatchDetails } from "./match-details";
-import { MatchPageResponse } from "@repo/shared-types";
+import { MatchPageResponse, VoterEligibility } from "@repo/shared-types";
 import { formatDate } from "@/utils/string";
 import { convertMatchType } from "@/utils/string";
 import React from "react";
@@ -37,6 +43,43 @@ const columnsOf = (showSeason: boolean): Column[] => [
   { label: "Voting Status", className: "hidden text-left xl:table-cell" },
   { label: "Actions", className: "hidden text-right sm:table-cell" },
 ];
+
+/**
+ * The vote affordance for a viewer the armed Voting gate has shut out. It
+ * stays in the cell rather than disappearing — a button that vanishes reads as
+ * a bug, not as a rule — disabled, carrying the viewer's Current-season
+ * progress and the rule that produced it.
+ *
+ * Only ever rendered when `canVote` is false, which the gate answers only once
+ * it is armed and the viewer has not qualified. So the counter never shows on
+ * its own during the runway, where it would be a number about a rule that is
+ * not yet in force.
+ *
+ * The title sits on the wrapping span deliberately: a disabled button carries
+ * `pointer-events: none`, so a title on the button itself never surfaces.
+ */
+function BlockedVoteAffordance({
+  eligibility,
+}: {
+  eligibility: VoterEligibility;
+}) {
+  const { threshold, matchesThisSeason } = eligibility;
+
+  return (
+    <span
+      title={`Voting in this competition needs ${threshold} matches played within a single season. You have played ${matchesThisSeason} this season, and matches do not add up across seasons.`}
+    >
+      <Button
+        disabled
+        className="text-2xs h-7 gap-1 rounded-full bg-gray-500/20 px-2 py-1 font-medium text-gray-400 md:text-xs"
+        aria-label="You cannot vote on this match yet"
+      >
+        <Lock size={14} aria-hidden="true" />
+        {matchesThisSeason}/{threshold} to vote
+      </Button>
+    </span>
+  );
+}
 
 export default function MatchesList({
   matches,
@@ -167,19 +210,27 @@ export default function MatchesList({
                       {match.season.isClosed && (
                         <ClosedSeasonLock seasonNumber={match.season.number} />
                       )}
-                      {match.votingStatus === "OPEN" && match.votingEnabled && (
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/pending/${match.id}`);
-                          }}
-                          className="rounded-full bg-amber-500/20 p-1 text-amber-400 hover:bg-amber-500/30 md:p-1.5"
-                          aria-label="Vote on this match"
-                          title="Vote on this match"
-                        >
-                          <CheckSquare size={16} />
-                        </Button>
-                      )}
+                      {/* The affordance shows on an open match exactly as it always
+                          has; the Voting gate decides only whether it is usable. */}
+                      {match.votingStatus === "OPEN" &&
+                        match.votingEnabled &&
+                        (match.viewerEligibility.canVote ? (
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/pending/${match.id}`);
+                            }}
+                            className="rounded-full bg-amber-500/20 p-1 text-amber-400 hover:bg-amber-500/30 md:p-1.5"
+                            aria-label="Vote on this match"
+                            title="Vote on this match"
+                          >
+                            <CheckSquare size={16} />
+                          </Button>
+                        ) : (
+                          <BlockedVoteAffordance
+                            eligibility={match.viewerEligibility}
+                          />
+                        ))}
                       {/* <Button
                         onClick={(e) => {
                           e.stopPropagation();

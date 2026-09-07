@@ -1,6 +1,7 @@
 import { CompetitionType, MatchType, VotingStatus } from "./enums";
 import { PlayerResponse } from "./player";
 import { MatchSeason } from "./season";
+import { VoterEligibility } from "./voting";
 
 export type MatchResponse = {
   id: string;
@@ -33,7 +34,18 @@ export type MatchPageResponse = {
   votingStatus: VotingStatus;
   votingEndsAt?: string;
   playerCount: number;
+  /**
+   * Non-voters whose ballot the Competition is still waiting for. Only
+   * Eligible voters count: a vote the Voting gate will never accept is not
+   * pending, it is impossible.
+   */
   pendingVotes: number;
+  /**
+   * Where the viewer stands with this Competition's Voting gate. Always
+   * present: `threshold: null` means the Competition has no gate, and a viewer
+   * who is nobody on this dashboard reads as a player who has played nothing.
+   */
+  viewerEligibility: VoterEligibility;
   playerStats: PlayerResponse[];
   videoUrl?: string;
   season: MatchSeason;
