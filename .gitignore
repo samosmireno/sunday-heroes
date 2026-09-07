@@ -15,6 +15,7 @@ public/dist
 
 # Claude files
 .worktrees/
+.claude/worktrees/
 
 # Database dumps
 *.dump
