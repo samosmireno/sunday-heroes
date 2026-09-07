@@ -12,14 +12,16 @@ Two smaller collisions: `packages/shared-types/src/voting.ts` (#49 creates `Vote
 
 ## Stages
 
-| Stage | Lanes           | Why they do not collide                                                                                                                                           |
-| ----- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 ✅  | #46 ‖ #47       | `vote-service.ts` against the schema, request schema and create-competition form. No shared file. **Landed** — `9860155`, `e948614`, review follow-up `2f0a43b`.  |
-| 2     | #49 ‖ #48 ‖ #57 | The seam is server plus `shared-types/voting.ts`; the readout is `voting-section.tsx` plus a derived-arithmetic module; #57 is `vote-service.ts` alone. Disjoint. |
-| 3     | #50 ‖ #53 ‖ #55 | Three disjoint sets: `submitVotes`; the transforms, `utils.ts`, match and dashboard services and `matches-list.tsx`; `match-voting-service.ts`.                   |
-| 4     | #52 ‖ #54       | Different `vote-service.ts` methods, different client features, different shared-types files.                                                                     |
-| 5     | #51             | Solo — see below.                                                                                                                                                 |
-| 6     | #56             | Solo, on merged `main`.                                                                                                                                           |
+| Stage | Lanes           | Why they do not collide                                                                                                                                                                                                                     |
+| ----- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 ✅  | #46 ‖ #47       | `vote-service.ts` against the schema, request schema and create-competition form. No shared file. **Landed** — `9860155`, `e948614`, review follow-up `2f0a43b`.                                                                            |
+| 2 ✅  | #49 ‖ #48 ‖ #57 | The seam is server plus `shared-types/voting.ts`; the readout is `voting-section.tsx` plus a derived-arithmetic module; #57 is `vote-service.ts` alone. Disjoint. **Landed** — `63b7a61`, `68a87f7`, `d58ec92`, review follow-up `47aabbc`. |
+| 3     | #50 ‖ #53 ‖ #55 | Three disjoint sets: `submitVotes`; the transforms, `utils.ts`, match and dashboard services and `matches-list.tsx`; `match-voting-service.ts`.                                                                                             |
+| 4     | #52 ‖ #54       | Different `vote-service.ts` methods, different client features, different shared-types files.                                                                                                                                               |
+| 5     | #51             | Solo — see below.                                                                                                                                                                                                                           |
+| 6     | #56             | Solo, on merged `main`.                                                                                                                                                                                                                     |
+
+Stage 3 inherits one thing from stage 2 worth knowing: `VoterEligibility.remaining` is `max(0, threshold - matchesThisSeason)` regardless of `qualified`, so a player who qualified in a closed Season and has played nothing this Season reports a non-zero `remaining` while `canVote` is `true`. That is §4.1's literal formula and the seam keeps it. The client rule that guards it is `armed && !qualified` — the copy lanes (#52, #53, #54) must not render `remaining` on its own.
 
 Stage 3 is the cleanest wave in the set: three lanes with no shared file at any point. #55 (`match-voting-service.ts`) is the only ticket in the whole effort that shares no file with any other.
 
@@ -69,8 +71,8 @@ Stage 2 therefore needs two databases, not one: #49 and #57 both run `db` tests,
 | --- | ------------------------------------------------------------ | ---------- | ----- |
 | 46  | Voting closes on the votes just cast (prefactor)             | —          | 1 ✅  |
 | 47  | An admin sets a Voting threshold when creating a Competition | —          | 1 ✅  |
-| 48  | The Voting threshold readout and the League ceiling advisory | #47        | 2     |
-| 49  | The eligibility seam: one loaded answer per Competition      | #47        | 2     |
+| 48  | The Voting threshold readout and the League ceiling advisory | #47        | 2 ✅  |
+| 49  | The eligibility seam: one loaded answer per Competition      | #47        | 2 ✅  |
 | 50  | The Voting gate refuses an ineligible voter at submit        | #49        | 3     |
 | 51  | Voting closes when every Eligible voter has voted            | #46, #50   | 5     |
 | 52  | The vote page's fourth state                                 | #49        | 4     |
@@ -78,4 +80,4 @@ Stage 2 therefore needs two databases, not one: #49 and #57 both run `db` tests,
 | 54  | The pending-votes list shows each player's standing          | #49        | 4     |
 | 55  | Voting invitations and reminders skip ineligible players     | #49        | 3     |
 | 56  | Verify the finished Voting gate against CONTEXT.md           | #51–#55    | 6     |
-| 57  | The closing ballot is dropped from the ratings it closes on  | —          | 2     |
+| 57  | The closing ballot is dropped from the ratings it closes on  | —          | 2 ✅  |
