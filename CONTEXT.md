@@ -48,6 +48,20 @@ _Avoid_: Game, scheduled match
 A Match the admin has marked as completed. Only Completed matches count toward Standings and player stats; a Fixture that is not yet a Completed match is "not completed", whether or not a result has been entered.
 _Avoid_: Played match, finished match, unplayed (as a state)
 
+### Voting
+
+**Voting threshold**:
+The number of Completed matches a player must have played within a single Season of a Competition before they may vote in it. Chosen once, when the Competition is created, and never changed afterwards; a Competition may have none, in which case everyone who played a match votes on it. Counted per Season and never pooled: four matches in one Season and four in the next is not eight.
+_Avoid_: Minimum matches, vote threshold, eligibility threshold, quota
+
+**Eligible voter**:
+A player who has reached a Competition's Voting threshold in some Season of it. Permanent once earned, because a Past season's matches never change. Once the Voting gate is armed only an Eligible voter's ballot is accepted, but every participant stays on the ballot: a player who cannot vote can still receive votes and be man of the match.
+_Avoid_: Qualified player, verified voter, regular, member
+
+**Voting gate**:
+The state of a Competition in which only Eligible voters may vote. It arms once the Competition has at least twice its Voting threshold in Completed matches and at least one Eligible voter exists — both, not either. Before it arms, during the runway, every participant votes as though there were no threshold, and those matches count toward qualification like any other, so nobody is grandfathered in.
+_Avoid_: Voting lock, restriction, gating (as a state)
+
 ### Player stats
 
 **Win rate**:
