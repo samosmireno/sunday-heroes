@@ -95,11 +95,21 @@ export class VotingEligibility {
     this.currentSeasonCounts = currentSeasonCounts;
   }
 
-  /** Total: any id, always a valid record. */
-  for(dashboardPlayerId: string): VoterEligibility {
-    const qualified = this.qualifiedPlayerIds.has(dashboardPlayerId);
+  /**
+   * Total: any id, always a valid record — `null` included, which is a viewer
+   * who is nobody on this dashboard (an admin never put on a match). They have
+   * played nothing anywhere, which is what an unknown id already answers, so
+   * accepting `null` here saves every caller inventing a sentinel id to stand
+   * in for the absence.
+   */
+  for(dashboardPlayerId: string | null): VoterEligibility {
+    const qualified =
+      dashboardPlayerId !== null &&
+      this.qualifiedPlayerIds.has(dashboardPlayerId);
     const matchesThisSeason =
-      this.currentSeasonCounts.get(dashboardPlayerId) ?? 0;
+      (dashboardPlayerId === null
+        ? undefined
+        : this.currentSeasonCounts.get(dashboardPlayerId)) ?? 0;
 
     return {
       canVote: !this.armed || qualified,

@@ -3,6 +3,7 @@ import { VotingStatus } from "@prisma/client";
 import { MatchResponse, MatchType, PlayerResponse } from "@repo/shared-types";
 import { MatchWithDetails } from "../repositories/match/types";
 import { buildVotingEligibility } from "./voting-eligibility";
+import { gate } from "../../test/voting-eligibility-fixtures";
 import {
   calculateLeaguePlayerStats,
   calculatePendingVotes,
@@ -266,24 +267,6 @@ function matchTakingVotes(options: {
     })),
     playerVotes: (options.voted ?? []).map((voterId) => ({ voterId })),
   } as unknown as MatchWithDetails;
-}
-
-/**
- * A gate armed at `threshold`, with everyone named in `qualified` past it. The
- * lifetime count is well over `2 * threshold`, so arming turns on whether
- * anybody qualified — which is what these tests vary.
- */
-function gate(threshold: number | null, qualified: string[] = []) {
-  return buildVotingEligibility({
-    threshold,
-    completedMatchCount: 100,
-    currentSeason: { id: SEASON, number: 1 },
-    participations: qualified.map((dashboardPlayerId) => ({
-      dashboardPlayerId,
-      seasonId: SEASON,
-      count: threshold ?? 0,
-    })),
-  });
 }
 
 describe("calculatePendingVotes", () => {

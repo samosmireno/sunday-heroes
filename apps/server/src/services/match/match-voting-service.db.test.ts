@@ -209,6 +209,29 @@ describe("MatchVotingService voting reminders", () => {
     expect(await settledEmailsAbout(match.id, "reminder", 1)).toEqual(["Cal"]);
   });
 
+  it("reminds every participant while the Competition is still on the runway", async () => {
+    // A threshold with the gate not yet armed: two Completed matches here plus
+    // the expiring one — which is Completed the moment it is created, like
+    // every Duel match — is three against a threshold of 2, one short of twice
+    // it. Nobody is gated, and the sweep behaves as it does with no threshold.
+    const { competition } = await duelWithVoting({ votingThreshold: 2 });
+    for (let i = 0; i < 2; i++) {
+      const runwayMatch = await createDuelMatch({
+        competitionId: competition.id,
+        players: pair("Ana", "Cal"),
+      });
+      await settledEmailsAbout(runwayMatch.id, "invitation", 2);
+    }
+    const match = await expiringMatch(competition.id, pair("Bea", "Dan"));
+
+    await MatchVotingService.sendReminderEmails();
+
+    expect(await settledEmailsAbout(match.id, "reminder", 2)).toEqual([
+      "Bea",
+      "Dan",
+    ]);
+  });
+
   it("reminds every participant of a Competition with no threshold", async () => {
     const { competition } = await duelWithVoting();
     const match = await expiringMatch(competition.id);

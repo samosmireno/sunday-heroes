@@ -7,10 +7,8 @@ import {
   transformAddMatchRequestToService,
   transformMatchesToMatchesResponse,
 } from "./match-transforms";
-import {
-  buildVotingEligibility,
-  VotingEligibility,
-} from "./voting-eligibility";
+import { VotingEligibility } from "./voting-eligibility";
+import { gate } from "../../test/voting-eligibility-fixtures";
 
 function request(
   overrides: Partial<createMatchRequest> = {},
@@ -76,7 +74,6 @@ describe("transformAddMatchRequestToService", () => {
 });
 
 const COMPETITION = "competition-1";
-const SEASON = "season-1";
 const ADMIN = "user-admin";
 const ANA = "player-ana";
 const BEA = "player-bea";
@@ -132,20 +129,6 @@ function matchOnThePage(
       dashboard: { adminId: ADMIN },
     },
   } as unknown as MatchWithDetails;
-}
-
-/** A gate at `threshold`, armed, with everyone in `qualified` past it. */
-function gate(threshold: number | null, qualified: string[] = []) {
-  return buildVotingEligibility({
-    threshold,
-    completedMatchCount: 100,
-    currentSeason: { id: SEASON, number: 1 },
-    participations: qualified.map((dashboardPlayerId) => ({
-      dashboardPlayerId,
-      seasonId: SEASON,
-      count: threshold ?? 0,
-    })),
-  });
 }
 
 function eligibilitiesOf(

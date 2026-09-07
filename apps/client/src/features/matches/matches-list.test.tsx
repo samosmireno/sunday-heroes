@@ -67,11 +67,12 @@ describe("MatchesList", () => {
 });
 
 /** An open match, with the viewer standing wherever the Voting gate puts them. */
-function openMatch(viewerEligibility = voterEligibility()) {
+function openMatch(viewerEligibility = voterEligibility(), isAdmin = false) {
   return matchPageResponse({
     votingEnabled: true,
     votingStatus: VotingStatus.OPEN,
     pendingVotes: 2,
+    isAdmin,
     viewerEligibility,
   });
 }
@@ -114,6 +115,21 @@ describe("MatchesList and the Voting gate", () => {
     });
 
     expect(screen.getByText("2 pending votes")).toBeDefined();
+  });
+
+  it("leaves an admin the live link however the gate reads their own standing", () => {
+    // This button is the only route to `/pending/:matchId`, the on-behalf-of
+    // list. An admin who never played is blocked as a voter and must still be
+    // able to open it — the gate is about the player a ballot is cast for.
+    render(
+      <MatchesList matches={[openMatch(blockedEligibility(5, 0), true)]} />,
+      { wrapper: createTestProviders() },
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Vote on this match" }),
+    ).toBeDefined();
+    expect(screen.queryByText(/to vote/)).toBeNull();
   });
 
   it("renders the cell exactly as before during the runway", () => {

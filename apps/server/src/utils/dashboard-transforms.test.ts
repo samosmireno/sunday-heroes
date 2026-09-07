@@ -7,6 +7,7 @@ import {
   buildVotingEligibility,
   VotingEligibility,
 } from "./voting-eligibility";
+import { gate } from "../../test/voting-eligibility-fixtures";
 
 const COMPETITION = "competition-1";
 const OTHER = "competition-2";
@@ -55,20 +56,6 @@ function dashboardMatch(options: {
     ),
     playerVotes: (options.voted ?? []).map((voterId) => ({ voterId })),
   } as unknown as CompetitionMatch;
-}
-
-/** A gate at `threshold`, armed, with everyone in `qualified` past it. */
-function gate(threshold: number | null, qualified: string[] = []) {
-  return buildVotingEligibility({
-    threshold,
-    completedMatchCount: 100,
-    currentSeason: { id: SEASON, number: 1 },
-    participations: qualified.map((dashboardPlayerId) => ({
-      dashboardPlayerId,
-      seasonId: SEASON,
-      count: threshold ?? 0,
-    })),
-  });
 }
 
 function eligibilitiesOf(

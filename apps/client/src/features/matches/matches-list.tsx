@@ -211,10 +211,15 @@ export default function MatchesList({
                         <ClosedSeasonLock seasonNumber={match.season.number} />
                       )}
                       {/* The affordance shows on an open match exactly as it always
-                          has; the Voting gate decides only whether it is usable. */}
+                          has; the Voting gate decides only whether it is usable.
+                          An admin keeps the live link whatever their own standing:
+                          this button is the only route to the on-behalf-of list
+                          (`/pending/:matchId`), and the gate is about the standing
+                          of the player a ballot is cast for, never the rights of
+                          whoever is asking. */}
                       {match.votingStatus === "OPEN" &&
                         match.votingEnabled &&
-                        (match.viewerEligibility.canVote ? (
+                        (match.isAdmin || match.viewerEligibility.canVote ? (
                           <Button
                             onClick={(e) => {
                               e.stopPropagation();

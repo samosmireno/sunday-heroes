@@ -223,6 +223,21 @@ describe("buildVotingEligibility is total", () => {
     });
   });
 
+  it("reads null as a viewer who is nobody on this dashboard", () => {
+    // An admin never put on a match has no dashboard player at all. Answering
+    // that directly is what keeps callers from inventing a sentinel id.
+    const eligibility = buildVotingEligibility({
+      threshold: 2,
+      completedMatchCount: 6,
+      currentSeason,
+      participations: [played(ANA, SEASON_2, 2)],
+    });
+
+    expect(eligibility.for(null)).toEqual(
+      eligibility.for("nobody-ever-heard-of"),
+    );
+  });
+
   it("returns a valid record from a Competition with no participation at all", () => {
     const eligibility = buildVotingEligibility({
       threshold: 2,

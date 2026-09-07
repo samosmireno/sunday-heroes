@@ -62,14 +62,6 @@ export function transformMatchServiceToResponse(
 }
 
 /**
- * A viewer who is nobody on this dashboard — an admin who has never been put
- * on a match — has played nothing anywhere, which is exactly what a total
- * `for()` answers for an id it has never seen. No dashboard player carries
- * this id, so the record it produces is the honest one.
- */
-const VIEWER_IS_NOT_A_PLAYER = "";
-
-/**
  * The All Matches page. Two identities are in play and they are not the same
  * one: `userId` is the account, which is what the admin check compares against
  * the dashboard's admin; `viewerDashboardPlayerId` is who the viewer is *on
@@ -137,9 +129,7 @@ export function transformMatchesToMatchesResponse(
       votingEndsAt: match.votingEndsAt?.toDateString(),
       playerCount: match.matchPlayers.length,
       pendingVotes: calculatePendingVotes(match, eligibility),
-      viewerEligibility: eligibility.for(
-        viewerDashboardPlayerId ?? VIEWER_IS_NOT_A_PLAYER,
-      ),
+      viewerEligibility: eligibility.for(viewerDashboardPlayerId),
       playerStats: [...homeTeamPlayers, ...awayTeamPlayers],
       competitionId: match.competition.id,
       competitionName: match.competition.name,
