@@ -117,12 +117,25 @@ export class VoteService {
     };
   }
 
-  static async getPendingVoters(matchId: string): Promise<string[]> {
-    const matchPlayers =
-      await MatchPlayerRepo.getMatchPlayersFromMatch(matchId);
+  /**
+   * Both reads take the caller's transaction, so a submit sees the ballot it is
+   * in the middle of writing. Reading them off a separate connection instead left
+   * the submitter counted as pending, which the closure condition used to cancel
+   * out by subtracting one — a compensation resting on the unwritten invariant
+   * "exactly one phantom pending voter, always the submitter". Removing the cause
+   * lets the count mean what it says to every caller, in a transaction or not.
+   */
+  static async getPendingVoters(
+    matchId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<string[]> {
+    const matchPlayers = await MatchPlayerRepo.getMatchPlayersFromMatch(
+      matchId,
+      tx,
+    );
     const allPlayerIds = matchPlayers.map((mp) => mp.dashboardPlayerId);
 
-    const votedPlayerIds = await VoteRepo.getDistinctVotersByMatch(matchId);
+    const votedPlayerIds = await VoteRepo.getDistinctVotersByMatch(matchId, tx);
 
     return allPlayerIds.filter((id) => !votedPlayerIds.includes(id));
   }
@@ -300,9 +313,9 @@ export class VoteService {
     matchId: string,
     tx?: Prisma.TransactionClient,
   ): Promise<void> {
-    const pendingVoters = await this.getPendingVoters(matchId);
+    const pendingVoters = await this.getPendingVoters(matchId, tx);
 
-    if (pendingVoters.length - 1 === 0) {
+    if (pendingVoters.length === 0) {
       await this.calculateAndStoreMatchRatings(matchId, tx);
       await MatchRepo.updateVotingStatus(matchId, "CLOSED", new Date(), tx);
     }
