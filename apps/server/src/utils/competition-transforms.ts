@@ -159,6 +159,7 @@ export function transformAddCompetitionRequestToService(
     votingPeriodDays: competitionReq.votingPeriodDays ?? null,
     knockoutVotingPeriodDays: competitionReq.knockoutVotingPeriodDays ?? null,
     reminderDays: competitionReq.reminderDays ?? null,
+    votingThreshold: competitionReq.votingThreshold ?? null,
     minPlayers: competitionReq.minPlayers ?? 4,
     // A League's format is remembered for later seasons' Fixtures.
     isRoundRobin: competitionReq.isRoundRobin ?? null,

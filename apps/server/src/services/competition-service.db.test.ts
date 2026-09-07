@@ -41,6 +41,41 @@ describe("CompetitionService.createCompetition", () => {
       }),
     ]);
   });
+
+  it("stores the Voting threshold the admin chose", async () => {
+    const { user } = await createUserWithDashboard();
+
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 4,
+    });
+
+    expect(competition.votingThreshold).toBe(4);
+    expect(
+      (
+        await prisma.competition.findUniqueOrThrow({
+          where: { id: competition.id },
+        })
+      ).votingThreshold,
+    ).toBe(4);
+  });
+
+  it("leaves the Voting threshold null when the admin chose none", async () => {
+    const { user } = await createUserWithDashboard();
+
+    const { competition: withVoting } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+    });
+    const { competition: withoutVoting } = await createDuel({
+      userId: user.id,
+      name: "No voting",
+    });
+
+    expect(withVoting.votingThreshold).toBeNull();
+    expect(withoutVoting.votingThreshold).toBeNull();
+  });
 });
 
 describe("CompetitionService.getCompetitionSettings", () => {

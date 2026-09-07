@@ -118,6 +118,10 @@ model Competition {
   votingPeriodDays         Int?
   knockoutVotingPeriodDays Int?
   reminderDays              Int?
+  // Chosen once at creation and never edited: the number of Completed matches a
+  // player must have played in a single Season before their ballot is accepted.
+  // null = no gate.
+  votingThreshold          Int?
   isRoundRobin          Boolean?
   // A League's match type, chosen at creation: what Teams setup generates a
   // Season's Fixtures with once no Match is left to copy it from (after Reset).
@@ -227,6 +231,9 @@ model Match {
 
   @@index([competitionId])
   @@index([seasonId])
+  // Voting eligibility counts a Competition's Completed matches, once per
+  // player and again from the cron that fans out over expiring matches.
+  @@index([competitionId, isCompleted])
 }
 
 model MatchTeam {

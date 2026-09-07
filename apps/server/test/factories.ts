@@ -96,6 +96,7 @@ function competitionRequest(fields: {
   name: string;
   type: CompetitionType;
   votingEnabled?: boolean;
+  votingThreshold?: number;
 }) {
   const votingEnabled = fields.votingEnabled ?? false;
 
@@ -105,6 +106,10 @@ function competitionRequest(fields: {
     type: fields.type,
     votingEnabled,
     ...(votingEnabled ? { votingPeriodDays: 7, reminderDays: 3 } : {}),
+    // Absent unless a test asks for a Voting threshold, as on the form.
+    ...(fields.votingThreshold === undefined
+      ? {}
+      : { votingThreshold: fields.votingThreshold }),
   };
 }
 
@@ -113,6 +118,7 @@ export async function createDuel(options: {
   userId: string;
   name?: string;
   votingEnabled?: boolean;
+  votingThreshold?: number;
 }) {
   const competition = await CompetitionService.createCompetition(
     competitionRequest({
@@ -120,6 +126,7 @@ export async function createDuel(options: {
       name: options.name ?? "Duel",
       type: CompetitionType.DUEL,
       votingEnabled: options.votingEnabled,
+      votingThreshold: options.votingThreshold,
     }),
   );
 

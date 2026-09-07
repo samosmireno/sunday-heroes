@@ -23,4 +23,38 @@ describe("transformCompetitionFormToRequest", () => {
       isRoundRobin: false,
     });
   });
+
+  it("sends the Voting threshold the admin chose", () => {
+    const request = transformCompetitionFormToRequest(
+      {
+        name: "Sunday Night",
+        type: CompetitionType.DUEL,
+        votingEnabled: true,
+        votingPeriodDays: 3,
+        reminderDays: 2,
+        votingThreshold: 5,
+        isRoundRobin: false,
+      },
+      "user-1",
+    );
+
+    expect(request.votingThreshold).toBe(5);
+  });
+
+  it("sends no threshold field when the admin left it empty", () => {
+    const request = transformCompetitionFormToRequest(
+      {
+        name: "Sunday Night",
+        type: CompetitionType.DUEL,
+        votingEnabled: true,
+        votingPeriodDays: 3,
+        reminderDays: 2,
+        isRoundRobin: false,
+      },
+      "user-1",
+    );
+
+    expect(request.votingThreshold).toBeUndefined();
+    expect(request).not.toHaveProperty("votingThreshold", 0);
+  });
 });

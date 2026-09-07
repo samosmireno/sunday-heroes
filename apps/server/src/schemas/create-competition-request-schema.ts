@@ -13,6 +13,13 @@ export const createCompetitionRequestSchema = z
     votingPeriodDays: z.coerce.number().optional(),
     knockoutVotingPeriodDays: z.coerce.number().optional(),
     reminderDays: z.coerce.number().optional(),
+    // Optional, even with voting enabled: a Competition may have no gate.
+    // `preprocess` first, because a bare `z.coerce.number()` turns the form's
+    // "" into 0 and trips `min(1)`; the server takes a number or no field.
+    votingThreshold: z.preprocess(
+      (v) => (v === "" || v === null ? undefined : v),
+      z.coerce.number().int().min(1).max(50).optional(),
+    ),
   })
   .refine(
     (data) =>

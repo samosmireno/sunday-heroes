@@ -13,6 +13,7 @@ export const transformCompetitionFormToRequest = (
     votingPeriodDays: data.votingPeriodDays ?? undefined,
     knockoutVotingPeriodDays: data.knockoutVotingPeriodDays ?? undefined,
     reminderDays: data.reminderDays ?? undefined,
+    votingThreshold: data.votingThreshold ?? undefined,
     isRoundRobin: data.isRoundRobin ?? false,
     numberOfTeams: data.numberOfTeams ?? undefined,
     matchType: data.matchType ?? undefined,

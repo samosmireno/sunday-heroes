@@ -13,6 +13,13 @@ export const CreateCompetitionFormSchema = z
     votingPeriodDays: z.coerce.number().min(0).nonnegative().optional(),
     reminderDays: z.coerce.number().min(0).nonnegative().optional(),
     knockoutVotingPeriodDays: z.coerce.number().min(0).nonnegative().optional(),
+    // Optional, and empty by default. `preprocess` first: a bare
+    // `z.coerce.number()` reads the empty input as 0, which trips `min(1)` and
+    // would disable the submit button with no message anyone can see.
+    votingThreshold: z.preprocess(
+      (v) => (v === "" || v === null ? undefined : v),
+      z.coerce.number().int().min(1).max(50).optional(),
+    ),
     isRoundRobin: z.boolean().default(false).optional(),
     numberOfTeams: z.coerce
       .number()

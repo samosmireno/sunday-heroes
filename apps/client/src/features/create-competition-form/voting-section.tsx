@@ -150,6 +150,39 @@ function VotingOptionsSection({
           />
         )}
       </div>
+
+      <div className="mt-4 border-t border-accent/30 pt-4">
+        <FormField
+          name="votingThreshold"
+          control={form.control}
+          shouldUnregister={true}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col">
+              <FormLabel className="mb-1 block text-sm font-medium text-gray-300">
+                Voting Threshold{" "}
+                <span className="text-gray-400">(optional)</span>
+              </FormLabel>
+              <FormControl>
+                {/* No default: the rule cannot be changed after creation, so a
+                    threshold must never arrive by default. */}
+                <Input
+                  {...field}
+                  type="number"
+                  min={1}
+                  max={50}
+                  step={1}
+                  className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
+                />
+              </FormControl>
+              <FormDescription className="text-xs text-gray-400">
+                A player must have played this many completed matches within a
+                single season before their votes count.
+              </FormDescription>
+              <FormMessage className="text-red-400" />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 }

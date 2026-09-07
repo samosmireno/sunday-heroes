@@ -29,6 +29,8 @@ export function useCreateCompetition() {
       votingPeriodDays: "" as unknown as number,
       reminderDays: "" as unknown as number,
       knockoutVotingPeriodDays: "" as unknown as number,
+      // Empty, not a suggested number: an unset Voting threshold means no gate.
+      votingThreshold: "" as unknown as number,
       numberOfTeams: "" as unknown as number,
       matchType: undefined,
       isRoundRobin: false,
@@ -75,6 +77,7 @@ export function useCreateCompetition() {
       form.setValue("votingPeriodDays", undefined);
       form.setValue("reminderDays", undefined);
       form.setValue("knockoutVotingPeriodDays", undefined);
+      form.setValue("votingThreshold", undefined);
     }
   }, [votingEnabled, form]);
 
