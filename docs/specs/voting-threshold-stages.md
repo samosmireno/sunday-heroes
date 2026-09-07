@@ -18,7 +18,7 @@ Two smaller collisions: `packages/shared-types/src/voting.ts` (#49 creates `Vote
 | 2 ✅  | #49 ‖ #48 ‖ #57 | The seam is server plus `shared-types/voting.ts`; the readout is `voting-section.tsx` plus a derived-arithmetic module; #57 is `vote-service.ts` alone. Disjoint. **Landed** — `63b7a61`, `68a87f7`, `d58ec92`, review follow-up `47aabbc`. |
 | 3 ✅  | #50 ‖ #53 ‖ #55 | Three disjoint sets: `submitVotes`; the transforms, `utils.ts`, match and dashboard services and `matches-list.tsx`; `match-voting-service.ts`. **Landed** — `7f63f2d`, `5317256`, `da6104f`, review follow-up `4556c75`.                   |
 | 4 ✅  | #52 ‖ #54       | Different `vote-service.ts` methods, different client features, different shared-types files. **Landed** — `1a1360b`, `d1367cd`, review follow-up `1588265`.                                                                                |
-| 5     | #51             | Solo — see below.                                                                                                                                                                                                                           |
+| 5 ✅  | #51             | Solo — see below. **Landed** — `7651f3e`, review folded in before the commit.                                                                                                                                                               |
 | 6     | #56             | Solo, on merged `main`.                                                                                                                                                                                                                     |
 
 Stage 3 inherits one thing from stage 2 worth knowing: `VoterEligibility.remaining` is `max(0, threshold - matchesThisSeason)` regardless of `qualified`, so a player who qualified in a closed Season and has played nothing this Season reports a non-zero `remaining` while `canVote` is `true`. That is §4.1's literal formula and the seam keeps it. The client rule that guards it is `armed && !qualified` — the copy lanes (#52, #53, #54) must not render `remaining` on its own.
@@ -40,6 +40,25 @@ Two things the stage-3 review turned up that are real but belong to a later tick
 **The vote page's sidebar was reworded, the guide was not.** `1588265` turned `VotingDeadline` from "Please submit your votes before" into "Voting closes on" for a blocked reader, and the ballot heading from "Select Your Top 3 Players" into a label, because the lock line one panel away says they cannot submit. `VotingGuide`'s three steps are still written in the imperative — "Select 3 players", "Submit your votes to finalize your selection" — and were left that way on the judgement that a box titled "How Voting Works" is explaining the mechanism a blocked reader is waiting to join, not instructing them. If #56 disagrees, it is one prop.
 
 **"Meter" is a text ratio on both surfaces.** §6.3 and §6.4 both say meter; #53 rendered `3/5 to vote` and #54 followed it with `2/5 Not eligible yet` rather than inventing a bar for one of the two. Consistency across the three surfaces was judged worth more than the literal word.
+
+### What stage 5 hands to #56
+
+**An empty pending list is now ambiguous, and only `submitVotes` resolves it.**
+`getPendingVoters` returning `[]` means "nobody may still vote", which an armed
+Competition also answers for a match no participant is Eligible on — one that
+has had no ballot and never will. `checkAndCloseVoting` may read empty as
+finished only because it runs behind a ballot the gate has just accepted. §4.2
+names `closeExpiredVoting` as the obvious next caller to reuse it; it opens no
+transaction and sits behind no gate, so it would have to decide for itself what
+an unvoted match deserves. The constraint is recorded in the method's docblock
+rather than enforced, because there is no second caller yet to enforce it
+against. Worth a look at #56 alongside the voteless-match arithmetic.
+
+**The stranded match is now covered by a test, not just an argument.** #51's db
+test arms a Competition mid-voting and pins the accepted outcome: the match
+stays open, and its pending list is empty. If #56 finds the readout dishonest
+on any of the three surfaces, that test is where the agreed behaviour is
+written down.
 
 ### #57 goes in stage 2, and only stage 2
 
@@ -90,7 +109,7 @@ Stage 2 therefore needs two databases, not one: #49 and #57 both run `db` tests,
 | 48  | The Voting threshold readout and the League ceiling advisory | #47        | 2 ✅  |
 | 49  | The eligibility seam: one loaded answer per Competition      | #47        | 2 ✅  |
 | 50  | The Voting gate refuses an ineligible voter at submit        | #49        | 3 ✅  |
-| 51  | Voting closes when every Eligible voter has voted            | #46, #50   | 5     |
+| 51  | Voting closes when every Eligible voter has voted            | #46, #50   | 5 ✅  |
 | 52  | The vote page's fourth state                                 | #49        | 4 ✅  |
 | 53  | Pending counts and the matches list respect the Voting gate  | #49        | 3 ✅  |
 | 54  | The pending-votes list shows each player's standing          | #49        | 4 ✅  |
