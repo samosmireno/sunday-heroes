@@ -93,14 +93,19 @@ the gate decides. A Testing Library test mirrors the one #54 wrote for the lock,
 over both a runway viewer and an Eligible voter. The admin's live link is
 untouched: it is still the only route to `/pending/:matchId`.
 
-_The All Matches page really is admin-only, and it is filed._
+_The All Matches page really was admin-only, and it is now fixed._
 [#59](https://github.com/samosmireno/sunday-heroes/issues/59). Confirmed as
-described: `getDashboardIdFromUserId` → `DashboardRepo.findByAdminId` means a
-plain PLAYER gets `NotFoundError("Dashboard")`, and `isAdmin` is therefore true
-on every row any reachable viewer sees. So #53's disabled affordance and the
-scoping above are built, tested and unreachable in production until that is
-decided. It is pre-existing and a product call — whether a PLAYER should see the
-page at all — so it was filed rather than fixed here.
+described: `getDashboardIdFromUserId` → `DashboardRepo.findByAdminId` meant a
+plain PLAYER got `NotFoundError("Dashboard")`, so `isAdmin` was true on every
+row any reachable viewer saw, and #53's disabled affordance and the scoping
+above were built, tested and unreachable in production. Pre-existing and a
+product call rather than a closing-pass edit, so this pass filed it — and
+`8a08a2b` then took it straight away, admitting each branch's viewer by
+membership instead of by ownership. The gate's third surface has a reachable
+viewer for the first time. That commit also marks the one instruction in §4.5 it
+supersedes: the viewer's dashboard player is now read off each Match's own
+`matchPlayers`, because one account is a different player on every dashboard it
+plays on and the user-wide list spans dashboards.
 
 _`VotingGuide` keeps its imperative steps._ Stage 4's judgement stands: a box
 titled "How Voting Works" explains the mechanism a blocked reader is waiting to
