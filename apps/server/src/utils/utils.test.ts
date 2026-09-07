@@ -7,21 +7,35 @@ import {
   DRAW_WIN_WEIGHT,
 } from "./utils";
 
-/** A Completed match between Home and Away, with the players named on each side. */
+/**
+ * A Completed match between Home and Away, with the players named on each side.
+ * A side's `ratings` name the players who scored; everyone else is 0, and a match
+ * where nobody scored is one nobody voted on.
+ */
+type Side = {
+  score: number;
+  players: string[];
+  penalties?: number;
+  ratings?: Record<string, number>;
+};
+
 function match(
-  home: { score: number; players: string[]; penalties?: number },
-  away: { score: number; players: string[]; penalties?: number },
+  home: Side,
+  away: Side,
   id = `${home.players.join("+")}-v-${away.players.join("+")}`,
 ): MatchResponse {
-  const side = (names: string[], isHome: boolean): PlayerResponse[] =>
-    names.map((nickname, position) => ({
+  const side = (
+    { players, ratings }: Side,
+    isHome: boolean,
+  ): PlayerResponse[] =>
+    players.map((nickname, position) => ({
       id: `player-${nickname}`,
       nickname,
       isHome,
       goals: 0,
       assists: 0,
       position,
-      rating: 0,
+      rating: ratings?.[nickname] ?? 0,
       manOfTheMatch: false,
     }));
   return {
@@ -34,7 +48,7 @@ function match(
     penaltyAwayScore: away.penalties,
     isCompleted: true,
     teams: ["Home", "Away"],
-    players: [...side(home.players, true), ...side(away.players, false)],
+    players: [...side(home, true), ...side(away, false)],
     season: { number: 1, isClosed: false },
   };
 }
@@ -122,6 +136,59 @@ describe("calculatePlayerStats", () => {
 
     expect(row).not.toHaveProperty("draws");
   });
+
+  it("averages the rating over the matches that were voted on", () => {
+    const matches = [
+      match(
+        { score: 1, players: ["Ana"], ratings: { Ana: 3 } },
+        { score: 0, players: ["Bo"], ratings: { Bo: 2 } },
+      ),
+      // Nobody voted: every rating is 0, so this match rates nobody.
+      match({ score: 1, players: ["Ana"] }, { score: 0, players: ["Bo"] }),
+    ];
+
+    expect(statsFor("Ana", matches)).toMatchObject({ matches: 2, rating: 3 });
+    expect(statsFor("Bo", matches)).toMatchObject({ matches: 2, rating: 2 });
+  });
+
+  it("counts a player who was rated and received nothing", () => {
+    const matches = [
+      match(
+        { score: 1, players: ["Ana"], ratings: { Ana: 3 } },
+        { score: 0, players: ["Bo"] },
+      ),
+    ];
+
+    expect(statsFor("Bo", matches).rating).toBe(0);
+  });
+
+  it("leaves the rating undefined when every match was voteless", () => {
+    const matches = [
+      match({ score: 1, players: ["Ana"] }, { score: 0, players: ["Bo"] }),
+      match({ score: 2, players: ["Ana"] }, { score: 0, players: ["Bo"] }),
+    ];
+
+    expect(statsFor("Ana", matches)).toMatchObject({
+      matches: 2,
+      rating: undefined,
+    });
+  });
+
+  it("keeps dividing matches and the win rate by every match played", () => {
+    const ana = statsFor("Ana", [
+      match(
+        { score: 2, players: ["Ana"], ratings: { Ana: 3 } },
+        { score: 0, players: ["Bo"] },
+      ),
+      match({ score: 1, players: ["Ana"] }, { score: 1, players: ["Bo"] }),
+    ]);
+
+    expect(ana.matches).toBe(2);
+    // (1 win + 1 draw * 0.3) / 2 matches — the voteless match still counts here
+    expect(ana.winRate).toBe(65);
+    // ...but not here: 3 over the one rated match, not over both
+    expect(ana.rating).toBe(3);
+  });
 });
 
 describe("calculateLeaguePlayerStats", () => {
@@ -138,5 +205,39 @@ describe("calculateLeaguePlayerStats", () => {
     // (0 wins + 1 draw * 0.3) / 2 matches
     expect(bo).toMatchObject({ teamName: "Away", wins: 0, winRate: 15 });
     expect(ana).not.toHaveProperty("draws");
+  });
+
+  it("averages the rating over the matches that were voted on", () => {
+    const rows = calculateLeaguePlayerStats([
+      match(
+        { score: 2, players: ["Ana"], ratings: { Ana: 3 } },
+        { score: 0, players: ["Bo"] },
+      ),
+      match({ score: 1, players: ["Ana"] }, { score: 1, players: ["Bo"] }),
+    ]);
+
+    expect(rows.find((player) => player.nickname === "Ana")).toMatchObject({
+      matches: 2,
+      rating: 3,
+    });
+  });
+
+  it("leaves the rating undefined when every match was voteless", () => {
+    const rows = calculateLeaguePlayerStats([
+      match({ score: 2, players: ["Ana"] }, { score: 0, players: ["Bo"] }),
+    ]);
+
+    expect(rows.find((player) => player.nickname === "Ana")).toMatchObject({
+      matches: 1,
+      rating: undefined,
+    });
+  });
+
+  it("does not expose the rated-match tally on the totals", () => {
+    const [row] = calculateLeaguePlayerStats([
+      match({ score: 1, players: ["Ana"] }, { score: 1, players: ["Bo"] }),
+    ]);
+
+    expect(row).not.toHaveProperty("ratedMatches");
   });
 });

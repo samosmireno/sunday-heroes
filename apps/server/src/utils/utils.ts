@@ -56,7 +56,20 @@ function determineMatchWinner(match: MatchResponse): "home" | "away" | "draw" {
 export const DRAW_WIN_WEIGHT = 0.3;
 
 /** A player's running totals while their matches are being tallied. */
-type PlayerTally<T extends PlayerTotals> = T & { draws: number };
+type PlayerTally<T extends PlayerTotals> = T & {
+  draws: number;
+  ratedMatches: number;
+};
+
+/**
+ * A match had votes iff at least one player scored above zero: `calculatePlayerScore`
+ * returns exactly 0 for an empty ballot. Works identically on old and new data — a
+ * voteless match now stores `null` and the transform recomputes it to 0, a historical
+ * one stores 0 directly — so both are excluded from the rating divisor.
+ */
+function matchWasRated(match: MatchResponse): boolean {
+  return match.players.some((player) => player.rating > 0);
+}
 
 /** Wins plus weighted draws, as a percentage of matches played, to two decimals. */
 export function calculateWinRate(
@@ -74,6 +87,7 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
 
   matches.forEach((match) => {
     const matchWinner = determineMatchWinner(match);
+    const hadVotes = matchWasRated(match);
 
     match.players.forEach((player) => {
       const existingPlayer = playerMap.get(player.nickname) || {
@@ -82,6 +96,7 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
         matches: 0,
         wins: 0,
         draws: 0,
+        ratedMatches: 0,
         winRate: 0,
         goals: 0,
         assists: 0,
@@ -100,6 +115,7 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
         matches: existingPlayer.matches + 1,
         wins: existingPlayer.wins + (hasWon ? 1 : 0),
         draws: existingPlayer.draws + (hasDrawn ? 1 : 0),
+        ratedMatches: existingPlayer.ratedMatches + (hadVotes ? 1 : 0),
         goals: existingPlayer.goals + player.goals,
         assists: existingPlayer.assists + player.assists,
         penaltyScored:
@@ -115,11 +131,14 @@ export function calculatePlayerStats(matches: MatchResponse[]): PlayerTotals[] {
   });
 
   const playerStats = Array.from(playerMap.values()).map(
-    ({ draws, ...player }) => ({
+    ({ draws, ratedMatches, ...player }) => ({
       ...player,
+      // Rating averages over the matches that were actually voted on; `matches`
+      // and `winRate` still divide by all of them. This is the divisor SQL `AVG`
+      // has always used on the dashboard, which skips NULL.
       rating:
-        player.matches > 0
-          ? Math.round((player.rating! / player.matches) * 100) / 100
+        ratedMatches > 0
+          ? Math.round((player.rating! / ratedMatches) * 100) / 100
           : undefined,
       winRate: calculateWinRate(player.wins, draws, player.matches),
     }),
@@ -135,6 +154,7 @@ export function calculateLeaguePlayerStats(
 
   matches.forEach((match) => {
     const matchWinner = determineMatchWinner(match);
+    const hadVotes = matchWasRated(match);
     match.players.forEach((player) => {
       const existingPlayer = playerMap.get(player.nickname) || {
         id: player.id,
@@ -142,6 +162,7 @@ export function calculateLeaguePlayerStats(
         matches: 0,
         wins: 0,
         draws: 0,
+        ratedMatches: 0,
         winRate: 0,
         goals: 0,
         assists: 0,
@@ -160,6 +181,7 @@ export function calculateLeaguePlayerStats(
         matches: existingPlayer.matches + 1,
         wins: existingPlayer.wins + (hasWon ? 1 : 0),
         draws: existingPlayer.draws + (hasDrawn ? 1 : 0),
+        ratedMatches: existingPlayer.ratedMatches + (hadVotes ? 1 : 0),
         goals: existingPlayer.goals + player.goals,
         assists: existingPlayer.assists + player.assists,
         penaltyScored:
@@ -172,11 +194,14 @@ export function calculateLeaguePlayerStats(
   });
 
   const playerStats = Array.from(playerMap.values()).map(
-    ({ draws, ...player }) => ({
+    ({ draws, ratedMatches, ...player }) => ({
       ...player,
+      // Rating averages over the matches that were actually voted on; `matches`
+      // and `winRate` still divide by all of them. This is the divisor SQL `AVG`
+      // has always used on the dashboard, which skips NULL.
       rating:
-        player.matches > 0
-          ? Math.round((player.rating! / player.matches) * 100) / 100
+        ratedMatches > 0
+          ? Math.round((player.rating! / ratedMatches) * 100) / 100
           : undefined,
       winRate: calculateWinRate(player.wins, draws, player.matches),
     }),

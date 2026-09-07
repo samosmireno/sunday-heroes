@@ -242,6 +242,11 @@ export class VoteService {
     const match = await MatchRepo.findByIdWithDetails(matchId);
     if (!match) return;
 
+    // No votes means nothing was rated. `null` is "never rated", `0` is "rated
+    // and received nothing" — a voteless match is the former, and this guard is
+    // the only thing that keeps it distinguishable downstream.
+    if (match.playerVotes.length === 0) return;
+
     const updates = match.matchPlayers.map(async (mp) => {
       const rating = calculatePlayerScore(mp.receivedVotes, match.playerVotes);
       return await transaction.matchPlayer.update({
@@ -274,7 +279,11 @@ export class VoteService {
 
     const maxRating = maxRatingResult._max.rating;
 
-    if (maxRating === null) return;
+    // Nobody scored, nobody is man of the match. Arithmetically redundant given
+    // the guard above — any vote row awards at least one point — but two paths
+    // write ratings (the submit-time close and `closeExpiredVoting`), and "a 0
+    // maximum never crowns anyone" should hold whichever one calls.
+    if (maxRating === null || maxRating === 0) return;
 
     await transaction.matchPlayer.updateMany({
       where: {
