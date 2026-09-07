@@ -576,6 +576,22 @@ Plus the production-dump rehearsal for both migrations (§3).
 10. The repair migration, rehearsed against a production dump.
 11. Re-read the `CONTEXT.md` **Voting** entries against the finished code. They are expected to still read true; do not rewrite them.
 
+### Landed early, on `main`, before the feature
+
+The parts of this spec that never mention `votingThreshold` shipped ahead of it, as [Every player is marked man of the match when voting expires with no votes](https://github.com/samosmireno/sunday-heroes/issues/42) — they fix live behaviour for every Competition, and §2 had already ruled out gating them behind the flag. An implementing agent should expect to find them already done:
+
+| Step | What landed | What is still open in that step |
+| --- | --- | --- |
+| 4 | The two rating guards in `calculateAndStoreMatchRatings` and `markManOfTheMatch` (§4.2) | The gate in `submitVotes`, `getPendingVoters`, `checkAndCloseVoting` and the deleted `- 1`, `getVotingStatus`, `getMatchVotes` |
+| 5 | The `ratedMatches` divisor in `calculatePlayerStats` and `calculateLeaguePlayerStats` (§4.4) | `calculatePendingVotes(match, eligibility)` |
+| 10 | `20260907104753_voteless_match_repair` (§3.2), rehearsed against a restored production dump and deployed | — |
+
+So the repair migration is **out of order relative to the schema migration**: it is on `main` and in production, and `20260903110459_competition_match_type` is the migration before it. The `votingThreshold` column and the `Match` composite index of step 2 are still to be written, and will simply come after it.
+
+Both §2 deltas are therefore already visible in production; do not name them again in the feature's release note. The rehearsal found 60 rows across 6 voteless matches, 5 of which had their whole 10-player squad crowned; MOTM rows fell 147 → 97.
+
+The tests those steps called for are in place: `src/utils/utils.test.ts` for both divisors, the voteless close in `src/services/vote-service.db.test.ts`, and `test/voteless-match-repair.db.test.ts`, which reads the repair SQL out of the migration file. Everything else in §7 is still to be written.
+
 ---
 
 ## 9. Out of scope
