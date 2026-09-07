@@ -26,14 +26,12 @@ export class VotingEligibilityService {
    * That match counts toward qualification, so a player whose qualifying match
    * is this one is eligible — but only visibly so from inside that
    * transaction. Reading through a caller's `tx` would therefore hand back an
-   * answer that depends on which transaction happened to be open. Each caller
-   * instead loads at a point where what it needs is committed (the email path
-   * loads inside its `setImmediate`, `submitVotes` loads before opening its
-   * transaction). Do not add a `tx?` parameter here.
-   *
-   * Both of those callers, and every other one named above, are still to be
-   * built: #50 and #52-#55 wire this service up. Nothing in production
-   * reaches it yet, so grepping for a caller finds only the tests.
+   * answer that depends on which transaction happened to be open. Every caller
+   * instead loads at a point where what it needs is committed: the two email
+   * paths inside their `setImmediate`, `submitVotes` before it opens its
+   * transaction, and the read paths — `getVotingStatus`, `getMatchVotes`, the
+   * dashboard and the All Matches page — inside no transaction at all. Do not
+   * add a `tx?` parameter here.
    *
    * **No cache either.** Eligibility is live at submit time, and completing a
    * match, adding a player and Reset competition would each need invalidation.
