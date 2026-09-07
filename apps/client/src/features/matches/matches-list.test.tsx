@@ -67,13 +67,18 @@ describe("MatchesList", () => {
 });
 
 /** An open match, with the viewer standing wherever the Voting gate puts them. */
-function openMatch(viewerEligibility = voterEligibility(), isAdmin = false) {
+function openMatch(
+  viewerEligibility = voterEligibility(),
+  isAdmin = false,
+  viewerPlayed = true,
+) {
   return matchPageResponse({
     votingEnabled: true,
     votingStatus: VotingStatus.OPEN,
     pendingVotes: 2,
     isAdmin,
     viewerEligibility,
+    viewerPlayed,
   });
 }
 
@@ -130,6 +135,40 @@ describe("MatchesList and the Voting gate", () => {
       screen.getByRole("button", { name: "Vote on this match" }),
     ).toBeDefined();
     expect(screen.queryByText(/to vote/)).toBeNull();
+  });
+
+  it("says nothing to a blocked viewer who was never on the match", () => {
+    // §6.3 scopes the lock to a match the viewer played. A non-participant has
+    // no ballot on this match at all, so a Current-season counter here would be
+    // a number about a match they were never part of.
+    render(
+      <MatchesList
+        matches={[openMatch(blockedEligibility(5, 3), false, false)]}
+      />,
+      { wrapper: createTestProviders() },
+    );
+
+    expect(
+      screen.queryByRole("button", {
+        name: "You cannot vote on this match yet",
+      }),
+    ).toBeNull();
+    expect(screen.queryByRole("button", { name: "Vote on this match" })).toBe(
+      null,
+    );
+  });
+
+  it("keeps the admin's live link on a match the admin never played", () => {
+    render(
+      <MatchesList
+        matches={[openMatch(blockedEligibility(5, 0), true, false)]}
+      />,
+      { wrapper: createTestProviders() },
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Vote on this match" }),
+    ).toBeDefined();
   });
 
   it("renders the cell exactly as before during the runway", () => {

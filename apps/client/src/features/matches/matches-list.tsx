@@ -53,7 +53,8 @@ const columnsOf = (showSeason: boolean): Column[] => [
  * Only ever rendered when `canVote` is false, which the gate answers only once
  * it is armed and the viewer has not qualified. So the counter never shows on
  * its own during the runway, where it would be a number about a rule that is
- * not yet in force.
+ * not yet in force — and only on a match the viewer played, since a
+ * non-participant has no ballot on it to be shut out of.
  *
  * The title sits on the wrapping span deliberately: a disabled button carries
  * `pointer-events: none`, so a title on the button itself never surfaces.
@@ -216,7 +217,14 @@ export default function MatchesList({
                           this button is the only route to the on-behalf-of list
                           (`/pending/:matchId`), and the gate is about the standing
                           of the player a ballot is cast for, never the rights of
-                          whoever is asking. */}
+                          whoever is asking.
+
+                          The lock, though, is scoped to a match the viewer
+                          played. A blocked non-participant is not waiting for
+                          anything on this match — they never had a ballot on
+                          it — so the slot stays empty rather than carrying a
+                          Current-season counter about a match they were never
+                          on. */}
                       {match.votingStatus === "OPEN" &&
                         match.votingEnabled &&
                         (match.isAdmin || match.viewerEligibility.canVote ? (
@@ -232,9 +240,11 @@ export default function MatchesList({
                             <CheckSquare size={16} />
                           </Button>
                         ) : (
-                          <BlockedVoteAffordance
-                            eligibility={match.viewerEligibility}
-                          />
+                          match.viewerPlayed && (
+                            <BlockedVoteAffordance
+                              eligibility={match.viewerEligibility}
+                            />
+                          )
                         ))}
                       {/* <Button
                         onClick={(e) => {

@@ -130,6 +130,14 @@ export function transformMatchesToMatchesResponse(
       playerCount: match.matchPlayers.length,
       pendingVotes: calculatePendingVotes(match, eligibility),
       viewerEligibility: eligibility.for(viewerDashboardPlayerId),
+      // The blocked vote affordance is scoped to a match the viewer played,
+      // and this is the only place that knows. A viewer who is nobody on this
+      // dashboard played nothing anywhere, so `null` answers false here.
+      viewerPlayed:
+        viewerDashboardPlayerId !== null &&
+        match.matchPlayers.some(
+          (player) => player.dashboardPlayerId === viewerDashboardPlayerId,
+        ),
       playerStats: [...homeTeamPlayers, ...awayTeamPlayers],
       competitionId: match.competition.id,
       competitionName: match.competition.name,

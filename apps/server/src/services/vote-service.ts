@@ -198,10 +198,16 @@ export class VoteService {
       throw new NotFoundError("Competition");
     }
 
+    // One load for the match's Competition, handed down to the transform —
+    // the same idiom `submitVotes` follows, and the reason the list never asks
+    // the gate once per player.
+    const eligibility = await VotingEligibilityService.load(competitionInfo.id);
+
     const matchVoteResponse = transformMatchServiceToPendingVotes(
       match,
       competition,
       userId,
+      eligibility,
     );
     return matchVoteResponse;
   }

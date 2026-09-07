@@ -26,6 +26,12 @@ export type PendingVote = {
   playerId: string;
   voted: boolean;
   isUser: boolean;
+  /**
+   * Where this player stands with the Competition's Voting gate. Always
+   * present, so the on-behalf-of list can keep an ineligible player listed and
+   * say why rather than dropping the row.
+   */
+  eligibility: VoterEligibility;
 };
 
 export type MatchVotes = {

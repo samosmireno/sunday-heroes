@@ -46,6 +46,13 @@ export type MatchPageResponse = {
    * who is nobody on this dashboard reads as a player who has played nothing.
    */
   viewerEligibility: VoterEligibility;
+  /**
+   * Whether the viewer was on this match. The blocked vote affordance is
+   * scoped to a match the viewer played: a non-participant has no ballot on it
+   * at all, so a Current-season counter there would be a number about a match
+   * they were never part of.
+   */
+  viewerPlayed: boolean;
   playerStats: PlayerResponse[];
   videoUrl?: string;
   season: MatchSeason;

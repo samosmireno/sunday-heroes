@@ -10,6 +10,8 @@ import {
   MatchPageResponse,
   MatchResponse,
   MatchType,
+  MatchVotes,
+  PendingVote,
   PlayerResponse,
   Role,
   SeasonResponse,
@@ -248,6 +250,7 @@ export function matchPageResponse(
     playerCount: 10,
     pendingVotes: 0,
     viewerEligibility: voterEligibility(),
+    viewerPlayed: true,
     playerStats: [],
     season: { number: 1, isClosed: false },
     ...overrides,
@@ -286,4 +289,47 @@ export function blockedEligibility(
     matchesThisSeason: played,
     remaining: Math.max(0, threshold - played),
   });
+}
+
+/** An Eligible voter of an armed Competition, `played` matches in this Season. */
+export function eligibleUnderGate(
+  threshold: number,
+  played: number,
+): VoterEligibility {
+  return voterEligibility({
+    canVote: true,
+    qualified: true,
+    armed: true,
+    threshold,
+    matchesThisSeason: played,
+    remaining: Math.max(0, threshold - played),
+  });
+}
+
+/** One name on the admin's on-behalf-of list. */
+export function pendingVote(overrides: Partial<PendingVote> = {}): PendingVote {
+  return {
+    playerName: "Ana",
+    playerId: "player-1",
+    voted: false,
+    isUser: false,
+    eligibility: voterEligibility(),
+    ...overrides,
+  };
+}
+
+/** The whole on-behalf-of list for one match. */
+export function matchVotes(overrides: Partial<MatchVotes> = {}): MatchVotes {
+  return {
+    userRole: Role.ADMIN,
+    matchId: "match-1",
+    matchDate: "2026-09-06T12:00:00.000Z",
+    competitionId: "comp-1",
+    competitionName: "Zlatna lopta",
+    teams: ["Home", "Away"],
+    homeScore: 2,
+    awayScore: 1,
+    players: [pendingVote()],
+    ...overrides,
+  };
 }

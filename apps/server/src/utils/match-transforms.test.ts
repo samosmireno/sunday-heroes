@@ -175,6 +175,37 @@ describe("transformMatchesToMatchesResponse", () => {
     expect(response.isAdmin).toBe(true);
   });
 
+  it("says whether the viewer was on the match", () => {
+    const [played] = transformMatchesToMatchesResponse(
+      ADMIN,
+      [matchOnThePage()],
+      eligibilitiesOf(gate(5, [ANA])),
+      BEA,
+    );
+    const [watched] = transformMatchesToMatchesResponse(
+      ADMIN,
+      [matchOnThePage()],
+      eligibilitiesOf(gate(5, [ANA])),
+      "player-dee",
+    );
+
+    expect(played.viewerPlayed).toBe(true);
+    expect(watched.viewerPlayed).toBe(false);
+  });
+
+  it("puts nobody on a match they were never on", () => {
+    // A viewer who is nobody on this dashboard played nothing anywhere, so the
+    // question of whether they played this match answers itself.
+    const [response] = transformMatchesToMatchesResponse(
+      ADMIN,
+      [matchOnThePage()],
+      eligibilitiesOf(gate(5, [ANA])),
+      null,
+    );
+
+    expect(response.viewerPlayed).toBe(false);
+  });
+
   it("takes the eligibility of each match's own Competition", () => {
     const other = "competition-2";
     const eligibilities = new Map([
@@ -234,6 +265,7 @@ describe("transformMatchesToMatchesResponse", () => {
         matchesThisSeason: 0,
         remaining: 0,
       },
+      viewerPlayed: true,
       playerStats: [
         {
           id: ANA,
