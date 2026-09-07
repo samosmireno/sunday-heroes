@@ -210,22 +210,26 @@ export default function MatchesList({
                       {match.season.isClosed && (
                         <ClosedSeasonLock seasonNumber={match.season.number} />
                       )}
-                      {/* The affordance shows on an open match exactly as it always
-                          has; the Voting gate decides only whether it is usable.
-                          An admin keeps the live link whatever their own standing:
-                          this button is the only route to the on-behalf-of list
-                          (`/pending/:matchId`), and the gate is about the standing
-                          of the player a ballot is cast for, never the rights of
-                          whoever is asking.
+                      {/* The cell has something to say to two viewers, which is
+                          what the outer guard names: an admin, and a player who
+                          played this match. An admin keeps the live link
+                          whatever their own standing — this button is the only
+                          route to the on-behalf-of list (`/pending/:matchId`),
+                          and the gate is about the standing of the player a
+                          ballot is cast for, never the rights of whoever is
+                          asking. For anyone else the slot stays empty: a
+                          non-participant has no ballot on this match, so the
+                          lock would be a Current-season counter about a match
+                          they were never on, and the live button an offer the
+                          submit already refuses with "You have not played in
+                          this match".
 
-                          The lock, though, is scoped to a match the viewer
-                          played. A blocked non-participant is not waiting for
-                          anything on this match — they never had a ballot on
-                          it — so the slot stays empty rather than carrying a
-                          Current-season counter about a match they were never
-                          on. */}
+                          Between those two the affordance shows on every open
+                          match exactly as it always has, and the Voting gate
+                          decides only whether it is usable. */}
                       {match.votingStatus === "OPEN" &&
                         match.votingEnabled &&
+                        (match.isAdmin || match.viewerPlayed) &&
                         (match.isAdmin || match.viewerEligibility.canVote ? (
                           <Button
                             onClick={(e) => {
@@ -239,11 +243,9 @@ export default function MatchesList({
                             <CheckSquare size={16} />
                           </Button>
                         ) : (
-                          match.viewerPlayed && (
-                            <BlockedVoteAffordance
-                              eligibility={match.viewerEligibility}
-                            />
-                          )
+                          <BlockedVoteAffordance
+                            eligibility={match.viewerEligibility}
+                          />
                         ))}
                       {/* <Button
                         onClick={(e) => {

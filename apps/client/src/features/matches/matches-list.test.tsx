@@ -4,6 +4,7 @@ import { VoterEligibility, VotingStatus } from "@repo/shared-types";
 import { createTestProviders } from "@/test/harness";
 import {
   blockedEligibility,
+  eligibleUnderGate,
   matchPageResponse,
   voterEligibility,
 } from "@/test/fixtures";
@@ -194,6 +195,35 @@ describe("MatchesList and the Voting gate", () => {
       null,
     );
   });
+
+  it.each([
+    ["the runway", voterEligibility()],
+    ["an Eligible voter", eligibleUnderGate(5, 6)],
+  ])(
+    "says nothing to a viewer who may vote but was never on the match, on %s",
+    (_case, viewerEligibility) => {
+      // The mirror of the test above, on the enabled branch. §6.3 scopes the
+      // cell to a match the viewer played, and a viewer who may vote in the
+      // Competition still has no ballot on this match: the submit behind the
+      // button refuses with "You have not played in this match", so offering
+      // it is an offer the app already knows it cannot keep.
+      render(
+        <MatchesList
+          matches={[openMatch({ viewerEligibility, viewerPlayed: false })]}
+        />,
+        { wrapper: createTestProviders() },
+      );
+
+      expect(
+        screen.queryByRole("button", {
+          name: "You cannot vote on this match yet",
+        }),
+      ).toBeNull();
+      expect(screen.queryByRole("button", { name: "Vote on this match" })).toBe(
+        null,
+      );
+    },
+  );
 
   it("keeps the admin's live link on a match the admin never played", () => {
     render(
