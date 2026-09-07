@@ -6,12 +6,12 @@ Vocabulary is already in `CONTEXT.md` under **Voting** — **Voting threshold**,
 
 Provenance, for anything this file leaves ambiguous:
 
-| Decision | Ticket |
-| --- | --- |
-| What a blocked voter sees on all three surfaces | [What a player who cannot vote yet sees](https://github.com/samosmireno/sunday-heroes/issues/37) |
-| The form field, its bounds and its readout | [How an admin sets the threshold and learns about the runway](https://github.com/samosmireno/sunday-heroes/issues/38) |
-| The eligibility seam, the column, the caller table | [Where eligibility is computed](https://github.com/samosmireno/sunday-heroes/issues/39) |
-| Closure, pending counts, the voteless match, the repair | [What closing voting means with a shrinking electorate](https://github.com/samosmireno/sunday-heroes/issues/40) |
+| Decision                                                 | Ticket                                                                                                                |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| What a blocked voter sees on all three surfaces          | [What a player who cannot vote yet sees](https://github.com/samosmireno/sunday-heroes/issues/37)                      |
+| The form field, its bounds and its readout               | [How an admin sets the threshold and learns about the runway](https://github.com/samosmireno/sunday-heroes/issues/38) |
+| The eligibility seam, the column, the caller table       | [Where eligibility is computed](https://github.com/samosmireno/sunday-heroes/issues/39)                               |
+| Closure, pending counts, the voteless match, the repair  | [What closing voting means with a shrinking electorate](https://github.com/samosmireno/sunday-heroes/issues/40)       |
 | The League ceiling line, and that nothing is error-grade | [Whether the threshold is reachable at all in a small League](https://github.com/samosmireno/sunday-heroes/issues/43) |
 
 No ADR. The rule is reversible — drop the column and the feature is gone — and a future reader with this spec is not surprised by anything in the schema.
@@ -46,12 +46,12 @@ The promise this feature makes to existing users:
 
 > **No Competition acquires a threshold, no vote already cast is discarded, and no rating that any vote produced is ever changed.**
 
-Three of the changes below are **not** threshold-specific — they fix behaviour for every Competition, including the ones with `votingThreshold` null. Gating them behind the flag was explicitly rejected: it would preserve a live bug for most of the fleet and make the League and Duel tables disagree with the dashboard for precisely the competitions *not* using the feature.
+Three of the changes below are **not** threshold-specific — they fix behaviour for every Competition, including the ones with `votingThreshold` null. Gating them behind the flag was explicitly rejected: it would preserve a live bug for most of the fleet and make the League and Duel tables disagree with the dashboard for precisely the competitions _not_ using the feature.
 
 Two deltas will therefore be visible on deploy. Name them in the release note so they are not mistaken for a regression:
 
 1. **Voteless matches stop crowning the whole squad.** A match that closed with no votes stored `rating` 0 for everyone, and `markManOfTheMatch` then flagged `isMotm` on every player. Career MOTM counts fall to the truth.
-2. **Competition-table rating averages stop counting voteless matches.** They move *up*, into agreement with the dashboard's SQL `AVG`, which already skipped them.
+2. **Competition-table rating averages stop counting voteless matches.** They move _up_, into agreement with the dashboard's SQL `AVG`, which already skipped them.
 
 ---
 
@@ -131,9 +131,13 @@ export class VotingEligibility {
 
 export function buildVotingEligibility(input: {
   threshold: number | null;
-  completedMatchCount: number;                       // lifetime, all Seasons
+  completedMatchCount: number; // lifetime, all Seasons
   currentSeason: { id: string; number: number } | null;
-  participations: { dashboardPlayerId: string; seasonId: string; count: number }[];
+  participations: {
+    dashboardPlayerId: string;
+    seasonId: string;
+    count: number;
+  }[];
 }): VotingEligibility;
 ```
 
@@ -190,17 +194,17 @@ Add beside `findCurrent` in `apps/server/src/repositories/season/season-repo.ts`
 
 #### The caller table
 
-| Caller | How it gets the object |
-| --- | --- |
-| `VoteService.submitVotes` | `load` **before** opening the `$transaction`; passes it into `checkAndCloseVoting` |
-| `VoteService.getVotingStatus` | `load` |
-| `VoteService.getPendingVoters` | **required parameter, no default** |
-| `VoteService.getMatchVotes` | `load`, threaded into `transformMatchServiceToPendingVotes` |
-| `MatchVotingService.sendVotingEmails` | `load` **inside the existing `setImmediate`**, which already runs after the transaction callback returns |
-| `MatchVotingService.sendReminderEmails` | `loadMany` over the distinct `competitionId`s of `findMatchesExpiringSoon()`, once, up front |
-| `MatchService.getMatchesForUser` | `loadMany` over the distinct `competitionId`s of the page, threaded into `transformMatchesToMatchesResponse` |
-| `DashboardService` → `extractDashboardData` | `loadMany`, threaded into the pure transform |
-| `calculatePendingVotes` | threaded in as a parameter (an addition to #39's original table) |
+| Caller                                      | How it gets the object                                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `VoteService.submitVotes`                   | `load` **before** opening the `$transaction`; passes it into `checkAndCloseVoting`                           |
+| `VoteService.getVotingStatus`               | `load`                                                                                                       |
+| `VoteService.getPendingVoters`              | **required parameter, no default**                                                                           |
+| `VoteService.getMatchVotes`                 | `load`, threaded into `transformMatchServiceToPendingVotes`                                                  |
+| `MatchVotingService.sendVotingEmails`       | `load` **inside the existing `setImmediate`**, which already runs after the transaction callback returns     |
+| `MatchVotingService.sendReminderEmails`     | `loadMany` over the distinct `competitionId`s of `findMatchesExpiringSoon()`, once, up front                 |
+| `MatchService.getMatchesForUser`            | `loadMany` over the distinct `competitionId`s of the page, threaded into `transformMatchesToMatchesResponse` |
+| `DashboardService` → `extractDashboardData` | `loadMany`, threaded into the pure transform                                                                 |
+| `calculatePendingVotes`                     | threaded in as a parameter (an addition to #39's original table)                                             |
 
 `getPendingVoters` takes eligibility as a **required parameter with no default**. A default that loads its own is exactly how the N+1 gets reintroduced by the next caller.
 
@@ -266,7 +270,7 @@ private static async checkAndCloseVoting(
 }
 ```
 
-**The `- 1` is deleted, not adapted.** It existed only because the two reads ran on a separate connection and could not see the votes `VoteRepo.createMany(voteData, tx)` had just written, leaving the submitter counted as pending. Threading `tx` removes the cause. Keeping the `- 1` would work today but rests on an unwritten invariant — *"exactly one phantom pending voter, always the submitter"* — that fails **closed and silently**: the symptom is a match that never auto-closes, indistinguishable from ordinary slow turnout. The next caller to reuse `checkAndCloseVoting` outside a submit transaction (`closeExpiredVoting` is the obvious candidate) would see the true count, subtract one, and never close anything.
+**The `- 1` is deleted, not adapted.** It existed only because the two reads ran on a separate connection and could not see the votes `VoteRepo.createMany(voteData, tx)` had just written, leaving the submitter counted as pending. Threading `tx` removes the cause. Keeping the `- 1` would work today but rests on an unwritten invariant — _"exactly one phantom pending voter, always the submitter"_ — that fails **closed and silently**: the symptom is a match that never auto-closes, indistinguishable from ordinary slow turnout. The next caller to reuse `checkAndCloseVoting` outside a submit transaction (`closeExpiredVoting` is the obvious candidate) would see the true count, subtract one, and never close anything.
 
 #### `calculateAndStoreMatchRatings` and `markManOfTheMatch`
 
@@ -280,7 +284,7 @@ if (match.playerVotes.length === 0) return;
 if (maxRating === null || maxRating === 0) return;
 ```
 
-The first carries the meaning: `null` is *never rated*, `0` is *rated and received nothing*. A voteless match is the former, and this guard is the only thing that makes such a match distinguishable downstream at all.
+The first carries the meaning: `null` is _never rated_, `0` is _rated and received nothing_. A voteless match is the former, and this guard is the only thing that makes such a match distinguishable downstream at all.
 
 The second is arithmetically redundant given the first — any vote row awards at least 1 point, so a match with votes always has a positive maximum. It stays anyway, because **two paths write ratings** (the submit-time close and `MatchVotingService.closeExpiredVoting`), and the invariant "a 0 maximum never crowns anyone" should hold whichever calls, and whatever a future caller does.
 
@@ -306,11 +310,11 @@ Load **inside the existing `setImmediate`** (line 89), which already runs after 
 
 Unchanged. It calls `calculateAndStoreMatchRatings`, which needs no eligibility.
 
-**Arming mid-voting is left to this cron.** A match opens during the runway, A/B/C vote, D does not; the Competition then arms because some *other* match completed, and D goes ineligible. The eligible electorate {A, B, C} is complete, but `checkAndCloseVoting` only runs on a submit and no further submit is coming. The nightly `closeExpiredVoting` (`0 0 * * *`, `match-expired-service.ts:8`) collects it at `votingEndsAt`.
+**Arming mid-voting is left to this cron.** A match opens during the runway, A/B/C vote, D does not; the Competition then arms because some _other_ match completed, and D goes ineligible. The eligible electorate {A, B, C} is complete, but `checkAndCloseVoting` only runs on a submit and no further submit is coming. The nightly `closeExpiredVoting` (`0 0 * * *`, `match-expired-service.ts:8`) collects it at `votingEndsAt`.
 
-This is accepted, and bounded: arming is monotonic and fires once per Competition lifetime, so the stranded window is the handful of matches open at that single instant, once, ever — and it self-heals. An eager sweep was rejected on merit, not cost: the electorate is **not** monotonically shrinking, because an ineligible participant who crosses the threshold mid-voting *joins* it, and a "close as soon as all eligible have voted" sweep would slam the ballot shut on someone one match from qualifying who could legitimately still have voted before the deadline. Hooking arming onto `completeMatch`/`createMatch` was rejected too — write-triggers on two hot paths to buy a few days of tidiness for a once-per-competition event.
+This is accepted, and bounded: arming is monotonic and fires once per Competition lifetime, so the stranded window is the handful of matches open at that single instant, once, ever — and it self-heals. An eager sweep was rejected on merit, not cost: the electorate is **not** monotonically shrinking, because an ineligible participant who crosses the threshold mid-voting _joins_ it, and a "close as soon as all eligible have voted" sweep would slam the ballot shut on someone one match from qualifying who could legitimately still have voted before the deadline. Hooking arming onto `completeMatch`/`createMatch` was rejected too — write-triggers on two hot paths to buy a few days of tidiness for a once-per-competition event.
 
-**Spec line:** a stranded match reads as `votingStatus: OPEN` with `pendingVotes: 0` — *"nothing more can arrive, waiting for the deadline"*, which is exactly the truth. The pending-votes change in §4.4 is what makes that readout honest.
+**Spec line:** a stranded match reads as `votingStatus: OPEN` with `pendingVotes: 0` — _"nothing more can arrive, waiting for the deadline"_, which is exactly the truth. The pending-votes change in §4.4 is what makes that readout honest.
 
 ### 4.4 `apps/server/src/utils/utils.ts`
 
@@ -320,7 +324,7 @@ This is accepted, and bounded: arming is monotonic and fires once per Competitio
 export function calculatePendingVotes(
   match: MatchWithDetails,
   eligibility: VotingEligibility,
-): number
+): number;
 ```
 
 Count **eligible** non-voters only. It is the closure condition's twin, computed a second time without the filter — so today a match would advertise "2 votes pending" for two people who cannot vote and whose votes will never arrive, while the closure condition had already judged the electorate complete. During the runway `.for()` returns `canVote: true` for everyone, so the count is unchanged.
@@ -329,7 +333,7 @@ Count **eligible** non-voters only. It is the closure condition's twin, computed
 
 Both currently compute `sum(rating || 0) / matches`, dividing by **all** matches over ratings the transform already coerced to 0. The dashboard uses Prisma `_avg: { rating: true }` (`dashboard-player-stats-repo.ts:40`) and SQL `AVG()` skips `NULL` — so the same player's average differs between the dashboard and the competition table, and every voteless match drags the table figure toward zero. Pre-existing, but the gate turns voteless matches from an accident into a **designed outcome**, so a player in a small Duel would watch their rating fall for matches nobody was permitted to vote in.
 
-Divide by **rated** matches instead. No new field is needed, because *a match had votes iff at least one player scored above zero*:
+Divide by **rated** matches instead. No new field is needed, because _a match had votes iff at least one player scored above zero_:
 
 ```ts
 const matchHadVotes = match.players.some((p) => p.rating > 0);
@@ -347,15 +351,15 @@ rating: ratedMatches > 0
 
 The in-band signal works identically on old and new data, which is why it was chosen over making `rating` nullable on the wire: a new voteless match stores `null` and the transform recomputes `calculatePlayerScore([], [])` → `0`; a historical one stores `0` directly. Both arrive as 0 and both are excluded. `rating: number | null` reaching the client was rejected — `match-details.tsx:119` calls `player.rating.toFixed(1)` unguarded and three other sites assume a number.
 
-**No turnout floor.** `calculatePlayerScore` is already normalised: with `V` voters there are `3V` vote rows and a player taking first place on every ballot scores 3.0, whether `V` is 2 or 20. A thin electorate makes ratings *coarse*, not inflated. And this is not new — a ten-participant match where one person votes closes on that single ballot today. The gate changed who *may* vote, not how many turn up.
+**No turnout floor.** `calculatePlayerScore` is already normalised: with `V` voters there are `3V` vote rows and a player taking first place on every ballot scores 3.0, whether `V` is 2 or 20. A thin electorate makes ratings _coarse_, not inflated. And this is not new — a ten-participant match where one person votes closes on that single ballot today. The gate changed who _may_ vote, not how many turn up.
 
 ### 4.5 Transforms
 
-| Function | Change |
-| --- | --- |
-| `match-transforms.ts:63` `transformMatchesToMatchesResponse(userId, matches)` | takes `eligibilities: Map<competitionId, VotingEligibility>` and the **viewer's `dashboardPlayerId`**; passes eligibility to `calculatePendingVotes` and sets `viewerEligibility` on each `MatchPageResponse` |
-| `votes-transforms.ts:6` `transformMatchServiceToPendingVotes(match, competition, userId)` | takes `eligibility: VotingEligibility`; sets `eligibility` on each `PendingVote` from `player.dashboardPlayerId` |
-| `dashboard-transforms.ts:40` `extractDashboardData(competitions, matches)` | takes `eligibilities: Map<competitionId, VotingEligibility>`; the `pendingVotes` reduce (line 54) filters participants by `canVote` |
+| Function                                                                                  | Change                                                                                                                                                                                                        |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `match-transforms.ts:63` `transformMatchesToMatchesResponse(userId, matches)`             | takes `eligibilities: Map<competitionId, VotingEligibility>` and the **viewer's `dashboardPlayerId`**; passes eligibility to `calculatePendingVotes` and sets `viewerEligibility` on each `MatchPageResponse` |
+| `votes-transforms.ts:6` `transformMatchServiceToPendingVotes(match, competition, userId)` | takes `eligibility: VotingEligibility`; sets `eligibility` on each `PendingVote` from `player.dashboardPlayerId`                                                                                              |
+| `dashboard-transforms.ts:40` `extractDashboardData(competitions, matches)`                | takes `eligibilities: Map<competitionId, VotingEligibility>`; the `pendingVotes` reduce (line 54) filters participants by `canVote`                                                                           |
 
 `transformMatchesToMatchesResponse` needs the viewer's `dashboardPlayerId`, not their `userId`. `MatchService.getMatchesForUser` (`match-service.ts:35`) already resolves `dashboardId`, so add one `DashboardPlayerRepo.findByUserId(userId, dashboardId)` there and pass the id down. Keep the existing `userId` parameter — `isAdmin` still compares against `dashboard.adminId`.
 
@@ -386,10 +390,10 @@ No cross-field refinement. The threshold is optional even when `votingEnabled` i
 
 ```ts
 export type VoterEligibility = {
-  canVote: boolean;          // the gate's answer; folds in arming
-  qualified: boolean;        // has reached X in some Season
-  armed: boolean;            // competition-level, carried per record
-  threshold: number | null;  // null = no gate
+  canVote: boolean; // the gate's answer; folds in arming
+  qualified: boolean; // has reached X in some Season
+  armed: boolean; // competition-level, carried per record
+  threshold: number | null; // null = no gate
   matchesThisSeason: number; // Current season
   remaining: number;
 };
@@ -399,7 +403,7 @@ export type PendingVote = {
   playerId: string;
   voted: boolean;
   isUser: boolean;
-  eligibility: VoterEligibility;   // new
+  eligibility: VoterEligibility; // new
 };
 ```
 
@@ -454,7 +458,7 @@ The off-state is stated positively rather than being an absence.
 **One** derived advisory line, for a **League** only. `numberOfTeams` and `isRoundRobin` are two sections up in the same form and `LeagueService.generateRoundRobinMatches` generates the whole season's fixtures at creation, so the number is exact at form time:
 
 - **ceiling** = `n - 1`, doubled for double round robin — a player rostered to one team can play only that team's fixtures.
-- Stated as fact: *"With 4 teams, a player can play at most 3 matches in a season."*
+- Stated as fact: _"With 4 teams, a player can play at most 3 matches in a season."_
 - **Amber when X exceeds it. Submission still goes through.**
 
 A **Duel** shows nothing: it has no fixture list, no team count and no ceiling, so the reachability question does not arise there.
@@ -473,9 +477,9 @@ A participant who has not reached the threshold is a **fourth** state alongside 
 - A **banner above it names the count** — the threshold, matches played in the Current season, how many remain, and that the count is per-Season and does not carry over. Use `seasonNumber` from the payload to name the season.
 - The submit affordance is replaced by a lock line ("You can't submit votes yet"). **Back to Dashboard stays.**
 
-Structure comes from prototype variant C (being locked out should read as *waiting your turn*, not as being thrown out); the copy comes from variant B (a number is actionable — "keep turning up" leaves a genuine newcomer unable to tell two matches from twenty).
+Structure comes from prototype variant C (being locked out should read as _waiting your turn_, not as being thrown out); the copy comes from variant B (a number is actionable — "keep turning up" leaves a genuine newcomer unable to tell two matches from twenty).
 
-A **silent gate was rejected**: silence produces "why can't I vote?" messages to the admin, which leaks the rule anyway and more expensively. The disclosure risk it bought is small — a brought-along friend still has to physically appear X times, and the *admin* is the one who adds players to matches, so faking appearances needs the admin's cooperation, at which point the threshold was never the defence.
+A **silent gate was rejected**: silence produces "why can't I vote?" messages to the admin, which leaks the rule anyway and more expensively. The disclosure risk it bought is small — a brought-along friend still has to physically appear X times, and the _admin_ is the one who adds players to matches, so faking appearances needs the admin's cooperation, at which point the threshold was never the defence.
 
 Update `use-voting-status.ts`'s local `VotingStatus` interface with `eligibility` and `seasonNumber`.
 
@@ -580,11 +584,11 @@ Plus the production-dump rehearsal for both migrations (§3).
 
 The parts of this spec that never mention `votingThreshold` shipped ahead of it, as [Every player is marked man of the match when voting expires with no votes](https://github.com/samosmireno/sunday-heroes/issues/42) — they fix live behaviour for every Competition, and §2 had already ruled out gating them behind the flag. An implementing agent should expect to find them already done:
 
-| Step | What landed | What is still open in that step |
-| --- | --- | --- |
-| 4 | The two rating guards in `calculateAndStoreMatchRatings` and `markManOfTheMatch` (§4.2) | The gate in `submitVotes`, `getPendingVoters`, `checkAndCloseVoting` and the deleted `- 1`, `getVotingStatus`, `getMatchVotes` |
-| 5 | The `ratedMatches` divisor in `calculatePlayerStats` and `calculateLeaguePlayerStats` (§4.4) | `calculatePendingVotes(match, eligibility)` |
-| 10 | `20260907104753_voteless_match_repair` (§3.2), rehearsed against a restored production dump and deployed | — |
+| Step | What landed                                                                                              | What is still open in that step                                                                                                |
+| ---- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 4    | The two rating guards in `calculateAndStoreMatchRatings` and `markManOfTheMatch` (§4.2)                  | The gate in `submitVotes`, `getPendingVoters`, `checkAndCloseVoting` and the deleted `- 1`, `getVotingStatus`, `getMatchVotes` |
+| 5    | The `ratedMatches` divisor in `calculatePlayerStats` and `calculateLeaguePlayerStats` (§4.4)             | `calculatePendingVotes(match, eligibility)`                                                                                    |
+| 10   | `20260907104753_voteless_match_repair` (§3.2), rehearsed against a restored production dump and deployed | —                                                                                                                              |
 
 So the repair migration is **out of order relative to the schema migration**: it is on `main` and in production, and `20260903110459_competition_match_type` is the migration before it. The `votingThreshold` column and the `Match` composite index of step 2 are still to be written, and will simply come after it.
 
@@ -599,8 +603,8 @@ The tests those steps called for are in place: `src/utils/utils.test.ts` for bot
 Ruled out on the map. Do not drift into these:
 
 - **Editing voting settings after creation.** There is no competition-update endpoint at all (`CompetitionService` has create / reset / delete; `competition-settings.tsx` renders only SeasonCard / Reset / Delete). Building one drags in `votingPeriodDays` and `reminderDays` and each of their mid-flight semantics.
-- **Excluding ineligible players from the ballot.** A different and harsher feature: the problem here is who *gives* votes, not who receives them.
+- **Excluding ineligible players from the ballot.** A different and harsher feature: the problem here is who _gives_ votes, not who receives them.
 - **A minimum-turnout floor for storing ratings.** §4.4.
 - **Making a League's match players respect the team roster.** `MatchPlayerService.createMatchPlayers` never consults `TeamRoster` and the client's player picker searches the whole dashboard, so the `n-1` ceiling is intent rather than something the app enforces. Filed separately as [A League match never checks its players against the team roster](https://github.com/samosmireno/sunday-heroes/issues/45).
 - **A per-player admin override** to rescue someone the rule locks out. Parked, not rejected.
-- **The veteran-group hole** — an established group starting a *fresh* Competition votes ungated through the whole runway. Accepted for now; revisit once the feature has been used.
+- **The veteran-group hole** — an established group starting a _fresh_ Competition votes ungated through the whole runway. Accepted for now; revisit once the feature has been used.
