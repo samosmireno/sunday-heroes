@@ -338,3 +338,15 @@ export async function findPlayerId(
   });
   return player.id;
 }
+
+/**
+ * Brings a Match's voting deadline forward, into its Competition's reminder
+ * window. Leaf state: nothing in the app moves a deadline once voting has
+ * opened, so a test about the reminder sweep writes the date itself.
+ */
+export async function setVotingEndsAt(matchId: string, votingEndsAt: Date) {
+  return prisma.match.update({
+    where: { id: matchId },
+    data: { votingEndsAt },
+  });
+}

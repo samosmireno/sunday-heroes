@@ -6,6 +6,7 @@ import { EmailService } from "../email-service";
 import { DashboardPlayerBasic } from "../../repositories/dashboard-player/types";
 import { AppError } from "../../utils/errors";
 import { VoteService } from "../vote-service";
+import { VotingEligibilityService } from "../voting-eligibility-service";
 import logger from "../../logger";
 
 interface MatchVotingEmailData {
@@ -44,7 +45,12 @@ export class MatchVotingService {
     const emailData = await this.setupVoting(match, data, tx);
 
     if (emailData) {
-      this.sendVotingEmails(emailData, match.id, dashboardPlayers);
+      this.sendVotingEmails(
+        emailData,
+        match.id,
+        match.competitionId,
+        dashboardPlayers,
+      );
     }
   }
 
@@ -81,16 +87,31 @@ export class MatchVotingService {
     };
   }
 
+  /**
+   * A player the Voting gate blocks is not asked to vote. The whole reason
+   * this work is deferred into `setImmediate` — as it already was, to keep
+   * SMTP off the request — is what makes that safe to ask: `handleMatchVoting`
+   * runs inside `MatchCreationService`'s transaction, and a Duel match is
+   * created Completed with its `MatchPlayer` rows inside that same
+   * transaction. A player whose qualifying match is this one is therefore
+   * eligible to vote on it, but only visibly so once the transaction has
+   * committed — which is exactly where this callback runs. Do not load
+   * eligibility a line earlier, and do not hand the loader the caller's
+   * transaction client (see `VotingEligibilityService.loadMany`).
+   */
   private static sendVotingEmails(
     matchDetails: MatchVotingEmailData,
     matchId: string,
+    competitionId: string,
     dashboardPlayers: DashboardPlayerBasic[],
   ) {
     setImmediate(async () => {
       try {
+        const eligibility = await VotingEligibilityService.load(competitionId);
+
         const playersWithEmails = dashboardPlayers.filter(
           (player): player is typeof player & { user: { email: string } } =>
-            Boolean(player.user?.email),
+            Boolean(player.user?.email) && eligibility.for(player.id).canVote,
         );
 
         const emailPromises = playersWithEmails.map((player) =>
@@ -115,17 +136,33 @@ export class MatchVotingService {
     });
   }
 
+  /**
+   * The nightly reminder sweep walks every expiring match **in the system**,
+   * an unbounded fan-out across Competitions, so eligibility is loaded once up
+   * front over the distinct Competitions of that result rather than per match:
+   * a fixed handful of queries however many come back.
+   */
   static async sendReminderEmails() {
     setImmediate(async () => {
       try {
         const matches = await MatchRepo.findMatchesExpiringSoon();
+        const eligibilities = await VotingEligibilityService.loadMany(
+          matches.map((match) => match.competitionId),
+        );
 
         for (const match of matches) {
+          // Keyed for every id `loadMany` was given, so this is always present.
+          const eligibility = eligibilities.get(match.competitionId)!;
+
           const notVotedPlayers = match.matchPlayers.filter((mp) => {
             const votesGiven = match.playerVotes.filter(
               (v) => v.voterId === mp.dashboardPlayer.id,
             );
-            return !votesGiven.length && mp.dashboardPlayer.user?.email;
+            return (
+              !votesGiven.length &&
+              mp.dashboardPlayer.user?.email &&
+              eligibility.for(mp.dashboardPlayer.id).canVote
+            );
           });
 
           for (const mp of notVotedPlayers) {
