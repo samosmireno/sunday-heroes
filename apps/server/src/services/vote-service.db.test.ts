@@ -708,3 +708,167 @@ describe("The Voting gate refuses an ineligible voter at submit", () => {
     ).resolves.toMatchObject({ success: true });
   });
 });
+
+describe("The vote page's fourth state: a participant who cannot vote yet", () => {
+  beforeEach(() => {
+    vi.spyOn(EmailService, "sendVotingInvitation").mockResolvedValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /** A Duel lineup from nicknames, numbered per side as the form numbers them. */
+  function sides(
+    home: string[],
+    away: string[],
+  ): createMatchRequest["players"] {
+    const side = (nicknames: string[], isHome: boolean) =>
+      nicknames.map((nickname, index) => ({
+        nickname,
+        goals: 0,
+        assists: 0,
+        position: index + 1,
+        isHome,
+      }));
+
+    return [...side(home, true), ...side(away, false)];
+  }
+
+  /**
+   * A Duel with a threshold of 2, armed by four Completed matches: Ana played
+   * every one of them and is an Eligible voter, Bea only the last and is not.
+   */
+  async function armedDuelWithBlockedPlayer() {
+    const { user, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 2,
+    });
+    for (let i = 0; i < 3; i++) {
+      await createDuelMatch({
+        competitionId: competition.id,
+        players: sides(["Ana"], ["Cal"]),
+      });
+    }
+    const match = await createDuelMatch({
+      competitionId: competition.id,
+      players: sides(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const [ana, bea] = await Promise.all([
+      findPlayerId(dashboard.id, "Ana"),
+      findPlayerId(dashboard.id, "Bea"),
+    ]);
+
+    return { user, dashboard, competition, match, ana, bea };
+  }
+
+  it("answers a blocked participant with the ballot and where they stand, not an error", async () => {
+    const { match, bea } = await armedDuelWithBlockedPlayer();
+
+    const status = await VoteService.getVotingStatus(match.id, bea);
+
+    // The ballot is the one an Eligible voter gets, unchanged: the state the
+    // client builds on this is a read-only ballot, not a refusal.
+    expect(status.votingOpen).toBe(true);
+    expect(status.hasVoted).toBe(false);
+    expect(status.players).toHaveLength(4);
+    expect(status.eligibility).toEqual({
+      canVote: false,
+      qualified: false,
+      armed: true,
+      threshold: 2,
+      matchesThisSeason: 1,
+      remaining: 1,
+    });
+    expect(status.seasonNumber).toBe(1);
+  });
+
+  it("still refuses a non-participant, unchanged", async () => {
+    const { dashboard, match } = await armedDuelWithBlockedPlayer();
+    // On the dashboard and never on this match. The read-only ballot is only
+    // for someone who played, so this one keeps the refusal it always had.
+    const zoe = await createRegisteredPlayer({
+      dashboardId: dashboard.id,
+      nickname: "Zoe",
+    });
+
+    const thrown = await VoteService.getVotingStatus(
+      match.id,
+      zoe.dashboardPlayer.id,
+    ).then(
+      () => null,
+      (error: unknown) => error,
+    );
+
+    expect(thrown).toBeInstanceOf(VotingError);
+    expect((thrown as Error).message).toMatch(/have not played in this match/i);
+  });
+
+  it("leaves an Eligible voter's ballot as it was, with the two new fields on it", async () => {
+    const { match, ana } = await armedDuelWithBlockedPlayer();
+
+    const status = await VoteService.getVotingStatus(match.id, ana);
+
+    expect(status.matchId).toBe(match.id);
+    expect(status.votingOpen).toBe(true);
+    expect(status.hasVoted).toBe(false);
+    // The viewer is on the ballot and cannot be voted for; the other three can.
+    expect(status.players).toHaveLength(4);
+    expect(status.players.filter((player) => player.canVoteFor)).toHaveLength(
+      3,
+    );
+    expect(status.eligibility).toMatchObject({
+      canVote: true,
+      qualified: true,
+      armed: true,
+    });
+    expect(status.seasonNumber).toBe(1);
+  });
+
+  it("reads as no gate at all in a Competition with no threshold", async () => {
+    const { user, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+    });
+    const match = await createDuelMatch({
+      competitionId: competition.id,
+      players: sides(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+
+    const status = await VoteService.getVotingStatus(
+      match.id,
+      await findPlayerId(dashboard.id, "Ana"),
+    );
+
+    expect(status.eligibility).toEqual({
+      canVote: true,
+      qualified: false,
+      armed: false,
+      threshold: null,
+      matchesThisSeason: 1,
+      remaining: 0,
+    });
+    expect(status.seasonNumber).toBe(1);
+  });
+
+  it("names the Current season even on a Past season's match", async () => {
+    // Voting open when a Season closes runs on to its deadline, so this is
+    // reachable — and the Season worth naming is the one the reader can still
+    // earn their place in, not the one the match was played in.
+    const { user, dashboard } = await createUserWithDashboard();
+    const { seasonOneMatch } = await createDuelWithClosedSeason({
+      userId: user.id,
+      votingEnabled: true,
+    });
+
+    const status = await VoteService.getVotingStatus(
+      seasonOneMatch.id,
+      await findPlayerId(dashboard.id, defaultDuelPlayers[0].nickname),
+    );
+
+    expect(status.seasonNumber).toBe(2);
+  });
+});

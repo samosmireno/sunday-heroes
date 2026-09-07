@@ -18,6 +18,8 @@ interface VotePlayerListProps {
   filterFn: (arg1: VotePlayer) => boolean;
   selectedPlayers: SelectedPlayer[];
   onPlayerSelect: (arg1: string) => void;
+  /** Read-only: every card in the column is on show but out of reach. */
+  disabled?: boolean;
 }
 
 const VotePlayerList = ({
@@ -26,6 +28,7 @@ const VotePlayerList = ({
   filterFn,
   selectedPlayers,
   onPlayerSelect,
+  disabled = false,
 }: VotePlayerListProps) => {
   const teamPlayers = players.filter(filterFn);
 
@@ -51,6 +54,7 @@ const VotePlayerList = ({
                 })?.rank || 0
               }
               onSelect={() => onPlayerSelect(player.id)}
+              disabled={disabled}
             />
           ))
         ) : (

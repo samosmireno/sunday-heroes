@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
+import { VoterEligibility } from "@repo/shared-types";
 import { config } from "../../../config/config";
 import { useErrorHandler } from "../../../hooks/use-error-handler/use-error-handler";
 import { AppError } from "../../../hooks/use-error-handler/types";
@@ -11,11 +12,20 @@ interface VotePlayer {
   canVoteFor: boolean;
 }
 
-interface VotingStatus {
+export interface VotingStatus {
   matchId: string;
   votingOpen: boolean;
   votingEndsAt: string;
   hasVoted: boolean;
+  /** Where the viewer stands with the Voting gate. Always present, never optional. */
+  eligibility: VoterEligibility;
+  /**
+   * The Current season, for the banner that names it. A sibling of
+   * `eligibility` rather than a member of it: the vote page is the only
+   * surface that names a Season, and `VoterEligibility` rides on two other
+   * response types with no use for one.
+   */
+  seasonNumber: number | null;
   players: VotePlayer[];
 }
 

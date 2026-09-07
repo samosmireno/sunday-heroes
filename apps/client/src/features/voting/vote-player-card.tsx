@@ -13,6 +13,8 @@ interface VotePlayerCardProps {
   isSelected: boolean;
   rank: number;
   onSelect: (arg1: string) => void;
+  /** Read-only: the card is on a ballot the viewer may look at but not cast. */
+  disabled?: boolean;
 }
 
 export default function VotePlayerCard({
@@ -20,10 +22,12 @@ export default function VotePlayerCard({
   isSelected,
   rank,
   onSelect,
+  disabled = false,
 }: VotePlayerCardProps) {
   return (
     <Button
       onClick={() => onSelect(player.id)}
+      disabled={disabled}
       className={`group flex w-full items-center justify-between rounded-lg border-2 px-4 py-3 text-left transition ${
         isSelected
           ? "border-accent bg-accent/20 text-accent"
@@ -37,9 +41,12 @@ export default function VotePlayerCard({
           {rank} points
         </span>
       ) : (
-        <span className="invisible rounded bg-accent/10 px-2 py-1 text-xs group-hover:visible">
-          Select
-        </span>
+        // The hint invites a click, so a read-only card does not carry it.
+        !disabled && (
+          <span className="invisible rounded bg-accent/10 px-2 py-1 text-xs group-hover:visible">
+            Select
+          </span>
+        )
       )}
     </Button>
   );

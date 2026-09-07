@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Medal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { config } from "@/config/config";
@@ -21,6 +22,11 @@ interface PlayerSelectionProps {
   isSubmitting: boolean;
   maxSelections?: number;
   showSubmitButton: boolean;
+  /**
+   * Takes the submit button's place, in the same spot, when the Voting gate is
+   * shut against the viewer: the panel ends in a lock rather than in nothing.
+   */
+  lockedNotice?: ReactNode;
 }
 
 const PlayerSelection = ({
@@ -30,6 +36,7 @@ const PlayerSelection = ({
   isSubmitting = false,
   maxSelections = config.voting.maxVotesPerPlayer,
   showSubmitButton = true,
+  lockedNotice,
 }: PlayerSelectionProps) => {
   const getPlayerInfo = (playerId: string) => {
     return players.find((p) => p.id === playerId);
@@ -87,15 +94,16 @@ const PlayerSelection = ({
           </div>
         )}
 
-        {showSubmitButton && selectedPlayers.length === maxSelections && (
-          <Button
-            onClick={onSubmit}
-            disabled={isSubmitting}
-            className="mt-4 w-full transform bg-accent text-bg transition-all hover:bg-accent/80"
-          >
-            {isSubmitting ? "Submitting..." : "Submit Votes"}
-          </Button>
-        )}
+        {lockedNotice ??
+          (showSubmitButton && selectedPlayers.length === maxSelections && (
+            <Button
+              onClick={onSubmit}
+              disabled={isSubmitting}
+              className="mt-4 w-full transform bg-accent text-bg transition-all hover:bg-accent/80"
+            >
+              {isSubmitting ? "Submitting..." : "Submit Votes"}
+            </Button>
+          ))}
       </div>
     </div>
   );

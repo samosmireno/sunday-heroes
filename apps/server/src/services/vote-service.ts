@@ -119,6 +119,13 @@ export class VoteService {
       );
     }
 
+    // The gate is not a second refusal here. A participant it has shut out
+    // still gets the ballot — the vote page renders it read-only over a banner
+    // saying where they stand — so what the page needs is their standing, not
+    // an error. Only the non-participant above is turned away.
+    const eligibility = await VotingEligibilityService.load(
+      match.competitionId,
+    );
     const hasVoted = await this.hasPlayerVoted(voterId, matchId);
 
     return {
@@ -126,6 +133,11 @@ export class VoteService {
       votingOpen: match.votingStatus === "OPEN",
       votingEndsAt: match.votingEndsAt,
       hasVoted,
+      eligibility: eligibility.for(voterId),
+      // A sibling field rather than another member of `VoterEligibility`: the
+      // vote page is the only surface that names a Season, and that record
+      // rides on two other response types with no use for it.
+      seasonNumber: eligibility.currentSeasonNumber,
       players: match.matchPlayers.map((player) => ({
         id: player.id,
         nickname: player.dashboardPlayer.nickname,
