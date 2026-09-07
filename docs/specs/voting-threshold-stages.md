@@ -19,7 +19,7 @@ Two smaller collisions: `packages/shared-types/src/voting.ts` (#49 creates `Vote
 | 3 ✅  | #50 ‖ #53 ‖ #55 | Three disjoint sets: `submitVotes`; the transforms, `utils.ts`, match and dashboard services and `matches-list.tsx`; `match-voting-service.ts`. **Landed** — `7f63f2d`, `5317256`, `da6104f`, review follow-up `4556c75`.                   |
 | 4 ✅  | #52 ‖ #54       | Different `vote-service.ts` methods, different client features, different shared-types files. **Landed** — `1a1360b`, `d1367cd`, review follow-up `1588265`.                                                                                |
 | 5 ✅  | #51             | Solo — see below. **Landed** — `7651f3e`, review folded in before the commit.                                                                                                                                                               |
-| 6     | #56             | Solo, on merged `main`.                                                                                                                                                                                                                     |
+| 6 ✅  | #56             | Solo, on merged `main`. **Landed** — `049f935`, `d6a5c9c`; what the pass found is below.                                                                                                                                                    |
 
 Stage 3 inherits one thing from stage 2 worth knowing: `VoterEligibility.remaining` is `max(0, threshold - matchesThisSeason)` regardless of `qualified`, so a player who qualified in a closed Season and has played nothing this Season reports a non-zero `remaining` while `canVote` is `true`. That is §4.1's literal formula and the seam keeps it. The client rule that guards it is `armed && !qualified` — the copy lanes (#52, #53, #54) must not render `remaining` on its own.
 
@@ -59,6 +59,76 @@ test arms a Competition mid-voting and pins the accepted outcome: the match
 stays open, and its pending list is empty. If #56 finds the readout dishonest
 on any of the three surfaces, that test is where the agreed behaviour is
 written down.
+
+### What stage 6 found
+
+**The three `CONTEXT.md` Voting entries still read true**, clause by clause
+against the finished code. Nothing was edited.
+
+| Clause                                                                                                                                 | Where it lives now                                                                                                                                                                                          |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Voting threshold** — Completed matches "within a single Season", "counted per Season and never pooled"                               | `VotingEligibilityRepo.participationCounts` groups by `(competition, player, season)` over `isCompleted: true` rows only, and the constructor tests each row on its own, so two Seasons never add up        |
+| "Chosen once, when the Competition is created, and never changed afterwards"                                                           | Written once by `transformAddCompetitionRequestToService`; `apps/server/src/routes/api/competition-routes.ts` carries five reads, create, reset, seasons, moderators and delete, and no update route at all |
+| "a Competition may have none, in which case everyone who played a match votes on it"                                                   | `threshold: null` → `armed: false` → `canVote: true` for every id, `remaining: 0`                                                                                                                           |
+| **Eligible voter** — "reached … in some Season of it. Permanent once earned"                                                           | `qualifiedPlayerIds` is a set built over every Season's rows, Past seasons included, and nothing removes from it                                                                                            |
+| "only an Eligible voter's ballot is accepted", the on-behalf-of path included                                                          | The gate in `submitVotes` sits ahead of `canUserSubmitVotesForPlayer`, so an ADMIN carrying an ineligible player's ballot is refused with the eligibility `VotingError`                                     |
+| "every participant stays on the ballot … can still receive votes and be man of the match"                                              | `getVotingStatus` maps every `matchPlayer`, `transformMatchServiceToPendingVotes` keeps every row, and `markManOfTheMatch` never consults eligibility                                                       |
+| **Voting gate** — "at least twice its Voting threshold in Completed matches and at least one Eligible voter exists — both, not either" | One expression in the constructor, and the only place `armed` is decided                                                                                                                                    |
+| "during the runway, every participant votes as though there were no threshold … nobody is grandfathered in"                            | `canVote = !armed \|\| qualified`, and runway matches reach `participationCounts` like any other Completed match                                                                                            |
+
+One structural check behind the table: `submitVotes` is the only path that writes
+a vote. `VoteRepo.createMany` has exactly one caller and `VoteRepo.create` has
+none, so the gate has no side door to be carried around.
+
+**The notes handed forward, answered.**
+
+_The matches-list vote button is now scoped to a participant on both branches._
+Stage 3 left the enabled button on `match.isAdmin || match.viewerEligibility.canVote`,
+which offered an Eligible non-participant a live vote on a match they never
+played and a submit that refuses with "You have not played in this match". The
+scoping the disabled lock already carried is now an outer guard over both
+branches — `(match.isAdmin || match.viewerPlayed) && (…canVote ? live : lock)` —
+which says once who the cell speaks to and leaves the ternary to say only what
+the gate decides. A Testing Library test mirrors the one #54 wrote for the lock,
+over both a runway viewer and an Eligible voter. The admin's live link is
+untouched: it is still the only route to `/pending/:matchId`.
+
+_The All Matches page really is admin-only, and it is filed._
+[#59](https://github.com/samosmireno/sunday-heroes/issues/59). Confirmed as
+described: `getDashboardIdFromUserId` → `DashboardRepo.findByAdminId` means a
+plain PLAYER gets `NotFoundError("Dashboard")`, and `isAdmin` is therefore true
+on every row any reachable viewer sees. So #53's disabled affordance and the
+scoping above are built, tested and unreachable in production until that is
+decided. It is pre-existing and a product call — whether a PLAYER should see the
+page at all — so it was filed rather than fixed here.
+
+_`VotingGuide` keeps its imperative steps._ Stage 4's judgement stands: a box
+titled "How Voting Works" explains the mechanism a blocked reader is waiting to
+join, and the two panels either side of it — the deadline reading "Voting closes
+on" and the lock line reading "You can't submit votes yet" — already say they
+cannot act. Rewording the guide as well would be the third time on one screen.
+
+_The empty pending list has no second caller yet._ `closeExpiredVoting` closes on
+the deadline without asking who is pending: it calls
+`calculateAndStoreMatchRatings` and `updateManyVotingStatus` directly, so the
+ambiguity `getPendingVoters` records in its docblock stays a constraint on a
+future caller rather than a live bug. The stranded match's behaviour is pinned by
+#51's db test, and the voteless arithmetic beside it — no votes means `rating`
+stays `null` and nobody is crowned — by #57's.
+
+_"Meter" stays a text ratio._ `3/5 to vote` on the matches list, `2/5 Not
+eligible yet` on the pending list, and the vote page's banner counting in prose.
+Three surfaces, one idiom.
+
+**One stale comment.** `VotingEligibilityService.loadMany`'s docblock still said
+its callers were "still to be built: #50 and #52-#55 wire this service up.
+Nothing in production reaches it yet". Seven call sites later that was the only
+thing in the effort's code that had gone out of date; it now names them.
+
+**The release note** is `docs/releases/2026-09-07-voting-threshold.md`. It states
+the promise — no Competition acquires a threshold, no vote already cast is
+discarded, no rating any vote produced is changed — and deliberately does not
+name the two deltas that shipped with #42.
 
 ### #57 goes in stage 2, and only stage 2
 
