@@ -17,7 +17,7 @@ Two smaller collisions: `packages/shared-types/src/voting.ts` (#49 creates `Vote
 | 1 ✅  | #46 ‖ #47       | `vote-service.ts` against the schema, request schema and create-competition form. No shared file. **Landed** — `9860155`, `e948614`, review follow-up `2f0a43b`.                                                                            |
 | 2 ✅  | #49 ‖ #48 ‖ #57 | The seam is server plus `shared-types/voting.ts`; the readout is `voting-section.tsx` plus a derived-arithmetic module; #57 is `vote-service.ts` alone. Disjoint. **Landed** — `63b7a61`, `68a87f7`, `d58ec92`, review follow-up `47aabbc`. |
 | 3 ✅  | #50 ‖ #53 ‖ #55 | Three disjoint sets: `submitVotes`; the transforms, `utils.ts`, match and dashboard services and `matches-list.tsx`; `match-voting-service.ts`. **Landed** — `7f63f2d`, `5317256`, `da6104f`, review follow-up `4556c75`.                   |
-| 4     | #52 ‖ #54       | Different `vote-service.ts` methods, different client features, different shared-types files.                                                                                                                                               |
+| 4 ✅  | #52 ‖ #54       | Different `vote-service.ts` methods, different client features, different shared-types files. **Landed** — `1a1360b`, `d1367cd`, review follow-up `1588265`.                                                                                |
 | 5     | #51             | Solo — see below.                                                                                                                                                                                                                           |
 | 6     | #56             | Solo, on merged `main`.                                                                                                                                                                                                                     |
 
@@ -31,7 +31,15 @@ Two things the stage-3 review turned up that are real but belong to a later tick
 
 **The matches-list affordance is the only route to `/pending/:matchId`.** `app.tsx` maps that path to `AdminPendingVotes`, and nothing else in the client navigates to it. Gating the button on the viewer's own `canVote` therefore took the on-behalf-of page away from an admin, which `4556c75` fixed by keeping the live link whenever `isAdmin`. What remains is narrower: §6.3 scopes the lock to _"a match **the viewer played**"_, and the cell has never known who played — it shows the affordance on any open match. So a non-admin viewer who did not play an armed Competition's match sees a Current-season counter on a match they were never on. Harmless today (see below), and the fix belongs with #54, which owns the destination page: either put the viewer's participation on the wire, or drop the lock for a non-participant.
 
+**The matches-list hand-off is done.** #54 took it, as `d1367cd`: `MatchPageResponse` gained `viewerPlayed`, set in the transform that already receives the viewer's dashboard player id, and the disabled lock now renders only for a participant. What it deliberately did **not** touch is the _enabled_ button's condition — `match.isAdmin || match.viewerEligibility.canVote` — so an eligible non-participant is still offered a live vote button on a match they never played, and the submit behind it is refused with "You have not played in this match". That is pre-existing, predates the gate entirely, and the data to fix it now exists on the wire; it belongs with #56 alongside the paragraph below, which is the reason it has never been visible.
+
 **The All Matches page is admin-only today.** `MatchService.getMatchesForUser` resolves its dashboard through `DashboardService.getDashboardIdFromUserId` → `DashboardRepo.findByAdminId`, so a plain PLAYER hitting it gets `NotFoundError("Dashboard")` — even though `MatchRepo.findByUserWithDeduplication` carries a "matches this user played in" branch that implies otherwise. That is pre-existing and outside this effort, but it is why the paragraph above is harmless for now, and it caps how much of #53's client half is reachable at all. Worth confirming at #56 before declaring the gate's third surface done.
+
+### What stage 4 hands to #56
+
+**The vote page's sidebar was reworded, the guide was not.** `1588265` turned `VotingDeadline` from "Please submit your votes before" into "Voting closes on" for a blocked reader, and the ballot heading from "Select Your Top 3 Players" into a label, because the lock line one panel away says they cannot submit. `VotingGuide`'s three steps are still written in the imperative — "Select 3 players", "Submit your votes to finalize your selection" — and were left that way on the judgement that a box titled "How Voting Works" is explaining the mechanism a blocked reader is waiting to join, not instructing them. If #56 disagrees, it is one prop.
+
+**"Meter" is a text ratio on both surfaces.** §6.3 and §6.4 both say meter; #53 rendered `3/5 to vote` and #54 followed it with `2/5 Not eligible yet` rather than inventing a bar for one of the two. Consistency across the three surfaces was judged worth more than the literal word.
 
 ### #57 goes in stage 2, and only stage 2
 
@@ -83,9 +91,9 @@ Stage 2 therefore needs two databases, not one: #49 and #57 both run `db` tests,
 | 49  | The eligibility seam: one loaded answer per Competition      | #47        | 2 ✅  |
 | 50  | The Voting gate refuses an ineligible voter at submit        | #49        | 3 ✅  |
 | 51  | Voting closes when every Eligible voter has voted            | #46, #50   | 5     |
-| 52  | The vote page's fourth state                                 | #49        | 4     |
+| 52  | The vote page's fourth state                                 | #49        | 4 ✅  |
 | 53  | Pending counts and the matches list respect the Voting gate  | #49        | 3 ✅  |
-| 54  | The pending-votes list shows each player's standing          | #49        | 4     |
+| 54  | The pending-votes list shows each player's standing          | #49        | 4 ✅  |
 | 55  | Voting invitations and reminders skip ineligible players     | #49        | 3 ✅  |
 | 56  | Verify the finished Voting gate against CONTEXT.md           | #51–#55    | 6     |
 | 57  | The closing ballot is dropped from the ratings it closes on  | —          | 2 ✅  |
