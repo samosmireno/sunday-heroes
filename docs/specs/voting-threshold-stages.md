@@ -1,25 +1,39 @@
 # Voting threshold — execution stages
 
-How to run the tickets of [`voting-threshold.md`](./voting-threshold.md) as parallel lanes. The tickets are #46–#56; their blocking edges are wired as GitHub issue dependencies, so `issue_dependencies_summary.blocked_by` is the live gate. This file is about something the dependency graph does not say: which unblocked tickets can safely run **at the same time**, in separate worktrees, without colliding at merge.
+How to run the tickets of [`voting-threshold.md`](./voting-threshold.md) as parallel lanes. The tickets are #46–#56, plus #57, found while building #46 and folded in below. Their blocking edges are wired as GitHub issue dependencies, so `issue_dependencies_summary.blocked_by` is the live gate. This file is about something the dependency graph does not say: which unblocked tickets can safely run **at the same time**, in separate worktrees, without colliding at merge.
 
 ## The constraint
 
-`apps/server/src/services/vote-service.ts` is touched by five of the eleven tickets — #46 (`getPendingVoters`, `checkAndCloseVoting`), #50 (`submitVotes`), #51 (all three), #52 (`getVotingStatus`), #54 (`getMatchVotes`). That file is the serialization spine of the whole effort. Everything else fans out freely.
+`apps/server/src/services/vote-service.ts` is touched by six of the twelve tickets — #46 (`getPendingVoters`, `checkAndCloseVoting`), #50 (`submitVotes`), #51 (those two plus `submitVotes`), #52 (`getVotingStatus`), #54 (`getMatchVotes`), #57 (`calculateAndStoreMatchRatings`). That file is the serialization spine of the whole effort. Everything else fans out freely.
+
+No two of those want the same **method**, which is why the file serializes the effort without any lane having to negotiate a hunk. The spine is a scheduling constraint, not a design one.
 
 Two smaller collisions: `packages/shared-types/src/voting.ts` (#49 creates `VoterEligibility`, #54 extends `PendingVote`) and `apps/client/src/features/create-competition-form/voting-section.tsx` (#47 adds the field, #48 adds the readout). Both are sequential in the graph already, so neither is a live hazard.
 
 ## Stages
 
-| Stage | Lanes           | Why they do not collide                                                                                                                         |
-| ----- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1     | #46 ‖ #47       | `vote-service.ts` against the schema, request schema and create-competition form. No shared file.                                               |
-| 2     | #49 ‖ #48       | The seam is server plus `shared-types/voting.ts`; the readout is `voting-section.tsx` plus a derived-arithmetic module. Disjoint.               |
-| 3     | #50 ‖ #53 ‖ #55 | Three disjoint sets: `submitVotes`; the transforms, `utils.ts`, match and dashboard services and `matches-list.tsx`; `match-voting-service.ts`. |
-| 4     | #52 ‖ #54       | Different `vote-service.ts` methods, different client features, different shared-types files.                                                   |
-| 5     | #51             | Solo — see below.                                                                                                                               |
-| 6     | #56             | Solo, on merged `main`.                                                                                                                         |
+| Stage | Lanes           | Why they do not collide                                                                                                                                           |
+| ----- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 ✅  | #46 ‖ #47       | `vote-service.ts` against the schema, request schema and create-competition form. No shared file. **Landed** — `9860155`, `e948614`, review follow-up `2f0a43b`.  |
+| 2     | #49 ‖ #48 ‖ #57 | The seam is server plus `shared-types/voting.ts`; the readout is `voting-section.tsx` plus a derived-arithmetic module; #57 is `vote-service.ts` alone. Disjoint. |
+| 3     | #50 ‖ #53 ‖ #55 | Three disjoint sets: `submitVotes`; the transforms, `utils.ts`, match and dashboard services and `matches-list.tsx`; `match-voting-service.ts`.                   |
+| 4     | #52 ‖ #54       | Different `vote-service.ts` methods, different client features, different shared-types files.                                                                     |
+| 5     | #51             | Solo — see below.                                                                                                                                                 |
+| 6     | #56             | Solo, on merged `main`.                                                                                                                                           |
 
 Stage 3 is the cleanest wave in the set: three lanes with no shared file at any point. #55 (`match-voting-service.ts`) is the only ticket in the whole effort that shares no file with any other.
+
+### #57 goes in stage 2, and only stage 2
+
+#57 (the closing ballot dropped from the ratings it closes on) is blocked by nothing — it wants neither the threshold column nor the eligibility seam — so the graph will never schedule it. It has to be placed by hand, and stage 2 is the only place it fits.
+
+**Stage 2 is the one wave where nothing wants `vote-service.ts`.** #49 builds the eligibility seam with nothing yet calling it, and #48 is client-only. Every other wave has a lane on the spine: #46 in stage 1, #50 in 3, #52 and #54 in 4, #51 in 5. Put #57 anywhere else and it either waits for stage 6 or contends for the file.
+
+**It is one file.** `vote-service.ts` plus its db test. `closeExpiredVoting` calls `calculateAndStoreMatchRatings(match.id)` with no transaction client, so the `tx || prisma` fallback preserves that path byte for byte — `match-voting-service.ts` needs no change and #55 is untouched.
+
+**Going early is worth more than convenience.** #51's acceptance criteria include a db test that a match "closes on the last eligible submit, inside the submit transaction". Written on top of the unfixed bug, that test either asserts bare counts — which is what let this bug live through #46's closure tests — or pins rating values computed one ballot short, codifying it. Landing #57 in stage 2 means every closure test written after it is written against correct arithmetic, and #50 and #51 inherit a `calculateAndStoreMatchRatings` that means what it says.
+
+Method-level, #57 owns `calculateAndStoreMatchRatings` and no other ticket touches it. #51 rewrites its caller, `checkAndCloseVoting` — adjacent, and trivially rebaseable in either order, but before is strictly better than after.
 
 ### Stage 4 is hygiene, not a dependency
 
@@ -45,14 +59,16 @@ Running all five in one wave works. Merge them one at a time with a rebase betwe
 
 ## Databases per lane
 
-Following the worktree-per-ticket recipe, each lane with `db` tests needs its own database and its own `TEST_DATABASE_URL`: **#46, #49, #50, #51, #55**. The rest are Vitest-only (#48, #56) or have a client half that can share (#52, #53, #54 — their server halves do need one).
+Following the worktree-per-ticket recipe, each lane with `db` tests needs its own database and its own `TEST_DATABASE_URL`: **#46, #49, #50, #51, #55, #57**. The rest are Vitest-only (#48, #56) or have a client half that can share (#52, #53, #54 — their server halves do need one).
+
+Stage 2 therefore needs two databases, not one: #49 and #57 both run `db` tests, and #48 needs none.
 
 ## Ticket index
 
 | #   | Ticket                                                       | Blocked by | Stage |
 | --- | ------------------------------------------------------------ | ---------- | ----- |
-| 46  | Voting closes on the votes just cast (prefactor)             | —          | 1     |
-| 47  | An admin sets a Voting threshold when creating a Competition | —          | 1     |
+| 46  | Voting closes on the votes just cast (prefactor)             | —          | 1 ✅  |
+| 47  | An admin sets a Voting threshold when creating a Competition | —          | 1 ✅  |
 | 48  | The Voting threshold readout and the League ceiling advisory | #47        | 2     |
 | 49  | The eligibility seam: one loaded answer per Competition      | #47        | 2     |
 | 50  | The Voting gate refuses an ineligible voter at submit        | #49        | 3     |
@@ -62,3 +78,4 @@ Following the worktree-per-ticket recipe, each lane with `db` tests needs its ow
 | 54  | The pending-votes list shows each player's standing          | #49        | 4     |
 | 55  | Voting invitations and reminders skip ineligible players     | #49        | 3     |
 | 56  | Verify the finished Voting gate against CONTEXT.md           | #51–#55    | 6     |
+| 57  | The closing ballot is dropped from the ratings it closes on  | —          | 2     |
