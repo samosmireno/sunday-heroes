@@ -5,6 +5,14 @@ export type CreateCompetitionFormValues = z.infer<
   typeof CreateCompetitionFormSchema
 >;
 
+/**
+ * The Voting threshold's bounds, shared by the schema and the input that
+ * collects it so the two cannot drift apart. The server states the same pair in
+ * `create-competition-request-schema.ts` and is the one that enforces it.
+ */
+export const VOTING_THRESHOLD_MIN = 1;
+export const VOTING_THRESHOLD_MAX = 50;
+
 export const CreateCompetitionFormSchema = z
   .object({
     name: z.string().min(1).max(30).trim(),
@@ -18,7 +26,12 @@ export const CreateCompetitionFormSchema = z
     // would disable the submit button with no message anyone can see.
     votingThreshold: z.preprocess(
       (v) => (v === "" || v === null ? undefined : v),
-      z.coerce.number().int().min(1).max(50).optional(),
+      z.coerce
+        .number()
+        .int()
+        .min(VOTING_THRESHOLD_MIN)
+        .max(VOTING_THRESHOLD_MAX)
+        .optional(),
     ),
     isRoundRobin: z.boolean().default(false).optional(),
     numberOfTeams: z.coerce

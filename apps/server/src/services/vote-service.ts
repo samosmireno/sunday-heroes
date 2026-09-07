@@ -119,11 +119,11 @@ export class VoteService {
 
   /**
    * Both reads take the caller's transaction, so a submit sees the ballot it is
-   * in the middle of writing. Reading them off a separate connection instead left
-   * the submitter counted as pending, which the closure condition used to cancel
-   * out by subtracting one — a compensation resting on the unwritten invariant
-   * "exactly one phantom pending voter, always the submitter". Removing the cause
-   * lets the count mean what it says to every caller, in a transaction or not.
+   * in the middle of writing and the count means the same thing to every caller,
+   * inside a transaction or not. Reading them off a separate connection instead
+   * leaves the submitter counted as pending, and that miscount fails closed and
+   * silently: the symptom is a match that never auto-closes, indistinguishable
+   * from ordinary slow turnout.
    */
   static async getPendingVoters(
     matchId: string,

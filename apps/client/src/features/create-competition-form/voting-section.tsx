@@ -11,7 +11,11 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import { Checkbox } from "../../components/ui/checkbox";
-import { CreateCompetitionFormValues } from "./create-competition-schema";
+import {
+  CreateCompetitionFormValues,
+  VOTING_THRESHOLD_MAX,
+  VOTING_THRESHOLD_MIN,
+} from "./create-competition-schema";
 
 interface VotingSectionProps {
   form: UseFormReturn<CreateCompetitionFormValues>;
@@ -168,8 +172,8 @@ function VotingOptionsSection({
                 <Input
                   {...field}
                   type="number"
-                  min={1}
-                  max={50}
+                  min={VOTING_THRESHOLD_MIN}
+                  max={VOTING_THRESHOLD_MAX}
                   step={1}
                   className="w-full rounded-lg border-2 border-accent/30 bg-bg/30 px-3 py-1.5 text-gray-200 no-spinner focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:px-4 sm:py-2"
                 />

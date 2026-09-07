@@ -231,8 +231,9 @@ model Match {
 
   @@index([competitionId])
   @@index([seasonId])
-  // Voting eligibility counts a Competition's Completed matches, once per
-  // player and again from the cron that fans out over expiring matches.
+  // The pair Standings and the per-Season counts already filter on
+  // (`MatchRepo.findCompletedWithTeamSides`, `SeasonRepo.listWithCounts`), and
+  // the one the Voting eligibility aggregates will.
   @@index([competitionId, isCompleted])
 }
 
