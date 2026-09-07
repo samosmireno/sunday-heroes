@@ -13,6 +13,7 @@ import { CompetitionRepo } from "../repositories/competition/competition-repo";
 import { Prisma } from "@prisma/client";
 import { CompetitionAuthRepo } from "../repositories/competition/competition-auth-repo";
 import { calculatePlayerScore } from "../utils/utils";
+import { VotingEligibilityService } from "./voting-eligibility-service";
 
 export class VoteService {
   static async submitVotes(
@@ -48,12 +49,29 @@ export class VoteService {
       );
     }
 
-    const canVote = await this.canUserSubmitVotesForPlayer(
+    // The Voting gate, live at submit time and never snapshotted. It sits here,
+    // beside "you have not played in this match" and ahead of the authorization
+    // check, because both are rejections about the standing of the player the
+    // ballot belongs to rather than about the rights of whoever is asking:
+    // putting it after would let an ADMIN or MODERATOR carry an ineligible
+    // player's ballot in on the on-behalf-of path, which is the one path the
+    // gate must close. Loaded before the transaction opens, because the loader
+    // deliberately takes no transaction client and must read committed state.
+    const eligibility = await VotingEligibilityService.load(
+      match.competitionId,
+    );
+    if (!eligibility.for(voterId).canVote) {
+      throw new VotingError(
+        "This player has not played enough matches in a single season of this competition to vote yet. Only players who have reached the competition's voting threshold can vote.",
+      );
+    }
+
+    const isAuthorized = await this.canUserSubmitVotesForPlayer(
       matchId,
       voterId,
       requestingUserId,
     );
-    if (!canVote) {
+    if (!isAuthorized) {
       throw new AuthorizationError(
         "You are not authorized to submit votes for this player",
       );

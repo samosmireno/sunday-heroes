@@ -5,11 +5,17 @@ import {
   createDuelMatch,
   createDuelWithClosedSeason,
   createRegisteredPlayer,
+  createUser,
   createUserWithDashboard,
   defaultDuelPlayers,
+  findPlayerId,
 } from "../../test/factories";
+import { createMatchRequest } from "../schemas/create-match-request-schema";
+import { AuthorizationError, VotingError } from "../utils/errors";
+import { CompetitionService } from "./competition-service";
 import { EmailService } from "./email-service";
 import { MatchVotingService } from "./match/match-voting-service";
+import { SeasonService } from "./season-service";
 import { calculatePlayerScore } from "../utils/utils";
 import { VoteService } from "./vote-service";
 
@@ -442,5 +448,263 @@ describe("The closing ballot counts toward the ratings it closes", () => {
       (await prisma.match.findUniqueOrThrow({ where: { id: match.id } }))
         .votingStatus,
     ).toBe("CLOSED");
+  });
+});
+
+describe("The Voting gate refuses an ineligible voter at submit", () => {
+  beforeEach(() => {
+    vi.spyOn(EmailService, "sendVotingInvitation").mockResolvedValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /** A Duel lineup from nicknames, numbered per side as the form numbers them. */
+  function lineup(
+    home: string[],
+    away: string[],
+  ): createMatchRequest["players"] {
+    const side = (nicknames: string[], isHome: boolean) =>
+      nicknames.map((nickname, index) => ({
+        nickname,
+        goals: 0,
+        assists: 0,
+        position: index + 1,
+        isHome,
+      }));
+
+    return [...side(home, true), ...side(away, false)];
+  }
+
+  /** A full ballot from `voterId`: the other three participants, ranked by nickname. */
+  async function ballot(matchId: string, voterId: string) {
+    const others = await prisma.matchPlayer.findMany({
+      where: { matchId, dashboardPlayerId: { not: voterId } },
+      select: { id: true, dashboardPlayer: { select: { nickname: true } } },
+    });
+    const ranked = others.sort((a, b) =>
+      a.dashboardPlayer.nickname.localeCompare(b.dashboardPlayer.nickname),
+    );
+
+    return [
+      { playerId: ranked[0].id, points: 3 },
+      { playerId: ranked[1].id, points: 2 },
+      { playerId: ranked[2].id, points: 1 },
+    ];
+  }
+
+  /** `voterId`'s ballot on `matchId`, submitted by `requestingUserId`. */
+  async function submitBallot(
+    matchId: string,
+    voterId: string,
+    requestingUserId: string,
+  ) {
+    return VoteService.submitVotes(
+      matchId,
+      voterId,
+      await ballot(matchId, voterId),
+      requestingUserId,
+    );
+  }
+
+  /**
+   * The gate's own refusal, pinned by its copy: `submitVotes` raises five other
+   * `VotingError`s, and a test that accepted any of them would pass on a match
+   * whose voting had merely closed.
+   */
+  async function expectGateRefusal(submission: Promise<unknown>) {
+    const thrown = await submission.then(
+      () => null,
+      (error: unknown) => error,
+    );
+
+    expect(thrown).toBeInstanceOf(VotingError);
+    expect((thrown as Error).message).toMatch(/voting threshold/i);
+  }
+
+  /**
+   * A Duel with a threshold of 2 armed by four Completed matches, where Ana has
+   * played every one of them and Bea only the last.
+   */
+  async function armedDuel() {
+    const { user, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 2,
+    });
+    for (let i = 0; i < 3; i++) {
+      await createDuelMatch({
+        competitionId: competition.id,
+        players: lineup(["Ana"], ["Cal"]),
+      });
+    }
+    const match = await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const [ana, bea] = await Promise.all([
+      findPlayerId(dashboard.id, "Ana"),
+      findPlayerId(dashboard.id, "Bea"),
+    ]);
+
+    return { admin: user, dashboard, competition, match, ana, bea };
+  }
+
+  it("lets an unqualified participant vote on the runway and refuses them once the gate arms", async () => {
+    const { user, dashboard } = await createUserWithDashboard();
+    const bea = await createRegisteredPlayer({
+      dashboardId: dashboard.id,
+      nickname: "Bea",
+    });
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 3,
+    });
+    // Ana passes the threshold three times over; Bea plays two and never does.
+    for (let i = 0; i < 3; i++) {
+      await createDuelMatch({
+        competitionId: competition.id,
+        players: lineup(["Ana"], ["Cal"]),
+      });
+    }
+    const first = await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const second = await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const voterId = bea.dashboardPlayer.id;
+
+    // Five Completed matches against a threshold of 3: one short of arming, so
+    // the runway is still on and every participant votes as though there were
+    // no threshold.
+    await expect(
+      submitBallot(first.id, voterId, bea.user.id),
+    ).resolves.toMatchObject({ success: true });
+
+    // The sixth match arms the gate, and Bea is on two.
+    await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana"], ["Cal"]),
+    });
+
+    await expectGateRefusal(submitBallot(second.id, voterId, bea.user.id));
+  });
+
+  it("counts qualification within one Season and never pools two", async () => {
+    const { user, dashboard } = await createUserWithDashboard();
+    const [ana, eve] = await Promise.all([
+      createRegisteredPlayer({ dashboardId: dashboard.id, nickname: "Ana" }),
+      createRegisteredPlayer({ dashboardId: dashboard.id, nickname: "Eve" }),
+    ]);
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 2,
+    });
+
+    // Season 1: Ana plays both matches and qualifies; Eve plays one.
+    await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana", "Eve"], ["Cal", "Fay"]),
+    });
+    await SeasonService.startNewSeason(competition.id, user.id);
+
+    // Season 2: one match each, so Eve ends on one per Season and Ana on one
+    // this Season with her qualification earned in the closed one.
+    const anasMatch = await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const evesMatch = await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Eve", "Bea"], ["Fay", "Dan"]),
+    });
+
+    // Four Completed matches against a threshold of 2, with Ana qualified: armed.
+    await expect(
+      submitBallot(anasMatch.id, ana.dashboardPlayer.id, ana.user.id),
+    ).resolves.toMatchObject({ success: true });
+    // Eve has played two, one in each Season, and one and one is not two.
+    await expectGateRefusal(
+      submitBallot(evesMatch.id, eve.dashboardPlayer.id, eve.user.id),
+    );
+  });
+
+  it("refuses an ADMIN submitting on behalf of an ineligible player", async () => {
+    const { admin, match, bea } = await armedDuel();
+
+    await expectGateRefusal(submitBallot(match.id, bea, admin.id));
+  });
+
+  it("still lets an ADMIN submit on behalf of an Eligible voter", async () => {
+    const { admin, match, ana } = await armedDuel();
+
+    await expect(submitBallot(match.id, ana, admin.id)).resolves.toMatchObject({
+      success: true,
+    });
+  });
+
+  it("answers the gate's refusal rather than an authorization error, whoever is asking", async () => {
+    const { match, bea } = await armedDuel();
+    // Nobody here: not the voter's own account, not an ADMIN, not a MODERATOR.
+    // The authorization check would refuse them on its own, so which error comes
+    // back is what pins the gate ahead of it.
+    const stranger = await createUser({ givenName: "Stranger" });
+
+    const thrown = await submitBallot(match.id, bea, stranger.id).then(
+      () => null,
+      (error: unknown) => error,
+    );
+
+    expect(thrown).toBeInstanceOf(VotingError);
+    expect(thrown).not.toBeInstanceOf(AuthorizationError);
+  });
+
+  it("disarms after Reset competition and lets every participant vote again", async () => {
+    const { user, dashboard } = await createUserWithDashboard();
+    const bea = await createRegisteredPlayer({
+      dashboardId: dashboard.id,
+      nickname: "Bea",
+    });
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+      votingThreshold: 2,
+    });
+    for (let i = 0; i < 3; i++) {
+      await createDuelMatch({
+        competitionId: competition.id,
+        players: lineup(["Ana"], ["Cal"]),
+      });
+    }
+    const armedMatch = await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+    const voterId = bea.dashboardPlayer.id;
+    await expectGateRefusal(submitBallot(armedMatch.id, voterId, bea.user.id));
+
+    // Reset means this Competition never happened: every Match goes, the
+    // qualification they carried goes with them, and the gate falls back to the
+    // runway of a fresh Season 1.
+    await CompetitionService.resetCompetition(competition.id, user.id);
+    const resetMatch = await createDuelMatch({
+      competitionId: competition.id,
+      players: lineup(["Ana", "Bea"], ["Cal", "Dan"]),
+    });
+
+    await expect(
+      submitBallot(resetMatch.id, voterId, bea.user.id),
+    ).resolves.toMatchObject({ success: true });
   });
 });
