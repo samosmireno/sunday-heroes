@@ -16,6 +16,7 @@ import {
   VOTING_THRESHOLD_MAX,
   VOTING_THRESHOLD_MIN,
 } from "./create-competition-schema";
+import { VotingThresholdReadout } from "./voting-threshold-readout";
 
 interface VotingSectionProps {
   form: UseFormReturn<CreateCompetitionFormValues>;
@@ -74,6 +75,12 @@ function VotingOptionsSection({
   form: UseFormReturn<CreateCompetitionFormValues>;
   competitionType: CompetitionType;
 }) {
+  // The League ceiling is derived from fields two sections up in this same
+  // form, so the readout watches them rather than being told about them.
+  const votingThreshold = form.watch("votingThreshold");
+  const numberOfTeams = form.watch("numberOfTeams");
+  const doubleRoundRobin = form.watch("isRoundRobin");
+
   return (
     <div className="ml-0 mt-2 rounded-lg bg-bg/20 p-3 sm:ml-7 sm:p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -183,6 +190,12 @@ function VotingOptionsSection({
                 single season before their votes count.
               </FormDescription>
               <FormMessage className="text-red-400" />
+              <VotingThresholdReadout
+                threshold={votingThreshold}
+                competitionType={competitionType}
+                numberOfTeams={numberOfTeams}
+                doubleRoundRobin={doubleRoundRobin}
+              />
             </FormItem>
           )}
         />
