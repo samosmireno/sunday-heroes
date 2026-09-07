@@ -23,6 +23,8 @@ import ForgotPasswordPage from "./pages/forgot-password-page";
 import ResetPasswordPage from "./pages/reset-password-page";
 import PlayerStatsPage from "./pages/player-stats-page";
 import PublicLayout from "./layouts/public-layout";
+// PROTOTYPE — throwaway (issue #38); drop with the branch.
+import PrototypeVotingThresholdPage from "./pages/prototype-voting-threshold-page";
 
 const publicRoutes = [
   { path: "/login", element: <LoginPage /> },
@@ -34,6 +36,11 @@ const publicRoutes = [
   { path: "/player-stats/:playerId", element: <PlayerStatsPage /> },
   { path: "/invite/:token", element: <InvitationPage /> },
   { path: "/competition/:competitionId", element: <LeagueRouter /> },
+  // PROTOTYPE — throwaway (issue #38); drop with the branch.
+  {
+    path: "/prototype/voting-threshold",
+    element: <PrototypeVotingThresholdPage />,
+  },
 ];
 
 const protectedRoutes = [
