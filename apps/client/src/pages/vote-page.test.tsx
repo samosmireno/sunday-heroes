@@ -1,25 +1,31 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Route, Routes } from "react-router-dom";
 import axios from "axios";
-import { VoterEligibility } from "@repo/shared-types";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { axiosResponse, createTestProviders } from "@/test/harness";
-import { VotingStatus } from "@/features/voting/hooks/use-voting-status";
+import {
+  blockedEligibility,
+  eligibleUnderGate,
+  voterEligibility,
+} from "@/test/fixtures";
+import { VotingStatusResponse } from "@/features/voting/hooks/use-voting-status";
 import VotePage from "./vote-page";
 
 /**
- * The vote page's read. It is a bespoke payload rather than a shared type — the
- * only surface that names a Season is this one — so its builder lives here
- * rather than in the shared fixtures.
+ * The vote page's read. It is a bespoke payload rather than a shared type —
+ * the only surface that names a Season is this one — so its builder lives
+ * here; the eligibility records inside it are shared and come from the
+ * fixtures.
  */
-function votingStatus(overrides: Partial<VotingStatus> = {}): VotingStatus {
+function votingStatus(
+  overrides: Partial<VotingStatusResponse> = {},
+): VotingStatusResponse {
   return {
     matchId: "match-1",
     votingOpen: true,
     votingEndsAt: "2026-09-20T12:00:00.000Z",
     hasVoted: false,
-    eligibility: runwayEligibility(),
+    eligibility: voterEligibility({ matchesThisSeason: 2 }),
     seasonNumber: 3,
     players: [
       { id: "mp-ana", nickname: "Ana", isHome: true, canVoteFor: true },
@@ -33,60 +39,23 @@ function votingStatus(overrides: Partial<VotingStatus> = {}): VotingStatus {
   };
 }
 
-/** A Competition with no threshold, and every armed Competition's runway. */
-function runwayEligibility(): VoterEligibility {
-  return {
-    canVote: true,
-    qualified: false,
-    armed: false,
-    threshold: null,
-    matchesThisSeason: 2,
-    remaining: 0,
-  };
-}
-
-/** An Eligible voter of an armed Competition: the gate is open to them. */
-function qualifiedEligibility(): VoterEligibility {
-  return {
-    canVote: true,
-    qualified: true,
-    armed: true,
-    threshold: 5,
-    matchesThisSeason: 6,
-    remaining: 0,
-  };
-}
-
-/** A participant the armed Voting gate has shut out, part-way to the threshold. */
-function blockedEligibility(
-  threshold: number,
-  matchesThisSeason: number,
-): VoterEligibility {
-  return {
-    canVote: false,
-    qualified: false,
-    armed: true,
-    threshold,
-    matchesThisSeason,
-    remaining: threshold - matchesThisSeason,
-  };
-}
-
 /** The page under its own route, so `useParams` sees a match id as it does in the app. */
-async function renderVotePage(status: VotingStatus) {
+function mountVotePage(status: VotingStatusResponse) {
   vi.spyOn(axios, "get").mockResolvedValue(axiosResponse(status));
 
   render(
-    <SidebarProvider>
-      <Routes>
-        <Route path="/vote/:matchId" element={<VotePage />} />
-      </Routes>
-    </SidebarProvider>,
+    <Routes>
+      <Route path="/vote/:matchId" element={<VotePage />} />
+    </Routes>,
     {
       wrapper: createTestProviders({ at: "/vote/match-1?voterId=player-bea" }),
     },
   );
+}
 
+/** Mounts and waits for the ballot; the refusal states have no columns to wait for. */
+async function renderVotePage(status: VotingStatusResponse) {
+  mountVotePage(status);
   await screen.findByText("Home Team");
 }
 
@@ -94,24 +63,8 @@ const playerCard = (nickname: string) =>
   screen.getByRole("button", { name: new RegExp(nickname) });
 
 describe("VotePage and the Voting gate", () => {
-  beforeEach(() => {
-    // jsdom implements no matchMedia, and the header's sidebar trigger asks the
-    // sidebar provider for one on mount.
-    vi.stubGlobal("matchMedia", (query: string) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      addListener: () => {},
-      removeListener: () => {},
-      dispatchEvent: () => false,
-    }));
-  });
-
   afterEach(() => {
     vi.restoreAllMocks();
-    vi.unstubAllGlobals();
   });
 
   it("shows a blocked participant the whole ballot, read-only and with themselves on it", async () => {
@@ -178,8 +131,8 @@ describe("VotePage and the Voting gate", () => {
   });
 
   it.each([
-    ["the runway", runwayEligibility()],
-    ["an Eligible voter", qualifiedEligibility()],
+    ["the runway", voterEligibility({ matchesThisSeason: 2 })],
+    ["an Eligible voter", eligibleUnderGate(5, 6)],
   ])(
     "renders the page exactly as before for %s",
     async (_case, eligibility) => {
@@ -196,26 +149,32 @@ describe("VotePage and the Voting gate", () => {
     },
   );
 
+  it("stops the sidebar asking a locked-out reader to submit", async () => {
+    await renderVotePage(
+      votingStatus({ eligibility: blockedEligibility(5, 3) }),
+    );
+
+    // The deadline still matters — it is when this ballot closes without
+    // them — but as a fact, not as an instruction the lock line contradicts.
+    expect(screen.getByText("Voting closes on:")).toBeDefined();
+    expect(screen.queryByText("Please submit your votes before:")).toBeNull();
+    expect(screen.queryByText("Select Your Top 3 Players")).toBeNull();
+  });
+
+  it("keeps the deadline an instruction for a voter who can act on it", async () => {
+    await renderVotePage(
+      votingStatus({ eligibility: eligibleUnderGate(5, 6) }),
+    );
+
+    expect(screen.getByText("Please submit your votes before:")).toBeDefined();
+    expect(screen.getByText("Select Your Top 3 Players")).toBeDefined();
+  });
+
   it("leaves the three states that came before it in front of the fourth", async () => {
     // Voting on the runway and blocked afterwards is reachable: the gate arms
     // once, on some other match completing.
-    vi.spyOn(axios, "get").mockResolvedValue(
-      axiosResponse(
-        votingStatus({ hasVoted: true, eligibility: blockedEligibility(5, 3) }),
-      ),
-    );
-
-    render(
-      <SidebarProvider>
-        <Routes>
-          <Route path="/vote/:matchId" element={<VotePage />} />
-        </Routes>
-      </SidebarProvider>,
-      {
-        wrapper: createTestProviders({
-          at: "/vote/match-1?voterId=player-bea",
-        }),
-      },
+    mountVotePage(
+      votingStatus({ hasVoted: true, eligibility: blockedEligibility(5, 3) }),
     );
 
     expect(

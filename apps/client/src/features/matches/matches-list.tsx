@@ -15,6 +15,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { seasonName } from "@/features/competition/season-labels";
 import ClosedSeasonLock from "@/features/competition/closed-season-lock";
+import { thresholdTooltip } from "@/features/voting/threshold-copy";
 
 interface MatchesListProps {
   matches: MatchPageResponse[];
@@ -67,9 +68,7 @@ function BlockedVoteAffordance({
   const { threshold, matchesThisSeason } = eligibility;
 
   return (
-    <span
-      title={`Voting in this competition needs ${threshold} matches played within a single season. You have played ${matchesThisSeason} this season, and matches do not add up across seasons.`}
-    >
+    <span title={thresholdTooltip(eligibility, "viewer")}>
       <Button
         disabled
         className="text-2xs h-7 gap-1 rounded-full bg-gray-500/20 px-2 py-1 font-medium text-gray-400 md:text-xs"

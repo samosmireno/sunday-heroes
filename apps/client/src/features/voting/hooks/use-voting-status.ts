@@ -12,7 +12,7 @@ interface VotePlayer {
   canVoteFor: boolean;
 }
 
-export interface VotingStatus {
+export interface VotingStatusResponse {
   matchId: string;
   votingOpen: boolean;
   votingEndsAt: string;
@@ -35,7 +35,7 @@ export const useVotingStatus = (matchId: string, voterId: string) => {
   const fetchVotingStatus = async (
     matchId: string,
     voterId: string,
-  ): Promise<VotingStatus> => {
+  ): Promise<VotingStatusResponse> => {
     try {
       const { data } = await axios.get(
         `${config.server}/api/votes/status/${matchId}?voterId=${voterId}`,

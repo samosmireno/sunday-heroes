@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { VotingStatus } from "@repo/shared-types";
+import { VoterEligibility, VotingStatus } from "@repo/shared-types";
 import { createTestProviders } from "@/test/harness";
 import {
   blockedEligibility,
@@ -66,12 +66,20 @@ describe("MatchesList", () => {
   });
 });
 
-/** An open match, with the viewer standing wherever the Voting gate puts them. */
-function openMatch(
+/**
+ * An open match, with the viewer standing wherever the Voting gate puts them.
+ * Overrides by name, like every other builder here: `openMatch(e, true, false)`
+ * says nothing about which flag is which.
+ */
+function openMatch({
   viewerEligibility = voterEligibility(),
   isAdmin = false,
   viewerPlayed = true,
-) {
+}: {
+  viewerEligibility?: VoterEligibility;
+  isAdmin?: boolean;
+  viewerPlayed?: boolean;
+} = {}) {
   return matchPageResponse({
     votingEnabled: true,
     votingStatus: VotingStatus.OPEN,
@@ -84,9 +92,14 @@ function openMatch(
 
 describe("MatchesList and the Voting gate", () => {
   it("keeps the vote affordance, disabled with the viewer's count, for a blocked voter", () => {
-    render(<MatchesList matches={[openMatch(blockedEligibility(5, 3))]} />, {
-      wrapper: createTestProviders(),
-    });
+    render(
+      <MatchesList
+        matches={[openMatch({ viewerEligibility: blockedEligibility(5, 3) })]}
+      />,
+      {
+        wrapper: createTestProviders(),
+      },
+    );
 
     const blocked = screen.getByRole("button", {
       name: "You cannot vote on this match yet",
@@ -99,9 +112,14 @@ describe("MatchesList and the Voting gate", () => {
   });
 
   it("spells the per-Season rule out in the tooltip", () => {
-    render(<MatchesList matches={[openMatch(blockedEligibility(5, 3))]} />, {
-      wrapper: createTestProviders(),
-    });
+    render(
+      <MatchesList
+        matches={[openMatch({ viewerEligibility: blockedEligibility(5, 3) })]}
+      />,
+      {
+        wrapper: createTestProviders(),
+      },
+    );
 
     // The title rides on the wrapper: a disabled button has no pointer events.
     const title = screen
@@ -109,15 +127,22 @@ describe("MatchesList and the Voting gate", () => {
       .closest("span")
       ?.getAttribute("title");
 
-    expect(title).toContain("5 matches played within a single season");
+    expect(title).toContain(
+      "5 completed matches played within a single season",
+    );
     expect(title).toContain("3 this season");
     expect(title).toContain("do not add up across seasons");
   });
 
   it("leaves the Voting Status badge to the Competition, not the viewer", () => {
-    render(<MatchesList matches={[openMatch(blockedEligibility(5, 3))]} />, {
-      wrapper: createTestProviders(),
-    });
+    render(
+      <MatchesList
+        matches={[openMatch({ viewerEligibility: blockedEligibility(5, 3) })]}
+      />,
+      {
+        wrapper: createTestProviders(),
+      },
+    );
 
     expect(screen.getByText("2 pending votes")).toBeDefined();
   });
@@ -127,7 +152,14 @@ describe("MatchesList and the Voting gate", () => {
     // list. An admin who never played is blocked as a voter and must still be
     // able to open it — the gate is about the player a ballot is cast for.
     render(
-      <MatchesList matches={[openMatch(blockedEligibility(5, 0), true)]} />,
+      <MatchesList
+        matches={[
+          openMatch({
+            viewerEligibility: blockedEligibility(5, 0),
+            isAdmin: true,
+          }),
+        ]}
+      />,
       { wrapper: createTestProviders() },
     );
 
@@ -143,7 +175,12 @@ describe("MatchesList and the Voting gate", () => {
     // a number about a match they were never part of.
     render(
       <MatchesList
-        matches={[openMatch(blockedEligibility(5, 3), false, false)]}
+        matches={[
+          openMatch({
+            viewerEligibility: blockedEligibility(5, 3),
+            viewerPlayed: false,
+          }),
+        ]}
       />,
       { wrapper: createTestProviders() },
     );
@@ -161,7 +198,13 @@ describe("MatchesList and the Voting gate", () => {
   it("keeps the admin's live link on a match the admin never played", () => {
     render(
       <MatchesList
-        matches={[openMatch(blockedEligibility(5, 0), true, false)]}
+        matches={[
+          openMatch({
+            viewerEligibility: blockedEligibility(5, 0),
+            isAdmin: true,
+            viewerPlayed: false,
+          }),
+        ]}
       />,
       { wrapper: createTestProviders() },
     );

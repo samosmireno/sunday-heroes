@@ -4,12 +4,7 @@ import { Button } from "@/components/ui/button";
 import { InfoBox } from "@/components/ui/info-box";
 import { seasonName } from "@/features/competition/season-labels";
 
-/**
- * `threshold` is typed nullable because a Competition may have no gate, but it
- * is never null here: this banner renders only for a blocked voter, and the
- * gate cannot be shut without a threshold to shut it.
- */
-const matches = (count: number | null) =>
+const matches = (count: number) =>
   count === 1 ? "1 match" : `${count} matches`;
 
 /**
@@ -37,6 +32,12 @@ export function VotingThresholdBanner({
   const { threshold, matchesThisSeason, remaining } = eligibility;
   const where =
     seasonNumber === null ? "this season" : `in ${seasonName(seasonNumber)}`;
+
+  // `threshold` is nullable because a Competition may have no gate, and a gate
+  // with nothing to shut cannot be shut against anyone — so this is
+  // unreachable. Written as a guard rather than a comment, because the
+  // alternative is a banner that counts up to "null matches".
+  if (threshold === null) return null;
 
   return (
     <InfoBox

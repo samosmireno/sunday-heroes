@@ -30,10 +30,25 @@ export function VotingGuide() {
   );
 }
 
-export function VotingDeadline({ votingEndsAt }: { votingEndsAt: string }) {
+/**
+ * `blocked` turns the deadline from an instruction into a fact. A reader the
+ * Voting gate has shut out is told two panels apart that they cannot submit
+ * votes; asking them in between to submit theirs before a date is the same
+ * contradiction the lock line exists to avoid. The date still matters to
+ * them — it is when this ballot closes without them.
+ */
+export function VotingDeadline({
+  votingEndsAt,
+  blocked = false,
+}: {
+  votingEndsAt: string;
+  blocked?: boolean;
+}) {
   return (
     <InfoBox title="Voting Deadline" icon={Info} className="w-full">
-      <p className="mt-3 text-gray-300">Please submit your votes before:</p>
+      <p className="mt-3 text-gray-300">
+        {blocked ? "Voting closes on:" : "Please submit your votes before:"}
+      </p>
       <p className="mt-1 text-lg font-medium text-amber-400">
         {new Date(votingEndsAt).toLocaleDateString(undefined, {
           year: "numeric",

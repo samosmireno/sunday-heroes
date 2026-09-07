@@ -2,6 +2,7 @@
 import { CheckCircle2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Role, PendingVote, VoterEligibility } from "@repo/shared-types";
+import { thresholdTooltip } from "@/features/voting/threshold-copy";
 
 interface PendingVoteRowProps {
   vote: PendingVote;
@@ -44,7 +45,9 @@ function IneligibleStanding({
   return (
     <span
       className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-gray-500/20 px-2 py-1 text-xs font-medium text-gray-400"
-      title={`Voting in this competition needs ${threshold} matches played within a single season. This player has played ${matchesThisSeason} this season, and matches do not add up across seasons.`}
+      title={thresholdTooltip(eligibility, "player")}
+      role="note"
+      aria-label={`Not eligible to vote yet: ${matchesThisSeason} of ${threshold} matches this season`}
     >
       <Lock size={14} aria-hidden="true" />
       <span>{`${matchesThisSeason}/${threshold}`}</span>

@@ -58,7 +58,10 @@ describe("seasonPageShell header", () => {
       wrapper: createTestProviders(),
     });
 
-    expect(container.innerHTML).toBe("");
+    // The header's own output, not the container's: the provider stack wraps
+    // every render in markup of its own, which is not this component's doing.
+    expect(container.textContent).toBe("");
+    expect(screen.queryByRole("heading")).toBeNull();
   });
 });
 

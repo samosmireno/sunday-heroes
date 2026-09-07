@@ -81,8 +81,10 @@ export default function VotePage() {
             />
           )}
           <div className="rounded-lg border-2 border-accent/70 bg-panel-bg p-5 shadow-lg">
+            {/* The heading is an instruction on the live ballot and a label on
+                the read-only one: there is nothing to select yet. */}
             <h2 className="mb-4 border-b border-accent/30 pb-2 text-xl font-bold text-accent">
-              Select Your Top 3 Players
+              {blocked ? "Players in This Match" : "Select Your Top 3 Players"}
             </h2>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* `canVoteFor` keeps a voter off their own ballot. Nobody is
@@ -109,7 +111,10 @@ export default function VotePage() {
         </div>
         <div className="order-2 flex flex-col space-y-6 lg:order-2 lg:max-w-md lg:flex-[1]">
           <VotingGuide />
-          <VotingDeadline votingEndsAt={votingStatus.votingEndsAt} />
+          <VotingDeadline
+            votingEndsAt={votingStatus.votingEndsAt}
+            blocked={blocked}
+          />
           <PlayerSelection
             selectedPlayers={selectedPlayers}
             players={votingStatus.players}

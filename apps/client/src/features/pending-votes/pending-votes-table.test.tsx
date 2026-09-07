@@ -68,7 +68,9 @@ describe("PendingVotesTable and the Voting gate", () => {
       .closest("[title]")
       ?.getAttribute("title");
 
-    expect(title).toContain("5 matches played within a single season");
+    expect(title).toContain(
+      "5 completed matches played within a single season",
+    );
     expect(title).toContain("played 2 this season");
     expect(title).toContain("do not add up across seasons");
   });
