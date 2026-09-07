@@ -19,6 +19,29 @@ export class SeasonRepo {
     }
   }
 
+  /**
+   * The Current season of each Competition given, keyed by `competitionId`.
+   * The same read as `findCurrent` across many Competitions rather than a
+   * second copy of it elsewhere; a Competition with no open Season is simply
+   * absent from the map.
+   */
+  static async findCurrentMany(
+    competitionIds: string[],
+    tx?: Prisma.TransactionClient,
+  ): Promise<Map<string, Season>> {
+    if (competitionIds.length === 0) return new Map();
+
+    try {
+      const prismaClient = tx || prisma;
+      const seasons = await prismaClient.season.findMany({
+        where: { competitionId: { in: competitionIds }, endedAt: null },
+      });
+      return new Map(seasons.map((season) => [season.competitionId, season]));
+    } catch (error) {
+      throw PrismaErrorHandler.handle(error, "SeasonRepo.findCurrentMany");
+    }
+  }
+
   /** The Current season with the number of Matches it holds. */
   static async findCurrentWithMatchCount(
     competitionId: string,

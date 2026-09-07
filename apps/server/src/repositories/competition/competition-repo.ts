@@ -121,6 +121,32 @@ export class CompetitionRepo {
     });
   }
 
+  /**
+   * The Voting threshold of each Competition given, keyed by id; null means no
+   * Voting gate. A Competition that does not exist is absent from the map, so
+   * the eligibility loader reads it as no gate.
+   */
+  static async findVotingThresholds(
+    ids: string[],
+    tx?: Prisma.TransactionClient,
+  ): Promise<Map<string, number | null>> {
+    if (ids.length === 0) return new Map();
+
+    try {
+      const prismaClient = tx || prisma;
+      const competitions = await prismaClient.competition.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, votingThreshold: true },
+      });
+      return new Map(competitions.map((c) => [c.id, c.votingThreshold]));
+    } catch (error) {
+      throw PrismaErrorHandler.handle(
+        error,
+        "CompetitionRepo.findVotingThresholds",
+      );
+    }
+  }
+
   static async findAll(tx?: Prisma.TransactionClient): Promise<Competition[]> {
     try {
       const prismaClient = tx || prisma;

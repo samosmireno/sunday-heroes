@@ -1,6 +1,10 @@
 import { Prisma } from "@prisma/client";
 import { describe, expect, it } from "vitest";
-import { createDuel, createUserWithDashboard } from "../../../test/factories";
+import {
+  createDuel,
+  createDuelWithClosedSeason,
+  createUserWithDashboard,
+} from "../../../test/factories";
 import prisma from "../prisma-client";
 import { SeasonRepo } from "./season-repo";
 
@@ -39,5 +43,32 @@ describe("SeasonRepo.close", () => {
     expect(await SeasonRepo.listWithCounts(competition.id)).toEqual([
       expect.objectContaining({ number: 1, endedAt }),
     ]);
+  });
+});
+
+describe("SeasonRepo.findCurrentMany", () => {
+  it("keys the Current season by Competition and leaves out one with none", async () => {
+    const { user } = await createUserWithDashboard();
+    const [rolledOver, fresh, closed] = await Promise.all([
+      createDuelWithClosedSeason({ userId: user.id, name: "Rolled over" }),
+      createDuel({ userId: user.id, name: "Fresh" }),
+      createDuel({ userId: user.id, name: "Closed" }),
+    ]);
+    const closedSeason = await SeasonRepo.findCurrent(closed.competition.id);
+    await SeasonRepo.close(closedSeason!.id, new Date());
+
+    const currentSeasons = await SeasonRepo.findCurrentMany([
+      rolledOver.competition.id,
+      fresh.competition.id,
+      closed.competition.id,
+    ]);
+
+    expect(currentSeasons.get(rolledOver.competition.id)?.number).toBe(2);
+    expect(currentSeasons.get(fresh.competition.id)?.number).toBe(1);
+    expect(currentSeasons.has(closed.competition.id)).toBe(false);
+  });
+
+  it("returns an empty map for an empty list of Competitions", async () => {
+    expect(await SeasonRepo.findCurrentMany([])).toEqual(new Map());
   });
 });
