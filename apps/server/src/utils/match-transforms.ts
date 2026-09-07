@@ -145,7 +145,9 @@ export function transformAddMatchRequestToService(
     round: match.round,
     bracketPosition: match.bracketPosition ?? null,
     votingStatus: competitionVoting ? competitionVoting : VotingStatus.CLOSED,
-    votingEndsAt: new Date(Date.now() + 5 * 24 * 60 * 60),
+    // No voting end until `MatchVotingService.setupVoting` computes one from the
+    // Competition's `votingPeriodDays`. A match with voting disabled never gets one.
+    votingEndsAt: null,
     isCompleted: true,
     videoUrl: match.videoUrl ?? null,
   };
