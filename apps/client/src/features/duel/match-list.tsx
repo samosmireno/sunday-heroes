@@ -107,47 +107,51 @@ export default function MatchList({
         >
           <ArrowLeft size={18} className="sm:size-20" />
         </Button>
-        {matches && matches.length > 0 ? (
-          <CarouselContent className="px-2">
-            {matches
-              .slice()
-              .sort((a, b) => {
-                if (!a.date && !b.date) return 0;
-                if (!a.date) return 1;
-                if (!b.date) return -1;
-                return new Date(b.date).getTime() - new Date(a.date).getTime();
-              })
-              .map((match) => {
-                if (!match) return null;
-                return (
-                  <CarouselItem key={match.id}>
-                    <MatchResult
-                      key={match.id}
-                      matchId={match.id}
-                      date={match.date?.split("T")[0]}
-                      homeScore={match.homeTeamScore}
-                      awayScore={match.awayTeamScore}
-                      isSelectedMatch={
-                        matches[selectedMatch] &&
-                        matches[selectedMatch].id === match.id
-                          ? true
-                          : false
-                      }
-                      refetchMatches={refetchMatches}
-                      userRole={userRole}
-                      videoUrl={match.videoUrl}
-                      season={match.season}
-                      showSeasonTag={isAll}
-                    />
-                  </CarouselItem>
-                );
-              })}
-          </CarouselContent>
-        ) : (
-          <div className="w-full rounded-lg bg-primary/20 py-4 text-center text-sm sm:text-base">
-            Add your first match
-          </div>
-        )}
+        <div className="min-w-0 flex-1">
+          {matches && matches.length > 0 ? (
+            <CarouselContent className="px-2">
+              {matches
+                .slice()
+                .sort((a, b) => {
+                  if (!a.date && !b.date) return 0;
+                  if (!a.date) return 1;
+                  if (!b.date) return -1;
+                  return (
+                    new Date(b.date).getTime() - new Date(a.date).getTime()
+                  );
+                })
+                .map((match) => {
+                  if (!match) return null;
+                  return (
+                    <CarouselItem key={match.id}>
+                      <MatchResult
+                        key={match.id}
+                        matchId={match.id}
+                        date={match.date?.split("T")[0]}
+                        homeScore={match.homeTeamScore}
+                        awayScore={match.awayTeamScore}
+                        isSelectedMatch={
+                          matches[selectedMatch] &&
+                          matches[selectedMatch].id === match.id
+                            ? true
+                            : false
+                        }
+                        refetchMatches={refetchMatches}
+                        userRole={userRole}
+                        videoUrl={match.videoUrl}
+                        season={match.season}
+                        showSeasonTag={isAll}
+                      />
+                    </CarouselItem>
+                  );
+                })}
+            </CarouselContent>
+          ) : (
+            <div className="w-full rounded-lg bg-primary/20 py-4 text-center text-sm sm:text-base">
+              Add your first match
+            </div>
+          )}
+        </div>
 
         <Button
           className="hidden rounded-full bg-transparent p-1 text-accent shadow-none hover:bg-primary disabled:bg-transparent sm:flex sm:p-2"
