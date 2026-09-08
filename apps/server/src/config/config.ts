@@ -24,7 +24,16 @@ requiredEnvVars.forEach((varName) => {
   }
 });
 
-const smtpEnvVars = ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASSWORD"];
+// MAIL_FROM is required alongside the credentials: the address the mail is *from*
+// is no longer the address we authenticate *as*. A provider signs for a domain we
+// own, and the SMTP username is its API key. See docs/email-deliverability.md.
+const smtpEnvVars = [
+  "SMTP_HOST",
+  "SMTP_PORT",
+  "SMTP_USER",
+  "SMTP_PASSWORD",
+  "MAIL_FROM",
+];
 smtpEnvVars.forEach((varName) => {
   if (!process.env[varName]) {
     throw new Error(`Environment variable ${varName} is not defined`);
@@ -67,6 +76,12 @@ export const config = {
     secure: process.env.SMTP_SECURE,
     user: process.env.SMTP_USER as string,
     pass: process.env.SMTP_PASSWORD as string,
+  },
+  mail: {
+    // Full RFC 5322 form, display name included: `Sunday Heroes <noreply@sunday-heroes.app>`.
+    from: process.env.MAIL_FROM as string,
+    // Optional, but a monitored mailbox here is worth real reputation.
+    replyTo: process.env.MAIL_REPLY_TO,
   },
   votes: {
     maxVotesPerPlayer: 3,
