@@ -33,7 +33,12 @@ export function AppLayout({ sidebarActive = true, children }: AppLayoutProps) {
       />
       <Background />
       {sidebarActive && <AppSidebar />}
-      <div className="flex min-h-screen w-full bg-bg font-retro text-gray-100 sm:overflow-x-hidden">
+      {/* Both this row and its page share the flex default `min-width: auto`,
+          which refuses to shrink below the content's intrinsic width: the row
+          would keep its full width beside the sidebar, and a page would keep
+          its widest table. `min-w-0` on each lets them shrink, so the inner
+          `overflow-x-auto` wrappers scroll instead of the whole document. */}
+      <div className="flex min-h-screen w-full min-w-0 bg-bg font-retro text-gray-100 [&>*]:min-w-0">
         {children}
       </div>
     </SidebarProvider>
