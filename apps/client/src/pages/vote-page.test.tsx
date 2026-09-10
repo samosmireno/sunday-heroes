@@ -1,7 +1,9 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Route, Routes } from "react-router-dom";
-import axios from "axios";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
+import axiosInstance, { SessionExpiredError } from "@/config/axios-config";
 import { axiosResponse, createTestProviders } from "@/test/harness";
 import {
   blockedEligibility,
@@ -39,28 +41,37 @@ function votingStatus(
   };
 }
 
+const ballotPath = "/vote/match-1?voterId=player-bea";
+
 /** The page under its own route, so `useParams` sees a match id as it does in the app. */
 function mountVotePage(status: VotingStatusResponse) {
-  vi.spyOn(axios, "get").mockResolvedValue(axiosResponse(status));
+  vi.spyOn(axiosInstance, "get").mockResolvedValue(axiosResponse(status));
 
-  render(
+  return render(
     <Routes>
       <Route path="/vote/:matchId" element={<VotePage />} />
     </Routes>,
     {
-      wrapper: createTestProviders({ at: "/vote/match-1?voterId=player-bea" }),
+      wrapper: createTestProviders({ at: ballotPath }),
     },
   );
 }
 
 /** Mounts and waits for the ballot; the refusal states have no columns to wait for. */
 async function renderVotePage(status: VotingStatusResponse) {
-  mountVotePage(status);
+  const view = mountVotePage(status);
   await screen.findByText("Home Team");
+  return view;
 }
 
 const playerCard = (nickname: string) =>
   screen.getByRole("button", { name: new RegExp(nickname) });
+
+beforeEach(() => {
+  // The ballot draft outlives a render on purpose, so each test starts without one.
+  sessionStorage.clear();
+  localStorage.clear();
+});
 
 describe("VotePage and the Voting gate", () => {
   afterEach(() => {
@@ -181,5 +192,134 @@ describe("VotePage and the Voting gate", () => {
       await screen.findByText(/You have already submitted your votes/),
     ).toBeDefined();
     expect(screen.queryByText(/single season/)).toBeNull();
+  });
+});
+
+describe("VotePage when the session dies at submit", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /** Picks three names on a live ballot and presses Submit. */
+  async function castBallot() {
+    const view = await renderVotePage(votingStatus());
+
+    fireEvent.click(playerCard("Ana"));
+    fireEvent.click(playerCard("Cal"));
+    fireEvent.click(playerCard("Dan"));
+    expect(screen.getByText("Your selection (3/3)")).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: "Submit Votes" }));
+
+    return view;
+  }
+
+  it("says plainly that nothing was submitted, and never claims success", async () => {
+    vi.spyOn(axiosInstance, "post").mockRejectedValue(
+      new SessionExpiredError(ballotPath),
+    );
+
+    await castBallot();
+
+    expect(
+      await screen.findByText("Your votes were not submitted"),
+    ).toBeDefined();
+    // The failure this replaces: a bare redirect to the landing page, no
+    // message, and a player who went away believing they had voted.
+    expect(screen.queryByText(/Votes Submitted Successfully/)).toBeNull();
+    expect(screen.queryByText(/Thank you for voting/)).toBeNull();
+    // And no submit button left to press against a session that is gone.
+    expect(screen.queryByRole("button", { name: "Submit Votes" })).toBeNull();
+  });
+
+  it("keeps the three picks on screen and through a return to the ballot", async () => {
+    vi.spyOn(axiosInstance, "post").mockRejectedValue(
+      new SessionExpiredError(ballotPath),
+    );
+
+    const view = await castBallot();
+    await screen.findByText("Your votes were not submitted");
+
+    expect(screen.getByText("Your selection (3/3)")).toBeDefined();
+
+    // Signing in is a full round trip out of the app and back. The picks have
+    // to be waiting when the player returns, or the vote costs them the whole
+    // ballot a second time and they simply do not bother.
+    view.unmount();
+    await renderVotePage(votingStatus());
+
+    expect(screen.getByText("Your selection (3/3)")).toBeDefined();
+  });
+
+  it("routes the player through sign-in back to this ballot", async () => {
+    vi.spyOn(axiosInstance, "post").mockRejectedValue(
+      new SessionExpiredError(ballotPath),
+    );
+
+    await castBallot();
+    await screen.findByText("Your votes were not submitted");
+
+    fireEvent.click(screen.getByRole("button", { name: "Sign in and submit" }));
+
+    expect(sessionStorage.getItem("redirectAfterLogin")).toBe(ballotPath);
+  });
+
+  it("tells the player what the server actually said about an ordinary refusal", async () => {
+    // A 400 is the server refusing this vote, not the session going away, so
+    // it keeps the toast-and-carry-on path — and the toast now carries the
+    // server's own words. Every 400 used to reach the player as "Request
+    // failed with status code 400", which named none of the nine rules
+    // `submitVotes` enforces.
+    const errorToast = vi.spyOn(toast, "error");
+    vi.spyOn(axiosInstance, "post").mockRejectedValue(
+      Object.assign(new Error("Request failed with status code 400"), {
+        status: 400,
+        response: { status: 400, data: { message: "Voting is not open" } },
+      }),
+    );
+
+    await castBallot();
+
+    await waitFor(() =>
+      expect(errorToast).toHaveBeenCalledWith("Voting is not open"),
+    );
+    expect(screen.queryByText("Your votes were not submitted")).toBeNull();
+  });
+});
+
+describe("VotePage when the ballot itself is refused", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("shows the server's reason rather than falling over on its error body", async () => {
+    // The read is authenticated now, so it can be refused — and what came back
+    // used to be handed to `ErrorState` whole. An object as a React child
+    // throws, which took the page to the error boundary instead of telling the
+    // reader anything.
+    vi.spyOn(axiosInstance, "get").mockRejectedValue(
+      Object.assign(new AxiosError("Request failed with status code 403"), {
+        response: {
+          status: 403,
+          data: {
+            code: 403,
+            message: "You are not authorized to view this player's ballot",
+          },
+        },
+      }),
+    );
+
+    render(
+      <Routes>
+        <Route path="/vote/:matchId" element={<VotePage />} />
+      </Routes>,
+      { wrapper: createTestProviders({ at: ballotPath }) },
+    );
+
+    expect(
+      await screen.findByText(
+        "You are not authorized to view this player's ballot",
+      ),
+    ).toBeDefined();
   });
 });

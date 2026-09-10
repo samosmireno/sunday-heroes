@@ -51,14 +51,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     axiosInstance
       .get(`${config.server}/auth/logout`, { withCredentials: true })
-      .then(() => {
+      .catch((error) => {
+        // Clearing the cookies is the server's half and it can fail; the
+        // client's half must happen either way. Leaving a signed-out player
+        // looking at a signed-in app is how a dead session goes unnoticed
+        // until the one request that needed it.
+        console.error("Logout error:", error);
+      })
+      .finally(() => {
         queryClient.clear();
         setUser(undefined);
         localStorage.removeItem("user");
         navigate("/landing");
-      })
-      .catch((error) => {
-        console.error("Logout error:", error);
       });
   };
 
@@ -89,25 +93,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /**
+   * A stored user is a claim, not a session.
+   *
+   * `localStorage.user` used to be the whole of `isAuthenticated`. It is
+   * permanent storage, and the thing it stands for — the refresh cookie — is
+   * not: browsers evict cookies on their own schedule, and a player whose
+   * cookies were gone still got the full signed-in app, protected routes and
+   * all. Almost every read in this app hits an unauthenticated endpoint, so
+   * nothing gave the lie away. On the vote page the first authenticated
+   * request a player ever makes is the vote itself, which meant the discovery
+   * came at the one moment it cost something.
+   *
+   * So the claim is checked against the server before it counts. The refresh
+   * interceptor gets its one attempt inside this request; if that fails the
+   * claim is thrown away, and `isAuthenticated` is false for a session the
+   * server would in fact refuse.
+   */
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const storedUser = localStorage.getItem("user");
+    let cancelled = false;
 
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-        }
+    const verifySession = async () => {
+      try {
+        if (!localStorage.getItem("user")) return;
+
+        const { data } = await axiosInstance.get<UserResponse>(
+          `${config.server}/auth/me`,
+        );
+
+        if (cancelled) return;
+        setUser(data);
+        localStorage.setItem("user", JSON.stringify(data));
       } catch (err) {
         console.error("Error initializing auth:", err);
-        setError("Failed to initialize authentication");
         localStorage.removeItem("user");
+        if (!cancelled) setUser(undefined);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    initializeAuth();
+    verifySession();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (

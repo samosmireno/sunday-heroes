@@ -14,6 +14,7 @@ import {
 import { useVoteSubmit } from "@/features/voting/hooks/use-vote-submit";
 import { usePlayerSelection } from "@/features/voting/hooks/use-player-selection";
 import { VotingDeadline, VotingGuide } from "@/features/voting/votig-info";
+import { VoteNotSubmittedNotice } from "@/features/voting/vote-not-submitted-notice";
 import {
   VotingLockNotice,
   VotingThresholdBanner,
@@ -24,11 +25,21 @@ export default function VotePage() {
   const [searchParams] = useSearchParams();
   const voterId = searchParams.get("voterId") as string;
 
-  const { submitVotes, isSubmitting, success, navigateToDashboard } =
-    useVoteSubmit();
+  const {
+    submitVotes,
+    isSubmitting,
+    success,
+    sessionExpired,
+    signInToSubmit,
+    navigateToDashboard,
+  } = useVoteSubmit();
   const { votingStatus, isLoading, error } = useVotingStatus(matchId, voterId);
-  const { selectedPlayers, handlePlayerSelect, canSubmit } =
-    usePlayerSelection();
+  const { selectedPlayers, handlePlayerSelect, canSubmit } = usePlayerSelection(
+    {
+      matchId,
+      voterId,
+    },
+  );
 
   const handleSubmit = () => {
     submitVotes(matchId, voterId, selectedPlayers);
@@ -121,9 +132,14 @@ export default function VotePage() {
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
             showSubmitButton={canSubmit}
+            /* Both of these take the submit button's place, and only one can
+               be true: a blocked voter has no submit button to press, so no
+               submit of theirs can have been refused. */
             lockedNotice={
               blocked ? (
                 <VotingLockNotice onNavigateToDashboard={navigateToDashboard} />
+              ) : sessionExpired ? (
+                <VoteNotSubmittedNotice onSignIn={signInToSubmit} />
               ) : undefined
             }
           />

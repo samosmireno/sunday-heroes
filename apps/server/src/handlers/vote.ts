@@ -43,6 +43,7 @@ export const getVotingStatus = async (
   next: NextFunction,
 ) => {
   try {
+    const requestingUserId = extractUserId(req);
     const matchId = req.params.matchId;
     const voterId = getRequiredQuery(req, "voterId");
 
@@ -50,7 +51,11 @@ export const getVotingStatus = async (
       throw new BadRequestError("matchId parameter is required");
     }
 
-    const status = await VoteService.getVotingStatus(matchId, voterId);
+    const status = await VoteService.getVotingStatus(
+      matchId,
+      voterId,
+      requestingUserId,
+    );
     sendSuccess(res, status);
   } catch (error) {
     next(error);

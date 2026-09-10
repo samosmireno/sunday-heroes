@@ -104,10 +104,37 @@ export class VoteService {
     });
   }
 
-  static async getVotingStatus(matchId: string, voterId: string) {
+  static async getVotingStatus(
+    matchId: string,
+    voterId: string,
+    requestingUserId: string,
+  ) {
     const match = await MatchRepo.findByIdWithVotes(matchId);
     if (!match) {
       throw new NotFoundError("Match not found");
+    }
+
+    // Who is asking, settled before a word is answered about the voter. The
+    // ballot is the page a vote is cast from, and it used to be readable by
+    // anyone at all: the route carried no `authenticateToken`, and nothing
+    // tied the `?voterId=` in the URL to a session. That gap is what let a
+    // player whose session had quietly died read a live ballot, pick three
+    // names, and only discover at submit that there was no session to submit
+    // with — by which point the vote was lost.
+    //
+    // The rule is the one `submitVotes` enforces, so the two can never
+    // disagree: the voter's own account, or an ADMIN/MODERATOR of the
+    // Competition carrying the ballot for them. Nothing that could submit is
+    // refused the ballot it would submit from.
+    const isAuthorized = await this.canUserSubmitVotesForPlayer(
+      matchId,
+      voterId,
+      requestingUserId,
+    );
+    if (!isAuthorized) {
+      throw new AuthorizationError(
+        "You are not authorized to view this player's ballot",
+      );
     }
 
     const isParticipant = await MatchPlayerRepo.isPlayerInMatch(

@@ -10,7 +10,11 @@ import { authenticateToken } from "../../middleware/authentication-middleware";
 
 const router = Router();
 
-router.get("/status/:matchId", getVotingStatus);
+// The ballot is authenticated for the same reason the submit is: it is the
+// page the vote is cast from, and a ballot handed to a dead session is a vote
+// that cannot be cast. The service then checks that the session owns the
+// `?voterId=` it asks for.
+router.get("/status/:matchId", authenticateToken, getVotingStatus);
 router.get("/pending-votes", getPendingVotesForMatch);
 
 router.post(

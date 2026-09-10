@@ -56,7 +56,7 @@ describe("voteless_match_repair", () => {
     const voted = await createDuelMatch({ competitionId: competition.id });
     const voterId = ana.dashboardPlayer.id;
     const ballot = (
-      await VoteService.getVotingStatus(voted.id, voterId)
+      await VoteService.getVotingStatus(voted.id, voterId, ana.user.id)
     ).players.filter((player) => player.canVoteFor);
     await VoteService.submitVotes(
       voted.id,

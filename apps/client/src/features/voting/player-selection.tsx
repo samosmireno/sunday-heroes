@@ -23,8 +23,10 @@ interface PlayerSelectionProps {
   maxSelections?: number;
   showSubmitButton: boolean;
   /**
-   * Takes the submit button's place, in the same spot, when the Voting gate is
-   * shut against the viewer: the panel ends in a lock rather than in nothing.
+   * Takes the submit button's place, in the same spot, when there is something
+   * to say instead of an invitation to submit: the Voting gate shut against
+   * the viewer, or a submit that was refused because their session had gone.
+   * The panel ends in that rather than in nothing.
    */
   lockedNotice?: ReactNode;
 }

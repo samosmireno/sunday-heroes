@@ -47,6 +47,7 @@ describe("Voting is not a Match write (ADR 0002)", () => {
     const before = await VoteService.getVotingStatus(
       seasonOneMatch.id,
       voterId,
+      ana.user.id,
     );
     expect(before).toMatchObject({ votingOpen: true, hasVoted: false });
     const [first, second, third] = before.players.filter(
@@ -66,7 +67,13 @@ describe("Voting is not a Match write (ADR 0002)", () => {
 
     expect(result.success).toBe(true);
     expect(
-      (await VoteService.getVotingStatus(seasonOneMatch.id, voterId)).hasVoted,
+      (
+        await VoteService.getVotingStatus(
+          seasonOneMatch.id,
+          voterId,
+          ana.user.id,
+        )
+      ).hasVoted,
     ).toBe(true);
   });
 });
@@ -120,7 +127,7 @@ describe("Closing a match nobody voted on", () => {
     const match = await createDuelMatch({ competitionId: competition.id });
     const voterId = ana.dashboardPlayer.id;
     const ballot = (
-      await VoteService.getVotingStatus(match.id, voterId)
+      await VoteService.getVotingStatus(match.id, voterId, ana.user.id)
     ).players.filter((player) => player.canVoteFor);
 
     await VoteService.submitVotes(
@@ -179,7 +186,9 @@ describe("Voting closes on the votes just cast", () => {
     voterId: string,
     adminUserId: string,
   ) {
-    const ranked = (await VoteService.getVotingStatus(matchId, voterId)).players
+    const ranked = (
+      await VoteService.getVotingStatus(matchId, voterId, adminUserId)
+    ).players
       .filter((player) => player.canVoteFor)
       .sort(bySquadOrder);
 
@@ -289,7 +298,9 @@ describe("The closing ballot counts toward the ratings it closes", () => {
     voterId: string,
     adminUserId: string,
   ) {
-    const ranked = (await VoteService.getVotingStatus(matchId, voterId)).players
+    const ranked = (
+      await VoteService.getVotingStatus(matchId, voterId, adminUserId)
+    ).players
       .filter((player) => player.canVoteFor)
       .sort(bySquadOrder);
 
@@ -733,9 +744,11 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
   }
 
   it("answers a blocked participant with the ballot and where they stand, not an error", async () => {
-    const { match, bea } = await armedDuelWithBlockedPlayer();
+    // None of the default players holds an account, so the ADMIN reads the
+    // ballot for them — the same on-behalf-of path `submitVotes` allows.
+    const { user, match, bea } = await armedDuelWithBlockedPlayer();
 
-    const status = await VoteService.getVotingStatus(match.id, bea);
+    const status = await VoteService.getVotingStatus(match.id, bea, user.id);
 
     // The ballot is the one an Eligible voter gets, unchanged: the state the
     // client builds on this is a read-only ballot, not a refusal.
@@ -765,6 +778,7 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
     const thrown = await VoteService.getVotingStatus(
       match.id,
       zoe.dashboardPlayer.id,
+      zoe.user.id,
     ).then(
       () => null,
       (error: unknown) => error,
@@ -775,9 +789,9 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
   });
 
   it("leaves an Eligible voter's ballot as it was, with the two new fields on it", async () => {
-    const { match, ana } = await armedDuelWithBlockedPlayer();
+    const { user, match, ana } = await armedDuelWithBlockedPlayer();
 
-    const status = await VoteService.getVotingStatus(match.id, ana);
+    const status = await VoteService.getVotingStatus(match.id, ana, user.id);
 
     expect(status.matchId).toBe(match.id);
     expect(status.votingOpen).toBe(true);
@@ -809,6 +823,7 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
     const status = await VoteService.getVotingStatus(
       match.id,
       await findPlayerId(dashboard.id, "Ana"),
+      user.id,
     );
 
     expect(status.eligibility).toEqual({
@@ -835,6 +850,7 @@ describe("The vote page's fourth state: a participant who cannot vote yet", () =
     const status = await VoteService.getVotingStatus(
       seasonOneMatch.id,
       await findPlayerId(dashboard.id, defaultDuelPlayers[0].nickname),
+      user.id,
     );
 
     expect(status.seasonNumber).toBe(2);
@@ -1087,5 +1103,64 @@ describe("Voting closes when every Eligible voter has voted", () => {
 
     await submitBallot(match.id, dan, user.id);
     expect(await votingStatusOf(match.id)).toBe("CLOSED");
+  });
+});
+
+describe("The ballot is guarded like the submit it leads to", () => {
+  beforeEach(() => {
+    vi.spyOn(EmailService, "sendVotingInvitation").mockResolvedValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /** A Duel whose match Ana played, with a stranger who has nothing to do with it. */
+  async function duelWithAnaAndAStranger() {
+    const { user, dashboard } = await createUserWithDashboard();
+    const ana = await createRegisteredPlayer({
+      dashboardId: dashboard.id,
+      nickname: "Ana",
+    });
+    const { competition } = await createDuel({
+      userId: user.id,
+      votingEnabled: true,
+    });
+    const match = await createDuelMatch({ competitionId: competition.id });
+    const stranger = await createUser({ givenName: "Stranger" });
+
+    return { admin: user, competition, match, ana, stranger };
+  }
+
+  it("refuses a signed-in stranger the ballot of a player they do not own", async () => {
+    const { match, ana, stranger } = await duelWithAnaAndAStranger();
+
+    // The gap this closes: the route carried no authentication and the service
+    // never looked at who was asking, so this read used to answer with Ana's
+    // live ballot to anyone who could guess two UUIDs.
+    const thrown = await VoteService.getVotingStatus(
+      match.id,
+      ana.dashboardPlayer.id,
+      stranger.id,
+    ).then(
+      () => null,
+      (error: unknown) => error,
+    );
+
+    expect(thrown).toBeInstanceOf(AuthorizationError);
+  });
+
+  it("gives the voter their own ballot, and the ADMIN the one they may submit", async () => {
+    const { admin, match, ana } = await duelWithAnaAndAStranger();
+    const voterId = ana.dashboardPlayer.id;
+
+    // Exactly the two who can reach `submitVotes` for this ballot reach the
+    // ballot: nothing that could submit is refused the page it submits from.
+    await expect(
+      VoteService.getVotingStatus(match.id, voterId, ana.user.id),
+    ).resolves.toMatchObject({ votingOpen: true, hasVoted: false });
+    await expect(
+      VoteService.getVotingStatus(match.id, voterId, admin.id),
+    ).resolves.toMatchObject({ votingOpen: true, hasVoted: false });
   });
 });
