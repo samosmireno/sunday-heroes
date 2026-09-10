@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { RefreshToken } from "@prisma/client";
 import { RefreshTokenRepo } from "../repositories/refresh-token/refresh-token-repo";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
@@ -52,8 +53,15 @@ export class RefreshTokenService {
   }
 
   static async createRefreshToken(userId: string): Promise<RefreshToken> {
+    // `jwtid` is what makes two tokens for the same user two tokens. The
+    // payload is otherwise just `{ userId }` plus a whole-second `iat`, so
+    // signing twice for one user inside the same second produced the identical
+    // string — and `RefreshToken.token` is unique. Rotation used to hide that
+    // by deleting the old row first; now that it commits last, the collision
+    // would surface as a failed refresh. Nothing reads the claim.
     const newRefreshToken = jwt.sign({ userId }, config.jwt.refreshSecret, {
       expiresIn: AuthService.REFRESH_TOKEN_EXPIRY,
+      jwtid: randomUUID(),
     });
 
     await this.cleanupExpiredTokensForUser(userId);
@@ -119,8 +127,11 @@ export class RefreshTokenService {
   static async rotateRefreshToken(oldToken: string): Promise<RefreshToken> {
     const validation = await this.validateRefreshToken(oldToken);
 
+    // Replacement first, as in `handleRefreshToken`: nothing retires a token
+    // the caller still holds until there is another one to hold instead.
+    const replacement = await this.createRefreshToken(validation.userId);
     await this.deleteToken(oldToken);
 
-    return await this.createRefreshToken(validation.userId);
+    return replacement;
   }
 }

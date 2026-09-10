@@ -132,7 +132,6 @@ export const handleRefreshToken = async (
 
     const { userId, decoded } =
       await AuthService.validateRefreshToken(refreshToken);
-    await RefreshTokenService.deleteToken(refreshToken);
 
     if (!userId) {
       throw new AuthenticationError("Invalid user ID");
@@ -147,6 +146,31 @@ export const handleRefreshToken = async (
       await AuthService.refreshUserTokens(userId, decoded.email);
 
     CookieUtils.setAuthCookies(res, accessToken, newRefreshToken);
+
+    // Rotation commits last. This used to retire the old token immediately
+    // after validating it, two awaits before the replacement was even minted:
+    // anything that interrupted the handler in that window — a Render restart,
+    // a dropped connection, a throw from either await — left the browser
+    // holding a refresh cookie no row backs, and every later refresh answered
+    // "Refresh token not found". That session is bricked for good; the player
+    // cannot recover it, and the next thing they do that needs authentication
+    // (submitting a vote) is silently refused.
+    //
+    // Retiring it on `finish` instead means the old token stays usable until
+    // the replacement has actually been written to the wire. It is still
+    // one-use rotation — the window is the flush of this response — and a
+    // response that never arrives leaves the player exactly where they were.
+    res.on("finish", () => {
+      // A failed response is not a rotation: the browser kept the old cookie.
+      if (res.statusCode < 200 || res.statusCode >= 300) return;
+
+      RefreshTokenService.deleteToken(refreshToken).catch((error) => {
+        logger.error(
+          { err: error, userId },
+          "Failed to retire a rotated refresh token",
+        );
+      });
+    });
 
     const authResponse = {
       id: user.id,
