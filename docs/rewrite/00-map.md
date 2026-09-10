@@ -20,6 +20,8 @@ The product and its shape:
 - **Seasons for every format**, admin-triggered like a real football season, so a recurring competition never has to be recreated and its player pool carries over. A closed Season is read-only.
 - **The voting gate becomes "Minimum matches"**: N completed matches in this competition, counted across seasons, editable, applied from the first match that crosses it. Squad format only; team formats are roster-based and need no gate.
 - **Competition settings are editable** after creation. A change applies to matches created after it and never rewrites the past.
+- **Match format (five-a-side, six-a-side and so on) lives at two levels.** In Pickup it is a fact of each match, chosen when the match is added. In League and Knockout it is a competition setting fixed at creation, because a schedule and its rosters are built for one size.
+- **A draw is a result** in Pickup and League. Penalties exist only in a one-leg Knockout match, where they decide the winner.
 - **Ratings are derived from ballots at read time**, never stored, so a correction is never a repair. Voting reopens only when a lineup changes and only before the deadline.
 - **A Player casts their own ballot through a linked Account.** A Group admin or competition manager may submit a ballot on behalf of any Player in the match, linked or not, because some players will never register.
 - **Sign-in is Google or email and password**, and one email is one Account across both.
@@ -53,17 +55,18 @@ Terms today's code uses without defining, to be settled in the sessions named: *
 
 Rules that more than one area depends on. Each branch session takes them as given unless it is the session named as owner.
 
-| Rule                                                                                                                                                      | Owner        | Status                                                                         |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------ |
-| **Completed match is the unit that counts** for standings, stats and Minimum matches. A Pickup match is born completed; a Fixture is completed by an act. | Matches      | Kept.                                                                          |
-| **Every new match lands in the Current season.** A Past season is read-only for match writes. Voting open at rollover runs to its deadline.               | Seasons      | Kept, by purpose this time: rollover happens when the old matches are settled. |
-| **A Player's identity is the nickname within the Group.** An Account is optional and is what voting requires.                                             | Groups       | Kept.                                                                          |
-| **Roles are derived**, never stored on the Account: Group admin from Group membership, Competition manager from a per-competition assignment.             | Groups       | Reshaped: several Group admins.                                                |
-| **Ratings and man of the match are derived from ballots at read time.** Nothing about a vote is stored except the ballot.                                 | Voting       | Reshaped. Today they are stored at close and repaired by migration.            |
-| **A settings change applies forward.** Voting on or off, period, Minimum matches and format details apply to matches created after the change.            | Competitions | New.                                                                           |
-| **Penalties decide a match, not a draw.** A level score settled on penalties is a win and a loss for both team standings and player win rate.             | Matches      | Today the glossary, the standings and the SQL career record disagree.          |
-| **Members only.** Every read is scoped to a Group the Account belongs to. Public share links are future work.                                             | Identity     | New. Today many reads are open by omission.                                    |
-| **Minimum matches applies to Pickup only** and counts completed matches in this competition across Seasons.                                               | Voting       | Reshaped.                                                                      |
+| Rule                                                                                                                                                                                                                                  | Owner        | Status                                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Completed match is the unit that counts** for standings, stats and Minimum matches. A Pickup match is born completed; a Fixture is completed by an act.                                                                             | Matches      | Kept.                                                                                                                                          |
+| **Every new match lands in the Current season.** A Past season is read-only for match writes. Voting open at rollover runs to its deadline.                                                                                           | Seasons      | Kept, by purpose this time: rollover happens when the old matches are settled.                                                                 |
+| **A Player's identity is the nickname within the Group.** An Account is optional and is what voting requires.                                                                                                                         | Groups       | Kept.                                                                                                                                          |
+| **Roles are derived**, never stored on the Account: Group admin from Group membership, Competition manager from a per-competition assignment.                                                                                         | Groups       | Reshaped: several Group admins.                                                                                                                |
+| **Ratings and man of the match are derived from ballots at read time.** Nothing about a vote is stored except the ballot.                                                                                                             | Voting       | Reshaped. Today they are stored at close and repaired by migration.                                                                            |
+| **A settings change applies forward.** Voting on or off, period, Minimum matches and format details apply to matches created after the change.                                                                                        | Competitions | New.                                                                                                                                           |
+| **A draw is a result.** A level Pickup or League match is a draw for standings and win rate. Only a one-leg Knockout match goes to penalties, and there the decision is a win and a loss.                                             | Matches      | New. Today the glossary and win rate treat a penalty result as a win or loss while the standings and the SQL career record treat it as a draw. |
+| **Members only.** Every read is scoped to a Group the Account belongs to. Public share links are future work.                                                                                                                         | Identity     | New. Today many reads are open by omission.                                                                                                    |
+| **Minimum matches applies to Pickup only** and counts completed matches in this competition across Seasons.                                                                                                                           | Voting       | Reshaped.                                                                                                                                      |
+| **Match format is per match in Pickup and per competition in team formats.** A Pickup match carries its own size, chosen when it is added. A League or Knockout competition fixes its size at creation and every Fixture inherits it. | Competitions | New. Today it is a free-text match type on League creation and on each match, validated nowhere.                                               |
 
 ## Areas
 
@@ -108,14 +111,14 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Today.** Duel is the only format in production: two literal Team rows named Home and Away, sides free-picked per match, every match born completed with round 1. League is created through its own endpoint with a match type, a number of teams and a double-round-robin flag misnamed `isRoundRobin`. Knockout exists as an enum value, a stored voting period nobody reads and a form schema; a Knockout match cannot be created. Settings are write-once because no update endpoint exists. `minPlayers` is stored and never read. Deletion is admin-only and prunes orphaned players.
 
-**Verdict: reshape.** Three formats under one Competition concept: **Pickup** (squad format), **League** and **Knockout** (team formats). Settings editable after creation, applied forward. Voting is a per-competition switch with its own settings.
+**Verdict: reshape.** Three formats under one Competition concept: **Pickup** (squad format), **League** and **Knockout** (team formats). Settings editable after creation, applied forward. Voting is a per-competition switch with its own settings. Match format is a competition setting for League and Knockout, fixed at creation; a Pickup competition has none, because each Pickup match picks its own.
 
 **Depends on.** Settings apply forward; roles are derived.
 
 **Open questions.**
 
-- The exact settings list per format and which are shared: voting on or off, voting period, reminder, Minimum matches (Pickup only), match format (five-a-side and so on), team count, single or double round robin, bracket size.
-- Whether match format (five-a-side and so on) is a competition setting, a match fact, or both, and whether it validates a lineup.
+- The exact settings list per format and which are shared: voting on or off, voting period, reminder, Minimum matches (Pickup only), match format (team formats only), team count, single or double round robin, bracket size.
+- Which match formats are offered (five-a-side up to eleven-a-side, or any number) and whether a match format validates a lineup, on the server, at completion.
 - What "delete a competition" means once it has Seasons and ballots: hard delete, or archive.
 - Whether a competition can change format after creation (almost certainly no) and how that is stated.
 
@@ -153,7 +156,7 @@ Rules that more than one area depends on. Each branch session takes them as give
 - Roster changes mid-season: allowed freely, allowed with a transfer window, or frozen.
 - Whether a Player may be on two teams' rosters in the same Season (a guest), and how a guest appearance is recorded.
 - Team identity: name only, or colours and a captain.
-- Minimum and maximum roster size, and whether they follow the match format.
+- Minimum and maximum roster size, and whether they follow the competition's match format.
 
 ### 6. League schedule and standings
 
@@ -163,11 +166,10 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Verdict: keep, reshaped.** Standings are always derived from completed matches, never counted. Schedule generation is its own act.
 
-**Depends on.** Completed match; Seasons; Teams and rosters; penalties decide a match.
+**Depends on.** Completed match; Seasons; Teams and rosters; a draw is a result.
 
 **Open questions.**
 
-- Whether penalties belong in a League at all, or only in a Knockout.
 - Tiebreak order and whether head-to-head enters it.
 - Whether an admin can add a Fixture outside the schedule, reschedule, postpone or void one.
 - Rounds versus matchdays as the visible grouping, and whether Fixtures carry a planned date.
@@ -181,13 +183,13 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Verdict: keep, built from nothing.** A team format sharing teams, rosters and match recording with League.
 
-**Depends on.** Teams and rosters; Seasons; penalties decide a match; Completed match.
+**Depends on.** Teams and rosters; Seasons; a draw is a result, so a one-leg Knockout match is the only match penalties decide; Completed match.
 
 **Open questions.**
 
 - Bracket size and seeding: fixed powers of two with byes, or any count; seeded by the admin, by a previous League table, or at random.
 - One leg or two, and how a two-leg tie is decided.
-- Draws: extra time is not recorded, so is a level score settled on penalties always, and must a Knockout match carry a penalty result before it can be completed?
+- A level one-leg match goes to penalties, since extra time is not recorded: must it carry a penalty result before it can be completed, and how is a level two-leg tie decided?
 - Third-place match, group stage before the bracket (probably a later format), and what happens to a team that withdraws.
 - Whether a Knockout Season ends automatically when the final is completed.
 
@@ -197,14 +199,14 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Today.** Date, two scores, penalties (built, hidden in the UI, the away value written as a copy of the home value), a video link, match type, round. Per side a Team row; per player goals, assists, a `penaltyScored` flag that is always null, an ordinal position that draws shirts on a pitch, rating and man-of-the-match flag. A Pickup match is created already completed; a League Fixture is completed by a separate act that needs players, teams and a date. Editing rewrites date, scores and video, reconciles players by nickname and side, and moving a player across sides loses their rating and cascades their votes away. Every edit reopens voting with a fresh deadline. Validation is mostly client-side: four per side, goals and assists each at most the side's score; the server accepts zero players. Nothing validates the match format against the lineup.
 
-**Verdict: reshape.** A match records scores, scorers, assists, own goals, penalties as a tie-breaker, a lineup per side with a chosen formation, and a video link. Goals reconcile with the score. No cards, minutes or substitutes.
+**Verdict: reshape.** A match records scores, scorers, assists, own goals, a penalty shoot-out for a one-leg Knockout match, a lineup per side with a chosen formation, and a video link. Goals reconcile with the score. No cards, minutes or substitutes.
 
-**Depends on.** Completed match; every new match lands in the Current season; penalties decide a match; Teams and rosters for team formats; Player identity is the nickname for Pickup.
+**Depends on.** Completed match; every new match lands in the Current season; a draw is a result; Teams and rosters for team formats; Player identity is the nickname for Pickup; match format is per match in Pickup and inherited from the competition in team formats.
 
 **Open questions.**
 
 - Is a Pickup match still born completed, or does it get the same "record then complete" life cycle as a Fixture?
-- Formation: chosen from a list per match format, or free placement; whether a Player's position is a fact worth keeping for stats.
+- Formation: chosen from a list per match format, or free placement; whether a Player's position is a fact worth keeping for stats. In Pickup the list follows the size chosen for that match.
 - Whether an own goal is a per-player fact or only a score adjustment.
 - Exactly which edits reopen voting (lineup change by decision) and which never do (score correction).
 - Validation split: what must hold on the server for a match to be completed.
@@ -235,9 +237,9 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Today.** A per-competition table computed in memory from the selected Season: matches, goals, assists, wins, win rate, average rating over rated matches, man-of-the-match count, team for League. A career page in SQL across every Player an Account has claimed: totals, average rating, win-draw-loss with penalties treated as draws, man-of-the-match count, goal and assist consistency rates, recent form, top matches, top competitions, top teammates by shared side. Win rate is wins plus 0.3 per draw over matches, never stored. A home page with four cards, one counting dated matches as completed. The career page is public.
 
-**Verdict: keep, reshaped.** Everything stays and gains a rating history over time. Group-scoped, not public. Penalties follow the one rule.
+**Verdict: keep, reshaped.** Everything stays and gains a rating history over time. Group-scoped, not public. A draw counts as a draw everywhere; a Knockout penalty decision counts as a win and a loss.
 
-**Depends on.** Completed match; ratings derived; penalties decide a match; All seasons; Account may claim one Player per Group.
+**Depends on.** Completed match; ratings derived; a draw is a result; All seasons; Account may claim one Player per Group.
 
 **Open questions.**
 
@@ -340,20 +342,22 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 Paste one line to start that session. Each session reads this map first, settles the open questions of its area, may write its own `docs/rewrite/NN-<area>.md`, and adds resolved terms to `docs/rewrite/CONTEXT.md`.
 
-1. `/grill-with-docs Sunday Heroes rewrite, branch session: Identity and accounts. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 1, and write docs/rewrite/01-identity.md.`
-2. `/grill-with-docs Sunday Heroes rewrite, branch session: Groups, players and roles. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 2, and write docs/rewrite/02-groups.md.`
-3. `/grill-with-docs Sunday Heroes rewrite, branch session: Competitions and formats. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 3, and write docs/rewrite/03-competitions.md.`
-4. `/grill-with-docs Sunday Heroes rewrite, branch session: Seasons. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 4, and write docs/rewrite/04-seasons.md.`
-5. `/grill-with-docs Sunday Heroes rewrite, branch session: Teams and rosters. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 5, and write docs/rewrite/05-teams.md.`
-6. `/grill-with-docs Sunday Heroes rewrite, branch session: League schedule and standings. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 6, and write docs/rewrite/06-league.md.`
-7. `/grill-with-docs Sunday Heroes rewrite, branch session: Knockout bracket. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 7, and write docs/rewrite/07-knockout.md.`
-8. `/grill-with-docs Sunday Heroes rewrite, branch session: Match recording. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 8, and write docs/rewrite/08-matches.md.`
-9. `/grill-with-docs Sunday Heroes rewrite, branch session: Voting and man of the match. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 9, and write docs/rewrite/09-voting.md.`
-10. `/grill-with-docs Sunday Heroes rewrite, branch session: Player stats and views. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 10, and write docs/rewrite/10-stats.md.`
-11. `/grill-with-docs Sunday Heroes rewrite, branch session: Notifications and email. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 11, and write docs/rewrite/11-notifications.md.`
-12. `/grill-with-docs Sunday Heroes rewrite, branch session: Architecture. Read docs/rewrite/00-map.md and every docs/rewrite/NN-*.md written so far, take their decisions as settled, settle the open questions under area 12, and write docs/rewrite/12-architecture.md with ADRs for the hard-to-reverse choices.`
-13. `/grill-with-docs Sunday Heroes rewrite, branch session: Frontend and design. Read docs/rewrite/00-map.md and docs/rewrite/12-architecture.md first, take their decisions as settled, settle the open questions under area 13, and write docs/rewrite/13-frontend.md.`
-14. `/grill-with-docs Sunday Heroes rewrite, branch session: Operations and hosting. Read docs/rewrite/00-map.md and docs/rewrite/12-architecture.md first, take their decisions as settled, settle the open questions under area 14, and write docs/rewrite/14-operations.md.`
-15. `/grill-with-docs Sunday Heroes rewrite, branch session: Data migration. Read every docs/rewrite/*.md first, take their decisions as settled, settle the open questions under area 15, and write docs/rewrite/15-migration.md.`
+In every session the agent is expected to do more than ask: it should propose improvements to the area and additional features it thinks would be handy, drawn from what it has read of the current app, of the other branch documents and of how comparable products work. Each proposal is put to the user as a decision like any other question, never adopted silently, and the branch document records the ones that were accepted, the ones that were declined, and why.
+
+1. `/grill-with-docs Sunday Heroes rewrite, branch session: Identity and accounts. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 1, propose improvements and extra features you would find handy, and write docs/rewrite/01-identity.md.`
+2. `/grill-with-docs Sunday Heroes rewrite, branch session: Groups, players and roles. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 2, propose improvements and extra features you would find handy, and write docs/rewrite/02-groups.md.`
+3. `/grill-with-docs Sunday Heroes rewrite, branch session: Competitions and formats. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 3, propose improvements and extra features you would find handy, and write docs/rewrite/03-competitions.md.`
+4. `/grill-with-docs Sunday Heroes rewrite, branch session: Seasons. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 4, propose improvements and extra features you would find handy, and write docs/rewrite/04-seasons.md.`
+5. `/grill-with-docs Sunday Heroes rewrite, branch session: Teams and rosters. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 5, propose improvements and extra features you would find handy, and write docs/rewrite/05-teams.md.`
+6. `/grill-with-docs Sunday Heroes rewrite, branch session: League schedule and standings. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 6, propose improvements and extra features you would find handy, and write docs/rewrite/06-league.md.`
+7. `/grill-with-docs Sunday Heroes rewrite, branch session: Knockout bracket. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 7, propose improvements and extra features you would find handy, and write docs/rewrite/07-knockout.md.`
+8. `/grill-with-docs Sunday Heroes rewrite, branch session: Match recording. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 8, propose improvements and extra features you would find handy, and write docs/rewrite/08-matches.md.`
+9. `/grill-with-docs Sunday Heroes rewrite, branch session: Voting and man of the match. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 9, propose improvements and extra features you would find handy, and write docs/rewrite/09-voting.md.`
+10. `/grill-with-docs Sunday Heroes rewrite, branch session: Player stats and views. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 10, propose improvements and extra features you would find handy, and write docs/rewrite/10-stats.md.`
+11. `/grill-with-docs Sunday Heroes rewrite, branch session: Notifications and email. Read docs/rewrite/00-map.md first, take its decisions as settled, settle the open questions under area 11, propose improvements and extra features you would find handy, and write docs/rewrite/11-notifications.md.`
+12. `/grill-with-docs Sunday Heroes rewrite, branch session: Architecture. Read docs/rewrite/00-map.md and every docs/rewrite/NN-*.md written so far, take their decisions as settled, settle the open questions under area 12, propose improvements and extra features you would find handy, and write docs/rewrite/12-architecture.md with ADRs for the hard-to-reverse choices.`
+13. `/grill-with-docs Sunday Heroes rewrite, branch session: Frontend and design. Read docs/rewrite/00-map.md and docs/rewrite/12-architecture.md first, take their decisions as settled, settle the open questions under area 13, propose improvements and extra features you would find handy, and write docs/rewrite/13-frontend.md.`
+14. `/grill-with-docs Sunday Heroes rewrite, branch session: Operations and hosting. Read docs/rewrite/00-map.md and docs/rewrite/12-architecture.md first, take their decisions as settled, settle the open questions under area 14, propose improvements and extra features you would find handy, and write docs/rewrite/14-operations.md.`
+15. `/grill-with-docs Sunday Heroes rewrite, branch session: Data migration. Read every docs/rewrite/*.md first, take their decisions as settled, settle the open questions under area 15, propose improvements and extra features you would find handy, and write docs/rewrite/15-migration.md.`
 
 Sessions 1 to 11 are domain and can run in the listed order; 3 and 4 may run together, and 5, 6 and 7 may run together after 4. Session 12 waits for the domain sessions. Sessions 13 and 14 wait for 12. Session 15 is last.
