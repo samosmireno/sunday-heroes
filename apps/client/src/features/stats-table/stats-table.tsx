@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSortPlayers } from "./use-sort-players";
+import { playedAtLeastPercent } from "./match-percentage-filter";
 import { PlayerTotals } from "@repo/shared-types";
 import {
   Select,
@@ -45,14 +46,16 @@ export default function StatsTable({
     "desc",
   );
 
-  // Filter players based on selected match percentage
+  // Keep the players who played at least the selected share of the matches
   const filteredPlayers =
     matchPercent === "all"
       ? sortedPlayers
-      : sortedPlayers.filter(
-          (player) =>
-            player.matches >
-            Math.floor((parseInt(matchPercent) / 100) * totalMatches),
+      : sortedPlayers.filter((player) =>
+          playedAtLeastPercent(
+            player.matches,
+            parseInt(matchPercent),
+            totalMatches,
+          ),
         );
 
   const getSortArrow = (key: keyof PlayerTotals) => {
