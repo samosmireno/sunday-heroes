@@ -91,3 +91,61 @@ _Avoid_: Combine, deduplicate, alias
 **Activity record**:
 An append-only record per Group of the acts that change who someone is or what they may do: Members, admins, Managers, Player repairs, invitations, settings. Names the acting Account, tombstoned on that Account's deletion. Visible to Group admins.
 _Avoid_: Audit log, feed, history, timeline
+
+### Competitions
+
+**Competition**:
+A named run of matches inside a Group with one Format, its own settings, its Managers and a history of Seasons. Every lineup and roster in it is drawn from the Group's Player pool. Created, configured, ended and deleted by Group admins.
+_Avoid_: Tournament, event, league (as the general word)
+
+**Format**:
+The kind of Competition, chosen at creation and never changed: Pickup, League or Knockout. Pickup is the Squad format; League and Knockout are Team formats.
+_Avoid_: Type, competition type, mode
+
+**Squad format**:
+A Format with one pool of players and sides drawn per match, producing a player table. Pickup is the only one.
+_Avoid_: Casual format, informal, duel
+
+**Team format**:
+A Format with fixed teams and rosters per Season, a schedule or a bracket, and a team table beside the player stats. League and Knockout.
+_Avoid_: Structured format, organised, proper
+
+**Pickup**:
+The Squad format: two sides picked from the Player pool for each match, every match a result on its own, one player table across them.
+_Avoid_: Duel, Home and Away, friendly, casual
+
+**League**:
+The Team format in which every team plays every other on a round-robin schedule and Standings rank them.
+_Avoid_: Tournament, table (as the competition), round robin (as the competition)
+
+**Knockout**:
+The Team format in which teams are drawn into a single-elimination bracket and one winner is left.
+_Avoid_: Cup, tournament, playoff, bracket (as the competition)
+
+**Match format**:
+The number of players a side fields on the pitch, 3 to 11, named "N-a-side". A fact of each Pickup match, chosen when it is added; a setting of a League or Knockout inherited by every Fixture, changeable only while the Current season has no matches. A side's lineup may hold more players than the Match format, the rest being substitutes, or fewer.
+_Avoid_: Match type, size, team size, format (alone: that is the Competition's)
+
+**Usual match format**:
+A Pickup Competition's setting that prefills the Match format of a new match. Seeded from the Group's default when the Competition is created; editable.
+_Avoid_: Default format, competition match format
+
+**Voting period**:
+A Competition setting: the number of whole days, 1 to 14, after a match is completed during which ballots are accepted, ending at the end of the last day in the Group's time zone.
+_Avoid_: Deadline (that is the resulting instant), voting window, voting days
+
+**Minimum matches**:
+A Pickup Competition setting, off or 1 to 20: the number of Completed matches in this Competition, counted across every Season, a Player must have played before their ballot is accepted. A change applies to matches created after it.
+_Avoid_: Voting threshold, voting gate, eligibility, quota, runway
+
+**Active competition**:
+A Competition that has a Current season. Every Competition is born Active, and only an Active Competition accepts new matches, settings changes and Roster setup.
+_Avoid_: Open, live, running, in progress
+
+**End competition**:
+The Group admin act that closes the Current season without opening the next. Refused while the Competition has no matches at all; an empty Current season is discarded rather than closed. Voting open at that moment runs to its deadline.
+_Avoid_: Archive, close, finish, retire
+
+**Ended competition**:
+A Competition with no Current season: fully readable and counted in stats, accepting only Start new season, which makes it Active again, and deletion.
+_Avoid_: Archived, closed, finished, inactive, past competition

@@ -33,7 +33,7 @@ Facts found in the current repo during this session that shaped a decision. They
 
 ### Group
 
-A Group has a **name** (1 to 50 characters, not unique anywhere), a **time zone** (prefilled from the creator's browser, used for voting deadlines and "today"), and a **default match format for new Pickup matches** (prefilled as five-a-side). All three are editable by any Group admin. Nothing else: no description, avatar, colour or slug.
+A Group has a **name** (1 to 50 characters, not unique anywhere), a **time zone** (prefilled from the creator's browser, used for voting deadlines and "today"), and a **default match format** (prefilled as five-a-side) that seeds a new competition's match format, or a new Pickup competition's usual match format; changing it touches no existing competition. All three are editable by any Group admin. Nothing else: no description, avatar, colour or slug.
 
 A Group is created deliberately by a signed-in Account, which becomes its first Group admin. Creation asks "I play too", on by default, and when accepted creates the creator's Player with their display name as the nickname.
 
@@ -58,7 +58,7 @@ Both roles are derived. Neither is stored on the Account.
 | Read everything in the Group; vote through a Linked Player; edit own nickname; leave         | yes    | yes     | yes         |
 | Record, edit and complete matches; Roster setup; generate a schedule; ballot on behalf       |        | yes     | yes         |
 | Create and rename unlinked Players; issue Player invitations                                 |        | yes     | yes         |
-| Change competition settings; roll a Season; delete a competition; assign Managers            |        |         | yes         |
+| Create, end and delete a competition; change its settings; roll a Season; assign Managers    |        |         | yes         |
 | Archive, merge, delete, link and unlink Players; join links; revoke any invitation           |        |         | yes         |
 | Remove Members; promote and demote admins; Group settings; delete the Group; activity record |        |         | yes         |
 
@@ -158,7 +158,7 @@ Put to the user as decisions, never adopted silently.
 - **Group activity record**, admin-visible, append-only.
 - **Hard delete of a Group** with re-authentication.
 - **Group in the URL** with a switcher in the shell.
-- **Group settings limited to** name, time zone and default Pickup format.
+- **Group settings limited to** name, time zone and default match format.
 
 ### Declined, and why
 
@@ -173,7 +173,7 @@ Put to the user as decisions, never adopted silently.
 
 ## Hand-offs to other sessions
 
-- **Competitions (3)**: the Manager's scope on competition acts as listed in the role table; the default Pickup format is a Group setting the Pickup match form reads; Manager assignment is an admin act on the competition from the Members list.
+- **Competitions (3)**: the Manager's scope on competition acts as listed in the role table; the Group's default match format seeds a new competition, and the Pickup match form reads the competition's usual match format (settled in `03-competitions.md`); Manager assignment is an admin act on the competition from the Members list and, since that session, from the competition's create form and settings screen.
 - **Teams and rosters (5)**: Roster setup draws from the pool, excluding archived Players; a Manager may run it.
 - **Matches (8)**: the inline "type a nickname" path creates a Player under the rules here; archived Players are not offered; a Manager records; match acts may join the activity record.
 - **Voting (9)**: a Player votes through its Member's Account; an archived Linked Player may still vote in matches it played; "entered on behalf of" names the acting Account and tombstones like the activity record.
