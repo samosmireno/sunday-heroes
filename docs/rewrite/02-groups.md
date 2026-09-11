@@ -53,14 +53,14 @@ Both roles are derived. Neither is stored on the Account.
 
 **Manager** ("Competition manager" in full): a Member assigned to one competition by a Group admin. A Member with no Player may be a Manager. Every Group admin is implicitly a Manager of every competition in the Group. The assignment ends with the Membership.
 
-| Act                                                                                          | Member | Manager | Group admin |
-| -------------------------------------------------------------------------------------------- | ------ | ------- | ----------- |
-| Read everything in the Group; vote through a Linked Player; edit own nickname; leave         | yes    | yes     | yes         |
-| Record, edit and complete matches; Roster setup; generate a schedule; ballot on behalf       |        | yes     | yes         |
-| Create and rename unlinked Players; issue Player invitations                                 |        | yes     | yes         |
-| Create, end and delete a competition; change its settings; roll a Season; assign Managers    |        |         | yes         |
-| Archive, merge, delete, link and unlink Players; join links; revoke any invitation           |        |         | yes         |
-| Remove Members; promote and demote admins; Group settings; delete the Group; activity record |        |         | yes         |
+| Act                                                                                                                              | Member | Manager | Group admin |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------ | ------- | ----------- |
+| Read everything in the Group; vote through a Linked Player; edit own nickname; leave                                             | yes    | yes     | yes         |
+| Record, edit and complete matches; Roster setup; generate a schedule; ballot on behalf                                           |        | yes     | yes         |
+| Create and rename unlinked Players; issue Player invitations                                                                     |        | yes     | yes         |
+| Create, end and delete a competition; change its settings; roll or reopen a Season; correct a Past season match; assign Managers |        |         | yes         |
+| Archive, merge, delete, link and unlink Players; join links; revoke any invitation                                               |        |         | yes         |
+| Remove Members; promote and demote admins; Group settings; delete the Group; activity record                                     |        |         | yes         |
 
 Members read and vote only. A Group that wants everyone recording makes them Managers, so "who may write" is a visible list rather than a default. Competition settings stay with admins because a change applies forward and is the kind of thing a group argues about.
 

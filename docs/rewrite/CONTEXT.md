@@ -143,9 +143,55 @@ A Competition that has a Current season. Every Competition is born Active, and o
 _Avoid_: Open, live, running, in progress
 
 **End competition**:
-The Group admin act that closes the Current season without opening the next. Refused while the Competition has no matches at all; an empty Current season is discarded rather than closed. Voting open at that moment runs to its deadline.
+The Group admin act that closes the Current season without opening the next. Refused while the Competition has no Completed match at all; an Empty season is discarded rather than closed and unfinished Fixtures become Not played. Voting open at that moment runs to its deadline.
 _Avoid_: Archive, close, finish, retire
 
 **Ended competition**:
-A Competition with no Current season: fully readable and counted in stats, accepting only Start new season, which makes it Active again, and deletion.
+A Competition with no Current season: fully readable and counted in stats, accepting only Start new season, which makes it Active again with the next number, Reopen last season, which makes it Active again with its last Season, a Correction on any of its Past seasons, and deletion.
 _Avoid_: Archived, closed, finished, inactive, past competition
+
+### Seasons
+
+**Season**:
+One run of a Competition to which every match belongs: a number from 1, an optional Season label, a start and, once closed, an end marking the admin's acts, its matches and, in a Team format, its teams, rosters and schedule or bracket. Shown by the dates of its Completed matches, never by the act instants. Nothing is set per Season.
+_Avoid_: Period, edition, campaign, year, term
+
+**Current season**:
+The one open Season of a Competition. Every new match lands in it; an Active competition has exactly one and an Ended competition has none.
+_Avoid_: Active season, live season, open season
+
+**Past season**:
+A closed Season: the record of what was played. Accepts no new match, no deletion and no lineup change, only a Correction. Voting open when it closed runs to its deadline.
+_Avoid_: Previous season, archived season, old season, closed season
+
+**Empty season**:
+A Season with no Completed match, whether or not a schedule has been generated or a roster drafted. The only kind that can be discarded, and the only kind that cannot be closed.
+_Avoid_: Unplayed season, blank season, new season (as a state)
+
+**All seasons**:
+The whole of a Competition's history across every Season, viewable as one set of matches and stats.
+_Avoid_: All time, overall, total, career (that is a Player's)
+
+**Start new season**:
+The Group admin act that closes the Current season and opens the next at one instant, or, on an Ended competition, opens the next Season only. Needs one Completed match in the Current season; lists the matches that become Not played; open votes run on. Informally a rollover.
+_Avoid_: Rollover (in copy), close season, finish season, new season (as a verb), reset
+
+**Season label**:
+An optional name of up to 30 characters a Group admin gives a Season, unique within the Competition ignoring case and whitespace, shown after the number: "Season 3 · 2026/27".
+_Avoid_: Season name, title, year
+
+**Not played**:
+The state of a match that was not completed when its Season closed, kept in the schedule as such. Counts in nothing and has no vote; can never be completed or corrected. Returned to not completed only by Reopen last season.
+_Avoid_: Voided, cancelled, abandoned, unplayed, not completed (that is a live Fixture)
+
+**Correction**:
+A Group admin's edit of the result facts of one Past season match: scores, scorers, assists, own goals, penalty result, date, video link. Never the lineup, the sides or the Season; never on a Not played match. Recorded with the old and new values; never reopens voting.
+_Avoid_: Edit (in a Past season), fix, repair, amendment
+
+**Reopen last season**:
+The Group admin act that makes the latest Past season Current again, allowed only while nothing has been played since it closed. Discards the empty Season after it, if any, and returns the matches its closing made Not played to not completed. The only reopening a Season ever gets.
+_Avoid_: Undo rollover, undo end, unlock season, restore
+
+**Season summary**:
+The derived header of a Season: leader (Standings leader, Knockout winner or teams still in, Pickup MVP), top scorer, top assists, most matches, most crowns, with ties shared, and the counts of Completed and Not played matches. Reads "so far" on the Current season. Never stored.
+_Avoid_: Season awards, champion (as stored state), recap
