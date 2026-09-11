@@ -74,7 +74,7 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Purpose.** Let a person prove who they are so they can be attached to Players, run Groups and vote.
 
-**Today.** Google OAuth or email and password. Both paths create an `ADMIN` account and a Dashboard on the spot, so the role enum never varies. Cookie JWT access and refresh tokens with rotation and a global sweep of expired tokens. Password reset by a one-hour emailed token; the reset endpoint returns 404 for an unknown email while the copy says otherwise. Rate limits on login, forgot and reset only. Google login on an email that registered with a password silently signs into that account. Client session is a `localStorage` entry; the `/auth/me` route exists and is never called. Several read routes carry no authentication at all.
+**Today.** Google OAuth or email and password. Both paths create an `ADMIN` account and a Dashboard on the spot, so the role enum never varies. Cookie JWT access and refresh tokens with rotation and a global sweep of expired tokens. Password reset by a one-hour emailed token; the reset endpoint returns 404 for an unknown email while the copy says otherwise. Rate limits on login, forgot and reset only. Google login on an email that registered with a password silently signs into that account. Client session is a `localStorage` entry, confirmed on mount by a call to `/auth/me`. Several read routes carry no authentication at all.
 
 **Verdict: reshape.** Keep Google and email-and-password. One email is one Account: an Account created with a password may sign in with Google for the same email, and the reverse. Sign-up creates nothing else. Drop the stored role.
 
