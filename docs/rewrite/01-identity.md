@@ -37,7 +37,8 @@ An Account is one person's proof of identity. It has:
 - a **verified email** flag: true from birth for an Account created through Google, true for a password Account once its verification link is clicked;
 - one or two **sign-in methods**: Password (a hash) and Google (attached by Google's stable subject id, at most one per Account). A method may be detached, never the last one;
 - a **display name**, prefilled from Google or typed at password sign-up, editable; and an **avatar** that is the Google picture URL, refreshed on each Google sign-in, with initials as the fallback. No upload;
-- its **sessions** and its **security events**.
+- its **sessions** and its **security events**;
+- added by the notifications session: the **Vote reminder** preference, off at birth, whether the Reminder prompt has been asked, an **Undeliverable** mark set by a bounce or complaint, and its **Deliveries**.
 
 The display name and avatar are used wherever the Account acts as itself: admin lists, "invited by", a ballot entered on someone's behalf. The nickname stays the identity inside a Group. Whether the display name becomes the default nickname on accepting an invitation belongs to the Groups session.
 
@@ -100,7 +101,7 @@ An append-only table in the database, one row per event: the Account, the kind, 
 
 Self-service, immediate, after re-authentication and a confirmation screen that lists what is kept and what goes. No typed phrase, no grace period.
 
-- **Goes**: the Account row, its sign-in methods, its sessions, its security events. The email is free again.
+- **Goes**: the Account row, its sign-in methods, its sessions, its security events, and, per the notifications session, its Deliveries and preferences. The email is free again.
 - **Kept**: every Player the Account had claimed stays in its Group as an unlinked Player with all matches, stats and ballots intact. A ballot is the Player's act on the Group's record, not the Account's.
 - **Tombstoned**: anything that names the Account as an actor (invited by, entered on behalf of) keeps a marker that an Account acted, not a name.
 - **Refused** while the Account is the only Group admin of any Group, with the list of those Groups, so the person hands over or deletes the Group first.
@@ -112,7 +113,7 @@ This is the one decision of the session that is hard to reverse once data has be
 
 Not a role on the Account and not a domain concept: an allowlist of emails in configuration. An operator signs in like anyone and sees an extra section.
 
-- Can: look up an Account by email; see its sign-in methods, sessions and security events; resend verification; mark an email verified; end its sessions; delete it.
+- Can: look up an Account by email; see its sign-in methods, sessions and security events; resend verification; mark an email verified; end its sessions; delete it. Added by the notifications session: see its Deliveries; clear an Undeliverable mark.
 - Cannot: sign in as the Account; read or change anything inside a Group.
 - Every action is recorded as a security event on the target Account with the operator named.
 
@@ -168,8 +169,8 @@ Put to the user as decisions, never adopted silently.
 ## Hand-offs to other sessions
 
 - **Groups (2)**: whether the display name is the default nickname on accepting an invitation; unlink and relink of a Player as the answer to lost access and duplicate Accounts; what happens to pending invitations addressed to a deleted Account's email; the Linked Player term may be tightened there.
-- **Voting (9)**: a ballot belongs to the Player; "entered on behalf of" points at an Account and survives that Account's deletion as a tombstone.
-- **Notifications (11)**: the mails this session adds: verification, "an Account already exists", set or reset password, and the four security notices.
+- **Voting (9)**: a ballot belongs to the Player; "entered on behalf of" points at an Account and survives that Account's deletion as a tombstone. Settled in `09-voting.md`: as stated; the mark is visible to the Player and to Managers and Group admins, and an Account's Your open votes spans every Group it belongs to.
+- **Notifications (11)**: the mails this session adds: verification, "an Account already exists", set or reset password, and the four security notices. Settled in `11-notifications.md`: all are Account mail, sent regardless of preference and without unsubscribe; the Account gains an Undeliverable mark with a banner, and its Deliveries, deleted with it.
 - **Architecture (12)**: members only as the default authorization model; the session store, the shared rate-limit store, the Origin check, and the auth library that provides server-side sessions, verified Google id tokens and signed OAuth state; the candidate ADR on deletion semantics.
 - **Operations (14)**: the operator allowlist as configuration; the unverified-Account purge and session expiry as scheduled work outside the request process.
 - **Data migration (15)**: whether password hashes migrate; today's Accounts have no verified-email flag and no Google subject id, so the migration decides what to assume for each.

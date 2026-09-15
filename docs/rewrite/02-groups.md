@@ -53,14 +53,14 @@ Both roles are derived. Neither is stored on the Account.
 
 **Manager** ("Competition manager" in full): a Member assigned to one competition by a Group admin. A Member with no Player may be a Manager. Every Group admin is implicitly a Manager of every competition in the Group. The assignment ends with the Membership.
 
-| Act                                                                                                                              | Member | Manager | Group admin |
-| -------------------------------------------------------------------------------------------------------------------------------- | ------ | ------- | ----------- |
-| Read everything in the Group; vote through a Linked Player; edit own nickname; leave                                             | yes    | yes     | yes         |
-| Record, edit and complete matches; Roster setup; generate a schedule; ballot on behalf                                           |        | yes     | yes         |
-| Create and rename unlinked Players; issue Player invitations                                                                     |        | yes     | yes         |
-| Create, end and delete a competition; change its settings; roll or reopen a Season; correct a Past season match; assign Managers |        |         | yes         |
-| Archive, merge, delete, link and unlink Players; join links; revoke any invitation                                               |        |         | yes         |
-| Remove Members; promote and demote admins; Group settings; delete the Group; activity record                                     |        |         | yes         |
+| Act                                                                                                                                                                                                          | Member | Manager | Group admin |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------- | ----------- |
+| Read everything in the Group; vote through a Linked Player; edit own nickname; leave                                                                                                                         | yes    | yes     | yes         |
+| Record, edit, complete and un-complete matches, delete a Pickup match; Roster setup; generate and run a schedule (cycles, extra Fixtures, Not played, Walkovers) or draw and run a bracket; ballot on behalf |        | yes     | yes         |
+| Create and rename unlinked Players; issue Player invitations; create, rename and recolour Teams                                                                                                              |        | yes     | yes         |
+| Create, end and delete a competition; change its settings; roll or reopen a Season; correct a Past season match; assign Managers; add or withdraw a team after the schedule or bracket exists                |        |         | yes         |
+| Archive, merge, delete, link and unlink Players; archive, merge and delete Teams; join links; revoke any invitation                                                                                          |        |         | yes         |
+| Remove Members; promote and demote admins; Group settings; delete the Group; activity record                                                                                                                 |        |         | yes         |
 
 Members read and vote only. A Group that wants everyone recording makes them Managers, so "who may write" is a visible list rather than a default. Competition settings stay with admins because a change applies forward and is the kind of thing a group argues about.
 
@@ -86,7 +86,7 @@ An invitation is the only way an Account claims a Player. No admin may link an A
 
 **Join link**: multi-use, made and revoked by an admin, no expiry unless the admin sets one. Meant for the chat. Accepting makes the Account a Member and asks them who they are: pick an unlinked Player from the pool, or type a new nickname prefilled from the display name. A wrong pick is repaired by an admin unlinking.
 
-Life cycle for both: **resend** issues a fresh token and voids the old one; **revoke** voids it; an invitation is voided automatically when its Player is linked or archived, or when the Group is deleted. The list shows pending, accepted (by whom, when), expired and revoked. An addressed invitation names an address, not an Account, so it stays valid if the Account holding that address is deleted; a new Account on the same address may accept it.
+Life cycle for both: **resend** issues a fresh token and voids the old one; **revoke** voids it; an invitation is voided automatically when its Player is linked or archived, or when the Group is deleted. The list shows pending, accepted (by whom, when), expired and revoked; an addressed invitation whose mail failed or bounced reads "not delivered" with Resend beside it (notifications session). An addressed invitation names an address, not an Account, so it stays valid if the Account holding that address is deleted; a new Account on the same address may accept it.
 
 Collisions on accept:
 
@@ -104,7 +104,7 @@ All admin-only, all recorded in the activity record, all leaving matches, stats 
 - **Merge**: fold one Player into another. The admin picks the survivor, which keeps its nickname and link. If only the absorbed Player is linked, its link and Membership move to the survivor. Refused when both are linked to different Accounts, and when both appear in the same match. The absorbed Player is gone afterwards. Merge is the universal repair for two nicknames that turned out to be one person and for a joiner who typed a new nickname instead of picking their existing one.
 - **Unlink**: detach a Member from their Player. Both stay.
 - **Link**: attach a Member who has no Player to an unlinked Player directly, without an invitation, because the person already consented by joining. With unlink, this is the repair for "claimed the wrong nickname".
-- **Archive**: hide a Player from lineup pickers, Roster setup and invitations. Reversible in one click. A Linked Player may be archived; the link and Membership stay, and the person can still vote in matches they played. This covers the one-off guest and the person who stopped coming.
+- **Archive**: hide a Player from lineup pickers, the Roster setup picker and invitations; an archived Player already on a roster stays on it, marked, until removed (settled in `05-teams.md`). Reversible in one click. A Linked Player may be archived; the link and Membership stay, and the person can still vote in matches they played. This covers the one-off guest and the person who stopped coming.
 - **Delete**: only a Player with no match rows and no link. The one destructive act, allowed only when it destroys nothing. Nothing prunes Players automatically.
 
 ### Leaving and removing
@@ -127,7 +127,7 @@ Admins see the Members list with display name, email, nickname, role and join da
 
 ### Navigation
 
-Every in-Group link carries the Group, so a link pasted into a chat opens the right Group regardless of which one the person used last. The home page lists the person's Groups and pending invitations; with one Group it opens straight into it. The Group name at the top of every in-Group screen is the switcher: it opens the list of Groups with "Create a Group" and pending invitations. The frontend session decides how it looks.
+Every in-Group link carries the Group, so a link pasted into a chat opens the right Group regardless of which one the person used last. The home page lists the person's Groups and pending invitations; with one Group it opens straight into it. Settled in `11-notifications.md`: pending invitations here are the in-app half of the addressed invitation mail, and the home carries the delivery-problem banner while the Account's email is Undeliverable. Settled in `10-stats.md`: the Account's home also carries Your career, and a Group opens on the Group home. The Group name at the top of every in-Group screen is the switcher: it opens the list of Groups with "Create a Group" and pending invitations. The frontend session decides how it looks.
 
 ## Scenarios that shaped the model
 
@@ -174,11 +174,11 @@ Put to the user as decisions, never adopted silently.
 ## Hand-offs to other sessions
 
 - **Competitions (3)**: the Manager's scope on competition acts as listed in the role table; the Group's default match format seeds a new competition, and the Pickup match form reads the competition's usual match format (settled in `03-competitions.md`); Manager assignment is an admin act on the competition from the Members list and, since that session, from the competition's create form and settings screen.
-- **Teams and rosters (5)**: Roster setup draws from the pool, excluding archived Players; a Manager may run it.
-- **Matches (8)**: the inline "type a nickname" path creates a Player under the rules here; archived Players are not offered; a Manager records; match acts may join the activity record.
-- **Voting (9)**: a Player votes through its Member's Account; an archived Linked Player may still vote in matches it played; "entered on behalf of" names the acting Account and tombstones like the activity record.
-- **Stats (10)**: the pool is per Group, so a per-Group career is the natural unit; whether a career also spans an Account's Players across Groups is that session's call. A merge changes history retroactively by design.
-- **Notifications (11)**: the addressed-invitation mail; the share sheet for bearer and join links.
+- **Teams and rosters (5)**: Roster setup draws from the pool, excluding archived Players; a Manager may run it. Settled in `05-teams.md`: Teams are Group records with the same split of acts as Players, added to the role table above; a Teams page sits beside the Players page; a Player merge moves roster spots and drops the absorbed one where the survivor already holds a spot in that Season; a roster spot never blocks Player delete; Team, Entry and roster acts join the activity record.
+- **Matches (8)**: the inline "type a nickname" path creates a Player under the rules here; archived Players are not offered; a Manager records; match acts may join the activity record. Settled in `08-matches.md`: only Un-complete and deletion join the activity record; every other match act lives in the match's own change record, shown in full to Managers and admins and as "Recorded by" to every Member.
+- **Voting (9)**: a Player votes through its Member's Account; an archived Linked Player may still vote in matches it played; "entered on behalf of" names the acting Account and tombstones like the activity record. Settled in `09-voting.md`: the mark is visible to the Player and to Managers and Group admins; a Manager may replace only a ballot entered on behalf, never a Player's own; ballot on behalf in the role table extends to Close now and Extend on an open vote.
+- **Stats (10)**: the pool is per Group, so a per-Group career is the natural unit; whether a career also spans an Account's Players across Groups is that session's call. A merge changes history retroactively by design. Settled in `10-stats.md`: the career is per Group on the Player page; Your career is a private across-Groups page for the Account alone; the Players page is the Group-wide table.
+- **Notifications (11)**: the addressed-invitation mail; the share sheet for bearer and join links. Settled in `11-notifications.md`: the addressed invitation is Account mail, the one mail a stranger can receive, naming the inviter in the body and carrying "if this is not you, ignore it"; "not delivered" with Resend on the invitations list.
 - **Architecture (12)**: Membership as the row that "members only" checks; nickname normalisation as a stored normalised column or a functional unique index; merge as a transaction that re-points lineup rows and ballots; the activity record's shape; tombstones for deleted Accounts.
 - **Frontend (13)**: the switcher, the home page with Groups and pending invitations, the "who are you" step of the join link, the Members and Players pages, the activity record screen.
 - **Data migration (15)**: every dashboard with at least one competition becomes a Group with its owner as the first admin Member and each linked DashboardPlayer's user as a Member; empty dashboards are dropped; nickname collisions under the new rule are reported for the admin to merge; used invitations need not migrate, unused ones may be voided; the two moderator rows become Manager assignments if their players are linked.
