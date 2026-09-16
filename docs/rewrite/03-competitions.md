@@ -51,7 +51,7 @@ Chosen at creation and never changed. There is no edit control and no conversion
 | League   | Team format  | Fixed teams with rosters, per Season   | Standings and player stats      |
 | Knockout | Team format  | Fixed teams with rosters, in a bracket | Bracket, a winner, player stats |
 
-A Format is visibly distinguishable everywhere a competition appears; how is the frontend session's call, not a fact of the domain.
+A Format is visibly distinguishable everywhere a competition appears; how is the frontend session's call, not a fact of the domain. Settled in `13-frontend.md`: a skewed Format tag that always carries the word, in a colour family per Format, Pickup blue, League green, Knockout orange-red.
 
 ### Match format
 
@@ -103,7 +103,7 @@ Consequences:
 - A new voting period applies to matches added afterwards; an open vote keeps its deadline.
 - The settings screen says "applies to matches added from now on".
 
-Whether this is a snapshot on the match or a versioned settings record is the architecture session's choice; the domain only requires that the answer to "what rules did this match have" never changes.
+Whether this is a snapshot on the match or a versioned settings record is the architecture session's choice; the domain only requires that the answer to "what rules did this match have" never changes. Settled in `12-architecture.md`: a snapshot, three columns on the match stamped at creation, with the Award threshold stamped on the Season at close (ADR 0008).
 
 ### Managers
 
@@ -194,8 +194,8 @@ Put to the user as decisions, never adopted silently.
 - **Voting (9)**: the voting period counts from the completion act and the deadline is the end of the last day in the Group's time zone; closing on the last ballot may sit on top; Minimum matches semantics as in the glossary; a substitute played and votes. Settled in `09-voting.md`: all adopted; the last ballot closes the vote once every voter, linked or not, has one; Extend may push a deadline to at most 14 days after completion, the same bound as the voting period; a Player below Minimum matches stays on the ballot and the match being voted on counts toward it.
 - **Stats (10)**: substitutes count as having played; Ended competitions count in every total. Settled in `10-stats.md`: both adopted; Award threshold joins the settings table above as a Season rule, 50% by default for every Format.
 - **Notifications (11)**: the reminder is an Account preference; the competition contributes only the deadline. Settled in `11-notifications.md`: the Vote reminder, off by default, one switch per Account, sent within 24 hours of the Voting deadline.
-- **Architecture (12)**: snapshot versus versioned settings for the apply-forward rule; Active and Ended derived from the Seasons, never stored; the normalised unique name index per Group; the lineup cap enforced on the server.
-- **Frontend (13)**: the per-Format look; the create form per Format; the rules summary; the list's two sections; the settings screen with its "applies from now on" copy.
+- **Architecture (12)**: snapshot versus versioned settings for the apply-forward rule; Active and Ended derived from the Seasons, never stored; the normalised unique name index per Group; the lineup cap enforced on the server. Settled in `12-architecture.md`: a snapshot, three columns on the match stamped at creation, with the Award threshold stamped on the Season at close (ADR 0008); Active and Ended derived from the Seasons; the competition name as a functional unique index per Group; the lineup cap as one of the completion checks in the pure `domain` package, run inside the Complete act.
+- **Frontend (13)**: the per-Format look; the create form per Format; the rules summary; the list's two sections; the settings screen with its "applies from now on" copy. Settled in `13-frontend.md`: a colour family per Format on a skewed tag that always carries the word, Pickup blue, League green, Knockout orange-red; the create form offers the three Formats as sticker choices; the rules summary is the Rules tab of the competition page; the list shows Active competitions with Ended below a heading; the settings screen is behind a gear for admins.
 - **Data migration (15)**: every Duel becomes a Pickup, Active, with its voting switch, period and threshold carried over as voting, voting period and Minimum matches; the usual match format from the most common match type of its matches, else the Group default; `minPlayers`, the reminder lead and the Knockout period are dropped.
 
 ## Vocabulary

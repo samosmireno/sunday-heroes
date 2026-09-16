@@ -11,7 +11,7 @@ Let a person prove who they are so they can be attached to Players, run Groups a
 - Sign-in is Google or email and password. One email is one Account across both.
 - Sign-up creates nothing else. No Group, no Player, no role.
 - Roles are derived, never stored on the Account.
-- Members only: every read is scoped to a Group the Account belongs to. This session owns the rule; the architecture session makes it the default rather than a per-route check.
+- Members only: every read is scoped to a Group the Account belongs to. This session owns the rule; the architecture session makes it the default rather than a per-route check. Settled in `12-architecture.md`: six procedure tiers with no bare procedure, and `group_id` on every Group-owned row (ADR 0003).
 - The rewrite reuses no code. Today's auth was read for behaviour only.
 
 ## What today does, as evidence
@@ -69,10 +69,10 @@ The display name and avatar are used wherever the Account acts as itself: admin 
 
 ### Sessions
 
-Server-side sessions, stated as a requirement the architecture session must meet, not a library choice. Any auth library it picks supports this.
+Server-side sessions, stated as a requirement the architecture session must meet, not a library choice. Any auth library it picks supports this. Settled in `12-architecture.md`: better-auth, with the one-year cap, the ten-minute re-authentication and the seven-day purge as custom code.
 
 - One row per session in the database: created, last seen, expires, user agent, IP at creation, and the sign-in method that opened it.
-- The session id is random and stored hashed. It travels in an httpOnly, secure, SameSite=Lax cookie on path `/`.
+- The session id is random and stored hashed. It travels in an httpOnly, secure, SameSite=Lax cookie on path `/`. Deviation recorded in `12-architecture.md` (ADR 0007): the auth library chosen there stores the session token in plaintext at rest and offers no hashing option; accepted because a read of the sessions table already implies a read of everything those sessions protect.
 - Lifetime: 90 days sliding, hard cap at one year. No "remember me" checkbox. Last seen and expiry are extended at most once a day, not on every request.
 - No cap on concurrent sessions.
 - **Sign out** ends the current session. **Sign out everywhere** ends every other session and needs re-authentication.
@@ -107,7 +107,7 @@ Self-service, immediate, after re-authentication and a confirmation screen that 
 - **Refused** while the Account is the only Group admin of any Group, with the list of those Groups, so the person hands over or deletes the Group first.
 - All sessions end at once and the deletion notice goes out.
 
-This is the one decision of the session that is hard to reverse once data has been deleted the other way, and it is the candidate for an ADR when the architecture session sets up the rewrite's ADR directory.
+This is the one decision of the session that is hard to reverse once data has been deleted the other way, and it is the candidate for an ADR when the architecture session sets up the rewrite's ADR directory. Written as `docs/rewrite/adr/0010-account-deletion-unlinks-and-tombstones.md`.
 
 ### Operator
 
@@ -171,8 +171,8 @@ Put to the user as decisions, never adopted silently.
 - **Groups (2)**: whether the display name is the default nickname on accepting an invitation; unlink and relink of a Player as the answer to lost access and duplicate Accounts; what happens to pending invitations addressed to a deleted Account's email; the Linked Player term may be tightened there.
 - **Voting (9)**: a ballot belongs to the Player; "entered on behalf of" points at an Account and survives that Account's deletion as a tombstone. Settled in `09-voting.md`: as stated; the mark is visible to the Player and to Managers and Group admins, and an Account's Your open votes spans every Group it belongs to.
 - **Notifications (11)**: the mails this session adds: verification, "an Account already exists", set or reset password, and the four security notices. Settled in `11-notifications.md`: all are Account mail, sent regardless of preference and without unsubscribe; the Account gains an Undeliverable mark with a banner, and its Deliveries, deleted with it.
-- **Architecture (12)**: members only as the default authorization model; the session store, the shared rate-limit store, the Origin check, and the auth library that provides server-side sessions, verified Google id tokens and signed OAuth state; the candidate ADR on deletion semantics.
-- **Operations (14)**: the operator allowlist as configuration; the unverified-Account purge and session expiry as scheduled work outside the request process.
+- **Architecture (12)**: members only as the default authorization model; the session store, the shared rate-limit store, the Origin check, and the auth library that provides server-side sessions, verified Google id tokens and signed OAuth state; the candidate ADR on deletion semantics. Settled in `12-architecture.md`: six procedure tiers with no bare procedure and `group_id` on every Group-owned row make members only structural; better-auth on the Drizzle adapter provides the sessions, the verified Google id token by subject id and the signed OAuth state, with the one-year cap, the ten-minute re-authentication and its `reauthenticate` procedure, and the seven-day purge as custom code; the session store and the library's rate limits are Postgres, and a Postgres counter limits the app's own mail-sending acts; the Origin check is the library's; the deletion ADR is `docs/rewrite/adr/0010`; the session token is stored in plaintext, a recorded deviation (ADR 0007).
+- **Operations (14)**: the operator allowlist as configuration; the unverified-Account purge and session expiry as scheduled work outside the request process. Settled in `12-architecture.md`: both are daily pg-boss jobs in the worker process; the allowlist is read by the typed environment at boot. Settled in `14-operations.md`: the Operator gains a second surface under the same allowlist, the read-only System page (versions, job runs, backup and rehearsal, Deliveries by outcome, Read-only mode); and every act may refuse with `maintenance` while the app is in Read-only mode.
 - **Data migration (15)**: whether password hashes migrate; today's Accounts have no verified-email flag and no Google subject id, so the migration decides what to assume for each.
 
 ## Vocabulary

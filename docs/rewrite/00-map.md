@@ -27,9 +27,9 @@ The product and its shape:
 - **Sign-in is Google or email and password**, and one email is one Account across both.
 - **Members only.** Nothing is visible outside a Group; public share links are a future feature.
 - **All current player stats survive** and gain a rating history.
-- **Mobile-first web app** with a large-screen layout, English only, look and feel open.
+- **Mobile-first web app** with a large-screen layout, English only, look and feel open. Settled in `13-frontend.md`: the look is a designer's rebrand, a retro sticker-album identity, extracted in `docs/rewrite/design/`; a four-tab phone shell and a sidebar from 1024 px.
 - **Operational rigour**: staging, migrations as a deliberate deploy step, health check, error tracking, automated backups, scheduled work outside the request process, hosting open.
-- **TypeScript end to end**; everything else in the stack is open. The shared-types package was a workaround for one contract across client and server, and the architecture session finds the proper mechanism.
+- **TypeScript end to end**; everything else in the stack is open. The shared-types package was a workaround for one contract across client and server, and the architecture session finds the proper mechanism. Found in `12-architecture.md`: the tRPC router's inferred types are the contract, and a pure `domain` package shares rules, never request shapes.
 - **One-time data migration** of Groups, Players, Accounts and their links, competitions as Pickup, Seasons, matches with lineups, and every ballot. Ratings and crowns are re-derived, with a report of where they differ from what was stored.
 
 ## Vocabulary
@@ -64,7 +64,7 @@ Rules that more than one area depends on. Each branch session takes them as give
 | **Ratings and man of the match are derived from ballots at read time.** Nothing about a vote is stored except the ballot.                                                                                                                                                          | Voting       | Reshaped. Today they are stored at close and repaired by migration. Stated in `09-voting.md`: the ballot is the only stored fact, with a three-ballot floor below which a closed vote leaves the match Not rated, and the acts on a vote in the match's change record.                                                           |
 | **A settings change applies forward.** Voting on or off, period, Minimum matches and format details apply to matches created after the change.                                                                                                                                     | Competitions | New. Stated in `03-competitions.md` as: a match carries the settings it was created under.                                                                                                                                                                                                                                       |
 | **A draw is a result.** A level Pickup or League match is a draw for standings and win rate. Only a one-leg Knockout match goes to penalties, and there the decision is a win and a loss.                                                                                          | Matches      | New. Today the glossary and win rate treat a penalty result as a win or loss while the standings and the SQL career record treat it as a draw. Amended in `07-knockout.md`: only the deciding match of a Knockout Tie goes to a shoot-out, which with two legs is the second leg on a level aggregate; a first leg may be drawn. |
-| **Members only.** Every read is scoped to a Group the Account belongs to. Public share links are future work.                                                                                                                                                                      | Identity     | New. Today many reads are open by omission.                                                                                                                                                                                                                                                                                      |
+| **Members only.** Every read is scoped to a Group the Account belongs to. Public share links are future work.                                                                                                                                                                      | Identity     | New. Today many reads are open by omission. Made structural in `12-architecture.md`: six procedure tiers and `group_id` on every Group-owned row (ADR 0003).                                                                                                                                                                     |
 | **Minimum matches applies to Pickup only** and counts completed matches in this competition across Seasons.                                                                                                                                                                        | Voting       | Reshaped. Stated in `09-voting.md`: the match being voted on counts, the on-behalf path is bound by it, a ballot accepted is never revoked, and a Player below it stays on the ballot.                                                                                                                                           |
 | **Match format is per match in Pickup and per competition in team formats.** A Pickup match carries its own size, chosen when it is added. A League or Knockout competition sets its size, changeable only while the Current season has no matches, and every Fixture inherits it. | Competitions | New. Today it is a free-text match type on League creation and on each match, validated nowhere.                                                                                                                                                                                                                                 |
 
@@ -272,7 +272,7 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Today.** Turbo monorepo, Express with a handler, service and repository layering, Prisma over Postgres, React with Vite, TanStack Query, a shared-types package built separately and hand-kept in step. None of this carries over; the shared-types package in particular was a workaround for keeping one contract.
 
-**Verdict: open.** TypeScript end to end is the only constraint.
+**Verdict: open.** TypeScript end to end is the only constraint. Settled in `12-architecture.md`: a new repository; a Vite React SPA and one Node API on Hono with a tRPC router as the contract; Postgres through Drizzle as the only stateful service, with pg-boss in a worker process; nothing derived is stored, a pure `domain` engine computes on read; six procedure tiers and `group_id` on every Group-owned row make members only structural; settings by snapshot; better-auth; UUIDv7 ids minted by the client; three test layers; three pnpm packages; eleven ADRs under `docs/rewrite/adr/`.
 
 **Depends on.** Every domain area above; ratings derived; standings derived; members only.
 
@@ -290,7 +290,7 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Today.** A flat router with an auth-only guard and one real role gate. Dark green pitch with a gold accent, Courier headings, gold, green and blue per format applied by class switching rather than a theme system. A sidebar that becomes a sheet on mobile. No i18n, no PWA. Pages: landing, sign-in, dashboard, competitions list, matches, players, competition page with season selector, League teams setup, vote page, pending votes, competition admin, player stats, add and edit match.
 
-**Verdict: reshape.** Mobile-first with a large-screen layout; the look is open. English only.
+**Verdict: reshape.** Mobile-first with a large-screen layout; the look is open. English only. The look was settled by a designer's rebrand, a retro sticker-album identity extracted in `docs/rewrite/design/`. Settled in `13-frontend.md`: a four-tab phone shell and the sidebar from 1024 px; the Group switcher as a sheet; two open fonts, two skew tokens, a colour family per Format, one theme; Tailwind v4 with shadcn/ui restyled; the sticker card as a Player thing with the missing sticker for an unlinked Player; the starburst as the vote callout; one scrolling match form with a picker sheet and a row sheet; the ballot as a tap-in-order sheet; one Share control; a screen inventory and the drawing order, with `design/brief.md` for Claude Design.
 
 **Depends on.** Architecture; every domain area for its screens; members only for what a route may show.
 
@@ -308,17 +308,17 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Today.** One Docker image on Render serving client and API, migrations run on every container start, CI runs lint, format, types and tests but never builds or deploys, no staging, no health endpoint, no error tracking, cron in-process on a single instance, backups by hand, test-error routes mounted in production, Vercel leftovers, production dumps at the repo root.
 
-**Verdict: reshape.** Staging, migrations as a deliberate step, health check, error tracking, automated backups, scheduled work outside the request process. Hosting open.
+**Verdict: reshape.** Staging, migrations as a deliberate step, health check, error tracking, automated backups, scheduled work outside the request process. Hosting open. Settled in `14-operations.md`: Render in Frankfurt with a production and a suspended-by-default staging environment under a ceiling of about $25 a month; one image built once in CI and pulled by every service; a gated release that pauses only for a migration, with the rehearsal as a job on staging from the latest dump; expand-and-contract migrations so a rollback is a previous tag; weekly off-host dumps to Backblaze B2 proven by the weekly rehearsal; Sentry and healthchecks.io behind the seam with exactly four alerts; an empty database allowlist; Read-only mode and the Operator's System page; Renovate; a Blueprint and `docs/ops/` runbooks.
 
 **Depends on.** Architecture.
 
 **Open questions.**
 
-- Hosting that fits the stack and gives staging, backups and a scheduler with the least ceremony.
-- Deploy pipeline: preview per pull request or a single staging.
-- Migration rehearsal as a pipeline step rather than a ritual.
-- Observability: logs, errors, uptime; what the alert is.
-- Cost ceiling.
+- Hosting that fits the stack and gives staging, backups and a scheduler with the least ceremony. Settled in `14-operations.md`: Render, where the DNS, OAuth client and mail records already point; the worker as a Background Worker; the scheduler is pg-boss, so the host needs none.
+- Deploy pipeline: preview per pull request or a single staging. Settled in `14-operations.md`: one staging, reseeded on every deploy and suspended between releases; no previews.
+- Migration rehearsal as a pipeline step rather than a ritual. Settled in `14-operations.md`: a one-off job on staging's Postgres from the latest off-host dump, run on every release that carries a migration and every week regardless.
+- Observability: logs, errors, uptime; what the alert is. Settled in `14-operations.md`: Sentry for errors and uptime, healthchecks.io for heartbeats, logs on the host; four alerts: down, schedules stopped, a new error, a late backup or rehearsal.
+- Cost ceiling. Settled in `14-operations.md`: about $25 a month, landing at $26.
 
 ### 15. Data migration
 

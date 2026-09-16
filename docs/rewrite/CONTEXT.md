@@ -637,3 +637,55 @@ _Avoid_: Email log, outbox (that is the mechanism), sent items, message history
 **Undeliverable**:
 The mark on an Account's email after a hard bounce or a complaint: Notices stop and a banner asks the person to check their address, while Account mail they ask for is still attempted. Cleared by changing and verifying the email, by turning the Vote reminder back on after a complaint, or by an Operator.
 _Avoid_: Bounced (as the state), suppressed, blacklisted, invalid email
+
+### Frontend
+
+**Account home**:
+The screen an Account sees outside any Group: its Groups with their open-votes badges, pending invitations, Your open votes across Groups, Your career and Account settings. What sign-in opens on with several Groups or none; one Group opens on its Group home instead.
+_Avoid_: Dashboard, profile, landing page, "You" (that is the tab's label only)
+
+**Group switcher**:
+The Group name at the top of every in-Group screen, which opens the list of the Account's Groups, its pending invitations, Create a Group, and the Group's own pages: Members, Activity record, Group settings.
+_Avoid_: Group menu, workspace switcher, dropdown
+
+**Sticker card**:
+The Panini-style card that stands for a Player wherever one is singled out: the Nickname on the plate, the Linked Account's avatar in the frame, the first-match date on the ribbon. On the Group home for the viewer's Player, on a Pickup competition page for the MVP, on a match page for the man of the match, on the Player page as the hero.
+_Avoid_: Player card, profile card, avatar (that is the Account's picture), photo
+
+**Missing sticker**:
+A Sticker card for a Player no Account has linked: a greyed silhouette with the Nickname's initials. What most Players look like until someone links them, and the state a Member with no Player sees on their home.
+_Avoid_: Unregistered, placeholder, empty avatar, unclaimed
+
+**Format tag**:
+The skewed tag carrying a competition's Format word in that Format's colour family: Pickup blue, League green, Knockout orange-red. The word is always present; colour never stands alone.
+_Avoid_: Type badge, competition label, colour code
+
+**Vote callout**:
+The red starburst that appears wherever the viewer is a Voter without a Ballot, reading "Vote now", and its cast state, the green box reading "Ballot cast". Never shown to a Member who is not a Voter of the match.
+_Avoid_: "You didn't vote", nag, notification, banner
+
+**Ballot sheet**:
+The full-screen form for casting a Ballot: every Player in the match, tapped in order for the first, second and third Pick, with the Voter's own row unavailable. The same sheet serves a Manager entering on behalf, titled with the Player's name, and a Replace.
+_Avoid_: Vote page, voting form, poll
+
+**Side palette**:
+The sixteen named colours a Team or a Pickup side is chosen from: Red, Orange, Yellow, Green, Dark green, Blue, Navy, Black, White, Sky, Purple, Pink, Teal, Maroon, Brown, Grey. In Pickup the name is the side's label.
+_Avoid_: Kit, bib colour (in copy), theme
+
+**Column preset**:
+One of the named column sets of the player table on a phone, Overview, Scoring, Voting or All, chosen by a chip above the table; the name column stays pinned while the rest scroll.
+_Avoid_: View, tab, column toggle, filter (that is by competition or Format)
+
+**Share**:
+The one control on a match, a table, a Season summary, Standings, a bracket or Records that hands its text to the phone's share sheet or copies it: Copy vote link, Copy reminder text, Copy as text, copy result, Standings or bracket as text, Export CSV.
+_Avoid_: Send, post, export (alone), share link (that is the vote's URL)
+
+### Operations
+
+**Read-only mode**:
+The state of the whole app while it is frozen for a cut-over or a restore: every act is refused and a banner on every screen says so, every read works, and nothing scheduled runs. Switched by whoever runs the app, never by a Group.
+_Avoid_: Maintenance mode (in copy), downtime, locked, frozen (as the state name)
+
+**System page**:
+The Operator's read-only view of whether the app is running: what version each part runs and since when, the last run and outcome of every scheduled job, the last backup and rehearsal, Deliveries by outcome over the last week, and whether Read-only mode is on. Shows nothing from inside any Group.
+_Avoid_: Admin dashboard, status page (that is public), health page, ops console

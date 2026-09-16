@@ -1,0 +1,7 @@
+# One worker on pg-boss; jobs idempotent on their record; reads never wait
+
+Scheduled work runs in a worker process started from the same image as the server with a different command. The worker owns pg-boss's schedules and maintenance; the server process only enqueues. Jobs: the deadline close, the hourly Vote reminder sweep, the daily purges, and the mail outbox with retries and backoff for a bounded time. Every job is idempotent on its record, the Delivery row or the vote's closed instant, and no read ever waits for a job: a vote reads as closed when its closed instant is stamped or its deadline has passed, whichever the reader sees first.
+
+## Considered options
+
+In-process timers, which the map rejected because they run inside the web process on a single instance. The host's cron hitting an endpoint, which locks the app to a host that has one while hosting is open. graphile-worker, leaner and with `add_job` from inside a SQL transaction, rejected for its 0.x cadence with occasional breaking releases, UTC-only cron and a scale-workers-to-zero story for its schema upgrades that is awkward on a single-instance host. pg-boss brings cron with time zones, per-queue retries with a dead-letter queue, singleton keys for one close job per match, and constructor flags that split a producer-only server from a scheduling worker on the same database; its weekly minors mean pinning and reading release notes.
