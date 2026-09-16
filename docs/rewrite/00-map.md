@@ -326,17 +326,17 @@ Rules that more than one area depends on. Each branch session takes them as give
 
 **Today.** Production holds Duel competitions only, each with matches, lineups, ballots, stored ratings and man-of-the-match flags, one Dashboard per account, invitations and moderators.
 
-**Verdict: one-time job.** Groups, Players, Accounts and their links, competitions as Pickup, Seasons, matches with lineups and every ballot. Ratings and crowns are re-derived, with a report of where they differ from what was stored.
+**Verdict: one-time job.** Groups, Players, Accounts and their links, competitions as Pickup, Seasons, matches with lineups and every ballot. Ratings and crowns are re-derived, with a report of where they differ from what was stored. Settled in `15-migration.md`: an `import-legacy` command of the new image inserting directly and verifying with the engine; every User an Account, verified, with no Sign-in method (ADR 0012); dashboards with a Completed match as Groups; history migrated as recorded with every rule it breaks reported; a Cut-over evening behind the old app's `READ_ONLY` flag, allowed once the new app matches what the group uses today.
 
 **Depends on.** Every domain area's final model; Architecture; Operations.
 
 **Open questions.**
 
-- What to do with the empty Dashboards every invited player received: drop them, or keep any that have competitions.
-- How Home and Away Team rows collapse into Pickup sides.
-- Whether stored ratings that differ from re-derived ones are shown to users as a note or silently replaced.
-- Whether password hashes migrate or every Account re-verifies.
-- Cut-over: freeze the old app, migrate, verify, redirect.
+- What to do with the empty Dashboards every invited player received: drop them, or keep any that have competitions. Settled in `15-migration.md`: a dashboard becomes a Group when it has at least one Completed match and is not in the job's skip input; every User becomes an Account regardless.
+- How Home and Away Team rows collapse into Pickup sides. Settled in `15-migration.md`: Home is the first side in Black, Away the second in White; no Team row migrates.
+- Whether stored ratings that differ from re-derived ones are shown to users as a note or silently replaced. Settled in `15-migration.md`: replaced, with every difference in the Migration report for the Operator and the two facts that matter in the cut-over chat message; nothing about it is stored in the app.
+- Whether password hashes migrate or every Account re-verifies. Settled in `15-migration.md`: neither; every migrated Account is verified and has no Sign-in method until its first sign-in (ADR 0012).
+- Cut-over: freeze the old app, migrate, verify, redirect. Settled in `15-migration.md`: the old app's `READ_ONLY` flag, the final dump to the archive, the import under Read-only mode, the report, DNS to the new app with the old on a subdomain, one page for old links, a chat message and no mail; the point of no return is the first write after DNS moves.
 
 ## Branch session prompts
 

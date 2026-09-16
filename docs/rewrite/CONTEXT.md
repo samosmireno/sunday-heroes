@@ -7,7 +7,7 @@ The glossary of the rewrite: a competition manager where a Group of people run f
 ### Identity
 
 **Account**:
-One person's proof of identity: an email, one or two Sign-in methods, a display name. It holds no role and owns nothing inside a Group; a Player attaches to it in order to vote.
+One person's proof of identity: an email, one or two Sign-in methods, a display name. It holds no role and owns nothing inside a Group; a Player attaches to it in order to vote. An Account carried over by the data migration has no Sign-in method until its first sign-in, when Google attaches or forgot password sets one.
 _Avoid_: User, profile, login (as a noun)
 
 **Sign-in method**:
@@ -39,7 +39,7 @@ A person on a configured allowlist who can look after Accounts (look one up, res
 _Avoid_: Superadmin, global admin, staff, support role
 
 **Linked Player**:
-A Player attached to a Member of its Group. The link is made by accepting a Player invitation, by picking oneself on a join link, or by an admin linking a Member; it ends when an admin unlinks, when the Membership ends, or when the Account is deleted. Nothing else about the Player changes on either side.
+A Player attached to a Member of its Group. The link is made by accepting a Player invitation, by picking oneself on a join link, by an admin linking a Member, or once, by the data migration carrying over a link from the old app; it ends when an admin unlinks, when the Membership ends, or when the Account is deleted. Nothing else about the Player changes on either side.
 _Avoid_: Registered player, claimed player, verified player, user
 
 ### Groups
@@ -53,7 +53,7 @@ The Players of a Group. Every competition in the Group draws its lineups and ros
 _Avoid_: Squad (reserved for a format), roster (reserved for teams), member list
 
 **Member**:
-An Account in a Group: the record that "members only" checks and that every derived role hangs off. May be linked to at most one Player of the Group, or to none. Begins by creating the Group, accepting a Player invitation or using a join link; ends by leaving, removal, Account deletion or Group deletion.
+An Account in a Group: the record that "members only" checks and that every derived role hangs off. May be linked to at most one Player of the Group, or to none. Begins by creating the Group, accepting a Player invitation, using a join link or, once, by the data migration; ends by leaving, removal, Account deletion or Group deletion.
 _Avoid_: User, participant, registered player
 
 **Group admin**:
@@ -69,7 +69,7 @@ A person in a Group's Player pool: a durable record whose Nickname is its label.
 _Avoid_: DashboardPlayer, user, participant, account
 
 **Nickname**:
-The name a Player goes by in its Group, unique within the Group ignoring case and surrounding or repeated whitespace, with the typed casing kept for display. Renaming keeps the Player's history.
+The name a Player goes by in its Group, unique within the Group ignoring case and surrounding or repeated whitespace, with the typed casing kept for display. Letters in any script count as letters, so "Đorđe" is a Nickname. Renaming keeps the Player's history.
 _Avoid_: Username, display name (that is the Account's), handle
 
 **Archived Player**:
@@ -689,3 +689,11 @@ _Avoid_: Maintenance mode (in copy), downtime, locked, frozen (as the state name
 **System page**:
 The Operator's read-only view of whether the app is running: what version each part runs and since when, the last run and outcome of every scheduled job, the last backup and rehearsal, Deliveries by outcome over the last week, and whether Read-only mode is on. Shows nothing from inside any Group.
 _Avoid_: Admin dashboard, status page (that is public), health page, ops console
+
+**Cut-over**:
+The one evening on which the old app is frozen, its data imported into the new app, the Migration report accepted and the address moved. Before the first write on the new address it can be undone; after it, it cannot.
+_Avoid_: Migration (alone: that is the whole job), launch, switch, go-live
+
+**Migration report**:
+The account the import job writes of what moved, what was dropped and what changed: counts against the old database, every match whose rating or crown differs from what was stored, every match that breaks a rule it will have to satisfy on its next edit, and the chat message to post. Read by the Operator; never shown inside a Group.
+_Avoid_: Audit, diff, log, changelog

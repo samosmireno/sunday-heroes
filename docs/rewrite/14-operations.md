@@ -70,6 +70,8 @@ One container image, built **once per commit in CI**, pushed to GitHub's contain
 | `backup`   | a weekly pg-boss job in the worker   | `pg_dump` of the database to the off-host bucket, then a heartbeat ping                                                                                |
 | `rehearse` | a one-off job on staging             | restores the latest dump into a scratch database on staging's Postgres, applies the migrations, runs the sanity check, drops it, then a heartbeat ping |
 
+Settled in `15-migration.md`: a seventh command, `import-legacy`, runs once as a one-off job in the production environment on the Cut-over evening and is deleted from the image in the release after the Migration report is accepted.
+
 ### The release
 
 The `deploy` workflow runs on every push to `main`, after the `check` job that is CI's gate:
@@ -96,7 +98,7 @@ Three layers, each covering the one above it:
 2. **A weekly off-host dump** by the `backup` job in the production worker, early Monday morning in the Group's part of the world after the Sunday matches, to a **Backblaze B2** bucket outside the host's account, kept eight weeks, plus an extra run before every release that carries a migration. Ballots are the one thing that can never be re-entered, and one host account is one failure domain.
 3. **The weekly rehearsal**, which restores the newest dump and so turns "we have backups" into "we restored one on Monday".
 
-Only the database is backed up. Everything else is in git or in the Blueprint, and the secrets are re-entered from wherever you keep them. The restore runbook covers the two cases: a restore into production's own instance from a host snapshot, and a rebuild on any Postgres from a B2 dump, with the app in read-only mode for the duration.
+Only the database is backed up. Everything else is in git or in the Blueprint, and the secrets are re-entered from wherever you keep them. Settled in `15-migration.md`: the old app's final dump, taken on the Cut-over evening, sits under an `archive/` prefix outside the eight-week rotation and is kept indefinitely. The restore runbook covers the two cases: a restore into production's own instance from a host snapshot, and a rebuild on any Postgres from a B2 dump, with the app in read-only mode for the duration.
 
 ### Staging's mail
 
@@ -151,7 +153,7 @@ The identity session gives the Operator an Account section. This session adds on
 
 ### Runbooks and the repository
 
-`docs/ops/` in the new repository, one short page each, written for an agent or a future you at ten on a Sunday night: **deploy** (what the workflow does and how to dispatch it by hand), **roll back** (a previous tag, and the expand-and-contract rule), **restore** (from a host snapshot, and from a B2 dump onto any Postgres, in Read-only mode), **rotate a secret** (each secret, where it lives, what to restart), **wake the worker** (a late heartbeat, the System page, resume or redeploy), **database access** (the temporary allowlist and the tunnel), **cut-over** (owned by session 15, outlined here), and **the cost sheet**. The `render.yaml` Blueprint sits at the root beside `compose.yml`.
+`docs/ops/` in the new repository, one short page each, written for an agent or a future you at ten on a Sunday night: **deploy** (what the workflow does and how to dispatch it by hand), **roll back** (a previous tag, and the expand-and-contract rule), **restore** (from a host snapshot, and from a B2 dump onto any Postgres, in Read-only mode), **rotate a secret** (each secret, where it lives, what to restart), **wake the worker** (a late heartbeat, the System page, resume or redeploy), **database access** (the temporary allowlist and the tunnel), **cut-over** (owned by session 15, outlined here and written in `15-migration.md`: the old app's `READ_ONLY` flag, the archive dump, the import under Read-only mode, the report, DNS, the point of no return, the decommissioning timeline), and **the cost sheet**. The `render.yaml` Blueprint sits at the root beside `compose.yml`.
 
 Where every secret lives, and nowhere else:
 
@@ -230,7 +232,7 @@ Put to the user as decisions, never adopted silently.
 - **Notifications (11)**: applied to that document in this session: production sends from `sunday-heroes.app` and staging from `staging.sunday-heroes.app` as a second Resend domain; the recipient allowlist and the suppressed Delivery outcome on staging; the webhook secret per environment held in that environment's group; the Reply-To mailbox as the existing Porkbun forwarding; the sweep's alert as a healthchecks.io heartbeat.
 - **Architecture (12)**: applied to that document in this session: the Mailpit rule amended for an environment with a recipient allowlist; Postgres 17 in the compose file and CI; the image's six commands; the additions to the typed environment (the recipient allowlist, the Read-only flag, the heartbeat URLs, the Sentry DSN, the B2 credentials, the connection budget); `maintenance` in the refusal enum; the `operator` System read; the Postgres client tools in the image; the source-map upload as a CI step.
 - **Frontend (13)**: the Read-only banner and the copy for the `maintenance` reason; the CSP constraint, no inline scripts and any forced inline style by hash; the build id as the SHA; Lighthouse by hand on staging; the smoke flow's screens as the ones that must never be behind a feature the seed does not produce.
-- **Data migration (15)**: Read-only mode on the new app and the old app's last deploy as the freeze; the old database read over its own connection, as the architecture said, with a dump of it taken through the same `pg_dump` path and kept in the bucket; the cut-over runbook's outline here, its job and report there; DNS moving the apex to the new app, with the old app kept reachable on a subdomain until the report is accepted.
+- **Data migration (15)**: Read-only mode on the new app and the old app's last deploy as the freeze; the old database read over its own connection, as the architecture said, with a dump of it taken through the same `pg_dump` path and kept in the bucket; the cut-over runbook's outline here, its job and report there; DNS moving the apex to the new app, with the old app kept reachable on a subdomain until the report is accepted. Settled in `15-migration.md`: the old app's last release is a `READ_ONLY` flag that also stops its crons; the final dump goes to an `archive/` prefix kept indefinitely; the sequence, the point of no return at the first write after DNS moves, `old.sunday-heroes.app` with its OAuth callback, and the decommissioning timeline of 14 and 30 days are stated there for `docs/ops/cut-over.md`.
 
 ## Vocabulary
 
