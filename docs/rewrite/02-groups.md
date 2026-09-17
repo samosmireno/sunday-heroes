@@ -86,7 +86,7 @@ An invitation is the only way an Account claims a Player. No admin may link an A
 
 **Join link**: multi-use, made and revoked by an admin, no expiry unless the admin sets one. Meant for the chat. Accepting makes the Account a Member and asks them who they are: pick an unlinked Player from the pool, or type a new nickname prefilled from the display name. A wrong pick is repaired by an admin unlinking.
 
-Life cycle for both: **resend** issues a fresh token and voids the old one; **revoke** voids it; an invitation is voided automatically when its Player is linked or archived, or when the Group is deleted. The list shows pending, accepted (by whom, when), expired and revoked; an addressed invitation whose mail failed or bounced reads "not delivered" with Resend beside it (notifications session). An addressed invitation names an address, not an Account, so it stays valid if the Account holding that address is deleted; a new Account on the same address may accept it.
+Life cycle for both: **resend** issues a fresh token and voids the old one; **revoke** voids it; an invitation is voided automatically when its Player is linked or archived, or when the Group is deleted. The list shows pending, accepted (by whom, when), expired and revoked (settled in `12-architecture.md` and `13-frontend.md`: the pending whole, the rest as Past invitations, newest first and paged); an addressed invitation whose mail failed or bounced reads "not delivered" with Resend beside it (notifications session). An addressed invitation names an address, not an Account, so it stays valid if the Account holding that address is deleted; a new Account on the same address may accept it.
 
 Collisions on accept:
 
@@ -119,7 +119,7 @@ By a Group admin, after re-authentication and a confirmation screen listing what
 
 ### Activity record
 
-An append-only record per Group of the acts this session defines: Member joined, left or removed; admin promoted or demoted; Manager assigned or unassigned; Player created, renamed, merged, archived, unarchived, linked, unlinked or deleted; invitation issued, resent, revoked or accepted; Group settings changed. Each entry names the acting Account, tombstoned if that Account is later deleted. Visible to admins on one screen; not a feed for Members. Other sessions may add their own acts to it. It exists so that merge and unlink are safe to offer. Settled in `15-migration.md`: a migrated Group's record opens with one "imported" entry, no actor, holding the source instant and the counts of Players, competitions, matches and ballots.
+An append-only record per Group of the acts this session defines: Member joined, left or removed; admin promoted or demoted; Manager assigned or unassigned; Player created, renamed, merged, archived, unarchived, linked, unlinked or deleted; invitation issued, resent, revoked or accepted; Group settings changed. Each entry names the acting Account, tombstoned if that Account is later deleted. Visible to admins on one screen, newest first and paged fifty at a time with the filter by kind as part of the read (`12-architecture.md`, Paged reads); not a feed for Members. Other sessions may add their own acts to it. It exists so that merge and unlink are safe to offer. Settled in `15-migration.md`: a migrated Group's record opens with one "imported" entry, no actor, holding the source instant and the counts of Players, competitions, matches and ballots.
 
 ### Who sees what
 

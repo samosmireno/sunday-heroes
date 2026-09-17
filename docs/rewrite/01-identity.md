@@ -113,7 +113,7 @@ This is the one decision of the session that is hard to reverse once data has be
 
 Not a role on the Account and not a domain concept: an allowlist of emails in configuration. An operator signs in like anyone and sees an extra section.
 
-- Can: look up an Account by email; see its sign-in methods, sessions and security events; resend verification; mark an email verified; end its sessions; delete it. Added by the notifications session: see its Deliveries; clear an Undeliverable mark.
+- Can: look up an Account by email; see its sign-in methods, sessions and security events, the events newest first and paged, as its Deliveries are (`12-architecture.md`, Paged reads); resend verification; mark an email verified; end its sessions; delete it. Added by the notifications session: see its Deliveries; clear an Undeliverable mark.
 - Cannot: sign in as the Account; read or change anything inside a Group.
 - Every action is recorded as a security event on the target Account with the operator named.
 

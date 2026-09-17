@@ -78,6 +78,8 @@ Every column sorts. The table is the same component on the competition page, whe
 
 Archived Players stay in every table they earned a row in.
 
+The table is never paged and never cut, in any scope (`12-architecture.md`, Paged reads): ranking one row needs every match of the scope, a Group of 63 Players is 63 rows, and sorting, the filter, Copy as text and Export CSV always run over all of them.
+
 ### Award threshold and Qualified
 
 Sorting a Season by win rate or average rating puts a Player with two matches at 3.00 on top, and a Season's MVP cannot be that Player. The **Award threshold** is a competition setting, shown in the read-only rules summary, that says who is **Qualified** for a Season's awards: a Player who has played at least a share of the matches they could have played in that Season.
@@ -127,7 +129,7 @@ The page a nickname opens anywhere in the Group, Members only, everything derive
 - played with and played against, in Pickup;
 - **best matches**, the Player's top five by rating;
 - Honours;
-- the match history: every Completed match newest first with the result, goals, assists, the rating or "Not rated" or "no vote", and a crown mark, filterable by competition.
+- the match history: every Completed match newest first with the result, goals, assists, the rating or "Not rated" or "no vote", and a crown mark, filterable by competition; paged fifty at a time by match date then recording order, the filter being part of the read (`12-architecture.md`, Paged reads).
 
 Today's "top competitions" is replaced by the breakdown table; today's "top matches" by the best matches list and the Records section.
 
