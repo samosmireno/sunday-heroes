@@ -52,7 +52,7 @@ The display name and avatar are used wherever the Account acts as itself: admin 
 
 ### Verification
 
-- A password sign-up sends a verification link. Until it is clicked the Account exists only to be verified: signing in shows the "verify your email" screen with a resend button and nothing else.
+- A password sign-up sends a verification link. Until it is clicked the Account exists only to be verified: signing in shows the "verify your email" screen with the address, a resend button and Sign out, and nothing else. A wrong address is not edited there: the person signs up again, and the unverified Account is purged.
 - A verification link is valid for 24 hours. Resend is allowed within the rate limits.
 - An Account still unverified after 7 days is deleted, so its address is free again.
 

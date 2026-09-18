@@ -80,7 +80,7 @@ Membership: the owner is the first Group admin, linked to their own DashboardPla
 
 ### Matches and the vote
 
-Every match is Completed, with the completion instant equal to the old creation instant because a Duel was born completed. Home is the first side in Black and Away the second in White, so every migrated match reads "Black 4-3 White" and the next match a Manager adds prefills that pair from the previous one. The date is the stored instant read as a calendar day in the Group's time zone, which yields the intended day both for the noon rows and for the three midnight rows of August 2025. The default formation for 5-a-side, 1-2-1, takes the first five positions of each side in order; a sixth and seventh sit on the bench.
+Every match is Completed, with the completion instant equal to the old creation instant because a Duel was born completed. Home is the first side in Black and Away the second in White, so every migrated match reads "Black 4-3 White" and the next match a Manager adds prefills that pair from the previous one. The date is the stored instant read as a calendar day in the Group's time zone, which yields the intended day both for the noon rows and for the three midnight rows of August 2025. The default formation for 5-a-side, 1-2-1, takes the first five positions of each side in order, the lowest position the keeper as the old pitch drew it; a sixth and seventh sit on the bench.
 
 The vote maps by four cases from `votingStatus` and `votingEndsAt`:
 

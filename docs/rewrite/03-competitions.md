@@ -130,7 +130,7 @@ Creation, every settings change with the old and new value, Manager assignment a
 Every read is scoped to a Group the Account belongs to; the unauthenticated reads of today are gone with the identity session's members-only rule.
 
 - **The list** shows Active competitions ordered by most recent completed match, with Ended competitions in a section below. No manual ordering, no favourites.
-- **The competition page** shows a read-only summary of its rules to every Member: Format, match format or usual match format, voting on or off, voting period, Minimum matches, Award threshold, the Managers. Members today cannot see the rules they play under, and this is the place to point at when someone asks why they cannot vote yet.
+- **The competition page** shows a read-only summary of its rules to every Member: Format, match format or usual match format, voting on or off, voting period, Minimum matches in Pickup only, Award threshold, the Managers. Members today cannot see the rules they play under, and this is the place to point at when someone asks why they cannot vote yet.
 - **The settings screen** is for admins and holds the editable settings, the Managers, End competition and deletion.
 
 ## Scenarios that shaped the model

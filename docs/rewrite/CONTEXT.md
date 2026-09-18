@@ -397,7 +397,7 @@ The part of a side's score its Players' goals and the opponents' own goals do no
 _Avoid_: Unknown scorer, missing goal, unassigned
 
 **Formation**:
-One of a fixed list per Match format, read defenders first with the keeper implied, that lays a side's first Lineup rows out on the pitch. Kept with each row's slot so a past match renders as it was; presentation only, no positional stat.
+One of a fixed list per Match format, read defenders first with the keeper implied, that lays a side's first Lineup rows out on the pitch, the first row as the keeper and the rest from the back to the front. Kept with each row's slot so a past match renders as it was; presentation only, no positional stat.
 _Avoid_: Position (as a stat), role, shape, tactic
 
 **Add match**:
@@ -425,7 +425,7 @@ Which Players are in a match and on which side. Editable while the vote is open 
 _Avoid_: Roster change, team change, squad edit
 
 **Match note**:
-Optional text of up to 500 characters on a match, a Result fact, shown on the match page.
+Optional text of up to 500 characters on a match, a Result fact, shown on the match page. On a Walkover or a Not played Fixture it is the reason, shown beside the mark.
 _Avoid_: Comment, description, report, caption
 
 **Change record**:
@@ -455,16 +455,16 @@ One Voter's three Picks on one match, cast by the Voter through a Linked Account
 _Avoid_: Vote (as the thing cast), votes, submission, rating (that is derived)
 
 **Pick**:
-One name on a Ballot: first, second or third, each a different Player in the match and never the Voter. Worth three, two and one point in the arithmetic only; copy says "first pick", never "3 points".
-_Avoid_: Points (in copy), nomination, choice, vote for
+One name on a Ballot: first, second or third, each a different Player in the match and never the Voter. Worth three, two and one point in the arithmetic only; copy says "first pick", never "3 points". The Results breakdown's Points column, the sum a Player received, is the one place points show.
+_Avoid_: Points (in copy, outside the breakdown's column), nomination, choice, vote for
 
 **Entered on behalf**:
 A Ballot a Manager or Group admin typed for a Voter, marked with the acting Account and counting like the Voter's own. Visible as such to that Player and to Managers and Group admins. The Player may replace it with their own; a Manager may replace only a Ballot entered on behalf, never a Player's own. Minimum matches binds it like any Ballot.
 _Avoid_: Proxy vote, admin vote, submitted for, override
 
 **Replace**:
-Casting a new Ballot over one's existing one while the Vote is open; the old Picks are gone, the Ballot keeps its first-submitted and last-changed instants.
-_Avoid_: Edit ballot, change vote, amend, resubmit
+Casting a new Ballot over one's existing one while the Vote is open; the old Picks are gone, the Ballot keeps its first-submitted and last-changed instants. The button reads "Replace ballot".
+_Avoid_: Edit ballot, change vote, Change ballot, amend, resubmit
 
 **Voting deadline**:
 The instant a Vote closes if nothing closes it first: the end of the last day of the match's Voting period counted from the completion date in the Group's time zone, or the day Extend set. Shown as a date, "closes Friday".
@@ -533,7 +533,7 @@ An Account's private page: one row per Group in which it has a Linked Player, wi
 _Avoid_: Global stats, cross-group career, account stats
 
 **Player page**:
-A Player's derived, Members-only page: summary, Form and Rating history, a breakdown by Competition and Season, Teams played for with guest appearances apart, Streaks, Played with and Played against, Best matches, Honours and the match history.
+A Player's derived, Members-only page: summary, Form and Rating history, a breakdown by Competition and Season, Teams played for with guest appearances apart, Streaks, Played with and Played against, Best matches, Honours and the match history. One competition filter in its header rescopes every section; no section has a filter of its own.
 _Avoid_: Player profile, player stats page, career page
 
 **Players page**:
@@ -557,8 +557,8 @@ The Season summary's leader in Pickup: the Qualified Player with the highest ave
 _Avoid_: Player of the season, best player, man of the match (that is per match)
 
 **Rating history**:
-A Player's Ratings over time: a per-match series across the Group by date with a rolling average over the last 10 Rated matches, per-Season averages in the breakdown, and Form's five-match average.
-_Avoid_: Rating trend, performance chart, progression
+A Player's Ratings over time: a per-match series across the Group by date, drawn as one bar per Rated match coloured by the Player's result with the scope's Average rating as a line, per-Season averages in the breakdown, and Form's five-match average.
+_Avoid_: Rating trend, performance chart, progression, rolling average
 
 **Streak**:
 A run over a Player's Completed matches by match date then recording order, crossing Seasons, in which absence is invisible: a win streak, an unbeaten run, a scoring streak or a crown streak, each with a current and a longest value.
@@ -602,7 +602,7 @@ _Avoid_: Dashboard, overview, landing page
 
 **Copy as text**:
 The act on a table, a Season summary or Records that produces a plain-text block for the group chat.
-_Avoid_: Share (that is the vote's link), copy table
+_Avoid_: Share (that is the control it sits under), share link (that is the vote's URL), copy table
 
 **Export CSV**:
 The act on a table that produces one file of its visible scope and columns.
@@ -627,7 +627,7 @@ The one-time question, "Remind me by email before a vote closes?", shown on the 
 _Avoid_: Opt-in modal, onboarding step, nag
 
 **Copy reminder text**:
-The act, open to every Member on a match with an open Vote, that produces a chat line from the Turnout and the Share link: "Still waiting on Marko, Ivan and Petar. Vote on Red 4-3 Blue, closes Wednesday". A read, never an act on the Vote.
+The act, open to every Member on a match with an open Vote, that produces a chat line from the Turnout and the Share link: "Still waiting on Marko, Ivan and Petar. Vote on Red 4-3 Blue, closes Wednesday". A read, never an act on the Vote. A button under the Turnout, and an item of Share.
 _Avoid_: Nudge, chase, ping, send reminder
 
 **Delivery**:
@@ -649,7 +649,7 @@ The Group name at the top of every in-Group screen, which opens the list of the 
 _Avoid_: Group menu, workspace switcher, dropdown
 
 **Sticker card**:
-The Panini-style card that stands for a Player wherever one is singled out: the Nickname on the plate, the Linked Account's avatar in the frame, the first-match date on the ribbon. On the Group home for the viewer's Player, on a Pickup competition page for the MVP, on a match page for the man of the match, on the Player page as the hero.
+The Panini-style card that stands for a Player wherever one is singled out: the Nickname on the plate, the Linked Account's avatar in the frame, and on the ribbon why the card is shown: the first-match month on the Player's own card ("since Mar 2024"), "Man of the match" on a match page, "MVP so far" or "MVP" on a Pickup competition page. On the Group home for the viewer's Player, on a Pickup competition page for the MVP, on a match page for the man of the match, on the Player page as the hero.
 _Avoid_: Player card, profile card, avatar (that is the Account's picture), photo
 
 **Missing sticker**:

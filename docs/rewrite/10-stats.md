@@ -72,9 +72,9 @@ Scopes, from narrowest to widest, every one the same table:
 
 ### The player table
 
-One table, in every scope, with these **default columns**: Player, played, W, D, L, win rate, goals, assists, own goals, average rating with its count, crowns. Behind a "more columns" toggle: goals per match, assists per match, contributions, clean sheets, attendance (Pickup only), Form (below), voting record. In a team format a **team** column joins the defaults: the Team whose roster holds the Player in that Season, or "Guest" for a Player who only guested; every appearance, roster or guest, counts fully in the Player's own row, and a Player is one row, never split by Team.
+One table, in every scope, with these **default columns**: Player, played, W, D, L, win rate, goals, assists, own goals, average rating with its count, crowns. Outside the defaults, reached through the column presets (settled in `13-frontend.md`: Overview, Scoring, Voting and All): goals per match, assists per match, contributions, clean sheets, attendance (Pickup only), Form (below), voting record. In a team format a **team** column joins the defaults: the Team whose roster holds the Player in that Season, or "Guest" for a Player who only guested; every appearance, roster or guest, counts fully in the Player's own row, and a Player is one row, never split by Team.
 
-Every column sorts. The table is the same component on the competition page, where it follows the Season selector, and on the **Players page**, which is the Group-wide table pooled across every competition and Season with a filter by competition and by Format. There is no separate leaderboard screen: the Players page is the Group's leaderboard. A viewer may switch on a filter, "played at least N% of the scope's matches", off by default, which is today's filter kept as a courtesy in the scopes where no Award threshold applies.
+Every column sorts. The table is the same component on the competition page, where it follows the Season selector, and on the **Players page**, which is the Group-wide table pooled across every competition and Season with a filter by competition and by Format. There is no separate leaderboard screen: the Players page is the Group's leaderboard. A viewer may switch on a filter, "played at least N% of the scope's matches", off by default, which is today's filter kept as a courtesy in the scopes where no Award threshold applies. The competition, Format and percentage filters define the scope and rank within it; a search by name only finds rows, each keeping its rank in the scope, and the count reads "3 of 15 Players".
 
 Archived Players stay in every table they earned a row in.
 
@@ -102,9 +102,9 @@ The Season summary's leader line in Pickup is the **MVP**: the Qualified Player 
 
 **Form**, the League session's term extended to Players: the Player's last five Completed matches in the scope, by match date then recording order, oldest to newest, as W, D or L; beside it the average of their last five ratings over Rated matches. A hidden column and a Player page line.
 
-**Rating history** is the map's one new stat, in three shapes on the Player page: a per-match series across every competition of the Group by date, each Rated match a point with a rolling average over the last 10 Rated matches drawn through it, filterable to one competition; per-Season averages in the breakdown table; and Form's five-match average.
+**Rating history** is the map's one new stat, in three shapes on the Player page: a per-match series across every competition of the Group by date, drawn as a bar chart: one bar per Rated match for the last 40 Rated matches of the scope, oldest on the left, the bar's height the Rating on an axis from 0 to 3, its colour the Player's result in that match (won, drawn, lost), and one dashed line across it at the scope's Average rating with its value, the scope being the page's competition filter; per-Season averages in the breakdown table; and Form's five-match average.
 
-A **streak** is a run over the Player's Completed matches ordered by match date then recording order, crossing Seasons because a Season boundary is an admin act rather than a football fact. On a competition page it runs within that competition; on the Player page across every competition of the Group. A Not played match, a Walkover and a match the Player did not play are invisible to it, so absence never breaks a streak. Four kinds, each with a current and a longest value: **win streak**, **unbeaten run** (no loss), **scoring streak** (a goal in every match) and **crown streak** (a crown in every Rated match, Not rated matches skipped). "Current" is the run ending at the Player's latest match.
+A **streak** is a run over the Player's Completed matches ordered by match date then recording order, crossing Seasons because a Season boundary is an admin act rather than a football fact. On a competition page it runs within that competition; on the Player page across every competition of the Group, or within the one its filter names. A Not played match, a Walkover and a match the Player did not play are invisible to it, so absence never breaks a streak. Four kinds, each with a current and a longest value: **win streak**, **unbeaten run** (no loss), **scoring streak** (a goal in every match) and **crown streak** (a crown in every Rated match, Not rated matches skipped). "Current" is the run ending at the Player's latest match.
 
 ### Played with and played against
 
@@ -120,16 +120,18 @@ Pickup only, on the Player page, since sides change every match: **played with**
 
 The page a nickname opens anywhere in the Group, Members only, everything derived, top to bottom:
 
-- header: nickname, linked or unlinked, the archived mark, first and last match dates;
+- header: nickname, linked or unlinked, the archived mark, first and last match dates, and the page's one **competition filter**;
 - a summary strip of the default columns across the career;
-- Form and the rating history chart, filterable to one competition;
+- Form and the rating history chart;
 - a breakdown table with a row per competition and a sub-row per Season, All seasons rolling each up;
 - Teams played for, from roster appearances, with guest appearances apart: "also guested for Blue, 2 matches";
 - streaks, clean sheets, attendance, own goals, goal and assist consistency, the voting record;
 - played with and played against, in Pickup;
 - **best matches**, the Player's top five by rating;
 - Honours;
-- the match history: every Completed match newest first with the result, goals, assists, the rating or "Not rated" or "no vote", and a crown mark, filterable by competition; paged fifty at a time by match date then recording order, the filter being part of the read (`12-architecture.md`, Paged reads).
+- the match history: every Completed match newest first with the result, goals, assists, the rating or "Not rated" or "no vote", and a crown mark; paged fifty at a time by match date then recording order, the page's filter being part of the read (`12-architecture.md`, Paged reads).
+
+The page has one filter, as drawn in `design/export/`: a competition dropdown in the header reading "All competitions" by default, with one entry per competition the Player has a Completed match in. Picking a competition rescopes every section at once: the summary strip, Form, the rating history chart, streaks and the other lines, played with and against, best matches, Honours and the match history read that competition only, and the breakdown table keeps that competition's row with its Season sub-rows. No section carries a filter of its own. The choice lives in the URL, and changing it starts the match history from the top.
 
 Today's "top competitions" is replaced by the breakdown table; today's "top matches" by the best matches list and the Records section.
 
@@ -146,7 +148,7 @@ Both helpers balance by average rating, and this is the formula: a Player's bala
 The screen a Group opens on, replacing today's four counting cards:
 
 - **Your open votes** in this Group, with deadlines;
-- **your Player**: played, Form, average rating, current streak; or "link your Player" when the Member has none;
+- **your Player**: played, Form, average rating, current streak; or "ask an admin to link you" when the Member has none, since linking is a Group admin act;
 - **Active competitions**, each with its Season summary's leader line so far;
 - **latest results**: the last five Completed matches across competitions, with the crown once Rated.
 
@@ -182,13 +184,13 @@ Put to the user as decisions, never adopted silently.
 
 - **Career per Group**, the Player page as the career, plus a private **Your career** across the Account's Groups with per-Group rows and a total line.
 - **Win rate as the points share**, `(3W + D) / (3 × played)`, named Win rate, shown as a percentage with W-D-L beside it.
-- **The default column set** with own goals in it and the rest behind a toggle; played as lineup rows in Completed matches.
+- **The default column set** with own goals in it and the rest reached through the column presets; played as lineup rows in Completed matches.
 - **One team column** in team formats reading the roster, "Guest" for a Player who only guested, one row per Player; played for on the Player page from roster appearances, guest appearances apart.
 - **Clean sheets** as a side fact for every Format, a Player page stat and a hidden column.
 - **The Players page as the Group-wide table** and the Group's leaderboard; no separate leaderboard screen.
 - **Award threshold**: a competition setting, 50% by default for every Format, of the Season's matches in Pickup and of the Entry's matches in a team format, floor of 3, Season-scoped, Past seasons keeping the value they closed under; no Qualified mark on All seasons or pooled scopes, where the viewer's optional filter remains.
 - **The Pickup MVP** as the Qualified rating leader, ties shared, "so far" on the Current season.
-- **Rating history in three shapes**: per-match series with a rolling average, per-Season averages, and Form extended to Players.
+- **Rating history in three shapes**: a per-match bar series coloured by result with the average as a line, per-Season averages, and Form extended to Players.
 - **Streaks as derived stats, no badges**: win, unbeaten, scoring and crown streaks, current and longest, crossing Seasons.
 - **Played with and played against**, Pickup only.
 - **Attendance**, Pickup only.
@@ -203,6 +205,8 @@ Put to the user as decisions, never adopted silently.
 - **Contributions** as a hidden column.
 
 ### Declined, and why
+
+- **A rolling average through the rating history.** First accepted as a line over the last 10 Rated matches; replaced on 2026-09-17 by the bar chart drawn in Claude Design, which shows each match's Rating against its result and one flat average. A second derived line said little more than Form and the per-Season averages already say.
 
 - **A career across Groups as the career**, or **pooled stats across Groups visible in a Group.** Members only forbids the second and the first pools circles that never played each other; Your career is the private compromise.
 - **Wins over played** as win rate, **half a win per draw**, or **keeping 0.3.** The user chose the League's own arithmetic; 0.3 was an approximation of it with no source.
@@ -219,6 +223,7 @@ Put to the user as decisions, never adopted silently.
 - **Dropping consistency rates**, or **promoting them to columns.** A hat-trick once and a goal every week are different players, but nobody sorts by it.
 - **The League Top performers strip.** The Season summary names the same people.
 - **Crown share**, crowns over played. Both numbers are on the row.
+- **A filter of its own on the chart and another on the match history**, replaced on 2026-09-17 by the Player page's one competition filter, as drawn.
 - **A date-range filter** on tables. Seasons are the time boundary.
 - **A balance over the competition's own history only**, or **the all-time average.** A new competition could not balance; three-year-old form is not form.
 
@@ -233,7 +238,7 @@ Put to the user as decisions, never adopted silently.
 - **Voting (9)**: applied to that document in this session: the MVP rule is noted where that session left it; the rating, the floor, the plain mean, the crown, the breakdown and the voting record are read here exactly as settled there.
 - **Notifications (11)**: nothing here notifies; a "Season summary at close" message, if that session wants one, reads the summary and the Honours as derived. Settled in `11-notifications.md`: declined; Copy as text is the message.
 - **Architecture (12)**: every table, page, summary, Record and Honour derived on read from Completed matches and closed votes, or cached and invalidated on any match, lineup, ballot, roster, Season or settings write; the Award threshold stored on the competition with its history so a Past season resolves the value in force at its close; Qualified evaluated per Season with the Pickup and Entry denominators; streaks and Records as ordered reads by match date then recording order; Your career as an Account-scoped read across Memberships enforced at the boundary; CSV and text serialisation of a table's visible scope; the last-10 balance read at Draw time. Settled in `12-architecture.md`: every table, page, summary, Record and Honour as pure engine functions on read, no cache in the first release (ADR 0002); the Award threshold stamped on the Season at close; Qualified evaluated by the engine with both denominators; streaks and Records as ordered reads by match date then recording order; Your career as an `account` tier read across Memberships; Export CSV as a plain HTTP route and Copy as text as a client serialisation of the same rows; the last-10 balance as a read at Draw time.
-- **Frontend (13)**: the one table component with its scopes, the column toggle, the Qualified mark and greyed rows, the optional percentage filter; the Player page and its chart; the Team page; Records and Honours; the Group home; Copy as text and Export CSV; how "2.10 over 18" and "–" read on a phone. Settled in `13-frontend.md`: the table pins the name cell and scrolls the numerals with column presets on a phone; the Player page's strip is six stat blocks and the chart a hand-drawn SVG line; Records and Honours are the yellow award panel; the Group home's top row is the mockup's, re-purposed as your Player; "2.10 · 18" in blocks and "2.10 over 18" in prose; Copy as text and Export CSV under the one Share control.
+- **Frontend (13)**: the one table component with its scopes, the column toggle, the Qualified mark and greyed rows, the optional percentage filter; the Player page and its chart; the Team page; Records and Honours; the Group home; Copy as text and Export CSV; how "2.10 over 18" and "–" read on a phone. Settled in `13-frontend.md`: the table pins the name cell and scrolls the numerals with column presets on a phone; the Player page's strip is six stat blocks and the chart hand-drawn SVG bars, under the page's one competition filter; Records and Honours are the yellow award panel; the Group home's top row is the mockup's, re-purposed as your Player; "2.10 · 18" in blocks and "2.10 over 18" in prose; Copy as text and Export CSV under the one Share control.
 - **Data migration (15)**: nothing stored here migrates; every stat re-derives from migrated matches, lineups and ballots; the stored win rate constant, stored ratings, stored crown flags and the union-by-Account career are retired; every migrated competition receives the default Award threshold of 50%, and migrated Past seasons resolve to it. Settled in `15-migration.md`: as stated; the verifier adds a career cross-check of matches, goals and assists against the old lineup rows and a derivation pass that executes every Season's Standings, summary and table.
 
 ## Vocabulary

@@ -49,7 +49,7 @@ The **deadline** is an instant: the end of the last day of the match's voting pe
 
 The **voters** of a match are the Players in its lineups who pass Minimum matches: in a team format every Player in the match; in Pickup every Player in the match with at least the Minimum matches value, the match itself included since it is Completed, or everyone when the setting is off. Being a voter says nothing about being voted for: **every Player in the match is on the ballot**, a Player below Minimum matches included.
 
-A **ballot** is one voter's three ordered **picks**, first, second and third, each a different Player in the match and none of them the voter. The picks are worth three, two and one point in the arithmetic and nowhere else: copy reads "first pick", never "3 points". A voter has at most one ballot per match and may **replace** it while the vote is open; the replacement overwrites the picks, the ballot keeps its first-submitted and last-changed instants, and nothing of the replaced picks is kept. There is no edit after close.
+A **ballot** is one voter's three ordered **picks**, first, second and third, each a different Player in the match and none of them the voter. The picks are worth three, two and one point in the arithmetic and nowhere else: copy reads "first pick", never "3 points". The one place points show is the results breakdown's Points column, the sum a Player received, which the rating divides by the ballots cast (decided 2026-09-18). A voter has at most one ballot per match and may **replace** it while the vote is open; the replacement overwrites the picks, the ballot keeps its first-submitted and last-changed instants, and nothing of the replaced picks is kept. There is no edit after close.
 
 A Player casts their own ballot through a Linked Account, from the match page. A Manager or Group admin may enter a ballot **on behalf** of any voter, linked or not. Such a ballot carries the acting Account, "entered by Ana", tombstoned on that Account's deletion as the change record does, and counts exactly like an own ballot. Who may overwrite whom:
 
@@ -109,7 +109,7 @@ The vote has the same shape in League and Knockout as in Pickup: one electorate,
 
 ### The match page, the share link and open votes
 
-The vote lives on the match page, Members only like everything else. Open: the deadline, the turnout, and for a voter the ballot or their own ballot with Replace. Closed: Rated with the ratings, the breakdown and the crown, or Not rated with the turnout. None: why.
+The vote lives on the match page, Members only like everything else. Open: the deadline, the turnout, and for a voter the ballot or their own ballot with Replace. Closed: Rated with the ratings, the breakdown and the crown, the turnout kept as one line, "12 of 14 voted", that opens the names; or Not rated with the turnout. None: why.
 
 The **share link** is the match page URL and nothing more: one link for the whole group, sign-in on the way if needed, a non-Member landing on the groups session's "not a member" screen. **Copy vote link** produces the URL with a line of text, "Vote on Red 4-3 Blue, closes Friday"; after close the same action copies the results line with the man of the match. A per-voter link is a credential pasted into a chat and is retired. Settled in `11-notifications.md`: **Copy reminder text**, open to every Member while the vote is open, produces "Still waiting on Marko, Ivan and Petar" from the turnout with the same line and link.
 
@@ -204,4 +204,4 @@ Put to the user as decisions, never adopted silently.
 
 ## Vocabulary
 
-Resolved in this session and added to `docs/rewrite/CONTEXT.md`: Vote, Voter, Ballot, Pick, Entered on behalf, Replace, Voting deadline, Turnout, Close now, Extend, Voided ballot, Rating, Rated match, Not rated, Man of the match, Crown, Results breakdown, Your open votes, Voting record, Share link. "Voting threshold", "Eligible voter", "Voting gate", "runway", "pending votes", "voting status", "points" in copy and the per-voter vote link are retired.
+Resolved in this session and added to `docs/rewrite/CONTEXT.md`: Vote, Voter, Ballot, Pick, Entered on behalf, Replace, Voting deadline, Turnout, Close now, Extend, Voided ballot, Rating, Rated match, Not rated, Man of the match, Crown, Results breakdown, Your open votes, Voting record, Share link. "Voting threshold", "Eligible voter", "Voting gate", "runway", "pending votes", "voting status", "points" in copy outside the breakdown's Points column, and the per-voter vote link are retired. The button that recasts a ballot reads "Replace ballot".

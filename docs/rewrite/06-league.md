@@ -82,6 +82,8 @@ A Fixture carries an optional **planned date**, set on generation by cadence or 
 
 **Walkover** in full: a table fact, not a football fact. The Fixture becomes Completed with the score fixed at 3-0 to the awarded side, no override. Its match date is its planned date if it has one, else the day of the act. It has no lineup, no player stats and no vote. It is a Completed match for every purpose that has no player in it: the Standings, form, the Team's record and Team page, All seasons Standings, the champion mark, and the closing precondition of at least one Completed match. A group that prefers not to punish a no-show marks the Fixture Not played instead.
 
+**Why, in a note.** Neither a Walkover nor Not played carries a reason of its own. The Walkover and Mark Not played confirmations offer the match's optional note (`08-matches.md`), "Dinamo Blok 45 did not show", "pitch closed", which a Manager may edit while the Season is Current like any result fact; the schedule shows it beside the mark and the match page with the note. A Knockout's Walkover and Not played, which carry these acts over, take the same note. Decided 2026-09-18, after the drawn schedule showed such lines.
+
 Deletion and un-completion of a Completed match, for every format, are settled in `08-matches.md`: Un-complete returns a Completed match to to play with everything kept as a draft and its ballots kept for re-validation, refused in a Knockout once anything is recorded on the next Tie; a Completed Fixture nobody should have played is un-completed and then marked Not played; a generated Fixture is never deleted.
 
 ### Entries after generation

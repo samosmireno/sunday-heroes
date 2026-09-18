@@ -245,7 +245,7 @@ Put to the user as decisions, never adopted silently.
 - **Four error codes with a `reason` enum** from `domain`.
 - **Typed environment parsing at boot; no production value in a development `.env`; non-localhost refused outside the release command.**
 - **Migrations as a release step**, never on container start, rehearsed on a dump.
-- **ADRs under `docs/rewrite/adr/`**, the eleven listed.
+- **ADRs under `docs/rewrite/adr/`**, the eleven listed, and 0012 from the migration session.
 - **A Postgres fixed-window rate limiter** for the mail-sending acts and the per-Account safety net.
 - **Direct inserts plus the engine as verifier** as the data migration's seam.
 - **ESLint type-aware plus Prettier**, Markdown included.

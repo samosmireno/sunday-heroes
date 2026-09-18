@@ -40,6 +40,8 @@ Hex values read from the vector fills and the text runs, grouped by what they pa
 | Muted text 2 (match rows)                   | `#c7bebe`                         | 8           |
 | Black, near-black, charcoal                 | `#000000` / `#161616` / `#212020` | 35 / 8 / 20 |
 
+Correction, 2026-09-18: `assets/balls.png` draws the footballs in orange-red `#f93a07`, not the yellow light the table lists beside Fun facts.
+
 Pitch lines are `#f7f7f3` shapes at partial opacity over the grass. The grass is a flat `#42af36` layer under a black-and-white noise layer (`assets/grass-noise.png` is a 512 px crop of it, `assets/grass-tile.png` the flat layer); the visible result is the two blended, which is why the sampled greens differ from the fill.
 
 ## Type

@@ -1,5 +1,7 @@
 # Sunday Heroes: design brief
 
+> **Historical.** The brief Claude Design drew from on 2026-09-17, kept as it was uploaded; the result is `export/DesignSystemV2/`. Its sample copy and numbers carry errors the branch docs correct: a 33% win rate that is 41% by the points share, "1 not played" on a Current Pickup season, "a possible duplicate" read as a duplicate Player, "Never use: Home" beside the Home tab, "no photo" against the Google avatar, "Change ballot" for the act named Replace. `export-audit.md` lists them. The branch docs and `CONTEXT.md` are the spec; this file is not.
+
 Sunday Heroes is a members-only web app where a Group of friends runs football competitions, records matches and votes for the man of the match. Draw the screens below, phone first, in the retro sticker-album identity of the four attached mockups. The mockups fix the look; their structure is out of date.
 
 ## Visual language
@@ -11,8 +13,8 @@ Sunday Heroes is a members-only web app where a Group of friends runs football c
 - Team and side colours come from sixteen named colours: Red `#ed1c24`, Orange `#f93a07`, Yellow `#f4e937`, Green `#42af36`, Dark green `#0c542c`, Blue `#3a3ab0`, Navy `#091e40`, Black `#161616`, White `#f7f7f3`, Sky `#4fb3e8`, Purple `#7b3fb5`, Pink `#f06aa8`, Teal `#1a9e8f`, Maroon `#7a1f2b`, Brown `#7a4a1f`, Grey `#8c8f94`. In Pickup a side's colour is its name: a result reads "Red 4-3 Blue".
 - Fonts: **Ultra** for slab panel titles (for Blackoak Std). **Archivo Narrow Bold** for numerals, band names, table names, ranks, nav items and match rows (for Arial Narrow and Galano Grotesque). The system sans for body, labels, buttons, column headers.
 - Sizes, phone and desktop: body 16; slab title 20 and 28; band name 28 and 48; stat numeral 36 and 56; table cell 15; tag 12 uppercase; column header 13.
-- Skews: stat blocks and the starburst 21.5° from vertical; every row and cell 15°. Never skew text.
-- Every panel has a black offset shadow, 4 px on a phone and 8 px on a desktop, a left edge tab 8 and 12 px wide, and a 1 px ink stroke on every shape.
+- Skews: stat blocks and the starburst 21.5° from vertical; every row and cell 15°. Never skew text; rotate it only on the sticker card's corner ribbon.
+- Every panel has a black offset shadow falling down and left, 4 px on a phone and 8 px on a desktop, a left edge tab 8 and 12 px wide, and a 1 px ink stroke on every shape.
 - Spacing: 16 px gutters and 12 px between panels on a phone, 24 px on a desktop, content max width 1400 px. One theme, no dark mode.
 
 ## Attached assets
@@ -61,7 +63,7 @@ Active competitions ordered by most recent result, each a row with name, Format 
 
 ### 6. Competition page, Pickup
 
-A title band in the Format's family with name and tag; the Season selector as a skewed dropdown ("Season 3 · 2026/27 · since Mar 2026", All seasons last); the yellow **Season summary** panel: "MVP so far", top scorer, top assists, most matches, most crowns, "14 completed · 1 not played"; the MVP's sticker card; tabs **Matches · Players · Records · Rules**. Matches: to play above, completed newest first, not played apart, as match rows; the completed list ends in Show more, which in practice only All seasons reaches. Players: the table of screen 9 for this Season, every row, Qualified Players ranked and the rest greyed on rating and win rate. Records, on All seasons only: the yellow panel with biggest win, highest-scoring match, most goals in a match, each with a name and date. Rules: read-only lines for Format, usual match format, voting, voting period, Minimum matches, Award threshold, Managers. Managers see the red **Add match** bar; admins a gear. Empty: "Add the first match". Must not show: HOME and AWAY, the mockup's empty "Match results" and "Stats" shells.
+A paper title band with the name in ink and the Format tag; the Season selector as a skewed dropdown ("Season 3 · 2026/27 · since Mar 2026", All seasons last); the yellow **Season summary** panel: "MVP so far", top scorer, top assists, most matches, most crowns, "14 completed · 1 not played"; the MVP's sticker card; tabs **Matches · Players · Records · Rules**. Matches: to play above, completed newest first, not played apart, as match rows; the completed list ends in Show more, which in practice only All seasons reaches. Players: the table of screen 9 for this Season, every row, Qualified Players ranked and the rest greyed on rating and win rate. Records, on All seasons only: the yellow panel with biggest win, highest-scoring match, most goals in a match, each with a name and date. Rules: read-only lines for Format, usual match format, voting, voting period, Minimum matches, Award threshold, Managers. Managers see the red **Add match** bar; admins a gear. Empty: "Add the first match". Must not show: HOME and AWAY, the mockup's empty "Match results" and "Stats" shells.
 
 ### 7. Match form
 
@@ -77,7 +79,7 @@ The Group's leaderboard, the mockup's table with the name cell pinned as the ske
 
 ### 10. Player page
 
-One Player's career in the Group. Header with nickname, linked or not, first and last match dates; the hero sticker card; six stat blocks Played · W-D-L · Goals · Assists · Rating · Crowns; Form and a rating chart over time; a breakdown table by competition with Season sub-rows; streaks, clean sheets, attendance, "scored in 12 of 30", "voted in 34 of 40"; **Played with** and **Played against** as the mockup's Top teammates cards ("9 matches · 3W-2D-4L · 33%"); best matches; Honours in the yellow panel ("MVP, Season 2"); the match history last on the page, newest first with result, goals, assists, rating, a crown mark, fifty at a time under Show more. Must not show: a birth date, a photo, "Performance history", page numbers.
+One Player's career in the Group. Header with nickname, linked or not, first and last match dates, and one competition dropdown ("All competitions") that rescopes the whole page; the hero sticker card; six stat blocks Played · W-D-L · Goals · Assists · Rating · Crowns; Form and the Rating history chart (one bar per Rated match for the last 40, oldest left, on an axis from 0 to 3, green for a win, grey for a draw, red for a loss, a dashed red line at the average with its value, the first and last dates beneath, a legend; no rolling average, no line chart); a breakdown table by competition with Season sub-rows; streaks, clean sheets, attendance, "scored in 12 of 30", "voted in 34 of 40"; **Played with** and **Played against** as the mockup's Top teammates cards ("9 matches · 3W-2D-4L · 33%"); best matches; Honours in the yellow panel ("MVP, Season 2"); the match history last on the page, newest first with result, goals, assists, rating, a crown mark, fifty at a time under Show more. Must not show: a birth date, a photo, "Performance history", page numbers.
 
 ## Later screens, by name
 
