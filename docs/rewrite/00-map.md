@@ -1,5 +1,7 @@
 # Sunday Heroes rewrite: the map
 
+> **Frozen on 2026-09-18.** These documents moved to the new repository, [`samosmireno/sunday-heroes-app`](https://github.com/samosmireno/sunday-heroes-app), which is canonical: the branch documents are its `docs/spec/`, the glossary its root `CONTEXT.md`, the ADRs its `docs/adr/`. Nothing under `docs/rewrite/` is updated any more.
+
 _Overall pass, 2026-09-09. Output of the first `/grill-with-docs` session for a from-scratch rebuild. Nothing here is code; the current repo was read only as evidence of what the app does today._
 
 ## How to read this
