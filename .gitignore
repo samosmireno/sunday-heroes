@@ -26,3 +26,7 @@ public/dist
 *.xlsx
 
 CLAUDE.md
+
+# Claude Design export: the uploaded inputs duplicate design/assets, design/screens and brief.md
+docs/rewrite/design/export/*/uploads/
+docs/rewrite/design/export/*/.thumbnail

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase">Screen 15 · Teams</div>
+  <div style="font-size:14px">the Players | Teams sub-tab on a phone, the Teams nav item on a desktop · active Teams as rows with colour plate, name, competitions entered and the overall record · archived below a heading · + New Team for Managers with the sixteen named colours · row overflow: rename and recolour for Managers, archive, merge and delete for admins</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="4">
+<section id="{{ s.id }}" data-screen-label="{{ s.label }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><span style="display:flex;align-items:center;height:28px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3">Teams</span></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div data-subtabs="" style="position:relative;display:grid;grid-template-columns:1fr 1fr;background:#07361c;border-bottom:1px solid #000">
+        <a style="display:flex;align-items:center;justify-content:center;height:44px;color:#d7e6cc;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-decoration:none;border-right:1px solid #000">Players</a>
+        <a style="display:flex;align-items:center;justify-content:center;height:44px;background:#f7f7f3;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-decoration:none">Teams</a>
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:12px">
+
+        <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:0 0 0 4px">
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New Team</a>
+        </div>
+        </sc-if>
+
+        <div data-panel="active" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Teams</div>
+            <div style="font-size:13px;color:#f7f7f3;white-space:nowrap">{{ s.countLine }}</div>
+          </div>
+          <sc-if value="{{ s.hasRows }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#000;padding:8px 8px 8px 10px;display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ s.active }}" as="t" hint-placeholder-count="5">
+            <div style="position:relative;display:flex;align-items:center;gap:10px;min-height:64px;padding:8px 6px 8px 14px">
+              <div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ t.bg }};border:1px solid #000"></div>
+              <div data-plate="" style="position:relative;width:26px;height:36px;flex:none;transform:skewX(-15deg);background:{{ t.hex }};border:1px solid {{ t.plateBd }};box-sizing:border-box"></div>
+              <a style="position:relative;flex:1;min-width:0;min-height:44px;justify-content:center;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:{{ t.fg }}">
+                <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;line-height:1.1;min-width:0">{{ t.name }}</span>
+                <div style="display:flex;flex-wrap:wrap;gap:4px 8px">
+                  <sc-for list="{{ t.comps }}" as="c" hint-placeholder-count="2">
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;white-space:nowrap"><span style="display:inline-block;width:8px;height:14px;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000;box-sizing:border-box"></span>{{ c.name }}</span>
+                  </sc-for>
+                </div>
+              </a>
+              <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ t.fg }};white-space:nowrap">{{ t.record }}</span>
+              <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+              <a style="position:relative;width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;color:{{ t.fg }};font-size:20px;letter-spacing:1px;text-decoration:none;line-height:1;background:{{ t.menuBg }};border:1px solid {{ t.menuBd }};box-sizing:border-box">···</a>
+              </sc-if>
+            </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ s.hasArchived }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:12px 8px 12px 10px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:12px;padding:2px 6px 6px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase">Archived</span><span style="flex:1;height:1px;background:#000"></span><span style="font-size:12px">{{ s.archivedLine }}</span></div>
+            <sc-for list="{{ s.archived }}" as="t" hint-placeholder-count="2">
+            <div style="position:relative;display:flex;align-items:center;gap:10px;min-height:64px;padding:8px 6px 8px 14px">
+              <div style="position:absolute;inset:0;transform:skewX(-15deg);background:#bcc5ce;border:1px solid #000"></div>
+              <div data-plate="" style="position:relative;width:26px;height:36px;flex:none;transform:skewX(-15deg);background:{{ t.hex }};border:1px solid #000;box-sizing:border-box;opacity:0.7"></div>
+              <a style="position:relative;flex:1;min-width:0;min-height:44px;justify-content:center;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:#000">
+                <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;line-height:1.1;min-width:0">{{ t.name }}</span>
+                <span style="font-size:12px;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ t.note }}</span>
+              </a>
+              <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;white-space:nowrap">{{ t.record }}</span>
+              <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+              <a style="position:relative;width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;color:#000;font-size:20px;letter-spacing:1px;text-decoration:none;line-height:1">···</a>
+              </sc-if>
+            </div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:10px 16px;font-size:13px">{{ s.footNote }}</div>
+          </sc-if>
+          <sc-if value="{{ s.isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#f7f7f3;padding:28px 16px 24px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+            <img src="assets/balls.png" alt="" style="width:240px;height:auto">
+            <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1.1">No Teams yet</div>
+            <div style="font-size:15px;max-width:280px;text-wrap:pretty;margin-top:-10px">{{ s.emptyLine }}</div>
+            <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:100%;max-width:300px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New Team</a>
+            </sc-if>
+          </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div data-tabbar="" style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr);height:60px;box-sizing:border-box">
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Competitions</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;background:#ed1c24;border-left:1px solid #000;border-right:1px solid #000;text-decoration:none">Players</a>
+        <a style="display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You<span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#ed1c24;border:1px solid #000;font-size:12px;color:#f7f7f3;box-sizing:border-box">2</span></a>
+      </div>
+
+      <sc-if value="{{ s.showNew }}" hint-placeholder-val="{{ false }}">
+      <div data-sheet="new" style="position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:flex;flex-direction:column;justify-content:flex-end">
+        <div style="background:#f7f7f3;border-top:1px solid #000;display:flex;flex-direction:column;max-height:92%">
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box;flex:none"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">New Team</div><a style="font-size:14px;color:#f7f7f3;text-decoration:none;padding:12px 0;margin:-12px 0">Cancel</a></div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:16px;overflow:auto">
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px">Name</span><div style="height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;padding:0 12px;box-sizing:border-box;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px">{{ s.newName }}<span style="width:2px;height:22px;background:#000;margin-left:2px"></span></div></label>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;flex-direction:column;gap:2px;font-size:13px"><span>Colour · {{ s.newColour }}</span><span style="font-size:12px;color:#000">{{ s.newColourHint }}</span></div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px 8px">
+                <sc-for list="{{ s.swatches }}" as="c" hint-placeholder-count="16">
+                <a style="display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:#000">
+                  <div style="position:relative;width:44px;height:44px;transform:skewX(-15deg);background:{{ c.hex }};border:1px solid #000;box-sizing:border-box;box-shadow:{{ c.shadow }}"></div>
+                  <span style="font-size:12px;line-height:1.1;white-space:nowrap;font-weight:{{ c.weight }}">{{ c.name }}</span>
+                  <span style="font-size:12px;line-height:1;color:#000;white-space:nowrap;min-height:10px">{{ c.taken }}</span>
+                </a>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="flex:none;display:grid;grid-template-columns:1fr 2fr;gap:12px;padding:12px 16px 16px 20px;border-top:1px solid #000;background:#f7f7f3">
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Cancel</a>
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Create Team</a>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showMenu }}" hint-placeholder-val="{{ false }}">
+      <div data-sheet="row" style="position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:flex;flex-direction:column;justify-content:flex-end">
+        <div style="background:#f7f7f3;border-top:1px solid #000;display:flex;flex-direction:column">
+          <div style="background:#091e40;height:56px;padding:0 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #000;box-sizing:border-box"><div style="width:22px;height:30px;transform:skewX(-15deg);background:{{ s.menuTeam.hex }};border:1px solid #000;box-sizing:border-box"></div><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">{{ s.menuTeam.name }}</span><span style="font-size:13px;color:#bcc5ce;margin-left:auto">{{ s.menuTeam.record }}</span></div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ s.menu }}" as="m" hint-placeholder-count="5">
+            <a style="display:flex;flex-direction:column;justify-content:center;min-height:52px;padding:8px 16px;border-bottom:1px solid #bcc5ce;text-decoration:none;color:{{ m.fg }};box-sizing:border-box"><span style="font-size:16px">{{ m.name }}</span><sc-if value="{{ m.hasSub }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#000">{{ m.sub }}</span></sc-if></a>
+            </sc-for>
+          </div>
+          <div style="padding:12px 16px 16px 20px"><a style="display:flex;align-items:center;justify-content:center;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Cancel</a></div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+        </nav>
+        <div style="flex:1"></div>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">{{ s.openVotes }}</span></a>
+      </div>
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;min-width:0;padding:40px 40px 48px;gap:24px;box-sizing:border-box">
+
+        <div data-band="" style="margin-left:8px;height:72px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;align-items:center;gap:20px;padding:0 20px;box-sizing:border-box;position:relative">
+          <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;white-space:nowrap;padding-right:6px;color:#3a3ab0">Teams</span>
+          <span style="font-size:14px;white-space:nowrap">{{ s.countLine }}</span>
+          <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+          <a style="margin-left:auto;display:flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 20px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:15px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000;white-space:nowrap"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New Team</a>
+          </sc-if>
+        </div>
+
+        <div data-panel="active" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Teams</div>
+            <div style="font-size:14px;color:#f7f7f3">Teams enter Leagues and Knockouts · Pickup sides are colours</div>
+          </div>
+          <sc-if value="{{ s.hasRows }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#000;padding:12px 12px 12px 16px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:grid;grid-template-columns:44px 260px 1fr 200px 56px;gap:0 16px;align-items:center;height:28px;padding:0 20px;font-size:13px;color:#f7f7f3"><span></span><span>Team</span><span>Competitions entered</span><span style="text-align:right">Played · W-D-L</span><span></span></div>
+            <sc-for list="{{ s.active }}" as="t" hint-placeholder-count="5">
+            <div style="position:relative;display:grid;grid-template-columns:44px 260px 1fr 200px 56px;gap:0 16px;align-items:center;height:60px;padding:0 20px;margin-left:6px">
+              <div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ t.bg }};border:1px solid #000"></div>
+              <div data-plate="" style="position:relative;width:32px;height:40px;transform:skewX(-15deg);background:{{ t.hex }};border:1px solid {{ t.plateBd }};box-sizing:border-box;margin-left:6px"></div>
+              <a style="position:relative;display:flex;flex-direction:column;justify-content:center;gap:2px;min-height:44px;text-decoration:none;color:{{ t.fg }};min-width:0"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;min-width:0">{{ t.name }}</span><span style="font-size:12px;color:#bcc5ce">{{ t.colour }}</span></a>
+              <div style="position:relative;display:flex;flex-wrap:wrap;gap:8px 12px;min-width:0">
+                <sc-for list="{{ t.comps }}" as="c" hint-placeholder-count="2">
+                <span style="display:inline-flex;align-items:center;gap:8px;color:{{ t.fg }};font-size:14px;white-space:nowrap"><span style="position:relative;display:inline-flex;align-items:center;height:22px;padding:0 10px"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ c.format }}</span></span>{{ c.name }}</span>
+                </sc-for>
+              </div>
+              <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:{{ t.fg }};white-space:nowrap;text-align:right">{{ t.record }}</span>
+              <div style="position:relative;display:flex;justify-content:flex-end">
+                <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+                <a style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:{{ t.fg }};font-size:22px;letter-spacing:1px;text-decoration:none;line-height:1;background:{{ t.menuBg }};border:1px solid {{ t.menuBd }};box-sizing:border-box">···</a>
+                </sc-if>
+                <sc-if value="{{ t.menuOpen }}" hint-placeholder-val="{{ false }}">
+                <div data-menu="" style="position:absolute;right:0;top:52px;width:260px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;z-index:5;display:flex;flex-direction:column">
+                  <sc-for list="{{ s.menu }}" as="m" hint-placeholder-count="5">
+                  <a style="display:flex;flex-direction:column;justify-content:center;min-height:44px;padding:6px 16px;border-top:1px solid {{ m.bd }};text-decoration:none;color:{{ m.fg }};box-sizing:border-box"><span style="font-size:15px">{{ m.name }}</span><sc-if value="{{ m.hasSub }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#000">{{ m.sub }}</span></sc-if></a>
+                  </sc-for>
+                </div>
+                </sc-if>
+              </div>
+            </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ s.hasArchived }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:12px 12px 16px 16px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:16px;padding:8px 20px 10px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase">Archived</span><span style="flex:1;height:1px;background:#000"></span><span style="font-size:13px">{{ s.archivedLine }}</span></div>
+            <sc-for list="{{ s.archived }}" as="t" hint-placeholder-count="2">
+            <div style="position:relative;display:grid;grid-template-columns:44px 260px 1fr 200px 56px;gap:0 16px;align-items:center;height:60px;padding:0 20px;margin-left:6px">
+              <div style="position:absolute;inset:0;transform:skewX(-15deg);background:#bcc5ce;border:1px solid #000"></div>
+              <div data-plate="" style="position:relative;width:32px;height:40px;transform:skewX(-15deg);background:{{ t.hex }};border:1px solid #000;box-sizing:border-box;margin-left:6px;opacity:0.7"></div>
+              <a style="position:relative;display:flex;flex-direction:column;gap:2px;text-decoration:none;color:#000;min-width:0"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;white-space:nowrap">{{ t.name }}</span><span style="font-size:12px">{{ t.note }}</span></a>
+              <div style="position:relative;display:flex;flex-wrap:wrap;gap:8px 12px">
+                <sc-for list="{{ t.comps }}" as="c" hint-placeholder-count="1">
+                <span style="display:inline-flex;align-items:center;gap:8px;color:#000;font-size:14px;white-space:nowrap"><span style="position:relative;display:inline-flex;align-items:center;height:22px;padding:0 10px"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ c.format }}</span></span>{{ c.name }}</span>
+                </sc-for>
+              </div>
+              <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;white-space:nowrap;text-align:right">{{ t.record }}</span>
+              <div style="position:relative;display:flex;justify-content:flex-end"><sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}"><a style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#000;font-size:22px;letter-spacing:1px;text-decoration:none;line-height:1">···</a></sc-if></div>
+            </div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:10px 20px;font-size:13px;display:flex;justify-content:space-between;gap:16px"><span>{{ s.footNote }}</span><span>Every Team in one list, no paging</span></div>
+          </sc-if>
+          <sc-if value="{{ s.isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#f7f7f3;padding:40px 24px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+            <img src="assets/balls.png" alt="" style="width:320px;height:auto">
+            <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1.1">No Teams yet</div>
+            <div style="font-size:16px;max-width:420px;text-wrap:pretty;margin-top:-10px">{{ s.emptyLine }}</div>
+            <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 24px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New Team</a>
+            </sc-if>
+          </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <sc-if value="{{ s.showNew }}" hint-placeholder-val="{{ false }}">
+      <div data-dialog="new" style="position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:flex;align-items:center;justify-content:center">
+        <div style="width:560px;margin-left:12px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;flex-direction:column;position:relative">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">New Team</div><a style="font-size:14px;color:#f7f7f3;text-decoration:none;padding:12px 0;margin:-12px 0">Cancel</a></div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:20px">
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px">Name</span><div style="height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;padding:0 14px;box-sizing:border-box;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px">{{ s.newName }}<span style="width:2px;height:22px;background:#000;margin-left:2px"></span></div></label>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span>Colour</span><span>{{ s.newColourLine }}</span></div>
+              <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:14px 8px">
+                <sc-for list="{{ s.swatches }}" as="c" hint-placeholder-count="16">
+                <a style="display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;color:#000">
+                  <div style="position:relative;width:44px;height:44px;transform:skewX(-15deg);background:{{ c.hex }};border:1px solid #000;box-sizing:border-box;box-shadow:{{ c.shadow }}"></div>
+                  <span style="font-size:12px;line-height:1.1;white-space:nowrap;font-weight:{{ c.weight }}">{{ c.name }}</span>
+                  <span style="font-size:12px;line-height:1;color:#000;white-space:nowrap;min-height:10px">{{ c.taken }}</span>
+                </a>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:16px;padding:16px 24px 24px 32px;border-top:1px solid #000">
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 24px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">Cancel</a>
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 24px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">Create Team</a>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;overflowRole&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Manager&quot;,&quot;Group admin&quot;],&quot;default&quot;:&quot;Group admin&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Row overflow (15c)&quot;},&quot;emptyAsMember&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Empty state (15d)&quot;},&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+  }
+  renderVals() {
+    const ovRole = this.props.overflowRole ?? 'Group admin';
+    const emptyMember = this.props.emptyAsMember ?? false;
+    const COL16 = [['Red', '#ed1c24'], ['Orange', '#f93a07'], ['Yellow', '#f4e937'], ['Green', '#42af36'], ['Dark green', '#0c542c'], ['Blue', '#3a3ab0'], ['Navy', '#091e40'], ['Black', '#161616'], ['White', '#f7f7f3'], ['Sky', '#4fb3e8'], ['Purple', '#7b3fb5'], ['Pink', '#f06aa8'], ['Teal', '#1a9e8f'], ['Maroon', '#7a1f2b'], ['Brown', '#7a4a1f'], ['Grey', '#8c8f94']];
+    const HEX = Object.fromEntries(COL16);
+    const FMT = { League: '#0c542c', Knockout: '#f93a07', Pickup: '#3a3ab0' };
+    const mk = (name, colour, comps, record, note) => ({ name, colour, hex: HEX[colour], plateBd: ['Navy', 'Black', 'Dark green'].includes(colour) ? '#f7f7f3' : '#000', record, note: note || '', comps: comps.map(c => ({ name: c[0], format: c[1], tagBg: FMT[c[1]] })) });
+    const SL = ['Sunday league', 'League'], ZL = ['Zlatna lopta', 'Knockout'], ZI = ['Zimska liga', 'League'];
+    const ACTIVE = [
+      mk('Bulls', 'Red', [SL, ZL], '37 · 25W-5D-7L'),
+      mk('Plavi', 'Blue', [SL, ZL], '35 · 15W-8D-12L'),
+      mk('Zeleni', 'Green', [SL], '26 · 10W-7D-9L'),
+      mk('Lokomotiva', 'Navy', [SL, ZL], '31 · 12W-6D-13L'),
+      mk('Dinamo Blok 45', 'Yellow', [SL], '12 · 4W-2D-6L')
+    ];
+    const ARCHIVED = [
+      mk('Stari lavovi', 'Sky', [SL], '4 · 1W-0D-3L', 'withdrew after Round 4, Season 2'),
+      mk('Munja', 'Purple', [ZI], '10 · 6W-2D-2L', 'archived Apr 2026 · Zimska liga ended')
+    ];
+    const takenBy = {}; ACTIVE.forEach(t => { takenBy[t.colour] = t.name; });
+    const MENU_MGR = [{ name: 'Rename' }, { name: 'Recolour', sub: 'one of the sixteen colours' }];
+    const MENU_ADMIN = [...MENU_MGR, { name: 'Archive', sub: 'kept in the records, out of new Entries', top: true }, { name: 'Merge into another Team…', sub: 'its Entries and appearances move over' }, { name: 'Delete', sub: 'only a Team that never played', red: true }];
+    const build = o => {
+      const manager = !!o.manager;
+      const menuSrc = o.menuRole === 'Manager' ? MENU_MGR : MENU_ADMIN;
+      const menu = menuSrc.map((m, i) => ({ name: m.name, sub: m.sub || '', hasSub: !!m.sub, fg: m.red ? '#ed1c24' : '#000', bd: i === 0 ? 'transparent' : (m.top ? '#000' : '#bcc5ce') }));
+      const active = o.empty ? [] : ACTIVE.map((t, i) => ({ ...t, bg: i % 2 ? '#0d2e63' : '#091e40', fg: '#f7f7f3', menuOpen: o.menuOn === t.name, menuBg: o.menuOn === t.name ? '#ed1c24' : 'transparent', menuBd: o.menuOn === t.name ? '#000' : 'transparent' }));
+      const archived = o.empty ? [] : ARCHIVED;
+      const swatches = COL16.map(([name, hex]) => ({ name, hex, taken: takenBy[name] ? takenBy[name] : '', weight: name === o.newColour ? '700' : '400', shadow: name === o.newColour ? '0 0 0 3px #f7f7f3, 0 0 0 4px #000' : 'none' }));
+      const menuTeam = active.find(t => t.menuOpen) || { name: '', hex: '#000', record: '' };
+      return {
+        id: o.id, label: o.label, blurb: o.blurb, manager,
+        openVotes: '2', roleLine: (o.role || 'Member') + ' · 2 open votes',
+        active, archived, hasRows: active.length > 0, hasArchived: archived.length > 0, isEmpty: active.length === 0,
+        countLine: active.length ? `${active.length} active · ${archived.length} archived` : 'none yet',
+        archivedLine: 'out of new Entries · records kept',
+        footNote: 'Played · W-D-L over every competition and Season · tap a Team for its page',
+        showNew: !!o.showNew, newName: o.newName || '', newColour: o.newColour || '', newColourLine: o.newColour ? `${o.newColour} · a name under a swatch is the Team already wearing it` : 'pick one', newColourHint: 'a name under a swatch is the Team already wearing it',
+        swatches, showMenu: !!o.menuOn, menu, menuTeam,
+        emptyLine: manager ? 'Teams enter Leagues and Knockouts. Pickup sides are colours and need none.' : 'Teams enter Leagues and Knockouts. A Manager creates the first one.'
+      };
+    };
+    const sections = [
+      build({ id: '15a', label: '15a Teams, Member', blurb: 'A Member: five active Teams as rows with the colour plate, name, competitions entered as Format tags and the overall record, Played · W-D-L · two archived below the heading in grey · on the phone the Players | Teams sub-tab, on the desktop the Teams nav item · no acts' }),
+      build({ id: '15b', label: '15b Manager, New Team', manager: true, role: 'Manager', showNew: true, newName: 'Orkan', newColour: 'Teal', blurb: 'Cope as a Manager: the red + New Team bar and the row overflow · New Team open, a sheet with a sticky action bar on the phone, a dialog on the desktop · name, then the sixteen named colours as skewed swatches; the Team already wearing a colour is named under it; Teal picked' }),
+      build({ id: '15c', label: '15c Admin, row overflow', manager: true, role: 'Group admin', menuOn: 'Lokomotiva', menuRole: ovRole, blurb: `The row overflow on Lokomotiva, a sheet on the phone, a menu on the desktop · ${ovRole === 'Manager' ? 'a Manager sees Rename and Recolour only' : 'an admin sees Rename and Recolour, then below a rule Archive, Merge into another Team, Delete in red'} · the Tweaks switch the viewer's role` }),
+      build({ id: '15d', label: '15d Empty', manager: !emptyMember, role: emptyMember ? 'Member' : 'Manager', empty: true, blurb: `No Teams yet: the footballs, one sentence${emptyMember ? ' · a Member reads that a Manager creates the first one' : ' and + New Team for a Manager'}` })
+    ];
+    return { sections };
+  }
+}
+</script>
+</body>
+</html>

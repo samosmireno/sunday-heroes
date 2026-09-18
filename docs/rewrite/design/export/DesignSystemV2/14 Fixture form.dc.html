@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase">Screen 14 · Fixture form</div>
+  <div style="font-size:14px">screen 7's match form on a Fixture · the two Teams as colour plate and name · the format inherited · the date planned · the picker opens on the roster, a guest behind an act · the Shoot-out block on a level deciding match</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="5">
+<section id="{{ s.id }}" data-screen-label="{{ s.label }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;height:{{ s.phoneH }};background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><a style="display:inline-flex;align-items:center;align-self:flex-start;height:44px;padding:0 8px 16px;margin:0 0 -16px -8px;box-sizing:content-box;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3;text-decoration:none;position:relative;z-index:1">‹ {{ s.comp }}</a></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px">
+        <div data-panel="fixture" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:{{ s.tagBg }};height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">{{ s.title }}</div>
+            <div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:{{ s.tagBg }}">{{ s.tag }}</span></div>
+          </div>
+          <div style="background:#f7f7f3;padding:16px;display:flex;flex-direction:column;gap:14px">
+            <div style="font-size:13px">{{ s.sub }}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Date <span style="color:#8c8f94">· planned</span></label><div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:16px;box-sizing:border-box"><span>{{ s.date }}</span><span style="font-size:12px">▼</span></div></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Match format <span style="color:#8c8f94">· inherited</span></label><div style="height:44px;border:1px solid #8c8f94;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:16px;box-sizing:border-box;color:#000"><span style="white-space:nowrap;flex:none">{{ s.format }}</span><span style="font-size:12px;color:#8c8f94;text-transform:uppercase;letter-spacing:0.04em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">set</span></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Teams</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <sc-for list="{{ s.sides }}" as="side" hint-placeholder-count="2">
+                <div style="height:44px;border:1px solid #8c8f94;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:16px;box-sizing:border-box;min-width:0"><span style="position:relative;width:18px;height:18px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ side.hex }};border:1px solid #000"></span></span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ side.name }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ s.hasWarnings }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;padding:2px 4px">
+          <sc-for list="{{ s.warnings }}" as="w" hint-placeholder-count="1">
+          <div style="display:inline-flex;align-items:center;padding:8px 12px 8px 20px;font-size:14px;color:#000;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:8px solid #cec311;transform:rotate({{ w.rot }});box-shadow:-2px 2px 0 #000"></span>{{ w.text }}</div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <div data-sides="" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 6px">
+          <sc-for list="{{ s.sides }}" as="side" hint-placeholder-count="2">
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <div style="position:relative;height:44px;display:flex;align-items:center;gap:8px;padding:0 14px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#000;border:1px solid #000"></div><span style="position:relative;width:18px;height:18px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ side.hex }};border:1px solid #000"></span></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3;white-space:nowrap;line-height:1.1">{{ side.name }}</span><span style="position:relative;margin-left:auto;font-size:12px;color:#f7f7f3;min-width:0;text-align:right;line-height:1.1">{{ side.count }}</span></div>
+            <sc-for list="{{ side.players }}" as="p" hint-placeholder-count="5">
+            <a style="position:relative;height:44px;display:flex;align-items:center;gap:6px;padding:0 10px;text-decoration:none;color:#f7f7f3"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ p.name }}</span>
+              <span style="position:relative;display:flex;gap:3px;margin-left:auto;flex:none">
+                <sc-for list="{{ p.chips }}" as="c" hint-placeholder-count="0"><span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;background:{{ c.bg }};border:1px solid #000;font-size:12px;font-weight:700;color:#000;line-height:1">{{ c.t }}</span></sc-for>
+              </span></a>
+            <sc-if value="{{ p.hasSticker }}" hint-placeholder-val="{{ false }}">
+            <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:6px 10px 6px 18px;font-size:13px;color:#000;margin:2px 0;text-wrap:pretty;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:8px solid #cec311;transform:rotate(-1deg);box-shadow:-2px 2px 0 #000"></span>{{ p.sticker }}</div>
+            </sc-if>
+            </sc-for>
+            <a style="position:relative;height:44px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#000;font-size:15px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px dashed #000"></div><span style="position:relative">Lineup</span></a>
+            <a style="position:relative;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;text-decoration:none;margin-top:6px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-size:12px;color:#bcc5ce">Formation</span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#f7f7f3">{{ side.formation }}</span><span style="position:relative;color:#f7f7f3;font-size:12px">▼</span></a>
+          </div>
+          </sc-for>
+        </div>
+
+        <div data-score="" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 6px">
+          <sc-for list="{{ s.sides }}" as="side" hint-placeholder-count="2">
+          <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+            <a style="position:relative;height:96px;display:flex;align-items:center;justify-content:center;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ side.scoreBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:56px;line-height:1;color:{{ side.scoreFg }}">{{ side.score }}</span></a>
+            <div style="display:flex;align-items:flex-start;gap:6px;font-size:13px;min-height:22px"><span style="position:relative;width:12px;height:12px;flex:none;margin-top:3px"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ side.hex }};border:1px solid #000"></span></span><span style="text-wrap:pretty">{{ side.attrib }}</span></div>
+            <sc-if value="{{ side.unattrib }}" hint-placeholder-val="{{ false }}">
+            <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:6px 10px 6px 18px;font-size:13px;color:#000;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:8px solid #cec311;transform:rotate(-1.5deg);box-shadow:-2px 2px 0 #000"></span>{{ side.unattribText }}</div>
+            </sc-if>
+          </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ s.showSO }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="shootout" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:44px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#f93a07;height:44px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#000">Shoot-out</div><span style="font-size:12px;color:#000">{{ s.soMeta }}</span></div>
+          <div style="background:#f7f7f3;padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 4px">
+              <sc-for list="{{ s.so }}" as="k" hint-placeholder-count="2">
+              <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                <a style="position:relative;height:64px;display:flex;align-items:center;justify-content:center;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:40px;line-height:1;color:#f7f7f3">{{ k.v }}</span></a>
+                <div style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="position:relative;width:12px;height:12px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ k.hex }};border:1px solid #000"></span></span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px">{{ k.name }}</span></div>
+              </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ s.soRefusal }}" hint-placeholder-val="{{ false }}">
+            <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:8px 12px;font-size:14px;color:#f7f7f3;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#ed1c24;border:1px solid #000;transform:rotate(-1.5deg);box-shadow:-2px 2px 0 #000"></span>{{ soRefusalText }}</div>
+            </sc-if>
+            <div style="font-size:13px;text-wrap:pretty">{{ s.soNote }}</div>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column;gap:6px;padding:0 2px"><label style="font-size:13px">Video link</label><div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;font-size:15px;box-sizing:border-box;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">{{ s.video }}</div></div>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:0 2px"><label style="font-size:13px">Note</label><div style="min-height:72px;border:1px solid #000;background:#f7f7f3;padding:10px 12px;font-size:15px;box-sizing:border-box;text-wrap:pretty">{{ s.note }}</div></div>
+      </div>
+      <div data-bar="" style="position:relative;background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box">
+        <sc-if value="{{ s.refusal }}" hint-placeholder-val="{{ false }}">
+        <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:8px 12px;font-size:14px;color:#f7f7f3;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#ed1c24;border:1px solid #000;transform:rotate(-1.5deg);box-shadow:-2px 2px 0 #000"></span>{{ s.refusalText }}</div>
+        </sc-if>
+        <div style="display:flex;gap:10px">
+          <a style="display:flex;align-items:center;justify-content:center;width:120px;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;flex:none">Save</a>
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;flex:1;height:44px;margin-left:4px;background:{{ s.completeBg }};border:1px solid #000;color:{{ s.completeFg }};font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Complete</a>
+        </div>
+      </div>
+
+      <sc-if value="{{ s.showPicker }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-sheet="picker" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#3a3ab0;min-height:78px;flex:none;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="display:flex;align-items:center;gap:10px"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">{{ s.pickerTitle }}</div><span style="position:relative;width:18px;height:18px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ s.pickerHex }};border:1px solid #000"></span></span></div>
+          <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0;text-decoration:none;flex:none">Cancel</a>
+        </div>
+        <div style="background:#f7f7f3;padding:0 16px 16px 20px;display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-height:0;overflow:auto">
+          <div style="display:flex;align-items:baseline;gap:10px;padding:12px 0 4px;border-bottom:1px solid #000;margin-bottom:4px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase">Roster</span><span style="font-size:13px">{{ s.rosterCount }}</span></div>
+          <sc-for list="{{ s.roster }}" as="r" hint-placeholder-count="6">
+          <a style="position:relative;height:48px;flex:0 0 48px;display:flex;align-items:center;gap:10px;padding:0 14px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ r.fg }}">{{ r.name }}</span><span style="position:relative;font-size:13px;color:{{ r.fg }}">{{ r.meta }}</span><span style="position:relative;margin-left:auto;margin-right:-10px;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;flex:none"><span style="width:28px;height:28px;border:1px solid #000;background:{{ r.boxBg }};display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#f7f7f3;box-sizing:border-box">{{ r.tick }}</span></span></a>
+          </sc-for>
+          <sc-if value="{{ s.guestClosed }}" hint-placeholder-val="{{ true }}">
+          <a style="height:44px;margin:8px 0 4px;display:flex;align-items:center;gap:10px;padding:0 12px;border:1px dashed #000;color:#000;font-size:15px;text-decoration:none;box-sizing:border-box">+ add a guest</a>
+          </sc-if>
+          <sc-if value="{{ s.guestOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:baseline;gap:10px;padding:14px 0 4px;border-bottom:1px solid #000;margin-bottom:4px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase">Guests</span><span style="font-size:13px">{{ s.guestCount }}</span></div>
+          <div style="height:44px;flex:0 0 44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:16px;box-sizing:border-box;color:#8c8f94"><span style="width:14px;height:14px;border:2px solid #000;border-radius:50%;box-sizing:border-box;flex:none"></span>Search Players</div>
+          <a style="height:44px;flex:0 0 44px;display:flex;align-items:center;gap:10px;padding:0 12px;border:1px dashed #000;color:#000;font-size:15px;text-decoration:none;box-sizing:border-box">+ new nickname</a>
+          <sc-for list="{{ s.guestGroups }}" as="grp" hint-placeholder-count="2">
+          <div style="display:flex;align-items:baseline;gap:10px;padding:10px 0 4px;border-bottom:1px solid #bcc5ce;margin-bottom:4px"><span style="font-size:13px;font-weight:700;text-transform:uppercase">{{ grp.title }}</span><span style="font-size:13px">{{ grp.count }}</span></div>
+          <sc-for list="{{ grp.rows }}" as="r" hint-placeholder-count="6">
+          <a style="position:relative;height:48px;flex:0 0 48px;display:flex;align-items:center;gap:10px;padding:0 14px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ r.fg }}">{{ r.name }}</span><span style="position:relative;font-size:13px;color:{{ r.fg }}">{{ r.meta }}</span>
+            <sc-if value="{{ r.guest }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:18px;padding:0 5px;background:{{ guestBg }};border:1px solid #000;font-size:12px;font-weight:700;color:#000;line-height:1;text-transform:uppercase">Guest</span></sc-if>
+            <span style="position:relative;margin-left:auto;margin-right:-10px;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;flex:none"><span style="width:28px;height:28px;border:1px solid #000;background:{{ r.boxBg }};display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#f7f7f3;box-sizing:border-box">{{ r.tick }}</span></span></a>
+          <sc-if value="{{ r.hasSticker }}" hint-placeholder-val="{{ false }}">
+          <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:6px 10px 6px 18px;font-size:13px;color:#000;margin:2px 0 4px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:8px solid #cec311;transform:rotate(-1deg);box-shadow:-2px 2px 0 #000"></span>{{ r.sticker }}</div>
+          </sc-if>
+          </sc-for>
+          </sc-for>
+          </sc-if>
+        </div>
+        <div style="background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;gap:10px;box-sizing:border-box;flex:none;position:sticky;bottom:0">
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;flex:1;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">{{ s.pickerDone }}</a>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;height:{{ s.deskH }};background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+        </nav>
+        <div style="flex:1"></div>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">2</span></a>
+      </div>
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;min-width:0">
+        <div style="flex:1;padding:40px 40px 32px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box">
+          <div style="display:flex;align-items:center;gap:24px">
+            <a style="font-size:14px;color:#000;flex:none;padding:12px 0;margin:-12px 0">‹ {{ s.comp }}</a>
+            <div data-band="" style="flex:1;min-width:0;margin-left:8px;height:72px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;align-items:center;gap:20px;padding:0 20px;box-sizing:border-box"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;white-space:nowrap;padding-right:6px;color:#3a3ab0">{{ s.title }}</span><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ s.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ s.tag }}</span></div><span style="font-size:14px">{{ s.sub }}</span><span style="margin-left:auto;font-size:14px">{{ s.savedLine }}</span></div>
+          </div>
+          <div data-panel="fixture" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:{{ s.tagBg }};height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+              <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Fixture</div>
+              <div style="display:flex;align-items:center;gap:10px"><div style="width:72px;height:32px;background:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 12px)"></div><div style="width:14px;height:14px;border-radius:50%;background:#000"></div></div>
+            </div>
+            <div style="background:#f7f7f3;padding:20px 24px 24px;display:flex;flex-direction:column;gap:20px">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:20px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Date <span style="color:#8c8f94">· planned date</span></label><div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:16px;box-sizing:border-box"><span>{{ s.date }}</span><span style="font-size:12px">▼</span></div></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Match format <span style="color:#8c8f94">· inherited</span></label><div style="height:44px;border:1px solid #8c8f94;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:16px;box-sizing:border-box"><span>{{ s.format }}</span><span style="font-size:12px;color:#8c8f94">from {{ s.comp }}</span></div></div>
+                <sc-for list="{{ s.sides }}" as="side" hint-placeholder-count="2">
+                <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><label style="font-size:13px">{{ side.slot }}</label><div style="height:44px;border:1px solid #8c8f94;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;gap:10px;font-size:16px;box-sizing:border-box"><span style="position:relative;width:20px;height:20px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ side.hex }};border:1px solid #000"></span></span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ side.name }}</span><span style="margin-left:auto;font-size:12px;color:#8c8f94;flex:none">{{ side.rosterNote }}</span></div></div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ s.hasWarnings }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-wrap:wrap;gap:14px;border-top:1px solid #bcc5ce;padding-top:20px">
+                <sc-for list="{{ s.warnings }}" as="w" hint-placeholder-count="1">
+                <div style="display:inline-flex;align-items:center;padding:10px 14px 10px 24px;font-size:14px;color:#000;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:10px solid #cec311;transform:rotate({{ w.rot }});box-shadow:-3px 3px 0 #000"></span>{{ w.text }}</div>
+                </sc-for>
+              </div>
+              </sc-if>
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px minmax(0,1fr);gap:24px;align-items:start;border-top:1px solid #bcc5ce;padding-top:20px">
+                <sc-for list="{{ s.sides }}" as="side" hint-placeholder-count="2">
+                <div style="display:flex;flex-direction:column;gap:6px;min-width:0;padding:0 8px;order:{{ side.order }}">
+                  <div style="position:relative;height:48px;display:flex;align-items:center;gap:10px;padding:0 16px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#000;border:1px solid #000"></div><span style="position:relative;width:20px;height:20px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ side.hex }};border:1px solid #000"></span></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;white-space:nowrap">{{ side.name }}</span><span style="position:relative;margin-left:auto;font-size:13px;color:#f7f7f3;min-width:0;text-align:right;line-height:1.1">{{ side.count }}</span></div>
+                  <sc-for list="{{ side.players }}" as="p" hint-placeholder-count="5">
+                  <a style="position:relative;height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;text-decoration:none;color:#f7f7f3"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;white-space:nowrap">{{ p.name }}</span><span style="position:relative;font-size:12px;color:#bcc5ce">{{ p.meta }}</span>
+                    <span style="position:relative;display:flex;gap:4px;margin-left:auto;flex:none">
+                      <sc-for list="{{ p.chips }}" as="c" hint-placeholder-count="0"><span style="display:inline-flex;align-items:center;height:20px;padding:0 6px;background:{{ c.bg }};border:1px solid #000;font-size:12px;font-weight:700;color:#000;line-height:1">{{ c.t }}</span></sc-for>
+                    </span></a>
+                  <sc-if value="{{ p.hasSticker }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:8px 12px 8px 22px;font-size:14px;color:#000;margin:4px 0;text-wrap:pretty;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:10px solid #cec311;transform:rotate(-1deg);box-shadow:-3px 3px 0 #000"></span>{{ p.sticker }}</div>
+                  </sc-if>
+                  </sc-for>
+                  <a style="position:relative;height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#000;font-size:16px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px dashed #000"></div><span style="position:relative">Lineup</span></a>
+                  <a style="position:relative;height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 16px;text-decoration:none;margin-top:8px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-size:13px;color:#bcc5ce">Formation</span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">{{ side.formation }}</span><span style="position:relative;color:#f7f7f3;font-size:12px">▼</span></a>
+                </div>
+                </sc-for>
+                <div style="order:2;display:flex;flex-direction:column;gap:12px;padding-top:56px">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 8px">
+                    <sc-for list="{{ s.sides }}" as="side" hint-placeholder-count="2">
+                    <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+                      <a style="position:relative;height:128px;display:flex;align-items:center;justify-content:center;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ side.scoreBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:72px;line-height:1;color:{{ side.scoreFg }}">{{ side.score }}</span></a>
+                      <div style="display:flex;align-items:flex-start;gap:6px;font-size:13px;min-height:22px"><span style="position:relative;width:12px;height:12px;flex:none;margin-top:3px"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ side.hex }};border:1px solid #000"></span></span><span style="text-wrap:pretty">{{ side.attrib }}</span></div>
+                      <sc-if value="{{ side.unattrib }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:8px 12px 8px 22px;font-size:14px;color:#000;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:10px solid #cec311;transform:rotate(-1.5deg);box-shadow:-3px 3px 0 #000"></span>{{ side.unattribText }}</div>
+                      </sc-if>
+                    </div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:13px;text-align:center;padding:0 8px;text-wrap:pretty">{{ s.scoreNote }}</div>
+                  <sc-if value="{{ s.showSO }}" hint-placeholder-val="{{ false }}">
+                  <div data-panel="shootout" style="position:relative;margin:12px 8px 0 21px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+                    <div style="position:absolute;left:-13px;top:-1px;width:12px;height:48px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+                    <div style="background:#f93a07;height:48px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#000">Shoot-out</div><span style="font-size:12px;color:#000">{{ s.soMeta }}</span></div>
+                    <div style="background:#f7f7f3;padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px">
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 4px">
+                        <sc-for list="{{ s.so }}" as="k" hint-placeholder-count="2">
+                        <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                          <a style="position:relative;height:72px;display:flex;align-items:center;justify-content:center;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:44px;line-height:1;color:#f7f7f3">{{ k.v }}</span></a>
+                          <div style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="position:relative;width:12px;height:12px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ k.hex }};border:1px solid #000"></span></span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px">{{ k.name }}</span></div>
+                        </div>
+                        </sc-for>
+                      </div>
+                      <sc-if value="{{ s.soRefusal }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:8px 12px;font-size:14px;color:#f7f7f3;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#ed1c24;border:1px solid #000;transform:rotate(-1.5deg);box-shadow:-3px 3px 0 #000"></span>{{ soRefusalText }}</div>
+                      </sc-if>
+                      <div style="font-size:13px;text-wrap:pretty">{{ s.soNote }}</div>
+                    </div>
+                  </div>
+                  </sc-if>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px;border-top:1px solid #bcc5ce;padding-top:20px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Video link</label><div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;font-size:16px;box-sizing:border-box;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">{{ s.video }}</div></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Note</label><div style="min-height:44px;border:1px solid #000;background:#f7f7f3;padding:10px 12px;font-size:16px;box-sizing:border-box;text-wrap:pretty">{{ s.note }}</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-bar="" style="position:relative;background:#f7f7f3;border-top:1px solid #000;padding:16px 40px 24px;display:flex;align-items:center;gap:20px;box-sizing:border-box">
+          <span style="font-size:14px">{{ s.barNote }}</span>
+          <sc-if value="{{ s.refusal }}" hint-placeholder-val="{{ false }}">
+          <div style="display:inline-flex;align-items:center;padding:10px 14px;font-size:14px;color:#f7f7f3;margin-left:8px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#ed1c24;border:1px solid #000;transform:rotate(-1.5deg);box-shadow:-3px 3px 0 #000"></span>{{ s.refusalText }}</div>
+          </sc-if>
+          <div style="display:flex;gap:16px;margin-left:auto">
+            <a style="display:flex;align-items:center;justify-content:center;width:160px;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;flex:none">Save</a>
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;width:240px;height:44px;margin-left:8px;background:{{ s.completeBg }};border:1px solid #000;color:{{ s.completeFg }};font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000;flex:none">Complete</a>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ s.showPicker }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-dialog="picker" style="position:absolute;left:50%;top:60px;transform:translateX(-50%);width:560px;margin-left:142px;display:flex;flex-direction:column;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+        <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="display:flex;align-items:center;gap:12px"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">{{ s.pickerTitle }}</div><span style="position:relative;width:20px;height:20px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ s.pickerHex }};border:1px solid #000"></span></span></div>
+          <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a>
+        </div>
+        <div style="background:#f7f7f3;padding:0 20px 8px 24px;display:flex;flex-direction:column;gap:6px;max-height:640px;overflow:auto">
+          <div style="display:flex;align-items:baseline;gap:10px;padding:14px 0 4px;border-bottom:1px solid #000;margin-bottom:4px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase">Roster</span><span style="font-size:13px">{{ s.rosterCount }}</span></div>
+          <sc-for list="{{ s.roster }}" as="r" hint-placeholder-count="6">
+          <a style="position:relative;height:48px;flex:0 0 48px;display:flex;align-items:center;gap:12px;padding:0 16px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ r.fg }}">{{ r.name }}</span><span style="position:relative;font-size:13px;color:{{ r.fg }}">{{ r.meta }}</span><span style="position:relative;margin-left:auto;margin-right:-10px;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;flex:none"><span style="width:28px;height:28px;border:1px solid #000;background:{{ r.boxBg }};display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#f7f7f3;box-sizing:border-box">{{ r.tick }}</span></span></a>
+          </sc-for>
+          <sc-if value="{{ s.guestClosed }}" hint-placeholder-val="{{ true }}">
+          <a style="height:44px;margin:8px 0 4px;display:flex;align-items:center;gap:10px;padding:0 16px;border:1px dashed #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;align-self:flex-start">+ add a guest</a>
+          </sc-if>
+          <sc-if value="{{ s.guestOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:baseline;gap:10px;padding:16px 0 4px;border-bottom:1px solid #000;margin-bottom:4px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase">Guests</span><span style="font-size:13px">{{ s.guestCount }}</span></div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:12px">
+            <div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:16px;box-sizing:border-box;color:#8c8f94"><span style="width:14px;height:14px;border:2px solid #000;border-radius:50%;box-sizing:border-box;flex:none"></span>Search Players</div>
+            <a style="height:44px;display:flex;align-items:center;gap:10px;padding:0 16px;border:1px dashed #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box">+ new nickname</a>
+          </div>
+          <sc-for list="{{ s.guestGroups }}" as="grp" hint-placeholder-count="2">
+          <div style="display:flex;align-items:baseline;gap:10px;padding:10px 0 4px;border-bottom:1px solid #bcc5ce;margin-bottom:4px"><span style="font-size:13px;font-weight:700;text-transform:uppercase">{{ grp.title }}</span><span style="font-size:13px">{{ grp.count }}</span></div>
+          <sc-for list="{{ grp.rows }}" as="r" hint-placeholder-count="6">
+          <a style="position:relative;height:48px;flex:0 0 48px;display:flex;align-items:center;gap:12px;padding:0 16px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ r.fg }}">{{ r.name }}</span><span style="position:relative;font-size:13px;color:{{ r.fg }}">{{ r.meta }}</span>
+            <sc-if value="{{ r.guest }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:20px;padding:0 6px;background:{{ guestBg }};border:1px solid #000;font-size:12px;font-weight:700;color:#000;line-height:1;text-transform:uppercase">Guest</span></sc-if>
+            <span style="position:relative;margin-left:auto;margin-right:-10px;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;flex:none"><span style="width:28px;height:28px;border:1px solid #000;background:{{ r.boxBg }};display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#f7f7f3;box-sizing:border-box">{{ r.tick }}</span></span></a>
+          <sc-if value="{{ r.hasSticker }}" hint-placeholder-val="{{ false }}">
+          <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:8px 12px 8px 22px;font-size:14px;color:#000;margin:4px 0 6px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:10px solid #cec311;transform:rotate(-1deg);box-shadow:-3px 3px 0 #000"></span>{{ r.sticker }}</div>
+          </sc-if>
+          </sc-for>
+          </sc-for>
+          </sc-if>
+        </div>
+        <div style="background:#f7f7f3;border-top:1px solid #000;padding:16px 20px 24px;display:flex;gap:16px;box-sizing:border-box;justify-content:flex-end">
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;width:280px;height:44px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">{{ s.pickerDone }}</a>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;},&quot;guestTag&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Orange&quot;,&quot;Sky&quot;,&quot;Yellow&quot;],&quot;default&quot;:&quot;Orange&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Guests&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+  }
+  renderVals() {
+    const C = { Red: '#ed1c24', Blue: '#3a3ab0', Green: '#42af36', Yellow: '#f4e937', Sky: '#4fb3e8', Navy: '#091e40' };
+    const guestBg = { Orange: '#f93a07', Sky: '#4fb3e8', Yellow: '#faf15d' }[this.props.guestTag ?? 'Orange'];
+    const PAPER = '#f7f7f3', MUTE = '#bcc5ce';
+    const chip = (g, as, og, guest) => {
+      const out = [];
+      if (g) out.push({ t: g + ' G', bg: PAPER });
+      if (as) out.push({ t: as + ' A', bg: MUTE });
+      if (og) out.push({ t: og + ' OG', bg: '#f55656' });
+      if (guest) out.push({ t: 'Guest', bg: guestBg });
+      return out;
+    };
+    const P = (name, g, as, og, x) => ({ name, chips: chip(g, as, og, x && x.guest), g, as, og, meta: '', hasSticker: !!(x && x.sticker), sticker: (x && x.sticker) || '', ...(x || {}) });
+    const side = (team, slot, order, players, score, formation, x) => {
+      const rows = players.map((p, i) => ({ ...p, bg: p.guest ? '#171775' : (i % 2 ? '#0d2e63' : '#091e40') }));
+      const goals = players.reduce((n, p) => n + (p.g || 0), 0);
+      const scorers = players.filter(p => p.g).map(p => p.name + (p.g > 1 ? ' ' + p.g : ''));
+      const has = score != null, un = has ? score - goals : 0;
+      let attrib = has ? (scorers.length ? scorers.join(', ') : 'no scorer yet') : 'no score yet';
+      if (has && goals === score && score > 0) attrib += ' · all attributed';
+      const guests = players.filter(p => p.guest).length;
+      return { ...team, slot, order, players: rows, count: players.length + ' Players' + (guests ? ' · ' + guests + ' guest' : ''), score: has ? score : '–', scoreBg: has ? PAPER : '#28477a', scoreFg: has ? '#000' : MUTE,
+        attrib, unattrib: un > 0, unattribText: un + ' unattributed', formation, ...(x || {}) };
+    };
+    const bulls = { name: 'Bulls', hex: C.Red, rosterNote: '6 on the roster' }, plavi = { name: 'Plavi', hex: C.Blue, rosterNote: '6 on the roster' };
+    const red = { name: 'Red', hex: C.Red, rosterNote: '7 on the roster' }, blue = { name: 'Blue', hex: C.Blue, rosterNote: '6 on the roster' };
+    const bullsXI = [P('Ana', 2, 1), P('Marko', 1), P('Cope', 1, 1), P('Ivan', 0, 1), P('Paja')];
+    const plaviXI = [P('Luka', 1), P('Dinić', 0, 1), P('Pule'), P('Bogdan'), P('Nikola')];
+    const redXI = [P('Ana', 1, 1), P('Marko', 1), P('Cope', 0, 1), P('Ivan'), P('Sale', 0, 0, 0, { guest: true, sticker: 'Sale is on Green\u2019s roster this Season' })];
+    const blueXI = [P('Luka', 1), P('Dinić', 1), P('Pule'), P('Bogdan'), P('Nikola')];
+
+    const league = { comp: 'Sunday league', tag: 'League', tagBg: '#0c542c', title: 'Bulls v Plavi', sub: 'Round 8 · planned for Sun 15.11.2026.', date: 'Sun 15.11.2026.', format: '5-a-side',
+      savedLine: 'Draft · not saved', video: 'https://youtu.be/k3RzQ8-round8', note: 'Rain at half time, moved to the covered pitch.',
+      scoreNote: 'Tap a numeral to type the score. Goals on the rows fill the attribution.', barNote: 'Save keeps a draft. Complete opens the vote and the Standings move.',
+      completeBg: '#ed1c24', completeFg: PAPER, refusal: false, refusalText: '', showPicker: false, warnings: [], hasWarnings: false, showSO: false, soRefusal: false, so: [], soMeta: '', soNote: '', phoneH: 'auto', deskH: 'auto',
+      pickerTitle: 'Plavi lineup', pickerHex: C.Blue, roster: [], rosterCount: '', guestClosed: true, guestOpen: false, guestGroups: [], guestCount: '', pickerDone: '' };
+    const cup = { ...league, comp: 'Zlatna lopta', tag: 'Knockout', tagBg: '#f93a07', title: 'Red v Blue', sub: 'Final · planned for Sun 15.11.2026.', video: 'https://youtu.be/k3RzQ8-final', note: 'Final at the big pitch. Green lent Red a keeper.',
+      barNote: 'Save keeps a draft. Complete opens the vote and settles the Tie.', scoreNote: 'Level at 2-2 on the deciding match of the Tie · the Shoot-out decides', showSO: true, soMeta: 'deciding match · level',
+      so: [{ name: 'Red', hex: C.Red, v: 4 }, { name: 'Blue', hex: C.Blue, v: 3 }], soNote: 'Penalties only. The Shoot-out settles the Tie, not the score.' };
+
+    const rRow = (name, meta, on, i, x) => ({ name, meta, bg: on ? '#171775' : (i % 2 ? '#0d2e63' : '#091e40'), fg: PAPER, boxBg: on ? '#ed1c24' : PAPER, tick: on ? '✓' : '', guest: false, hasSticker: false, sticker: '', ...(x || {}) });
+    const plaviRoster = drop => ['Luka', 'Dinić', 'Pule', 'Bogdan', 'Nikola', 'Vlada'].map((n, i) => rRow(n, (drop && n === 'Vlada') ? 'no-show · dropped' : '', !(drop && n === 'Vlada'), i, (drop && n === 'Vlada') ? { bg: '#28477a', fg: MUTE, boxBg: PAPER } : {}));
+    const season = [['Sale', 'on Bulls\u2019 roster', true], ['Đole', 'on Bulls\u2019 roster'], ['Miloš', '08.11.'], ['Steva', '01.11.'], ['Zoki', '25.10.'], ['Bane', '18.10.'], ['Kiza', '11.10.'], ['Peđa', '04.10.']];
+    const rest = ['Boban', 'Gaga', 'Cile', 'Žika', 'Pera', 'Deki', 'Toma', 'Šone', 'Bata', 'Laza', 'Mare', 'Vuk'].map((n, i) => [n, ['2025', '2025', '2024', '2024'][Math.min(3, Math.floor(i / 3))]]);
+    const gRow = ([name, meta, on], i) => rRow(name, meta, !!on, i, on ? { guest: true, hasSticker: true, sticker: 'Sale is on Bulls\u2019 roster this Season' } : {});
+    const guestGroups = [{ title: 'Played this Season', count: season.length + ' · most recent first', rows: season.map(gRow) }, { title: 'Everyone else', count: rest.length + ' · most recent first', rows: rest.map(gRow) }];
+
+    const sections = [
+      { ...league, id: '14a', label: '14a Fixture form, League', sides: [side(bulls, 'Home Team', 1, bullsXI, 4, '1-2-1'), side(plavi, 'Away Team', 3, plaviXI, 3, '1-2-1')],
+        blurb: 'Bulls 4-3 Plavi, Round 8 of Sunday league · the two Teams as colour plate and name, not colour pickers · format inherited from the competition, read-only · the date prefilled from the planned date · no Draw sides, no Copy last lineup · everything else as on screen 7' },
+      { ...league, id: '14b', label: '14b Picker sheet, roster pre-selected', showPicker: true, phoneH: '844px', deskH: '1000px',
+        sides: [side(bulls, 'Home Team', 1, bullsXI, 4, '1-2-1'), side(plavi, 'Away Team', 3, plaviXI, 3, '1-2-1')],
+        roster: plaviRoster(true), rosterCount: '5 of 6 picked · tap a name to drop a no-show', pickerDone: 'Save Plavi lineup · 5',
+        blurb: '"Lineup" on Plavi · the sheet opens with the Entry\u2019s roster pre-selected, so removing a no-show is one tap: Vlada dropped · the rest of the pool stays behind "+ add a guest"' },
+      { ...league, id: '14c', label: '14c Picker sheet, a guest', showPicker: true, phoneH: '844px', deskH: '1000px',
+        sides: [side(bulls, 'Home Team', 1, bullsXI, 4, '1-2-1'), side(plavi, 'Away Team', 3, plaviXI, 3, '1-2-1')],
+        roster: plaviRoster(true), rosterCount: '5 of 6 picked · Vlada dropped', guestClosed: false, guestOpen: true, guestGroups, guestCount: (season.length + rest.length) + ' Players · search filters both lists · 1 picked', pickerDone: 'Save Plavi lineup · 5 + 1 guest',
+        blurb: '"+ add a guest" opens the rest of the pool under Played this Season and Everyone else, with search and "+ new nickname" · Sale picked, his row marked Guest · the yellow sticker because Sale is on Bulls\u2019 roster this Season' },
+      { ...cup, id: '14d', label: '14d Fixture form, Knockout Final with a Shoot-out', sides: [side(red, 'Home Team', 1, redXI, 2, '1-2-1'), side(blue, 'Away Team', 3, blueXI, 2, '1-2-1')],
+        blurb: 'The Final of Zlatna lopta, a Knockout · Red 2-2 Blue on the deciding match of the Tie, so the Shoot-out block appears below the score with two numeral totals, 4 and 3 · Sale plays for Red as a Guest with the yellow sticker · the block is absent on any other match' },
+      { ...cup, id: '14e', label: '14e Shoot-out level, refused', sides: [side(red, 'Home Team', 1, redXI, 2, '1-2-1'), side(blue, 'Away Team', 3, blueXI, 2, '1-2-1')],
+        so: [{ name: 'Red', hex: C.Red, v: 3 }, { name: 'Blue', hex: C.Blue, v: 3 }], soRefusal: true, refusal: true, refusalText: 'The Tie needs a winner before you complete it', completeBg: MUTE, completeFg: '#000',
+        blurb: 'The Shoot-out entered level, 3-3 · a red refusal sticker on the block and on the bar, Complete greyed · Save still keeps the draft' }
+    ];
+    return { sections, guestBg, soRefusalText: 'A Shoot-out can\u2019t end level' };
+  }
+}
+</script>
+</body>
+</html>

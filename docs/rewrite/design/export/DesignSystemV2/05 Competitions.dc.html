@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase">Screen 5 · Competitions and New competition</div>
+  <div style="font-size:14px">active competitions by most recent result · ended below a heading · New competition for admins: name, Format as three stickers, voting, match format, Managers · the empty state</div>
+</header>
+
+<section id="5a" data-screen-label="5a Competitions" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">5a</span><span style="font-size:14px">Cope, a Group admin · three active competitions ordered by their last result, two ended below the heading · the red New competition bar because he is an admin</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><span style="display:flex;align-items:center;height:28px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3">Competitions</span></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px">
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New competition</a>
+        <div data-panel="active" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Active</div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:48px;height:24px;background:repeating-linear-gradient(90deg,#000 0 5px,transparent 5px 10px)"></div><div style="width:12px;height:12px;border-radius:50%;background:#000"></div></div>
+          </div>
+          <div style="background:#f7f7f3;padding:12px 10px 16px;display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ active }}" as="c" hint-placeholder-count="3">
+            <a style="position:relative;display:flex;flex-direction:column;justify-content:center;gap:6px;min-height:72px;padding:10px 16px;text-decoration:none;color:#f7f7f3">
+              <div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div>
+              <div style="position:relative;display:flex;align-items:center;gap:10px"><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ c.format }}</span></div><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ c.name }}</span></div>
+              <div style="position:relative;display:flex;justify-content:space-between;gap:8px;font-size:13px"><span>{{ c.result }}</span><span style="color:#bcc5ce;flex:none">{{ c.date }}</span></div>
+            </a>
+            </sc-for>
+          </div>
+        </div>
+        <div data-panel="ended" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Ended</div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:48px;height:24px;background:repeating-linear-gradient(90deg,#0c542c 0 5px,transparent 5px 10px)"></div><div style="width:12px;height:12px;border-radius:50%;background:#42af36"></div></div>
+          </div>
+          <div style="background:#f7f7f3;padding:12px 10px 16px;display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ ended }}" as="c" hint-placeholder-count="2">
+            <a style="position:relative;display:flex;flex-direction:column;justify-content:center;gap:6px;min-height:72px;padding:10px 16px;text-decoration:none;color:#000">
+              <div style="position:absolute;inset:0;transform:skewX(-15deg);background:#bcc5ce;border:1px solid #000"></div>
+              <div style="position:relative;display:flex;align-items:center;gap:10px"><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ c.format }}</span></div><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ c.name }}</span></div>
+              <div style="position:relative;display:flex;justify-content:space-between;gap:8px;font-size:13px"><span>{{ c.result }}</span><span style="flex:none">Ended {{ c.date }}</span></div>
+            </a>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr)">
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;background:#ed1c24;border-left:1px solid #000;border-right:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;text-decoration:none">Competitions</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Players</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You<span style="width:22px;height:22px;border-radius:50%;background:#f93a07;border:1px solid #000;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#f7f7f3;box-sizing:border-box">2</span></a>
+      </div>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Activity record</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Group settings</a>
+        </nav>
+        <div style="flex:1"></div>
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin:0 24px 24px 28px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New competition</a>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">2</span></a>
+      </div>
+      <div style="position:relative;flex:1;padding:40px 40px 48px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box;min-width:0">
+        <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;padding-left:14px;color:#3a3ab0">Competitions</div>
+        <div data-panel="active" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Active</div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:72px;height:32px;background:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 12px)"></div><div style="width:14px;height:14px;border-radius:50%;background:#000"></div></div>
+          </div>
+          <div style="background:#f7f7f3;padding:16px 14px 20px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:20px;padding:0 24px 6px;font-size:13px"><span style="width:96px">Format</span><span style="width:240px">Competition</span><span style="flex:1">Last result</span><span style="width:110px;text-align:right">Date</span></div>
+            <sc-for list="{{ active }}" as="c" hint-placeholder-count="3">
+            <a style="position:relative;height:56px;display:flex;align-items:center;gap:20px;padding:0 24px;text-decoration:none;color:#f7f7f3">
+              <div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div>
+              <div style="position:relative;width:96px;flex:none;display:flex"><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ c.format }}</span></div></div>
+              <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;width:240px">{{ c.name }}</span>
+              <span style="position:relative;flex:1;font-size:15px">{{ c.result }}</span>
+              <span style="position:relative;font-size:15px;color:#bcc5ce;width:110px;text-align:right">{{ c.date }}</span>
+            </a>
+            </sc-for>
+            <div style="display:flex;align-items:center;gap:16px;padding:20px 24px 8px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase">Ended</span><span style="flex:1;height:1px;background:#000"></span></div>
+            <sc-for list="{{ ended }}" as="c" hint-placeholder-count="2">
+            <a style="position:relative;height:56px;display:flex;align-items:center;gap:20px;padding:0 24px;text-decoration:none;color:#000">
+              <div style="position:absolute;inset:0;transform:skewX(-15deg);background:#bcc5ce;border:1px solid #000"></div>
+              <div style="position:relative;width:96px;flex:none;display:flex"><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ c.format }}</span></div></div>
+              <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;width:240px">{{ c.name }}</span>
+              <span style="position:relative;flex:1;font-size:15px">{{ c.result }}</span>
+              <span style="position:relative;font-size:15px;width:110px;text-align:right">{{ c.date }}</span>
+            </a>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="5b" data-screen-label="5b New competition" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">5b</span><span style="font-size:14px">Cope opens New competition · a sheet with a sticky action bar on a phone, a dialog on a desktop · name typed, Format as three stickers with a one-line description each, voting on, match format from the Group's default, Managers picked from Members</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><span style="display:flex;align-items:center;height:28px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3">Competitions</span></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px">
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New competition</a>
+        <div data-panel="active" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Active</div></div>
+          <div style="background:#f7f7f3;height:120px"></div>
+        </div>
+      </div>
+      <div data-sheet="" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#3a3ab0;border-bottom:1px solid #000;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;min-height:78px;box-sizing:border-box;flex:none">
+          <div style="display:flex;align-items:center;gap:12px;min-width:0"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">New competition</div><div style="display:flex;align-items:center;gap:8px;flex:none"><div style="width:48px;height:14px;background:repeating-linear-gradient(90deg,#000 0 5px,transparent 5px 10px)"></div><div style="width:12px;height:12px;border-radius:50%;background:#000"></div></div></div>
+          <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0;flex:none;text-decoration:none">Cancel</a>
+        </div>
+        <div style="background:#f7f7f3;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:16px 16px 44px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Name</label><div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;font-size:16px;box-sizing:border-box;outline:2px solid #3a3ab0;outline-offset:1px">Jesenja liga<span style="width:1px;height:20px;background:#000;margin-left:1px"></span></div></div>
+          <div style="display:flex;flex-direction:column;gap:8px"><label style="font-size:13px">Format</label>
+            <div data-format-choices="" style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ formats }}" as="f" hint-placeholder-count="3">
+              <a style="position:relative;display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px 8px 10px;border:1px solid #000;background:{{ f.bg }};color:{{ f.fg }};box-shadow:{{ f.shadow }};text-decoration:none;box-sizing:border-box;margin-left:4px">
+                <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:24px;width:82px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ f.name }}</span></div>
+                <span style="flex:1;font-size:13px;line-height:1.3">{{ f.desc }}</span>
+                <span style="width:22px;height:22px;border-radius:50%;border:1px solid #000;background:{{ f.dotBg }};flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#000;box-sizing:border-box">{{ f.mark }}</span>
+              </a>
+              </sc-for>
+            </div>
+          </div>
+          <div data-switch-row="" style="display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;border-top:1px solid #000;padding-top:14px">
+            <div style="display:flex;flex-direction:column;gap:2px"><div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">Voting</div><div style="font-size:13px">Players vote for the man of the match after each result; a vote closes Friday.</div></div>
+            <div data-switch="on" style="position:relative;width:52px;height:28px;border:1px solid #000;background:#ed1c24;box-sizing:border-box;flex:none"><div style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Match format</label><div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:16px;box-sizing:border-box"><span>5-a-side</span><span style="font-size:12px">▼</span></div><div style="font-size:13px">The Group's default. Each match can still differ.</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px"><label style="font-size:13px">Managers</label>
+            <div data-managers="" style="display:flex;flex-wrap:wrap;gap:8px 12px;padding-left:4px">
+              <sc-for list="{{ members }}" as="p" hint-placeholder-count="6">
+              <a style="position:relative;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;text-decoration:none;color:{{ p.fg }};box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ p.name }}</span><span style="position:relative;font-size:13px">{{ p.mark }}</span></a>
+              </sc-for>
+            </div>
+            <div style="font-size:13px">Managers record matches here. You are one as the admin.</div>
+          </div>
+        </div>
+        <div style="flex:none;background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;gap:10px;box-sizing:border-box">
+          <a style="display:flex;align-items:center;justify-content:center;width:110px;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;flex:none">Cancel</a>
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;flex:1;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>Create</a>
+        </div>
+      </div>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Activity record</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Group settings</a>
+        </nav>
+        <div style="flex:1"></div>
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin:0 24px 24px 28px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New competition</a>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">2</span></a>
+      </div>
+      <div style="position:relative;flex:1;padding:40px 40px 48px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box;min-width:0">
+        <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;padding-left:14px;color:#3a3ab0">Competitions</div>
+        <div data-panel="active" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Active</div></div>
+          <div style="background:#f7f7f3;height:420px"></div>
+        </div>
+      </div>
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-dialog="" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:760px;margin-left:6px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+        <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+        <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">New competition</div>
+          <div style="display:flex;align-items:center;gap:10px"><div style="width:72px;height:32px;background:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 12px)"></div><div style="width:14px;height:14px;border-radius:50%;background:#000"></div></div>
+        </div>
+        <div style="background:#f7f7f3;padding:24px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Name</label><div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;font-size:16px;box-sizing:border-box;outline:2px solid #3a3ab0;outline-offset:1px">Jesenja liga<span style="width:1px;height:20px;background:#000;margin-left:1px"></span></div></div>
+          <div style="display:flex;flex-direction:column;gap:8px"><label style="font-size:13px">Format</label>
+            <div data-format-choices="" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-left:8px">
+              <sc-for list="{{ formats }}" as="f" hint-placeholder-count="3">
+              <a style="position:relative;display:flex;flex-direction:column;gap:12px;min-height:120px;padding:14px;border:1px solid #000;background:{{ f.bg }};color:{{ f.fg }};box-shadow:{{ f.shadowLg }};text-decoration:none;box-sizing:border-box">
+                <div style="display:flex;align-items:center;justify-content:space-between"><div style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:24px;width:90px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ f.name }}</span></div><span style="width:22px;height:22px;border-radius:50%;border:1px solid #000;background:{{ f.dotBg }};display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#000;box-sizing:border-box">{{ f.mark }}</span></div>
+                <span style="font-size:14px;line-height:1.35">{{ f.desc }}</span>
+              </a>
+              </sc-for>
+            </div>
+          </div>
+          <div style="border-top:1px solid #000;padding-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+            <div data-switch-row="" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;min-height:44px">
+              <div style="display:flex;flex-direction:column;gap:2px"><div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;padding-top:4px">Voting</div><div style="font-size:13px">Players vote for the man of the match after each result; a vote closes Friday.</div></div>
+              <div data-switch="on" style="position:relative;width:52px;height:28px;border:1px solid #000;background:#ed1c24;box-sizing:border-box;flex:none;margin-top:2px"><div style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px">Match format</label><div style="height:44px;border:1px solid #000;background:#f7f7f3;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:16px;box-sizing:border-box"><span>5-a-side</span><span style="font-size:12px">▼</span></div><div style="font-size:13px">The Group's default. Each match can still differ.</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px"><label style="font-size:13px">Managers</label>
+            <div data-managers="" style="display:flex;flex-wrap:wrap;gap:8px 12px;padding-left:6px">
+              <sc-for list="{{ members }}" as="p" hint-placeholder-count="6">
+              <a style="position:relative;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;text-decoration:none;color:{{ p.fg }};box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ p.name }}</span><span style="position:relative;font-size:13px">{{ p.mark }}</span></a>
+              </sc-for>
+            </div>
+            <div style="font-size:13px">Managers record matches here. You are one as the admin.</div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:12px;padding-top:4px">
+            <a style="display:flex;align-items:center;justify-content:center;width:118px;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box">Cancel</a>
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;width:160px;height:44px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>Create</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="5c" data-screen-label="5c Competitions, empty" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">5c</span><span style="font-size:14px">A new Group with no competitions · the footballs, one sentence and, for an admin, the act · flip the Member tweak to see the sentence alone</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Četvrtak na Adi<span style="font-size:12px">▾</span></a><span style="display:flex;align-items:center;height:28px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3">Competitions</span></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px">
+        <div data-panel="empty" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Active</div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:48px;height:24px;background:repeating-linear-gradient(90deg,#000 0 5px,transparent 5px 10px)"></div><div style="width:12px;height:12px;border-radius:50%;background:#000"></div></div>
+          </div>
+          <div style="background:#f7f7f3;padding:28px 16px 24px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+            <img src="assets/balls.png" alt="" style="width:260px;height:auto">
+            <div style="font-size:16px;max-width:280px;text-wrap:pretty">{{ emptyLine }}</div>
+            <sc-if value="{{ emptyAdmin }}" hint-placeholder-val="{{ true }}">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:100%;max-width:300px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>Create your first competition</a>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr)">
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;background:#ed1c24;border-left:1px solid #000;border-right:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;text-decoration:none">Competitions</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Players</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You</a>
+      </div>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Četvrtak na Adi<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+          <sc-if value="{{ emptyAdmin }}" hint-placeholder-val="{{ true }}">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Activity record</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Group settings</a>
+          </sc-if>
+        </nav>
+        <div style="flex:1"></div>
+        <sc-if value="{{ emptyAdmin }}" hint-placeholder-val="{{ true }}">
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin:0 24px 24px 28px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New competition</a>
+        </sc-if>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#3a3ab0;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">M</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Marko</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">0</span></a>
+      </div>
+      <div style="position:relative;flex:1;padding:40px 40px 48px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box;min-width:0">
+        <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;padding-left:14px;color:#3a3ab0">Competitions</div>
+        <div data-panel="empty" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Active</div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:72px;height:32px;background:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 12px)"></div><div style="width:14px;height:14px;border-radius:50%;background:#000"></div></div>
+          </div>
+          <div style="background:#f7f7f3;padding:56px 24px 48px;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center">
+            <img src="assets/balls.png" alt="" style="width:420px;height:auto">
+            <div style="font-size:16px;max-width:420px;text-wrap:pretty">{{ emptyLine }}</div>
+            <sc-if value="{{ emptyAdmin }}" hint-placeholder-val="{{ true }}">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:300px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>Create your first competition</a>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;},&quot;formatPick&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Pickup&quot;,&quot;League&quot;,&quot;Knockout&quot;],&quot;default&quot;:&quot;League&quot;,&quot;tsType&quot;:&quot;'Pickup' | 'League' | 'Knockout'&quot;,&quot;section&quot;:&quot;5b New competition&quot;},&quot;emptyAsMember&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;5c Empty state&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+  }
+  renderVals() {
+    const tag = { Pickup: '#3a3ab0', League: '#0c542c', Knockout: '#f93a07' };
+    const active = [
+      { name: 'Sunday league', format: 'Pickup', result: 'Red 4-3 Blue', date: '14 Sep' },
+      { name: 'Spring cup', format: 'League', result: 'Galaksija 2-1 Munja', date: '13 Sep' },
+      { name: 'Kup Ade', format: 'Knockout', result: 'Orkan 3-2 Galaksija', date: '6 Sep' }
+    ].map((c, i) => ({ ...c, tagBg: tag[c.format], bg: i % 2 ? '#0d2e63' : '#091e40' }));
+    const ended = [
+      { name: 'Zimska liga', format: 'League', result: 'Munja 1-1 Galaksija', date: '22 Mar' },
+      { name: 'Novogodišnji kup', format: 'Knockout', result: 'Orkan 2-0 Munja', date: '28 Dec 2025' }
+    ].map(c => ({ ...c, tagBg: tag[c.format] }));
+
+    const pick = this.props.formatPick ?? 'League';
+    const formats = [
+      { name: 'Pickup', desc: 'Sides are picked each match. A side is its colour: Red 4-3 Blue.' },
+      { name: 'League', desc: 'Fixed Teams play a schedule. Standings on points.' },
+      { name: 'Knockout', desc: 'Fixed Teams, rounds. Lose once and you are out.' }
+    ].map(f => {
+      const on = f.name === pick;
+      return { ...f, tagBg: tag[f.name], bg: on ? tag[f.name] : '#f7f7f3', fg: on ? '#f7f7f3' : '#000',
+        shadow: on ? '-4px 4px 0 #000' : 'none', shadowLg: on ? '-8px 8px 0 #000' : 'none',
+        dotBg: on ? '#f7f7f3' : 'transparent', mark: on ? '✓' : '' };
+    });
+
+    const members = [
+      { name: 'Cope', on: true, mark: 'you' }, { name: 'Ana', on: true }, { name: 'Luka', on: true },
+      { name: 'Marko', on: false }, { name: 'Pule', on: false }, { name: 'Dinić', on: false }, { name: 'Paja', on: false }
+    ].map(p => ({ ...p, bg: p.on ? '#091e40' : '#f7f7f3', fg: p.on ? '#f7f7f3' : '#000', mark: p.mark ?? (p.on ? '✓' : '') }));
+
+    const emptyAdmin = !(this.props.emptyAsMember ?? false);
+    return { active, ended, formats, members, emptyAdmin,
+      emptyLine: emptyAdmin ? 'No competitions yet. Start with a Pickup if you pick sides on the day.' : 'No competitions yet. An admin creates the first one.' };
+  }
+}
+</script>
+</body>
+</html>

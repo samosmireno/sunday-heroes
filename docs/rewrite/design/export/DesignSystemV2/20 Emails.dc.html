@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase;flex:none">Screen 20 · Emails</div>
+  <div style="font-size:14px">Mail, not app screens · no shell, no grass under text, no web fonts assumed · 600 (desktop client) beside 360 (phone client) on a grey client surround · grass header with the logo · paper body, ink stroke, offset shadow · slab heading (Ultra → Georgia bold) · one red bar button · the bare link under it · footer says why the mail came · Account mails have no unsubscribe, the one Notice has "Stop these reminders"</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="7">
+<section id="{{ s.id }}" data-screen-label="{{ s.id }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+
+    <sc-for list="{{ s.frames }}" as="f" hint-placeholder-count="2">
+    <div data-frame="" style="width:{{ f.outer }}px;background:#d6d8d4;border:1px solid #000;padding:{{ f.gutter }}px;box-sizing:border-box;flex:none;display:flex;flex-direction:column;gap:14px">
+      <sc-if value="{{ f.subject }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:8px;font-size:14px;line-height:1.3;color:#000;padding:0 2px"><span style="color:#4b5560;flex:none">Subject</span><span style="font-weight:700">{{ f.subject }}</span></div>
+      </sc-if>
+      <div data-mail="" style="margin-left:{{ f.sh }}px;border:1px solid #000;box-shadow:-{{ f.sh }}px {{ f.sh }}px 0 #000;background:#f7f7f3;display:flex;flex-direction:column">
+        <div style="height:64px;background:#42af36;border-bottom:1px solid #000;display:flex;align-items:center;justify-content:center;box-sizing:border-box"><img src="assets/logo.svg" alt="Sunday Heroes" style="width:44px;height:44px"></div>
+        <div style="padding:{{ f.pad }}px;display:flex;flex-direction:column;gap:{{ f.gap }}px">
+          <h1 style="margin:0;font-family:{{ hFont }};font-weight:700;font-size:{{ f.hSize }}px;line-height:1.15;color:#000;text-wrap:pretty">{{ f.heading }}</h1>
+          <sc-for list="{{ f.paras }}" as="p" hint-placeholder-count="1">
+          <p style="margin:0;font-size:16px;line-height:1.45;text-wrap:pretty">{{ p }}</p>
+          </sc-for>
+          <sc-if value="{{ f.result }}" hint-placeholder-val="{{ false }}">
+          <table cellspacing="0" cellpadding="0" style="border-collapse:collapse;width:auto;align-self:flex-start;font-size:16px;line-height:1.45"><tbody>
+            <tr>
+              <td style="width:20px;height:20px;background:#ed1c24;border:1px solid #000;padding:0"></td>
+              <td style="padding:0 0 0 10px;font-weight:700;white-space:nowrap">Red 4-3 Blue</td>
+              <td style="padding:0 0 0 10px"><div style="width:20px;height:20px;background:#3a3ab0;border:1px solid #000;box-sizing:border-box"></div></td>
+              <td style="padding:0 0 0 14px;color:#4b5560;white-space:nowrap">Sun 14 Sep</td>
+            </tr>
+          </tbody></table>
+          </sc-if>
+          <a href="{{ f.url }}" style="display:flex;align-items:center;justify-content:center;height:48px;margin:4px 0 0 {{ f.sh }}px;background:#ed1c24;border:1px solid #000;box-shadow:-{{ f.sh }}px {{ f.sh }}px 0 #000;color:#f7f7f3;font-size:16px;font-weight:700;text-decoration:none;box-sizing:border-box">{{ f.button }}</a>
+          <div style="font-size:13px;line-height:1.4;color:#4b5560;display:flex;flex-direction:column;gap:2px;margin-top:4px"><span>Or paste this link:</span><a href="{{ f.url }}" style="color:#4b5560;overflow-wrap:anywhere;word-break:break-all">{{ f.url }}</a></div>
+          <sc-if value="{{ f.note }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0;font-size:16px;line-height:1.45">{{ f.note }}</p>
+          </sc-if>
+          <div style="border-top:1px solid #bcc5ce;padding-top:14px;margin-top:6px;font-size:13px;line-height:1.4;color:#4b5560;display:flex;flex-direction:column;gap:2px">
+            <span style="font-weight:700">Sunday Heroes</span>
+            <span style="text-wrap:pretty">{{ f.reason }}</span>
+            <sc-if value="{{ f.notice }}" hint-placeholder-val="{{ false }}"><a href="#" style="color:#4b5560;align-self:flex-start;padding:6px 0">Stop these reminders</a></sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-for>
+
+    <sc-if value="{{ s.plain }}" hint-placeholder-val="{{ false }}">
+    <div id="20g" data-screen-label="20g" style="width:560px;flex:none;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">20g</span><span style="font-size:14px">The plain-text part of <a href="#20e">20e</a> · the same mail with no styling</span></div>
+      <pre style="margin:0;background:#d6d8d4;border:1px solid #000;padding:32px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;line-height:1.6;color:#000;white-space:pre-wrap;overflow-wrap:anywhere">{{ s.plain }}</pre>
+    </div>
+    </sc-if>
+
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;georgiaFallback&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;showSubjects&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const georgia = this.props.georgiaFallback ?? false;
+    const allSubjects = this.props.showSubjects ?? false;
+    const hFont = georgia ? "Georgia,'Times New Roman',serif" : "Ultra,Georgia,'Times New Roman',serif";
+    const pair = (m) => [
+      { outer: 674, gutter: 32, pad: 32, gap: 18, sh: 8, hSize: 28, ...m, subject: (allSubjects || m.showSubject) ? m.subject : null },
+      { outer: 406, gutter: 20, pad: 20, gap: 16, sh: 4, hSize: 24, ...m, subject: (allSubjects || m.showSubject) ? m.subject : null },
+    ];
+    const account = 'You are getting this because this address was entered at Sunday Heroes.';
+    const a = { subject: 'Confirm your email', heading: 'Confirm your email', paras: ['Press the button to confirm this address for your Sunday Heroes account.'], button: 'Confirm email', url: 'https://sundayheroes.app/confirm/3fa9c1d7e2b4a6f0', note: 'The link works for 24 hours.', reason: account };
+    const b = { subject: 'You already have an account', heading: 'You already have an account', paras: ['There is already a Sunday Heroes account for this address. Sign in to continue.'], button: 'Sign in', url: 'https://sundayheroes.app/sign-in', reason: account };
+    const c = { subject: 'Reset your password', heading: 'Reset your password', paras: ['Press the button to set a new password for your Sunday Heroes account.', 'If you did not ask for this, ignore this mail. Your password stays as it is.'], button: 'Set a new password', url: 'https://sundayheroes.app/reset/9b1e4c72d8a35f06', reason: 'You are getting this because a password reset was asked for this address.' };
+    const cg = { ...c, subject: 'Set a password', heading: 'Set a password', paras: ['Your account signs in with Google. Set a password to sign in with this address as well.', 'If you did not ask for this, ignore this mail.'], button: 'Set a password' };
+    const d = { subject: 'Your password was changed', heading: 'Your password was changed', paras: ['The password for your Sunday Heroes account was changed on 17 Sep at 09:42. If this was not you, reset your password now.'], button: 'Reset password', url: 'https://sundayheroes.app/reset', reason: 'You are getting this because it is about the safety of your account.' };
+    const e = { subject: 'Ana invited you to Nedeljni heroji', heading: 'Ana invited you to Nedeljni heroji', paras: ['You will be Marko.'], button: 'Accept invitation', url: 'https://sundayheroes.app/invite/7c2e9a4b1d58f3e6', note: 'The invitation works for 14 days.', reason: 'You are getting this because Ana entered this address in Nedeljni heroji.' };
+    const f = { showSubject: true, notice: true, result: true, subject: 'Nedeljni heroji: the vote closes tomorrow', heading: 'The vote closes tomorrow', paras: ['You have not voted for this match yet.'], button: 'Vote now', url: 'https://sundayheroes.app/m/4f81c2/vote', reason: 'You are getting this because you played in this match.' };
+    const plain = `Ana invited you to Nedeljni heroji
+
+You will be Marko.
+
+Accept the invitation:
+https://sundayheroes.app/invite/7c2e9a4b1d58f3e6
+
+The invitation works for 14 days.
+
+--
+Sunday Heroes
+You are getting this because Ana entered this address in Nedeljni heroji.`;
+    return {
+      hFont,
+      sections: [
+        { id: '20a', blurb: 'Verify your email · Account mail · the link works for 24 hours', frames: pair(a) },
+        { id: '20b', blurb: 'An Account already exists · Account mail · says nothing about who asked', frames: pair(b) },
+        { id: '20c', blurb: 'Reset your password · Account mail · second pair is the Google-only Account, which sets a first password', frames: [...pair(c), ...pair(cg)] },
+        { id: '20d', blurb: 'Security notice · Account mail · one drawing stands for password changed, email changed, Google linked, Google unlinked', frames: pair(d) },
+        { id: '20e', blurb: 'Player invitation · Account mail · the invitation works for 14 days · 20g beside it is the plain-text part', frames: pair(e), plain },
+        { id: '20f', blurb: 'Vote reminder · the one Notice · subject shown above the mail · result line with two swatch cells · footer gains "Stop these reminders"', frames: pair(f) },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

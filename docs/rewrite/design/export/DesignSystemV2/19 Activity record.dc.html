@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+[data-chips]::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase;flex:none">Screen 19 · Activity record</div>
+  <div style="font-size:14px">Group admins only · the sidebar's Activity record on a desktop, the Group switcher's sheet on a phone · one paper panel, filter chips by kind above it · newest first under date headings · a row per entry: time, kind icon, one sentence, old → new where there are values · the paper Show more bar</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="6">
+<section id="{{ s.id }}" data-screen-label="{{ s.label }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><span style="display:flex;align-items:center;height:28px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3">Activity record</span></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 0 24px;display:flex;flex-direction:column;gap:14px">
+
+        <div data-chips="" style="display:flex;gap:10px;padding:0 16px 4px 20px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none">
+          <sc-for list="{{ s.chips }}" as="c" hint-placeholder-count="7">
+          <a data-chip="{{ c.flag }}" style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 16px;flex:none;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000;box-shadow:-2px 2px 0 #000"></div><span style="position:relative;font-size:14px;font-weight:700;color:{{ c.fg }}">{{ c.name }}</span></a>
+          </sc-for>
+        </div>
+
+        <div style="padding:0 16px">
+        <div data-panel="record" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Activity record</div>
+            <div style="font-size:13px;color:#f7f7f3;white-space:nowrap">newest first</div>
+          </div>
+          <div style="background:#f7f7f3;display:flex;flex-direction:column">
+            <sc-for list="{{ s.groups }}" as="g" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;flex:0 0 40px;height:40px;padding:0 16px;border-top:1px solid {{ g.bd }};box-sizing:border-box;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:0.02em">{{ g.date }}</div>
+            <sc-for list="{{ g.entries }}" as="e" hint-placeholder-count="4">
+            <div style="display:flex;align-items:flex-start;gap:12px;flex:0 0 auto;min-height:48px;padding:10px 12px 12px 16px;border-top:1px solid #bcc5ce;box-sizing:border-box">
+              <span style="position:relative;width:28px;height:28px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;box-sizing:border-box;margin-top:2px">
+                <sc-if value="{{ e.isMember }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:9px;top:4px;width:8px;height:8px;border:1px solid #000;border-radius:50%;background:#f7f7f3;box-sizing:border-box"></span><span style="position:absolute;left:6px;top:13px;width:14px;height:8px;border:1px solid #000;border-bottom:0;border-radius:7px 7px 0 0;background:#f7f7f3;box-sizing:border-box"></span></sc-if>
+                <sc-if value="{{ e.isRole }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:6px;top:9px;width:14px;height:8px;background:#3a3ab0;border:1px solid #000;transform:skewX(-15deg);box-sizing:border-box"></span></sc-if>
+                <sc-if value="{{ e.isPlayer }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:8px;top:6px;width:10px;height:14px;background:#f93a07;border:1px solid #000;box-sizing:border-box;padding:2px;display:flex;flex-direction:column;justify-content:flex-end"><span style="height:3px;background:#f7f7f3;border:1px solid #3a3ab0;box-sizing:border-box"></span></span></sc-if>
+                <sc-if value="{{ e.isInvite }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:6px;top:8px;width:14px;height:10px;border:1px solid #000;background:#f7f7f3;box-sizing:border-box;overflow:hidden"><span style="position:absolute;left:-1px;right:-1px;top:-1px;height:8px;background:#000;clip-path:polygon(0 0,100% 0,50% 100%)"></span><span style="position:absolute;left:1px;right:1px;top:-1px;height:6px;background:#f7f7f3;clip-path:polygon(0 0,100% 0,50% 100%)"></span></span></sc-if>
+                <sc-if value="{{ e.isTeam }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:5px;top:8px;width:10px;height:10px;border-radius:50%;background:#ed1c24;border:1px solid #000;box-sizing:border-box"></span><span style="position:absolute;left:11px;top:8px;width:10px;height:10px;border-radius:50%;background:#3a3ab0;border:1px solid #000;box-sizing:border-box"></span></sc-if>
+                <sc-if value="{{ e.isSetting }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:6px;top:9px;width:14px;height:2px;background:#000"></span><span style="position:absolute;left:14px;top:7px;width:6px;height:6px;border-radius:50%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></span><span style="position:absolute;left:6px;top:16px;width:14px;height:2px;background:#000"></span><span style="position:absolute;left:6px;top:14px;width:6px;height:6px;border-radius:50%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></span></sc-if>
+              </span>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+                <span style="font-size:13px;line-height:1.2;color:#4b5560">{{ e.time }}</span>
+                <span style="font-size:16px;line-height:1.35;min-width:0;overflow-wrap:anywhere;text-wrap:pretty"><sc-for list="{{ e.parts }}" as="p" hint-placeholder-count="3"><span style="font-family:{{ p.ff }};font-weight:{{ p.fw }};color:{{ p.fg }}">{{ p.t }}</span></sc-for></span>
+                <sc-if value="{{ e.hasVals }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;line-height:1.3;display:flex;flex-wrap:wrap;gap:0 8px;min-width:0"><span style="color:#4b5560;text-decoration:line-through;overflow-wrap:anywhere">{{ e.oldV }}</span><span style="color:#4b5560">→</span><span style="color:#000;overflow-wrap:anywhere">{{ e.newV }}</span></span></sc-if>
+              </div>
+            </div>
+            </sc-for>
+            </sc-for>
+            <sc-if value="{{ s.isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:28px 16px 32px;text-align:center;font-size:16px">Nothing of this kind yet.</div>
+            </sc-if>
+            <sc-if value="{{ s.loadingMore }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:flex-start;gap:12px;flex:0 0 auto;min-height:48px;padding:10px 12px 12px 16px;border-top:1px solid #bcc5ce;box-sizing:border-box"><span style="width:28px;height:28px;border-radius:50%;background:#bcc5ce;flex:none;margin-top:2px"></span><div style="flex:1;display:flex;flex-direction:column;gap:8px;padding-top:2px"><div style="height:10px;width:40px;background:#bcc5ce"></div><div style="height:14px;width:78%;background:#bcc5ce"></div></div></div>
+            </sc-if>
+            <sc-if value="{{ s.hasMore }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:12px 12px 16px 16px;border-top:1px solid #bcc5ce"><a style="display:flex;align-items:center;justify-content:center;height:44px;margin-left:4px;background:{{ s.moreBg }};border:1px solid #000;color:{{ s.moreFg }};font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">{{ s.moreLabel }}</a></div>
+            </sc-if>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <div data-tabbar="" style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr);height:60px;box-sizing:border-box">
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Competitions</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Players</a>
+        <a style="display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You<span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#ed1c24;border:1px solid #000;font-size:12px;color:#f7f7f3;box-sizing:border-box">2</span></a>
+      </div>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Activity record</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Group settings</a>
+        </nav>
+        <div style="flex:1"></div>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">2</span></a>
+      </div>
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;min-width:0;padding:40px 40px 48px;gap:28px;box-sizing:border-box">
+
+        <div data-band="" style="margin-left:8px;height:72px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;align-items:center;gap:20px;padding:0 20px;box-sizing:border-box;position:relative">
+          <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;white-space:nowrap;padding-right:6px;color:#3a3ab0">Activity record</span>
+          <span style="font-size:14px;white-space:nowrap">what changed in Nedeljni heroji, and who changed it</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:900px">
+          <div data-chips="" style="display:flex;gap:12px;flex-wrap:wrap;margin-left:8px">
+            <sc-for list="{{ s.chips }}" as="c" hint-placeholder-count="7">
+            <a style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 22px;flex:none;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000;box-shadow:-2px 2px 0 #000"></div><span style="position:relative;font-size:14px;font-weight:700;color:{{ c.fg }}">{{ c.name }}</span></a>
+            </sc-for>
+          </div>
+
+          <div data-panel="record" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #000;box-sizing:border-box">
+              <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Activity record</div>
+              <div style="font-size:14px;color:#f7f7f3">{{ s.headNote }}</div>
+            </div>
+            <div style="background:#f7f7f3;display:flex;flex-direction:column">
+              <sc-for list="{{ s.groups }}" as="g" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;flex:0 0 40px;height:40px;padding:0 20px;border-top:1px solid {{ g.bd }};box-sizing:border-box;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:0.02em">{{ g.date }}</div>
+              <sc-for list="{{ g.entries }}" as="e" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:56px 28px minmax(0,1fr);gap:0 16px;align-items:start;flex:0 0 auto;min-height:48px;padding:11px 20px 12px;border-top:1px solid #bcc5ce;box-sizing:border-box">
+                <span style="font-size:14px;line-height:1.5;color:#4b5560;white-space:nowrap">{{ e.time }}</span>
+                <span style="position:relative;width:28px;height:28px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;box-sizing:border-box;margin-top:-2px">
+                  <sc-if value="{{ e.isMember }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:9px;top:4px;width:8px;height:8px;border:1px solid #000;border-radius:50%;background:#f7f7f3;box-sizing:border-box"></span><span style="position:absolute;left:6px;top:13px;width:14px;height:8px;border:1px solid #000;border-bottom:0;border-radius:7px 7px 0 0;background:#f7f7f3;box-sizing:border-box"></span></sc-if>
+                  <sc-if value="{{ e.isRole }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:6px;top:9px;width:14px;height:8px;background:#3a3ab0;border:1px solid #000;transform:skewX(-15deg);box-sizing:border-box"></span></sc-if>
+                  <sc-if value="{{ e.isPlayer }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:8px;top:6px;width:10px;height:14px;background:#f93a07;border:1px solid #000;box-sizing:border-box;padding:2px;display:flex;flex-direction:column;justify-content:flex-end"><span style="height:3px;background:#f7f7f3;border:1px solid #3a3ab0;box-sizing:border-box"></span></span></sc-if>
+                  <sc-if value="{{ e.isInvite }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:6px;top:8px;width:14px;height:10px;border:1px solid #000;background:#f7f7f3;box-sizing:border-box;overflow:hidden"><span style="position:absolute;left:-1px;right:-1px;top:-1px;height:8px;background:#000;clip-path:polygon(0 0,100% 0,50% 100%)"></span><span style="position:absolute;left:1px;right:1px;top:-1px;height:6px;background:#f7f7f3;clip-path:polygon(0 0,100% 0,50% 100%)"></span></span></sc-if>
+                  <sc-if value="{{ e.isTeam }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:5px;top:8px;width:10px;height:10px;border-radius:50%;background:#ed1c24;border:1px solid #000;box-sizing:border-box"></span><span style="position:absolute;left:11px;top:8px;width:10px;height:10px;border-radius:50%;background:#3a3ab0;border:1px solid #000;box-sizing:border-box"></span></sc-if>
+                  <sc-if value="{{ e.isSetting }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:6px;top:9px;width:14px;height:2px;background:#000"></span><span style="position:absolute;left:14px;top:7px;width:6px;height:6px;border-radius:50%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></span><span style="position:absolute;left:6px;top:16px;width:14px;height:2px;background:#000"></span><span style="position:absolute;left:6px;top:14px;width:6px;height:6px;border-radius:50%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></span></sc-if>
+                </span>
+                <div style="min-width:0;display:flex;flex-direction:column;gap:3px">
+                  <span style="font-size:16px;line-height:1.35;min-width:0;overflow-wrap:anywhere;text-wrap:pretty"><sc-for list="{{ e.parts }}" as="p" hint-placeholder-count="3"><span style="font-family:{{ p.ff }};font-weight:{{ p.fw }};color:{{ p.fg }}">{{ p.t }}</span></sc-for></span>
+                  <sc-if value="{{ e.hasVals }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;line-height:1.3;display:flex;flex-wrap:wrap;gap:0 8px;min-width:0"><span style="color:#4b5560;text-decoration:line-through;overflow-wrap:anywhere">{{ e.oldV }}</span><span style="color:#4b5560">→</span><span style="color:#000;overflow-wrap:anywhere">{{ e.newV }}</span></span></sc-if>
+                </div>
+              </div>
+              </sc-for>
+              </sc-for>
+              <sc-if value="{{ s.isEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:36px 24px 40px;text-align:center;font-size:16px">Nothing of this kind yet.</div>
+              </sc-if>
+              <sc-if value="{{ s.loadingMore }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:56px 28px minmax(0,1fr);gap:0 16px;align-items:start;min-height:48px;padding:11px 20px 12px;border-top:1px solid #bcc5ce;box-sizing:border-box"><div style="height:12px;width:40px;margin-top:4px;background:#bcc5ce"></div><span style="width:28px;height:28px;border-radius:50%;background:#bcc5ce;margin-top:-2px"></span><div style="height:14px;width:62%;margin-top:3px;background:#bcc5ce"></div></div>
+              </sc-if>
+              <sc-if value="{{ s.hasMore }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:16px 20px 20px 28px;border-top:1px solid #bcc5ce"><a style="display:flex;align-items:center;justify-content:center;height:44px;background:{{ s.moreBg }};border:1px solid #000;color:{{ s.moreFg }};font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">{{ s.moreLabel }}</a></div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;emptyKind&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Teams&quot;,&quot;Roles&quot;,&quot;Settings&quot;],&quot;default&quot;:&quot;Teams&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Empty filter (19f)&quot;},&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+    document.querySelectorAll('[data-chips]').forEach(strip => {
+      if (strip.scrollWidth <= strip.clientWidth) return;
+      const on = strip.querySelector('[data-chip="on"]');
+      if (!on) return;
+      const left = on.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+      strip.scrollLeft = Math.max(0, left - 20);
+    });
+  }
+  renderVals() {
+    const emptyKind = this.props.emptyKind ?? 'Teams';
+    const SUB = '#4b5560', PAPER = '#f7f7f3', RED = '#ed1c24', NARROW = "'Archivo Narrow','Arial Narrow',sans-serif";
+    const B = t => ({ t, ff: NARROW, fw: 700, fg: '#000' });
+    const T = t => ({ t, ff: 'inherit', fw: 400, fg: '#000' });
+    const M = t => ({ t, ff: 'inherit', fw: 400, fg: SUB });
+    const KINDS = ['Members', 'Roles', 'Players', 'Invitations', 'Teams', 'Settings'];
+    const en = (time, kind, parts, vals) => ({ time, parts, hasVals: !!vals, oldV: vals ? vals[0] : '', newV: vals ? vals[1] : '',
+      isMember: kind === 'Members', isRole: kind === 'Roles', isPlayer: kind === 'Players', isInvite: kind === 'Invitations', isTeam: kind === 'Teams', isSetting: kind === 'Settings' });
+    const grp = (date, entries) => ({ date, entries });
+    const groups = list => list.map((g, i) => ({ ...g, bd: i === 0 ? 'transparent' : '#000' }));
+    const chips = active => ['All', ...KINDS].map(name => ({ name, flag: name === active ? 'on' : 'off', bg: name === active ? RED : PAPER, fg: name === active ? PAPER : '#000' }));
+
+    const ALL = groups([
+      grp('Today', [
+        en('21:40', 'Players', [B('Ana'), T(' merged the Player '), B('Pule'), T(' into '), B('Paja')]),
+        en('19:12', 'Players', [B('Cope'), T(' renamed the Player '), B('Dinic')], ['Dinic', 'Dinić']),
+        en('18:05', 'Roles', [B('Ana'), T(' made '), B('Marko J.'), T(' a Manager of '), B('Sunday five-a-side')]),
+        en('17:58', 'Members', [B('Marko J.'), T(' joined with a join link')])
+      ]),
+      grp('14 Sep', [
+        en('22:30', 'Settings', [B('Ana'), T(" changed the Group's time zone")], ['Europe/London', 'Europe/Belgrade']),
+        en('20:14', 'Invitations', [M('a deleted Account'), T(' revoked an invitation for '), B('Steva')]),
+        en('20:02', 'Invitations', [B('Cope'), T(' invited '), B('Vuk'), T(' with a link')]),
+        en('11:20', 'Teams', [B('Luka'), T(' renamed the Team '), B('Plavi')], ['Plavi', 'Plavi orlovi'])
+      ]),
+      grp('2 Sep', [
+        en('21:05', 'Invitations', [B('Cope'), T(' made a join link')]),
+        en('20:40', 'Members', [B('Ana'), T(' removed '), B('Bane'), T(' from the Group')]),
+        en('19:33', 'Teams', [B('Cope'), T(' changed the colour of the Team '), B('Crveni')], ['Red', 'Maroon']),
+        en('09:15', 'Settings', [B('Ana'), T(' renamed the Group')], ['Sunday Heroes', 'Nedeljni heroji'])
+      ])
+    ]);
+    const PLAYERS = groups([
+      grp('Today', [ALL[0].entries[0], ALL[0].entries[1]]),
+      grp('14 Sep', [en('16:40', 'Players', [B('Ana'), T(' added the Player '), B('Đole')])]),
+      grp('2 Sep', [en('18:10', 'Players', [B('Cope'), T(' linked the Player '), B('Vuk'), T(' to an Account')])]),
+      grp('24 Aug', [en('20:00', 'Players', [B('Ana'), T(' renamed the Player '), B('Pula')], ['Pula', 'Pule'])])
+    ]);
+    const LAST = groups([
+      grp('12 Mar 2024', [
+        en('20:11', 'Invitations', [B('Cope'), T(' made a join link')]),
+        en('19:40', 'Roles', [B('Ana'), T(' made '), B('Cope'), T(' a Group admin')])
+      ]),
+      grp('3 Mar 2024', [
+        en('21:02', 'Players', [B('Ana'), T(' added the Player '), B('Cope')]),
+        en('20:58', 'Settings', [B('Group'), T(' created by '), B('Ana')])
+      ])
+    ]);
+    const MIGRATED = groups([
+      LAST[0],
+      grp('3 Mar 2024', [
+        en('21:02', 'Players', [B('Ana'), T(' added the Player '), B('Cope')]),
+        en('20:58', 'Settings', [T('Imported from the old '), B('Sunday Heroes'), T(' · 63 Players · 4 competitions · 212 matches · 1,840 ballots')])
+      ])
+    ]);
+
+    const base = { chips: chips('All'), groups: ALL, hasMore: true, moreBg: PAPER, moreFg: '#000', moreLabel: 'Show more', loadingMore: false, isEmpty: false, headNote: 'newest first · Group admins see this page' };
+    const sections = [
+      { ...base, id: '19a', label: '19a All kinds',
+        blurb: 'All kinds: twelve entries over Today, 14 Sep and 2 Sep · a row per entry: muted time, a kind icon in a paper circle, one sentence with actor and subject in Archivo Narrow Bold and the verb in body text · old struck through in muted, new in ink on a second line where there are values · "a deleted Account" in muted, not bold · the paper Show more bar · on a phone the chips scroll sideways and the time sits above the sentence' },
+      { ...base, id: '19b', label: '19b Players', chips: chips('Players'), groups: PLAYERS,
+        blurb: 'The Players chip active: the list starts again from the top with Player entries only · merges, renames, adds, links' },
+      { ...base, id: '19c', label: '19c Show more pressed', loadingMore: true, moreBg: '#bcc5ce', moreFg: SUB,
+        blurb: 'Show more pressed: a skeleton row under the last entry, the bar greyed on #bcc5ce until the next page lands under it' },
+      { ...base, id: '19d', label: '19d Last page', groups: LAST, hasMore: false,
+        blurb: 'The last page: no Show more bar · the final entry is "Group created by Ana"' },
+      { ...base, id: '19e', label: '19e Migrated Group', groups: MIGRATED, hasMore: false,
+        blurb: 'A migrated Group: the oldest entry reads "Imported from the old Sunday Heroes · 63 Players · 4 competitions · 212 matches · 1,840 ballots" with no actor' },
+      { ...base, id: '19f', label: '19f Nothing of this kind', chips: chips(emptyKind), groups: [], hasMore: false, isEmpty: true,
+        blurb: 'A filter with nothing in it: the ' + emptyKind + ' chip active and "Nothing of this kind yet." in the panel · no Show more bar · the Tweaks pick the kind' }
+    ];
+    return { sections };
+  }
+}
+</script>
+</body>
+</html>

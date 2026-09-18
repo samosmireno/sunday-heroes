@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase">Screen 8 · Match page and the vote</div>
+  <div style="font-size:14px">the page a shared link opens · the vote block in four states · half-pitches with shirts in the formation · the ballot sheet, on-behalf, the reminder prompt · nobody's picks, no running tally</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="8">
+<section id="{{ s.id }}" data-screen-label="{{ s.label }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;height:{{ s.phoneH }};background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><a style="display:inline-flex;align-items:center;align-self:flex-start;height:44px;padding:0 8px 16px;margin:0 0 -16px -8px;box-sizing:content-box;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3;text-decoration:none;position:relative;z-index:1">‹ {{ s.m.comp }}</a></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px">
+
+        <div data-panel="vote" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:{{ s.hdrBg }};height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:{{ s.hdrFg }};white-space:nowrap">The vote</div>
+            <span style="font-size:13px;color:{{ s.hdrFg }};white-space:nowrap">{{ s.hdrRight }}</span>
+          </div>
+          <div style="background:#f7f7f3;padding:16px;display:flex;flex-direction:column;gap:14px">
+            <sc-if value="{{ s.voteNone }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:16px">Voting is off for this match.</div>
+            </sc-if>
+            <sc-if value="{{ s.voteNotRated }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:16px">Not rated, {{ s.turnoutLine }}</div>
+            </sc-if>
+            <sc-if value="{{ s.voteOpen }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ s.showStar }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:16px">
+              <div style="position:relative;width:132px;height:132px;flex:none;filter:drop-shadow(-4px 4px 0 #000)">
+                <div style="position:absolute;inset:0;transform:rotate(21.5deg);background:#000;clip-path:polygon(50.0% 0.0%, 58.8% 17.2%, 75.0% 6.7%, 74.0% 26.0%, 93.3% 25.0%, 82.8% 41.2%, 100.0% 50.0%, 82.8% 58.8%, 93.3% 75.0%, 74.0% 74.0%, 75.0% 93.3%, 58.8% 82.8%, 50.0% 100.0%, 41.2% 82.8%, 25.0% 93.3%, 26.0% 74.0%, 6.7% 75.0%, 17.2% 58.8%, 0.0% 50.0%, 17.2% 41.2%, 6.7% 25.0%, 26.0% 26.0%, 25.0% 6.7%, 41.2% 17.2%)"></div>
+                <div style="position:absolute;inset:0;transform:rotate(21.5deg) scale(0.96);background:#ed1c24;clip-path:polygon(50.0% 0.0%, 58.8% 17.2%, 75.0% 6.7%, 74.0% 26.0%, 93.3% 25.0%, 82.8% 41.2%, 100.0% 50.0%, 82.8% 58.8%, 93.3% 75.0%, 74.0% 74.0%, 75.0% 93.3%, 58.8% 82.8%, 50.0% 100.0%, 41.2% 82.8%, 25.0% 93.3%, 26.0% 74.0%, 6.7% 75.0%, 17.2% 58.8%, 0.0% 50.0%, 17.2% 41.2%, 6.7% 25.0%, 26.0% 26.0%, 25.0% 6.7%, 41.2% 17.2%)"></div>
+                <a style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;line-height:0.95;color:#f7f7f3;text-transform:uppercase;text-decoration:none">Vote<br>now</a>
+              </div>
+              <div style="font-size:14px;text-wrap:pretty">You played in this match and haven't voted yet. Pick your first, second and third.</div>
+            </div>
+            </sc-if>
+            <sc-if value="{{ s.showCast }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:16px">
+              <div style="width:150px;flex:none;background:#f7f7f3;border:1px solid #000;box-shadow:-4px 4px 0 #000;margin-left:4px">
+                <div style="background:#42af36;padding:18px 12px 22px;clip-path:polygon(0 0,100% 0,100% 84%,0 100%);font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;color:#f7f7f3;text-transform:uppercase;line-height:1;text-align:center">Ballot cast</div>
+                <div style="margin-top:-10px;background:#3a3ab0;padding:16px 12px 12px;clip-path:polygon(0 18%,100% 0,100% 100%,0 100%);display:flex;flex-direction:column;gap:6px;font-size:14px;text-align:center"><a style="display:flex;align-items:center;justify-content:center;height:44px;color:#f7f7f3;text-decoration:none">See your ballot</a><a style="display:flex;align-items:center;justify-content:center;height:44px;color:#f7f7f3;text-decoration:none">Change ballot</a></div>
+              </div>
+              <div style="font-size:14px;text-wrap:pretty">Your ballot is in. You can change it until the vote closes.</div>
+            </div>
+            </sc-if>
+            <div style="font-size:14px">{{ s.turnoutLine }}</div>
+            </sc-if>
+            <sc-if value="{{ s.showTurnout }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-wrap:wrap;gap:10px 8px;padding:2px 4px">
+              <sc-for list="{{ s.turnout }}" as="t" hint-placeholder-count="12">
+              <div style="display:inline-flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;height:30px;padding:0 10px;color:{{ t.fg }};font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ t.bg }};border:1px solid #000;transform:rotate({{ t.rot }});box-shadow:-2px 2px 0 #000"></span>{{ t.name }}</span><sc-if value="{{ t.enter }}" hint-placeholder-val="{{ false }}"><a style="display:inline-flex;align-items:center;height:44px;padding:0 10px;font-size:13px;color:#000;text-decoration:none;flex:none">Enter ballot</a></sc-if></div>
+              </sc-for>
+            </div>
+            </sc-if>
+            <sc-if value="{{ s.voteOpen }}" hint-placeholder-val="{{ false }}">
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;margin-left:4px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:15px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Copy reminder text</a>
+            </sc-if>
+            <sc-if value="{{ s.voteRated }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:18px;padding:8px 0 4px">
+              <div style="display:flex;flex-direction:column;gap:30px;padding-left:10px">
+                <sc-for list="{{ s.motmCards }}" as="mc" hint-placeholder-count="1">
+                <div style="position:relative;width:150px;height:204px;flex:none">
+                  <div style="position:absolute;left:-10px;bottom:-10px;width:100%;height:100%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+                  <div style="position:absolute;inset:0;background:#f93a07;border:1px solid #000;padding:12px 12px 10px;box-sizing:border-box;display:flex;flex-direction:column;gap:8px;overflow:hidden">
+                    <div style="position:absolute;top:0;right:0;width:18px;height:70%;background:radial-gradient(#f4e937 1.4px,transparent 1.9px) 0 0/7px 7px"></div>
+                    <div style="position:relative;flex:1;border:1px solid #000;background:repeating-linear-gradient(135deg,#bcc5ce 0 6px,#f7f7f3 6px 12px);display:flex;align-items:flex-end;justify-content:center;padding:6px"><div style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#f7f7f3;padding:1px 5px;border:1px solid #000">Google avatar</div></div>
+                    <div style="position:relative;background:#f7f7f3;border:2px solid #3a3ab0;outline:1px solid #000;padding:6px;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;line-height:1">{{ mc.name }}</div>
+                    <div style="position:absolute;top:16px;left:-56px;width:180px;transform:rotate(-45deg);background:#3a3ab0;border:1px solid #000;padding:3px 0;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:12px;color:#f7f7f3">Man of the match</div>
+                  </div>
+                  <div style="position:absolute;top:-16px;right:-14px;width:40px;height:33px;transform:rotate(12deg)"><div style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div><div style="position:absolute;inset:2.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div></div>
+                </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:13px">{{ s.ballots }}</div>
+                <div data-table="results" style="background:#000;border:1px solid #000;overflow-x:auto;padding:8px 8px 8px 0;margin-left:4px">
+                  <div style="display:grid;grid-template-columns:176px repeat(5,60px);gap:4px">
+                    <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;display:flex;align-items:center;height:36px"><span style="font-size:13px;color:#f7f7f3">Player</span></div>
+                    <sc-for list="{{ tableCols }}" as="c" hint-placeholder-count="5">
+                    <div style="position:relative;height:36px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-size:12px;color:#000;white-space:nowrap">{{ c }}</span></div>
+                    </sc-for>
+                    <sc-for list="{{ s.table }}" as="p" hint-placeholder-count="12">
+                    <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px"><a style="position:relative;height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#3a3ab0;border:1px solid #000"></div><span style="position:relative;width:12px;height:12px;border-radius:50%;background:{{ p.hex }};border:1px solid {{ p.bd }};flex:none;box-sizing:border-box"></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;min-width:0;white-space:nowrap;line-height:1.1">{{ p.name }}</span><sc-if value="{{ p.crowned }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:22px;height:18px;flex:none;display:inline-block"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:2px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if></a></div>
+                    <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="5">
+                    <div style="position:relative;height:44px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;white-space:nowrap">{{ c }}</span></div>
+                    </sc-for>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div data-result="" style="position:relative;margin-left:9px;background:#f7f7f3;border:1px solid #000;box-shadow:-4px 4px 0 #000;padding:12px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap">
+            <span style="display:inline-flex;align-items:center;gap:8px;white-space:nowrap"><span style="width:16px;height:16px;border-radius:50%;background:{{ s.m.a.hex }};border:1px solid {{ s.m.a.bd }};flex:none"></span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1;text-transform:uppercase;color:#3a3ab0;text-shadow:-3px 3px 0 #000">{{ s.m.a.name }}</span></span>
+            <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1;text-transform:uppercase;color:#3a3ab0;text-shadow:-3px 3px 0 #000;white-space:nowrap">{{ s.m.a.score }}-{{ s.m.b.score }}</span>
+            <span style="display:inline-flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1;text-transform:uppercase;color:#3a3ab0;text-shadow:-3px 3px 0 #000">{{ s.m.b.name }}</span><span style="width:16px;height:16px;border-radius:50%;background:{{ s.m.b.hex }};border:1px solid {{ s.m.b.bd }};flex:none"></span></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ s.m.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ s.m.tag }}</span></div>
+            <span style="font-size:14px;white-space:nowrap">{{ s.m.date }}</span>
+            <div style="margin-left:auto;display:flex;gap:8px;position:relative;flex:none">
+              <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:14px;text-decoration:none;box-sizing:border-box">Share</a>
+              <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+              <a style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:{{ s.menuBg }};border:1px solid #000;color:{{ s.menuFg }};font-size:18px;font-weight:700;text-decoration:none;box-sizing:border-box;letter-spacing:1px">···</a>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+
+        <sc-for list="{{ s.m.sides }}" as="side" hint-placeholder-count="2">
+        <div data-panel="side" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:48px;background:{{ side.hex }};border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#000;height:48px;padding:0 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #000;box-sizing:border-box">
+            <span style="width:16px;height:16px;border-radius:50%;background:{{ side.hex }};border:1px solid #f7f7f3;flex:none"></span>
+            <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">{{ side.name }}</span>
+            <span style="margin-left:auto;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:24px;line-height:1;color:#f7f7f3">{{ side.score }}</span>
+            <span style="font-size:12px;color:#bcc5ce">{{ side.formLabel }}</span>
+          </div>
+          <div data-halfpitch="" style="position:relative;height:280px;background:#42af36;border-bottom:1px solid #000;overflow:hidden">
+            <div style="position:absolute;inset:10px;border:2px solid rgba(247,247,243,0.85)"></div>
+            <div style="position:absolute;top:10px;left:50%;width:90px;height:45px;transform:translateX(-50%);border:2px solid rgba(247,247,243,0.85);border-top:none;border-radius:0 0 45px 45px;box-sizing:border-box"></div>
+            <div style="position:absolute;bottom:10px;left:50%;width:56%;height:26%;transform:translateX(-50%);border:2px solid rgba(247,247,243,0.85);border-bottom:none;box-sizing:border-box"></div>
+            <div style="position:absolute;bottom:10px;left:50%;width:28%;height:11%;transform:translateX(-50%);border:2px solid rgba(247,247,243,0.85);border-bottom:none;box-sizing:border-box"></div>
+            <div style="position:absolute;inset:12px 10px 12px;display:flex;flex-direction:column;justify-content:space-around">
+              <sc-for list="{{ side.rows }}" as="row" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-around;align-items:flex-start">
+                <sc-for list="{{ row.players }}" as="p" hint-placeholder-count="1">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                  <div style="position:relative;width:34px;height:30px"><div style="position:absolute;inset:0;background:#000;clip-path:polygon(28% 0,40% 9%,60% 9%,72% 0,100% 16%,90% 38%,80% 32%,80% 100%,20% 100%,20% 32%,10% 38%,0 16%)"></div><div style="position:absolute;inset:0;transform:scale(0.86);background:{{ side.hex }};clip-path:polygon(28% 0,40% 9%,60% 9%,72% 0,100% 16%,90% 38%,80% 32%,80% 100%,20% 100%,20% 32%,10% 38%,0 16%)"></div></div>
+                  <div style="display:flex;align-items:center;gap:3px"><span style="background:#f7f7f3;border:1px solid #000;padding:1px 5px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:12px;line-height:1.3;white-space:nowrap">{{ p.name }}</span><sc-for list="{{ p.chips }}" as="c" hint-placeholder-count="0"><span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;background:{{ c.bg }};border:1px solid #000;font-size:12px;font-weight:700;color:#000;line-height:1">{{ c.t }}</span></sc-for></div>
+                </div>
+                </sc-for>
+              </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#f7f7f3;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:48px;box-sizing:border-box">
+            <span style="font-size:13px">Bench</span>
+            <sc-for list="{{ side.benchList }}" as="bn" hint-placeholder-count="1">
+            <div style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;color:{{ side.fg }};font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ side.hex }};border:1px solid #000;transform:rotate(-1deg);box-shadow:-2px 2px 0 #000"></span>{{ bn.name }}</span><sc-for list="{{ bn.chips }}" as="c" hint-placeholder-count="0"><span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;background:{{ c.bg }};border:1px solid #000;font-size:12px;font-weight:700;color:#000;line-height:1">{{ c.t }}</span></sc-for></div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-for>
+
+        <div data-panel="details" style="position:relative;margin-left:9px;background:#f7f7f3;border:1px solid #000;box-shadow:-4px 4px 0 #000;padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+          <div style="position:absolute;left:-9px;top:-1px;bottom:-1px;width:8px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:13px">Video</span><a style="font-size:15px;color:#000;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:12px 0;margin:-12px 0">▶ {{ s.m.video }}</a></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:13px">Note</span><div style="font-size:15px;text-wrap:pretty">{{ s.m.note }}</div></div>
+          <div style="font-size:13px;border-top:1px solid #bcc5ce;padding-top:10px">Recorded by {{ s.m.recorder }} · {{ s.m.recordedAt }}</div>
+        </div>
+      </div>
+
+      <div data-tabbar="" style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr);height:60px;box-sizing:border-box">
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;background:#ed1c24;border-left:1px solid #000;border-right:1px solid #000;text-decoration:none">Competitions</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Players</a>
+        <a style="display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You<span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#ed1c24;border:1px solid #000;font-size:12px;color:#f7f7f3;box-sizing:border-box">2</span></a>
+      </div>
+
+      <sc-if value="{{ s.menuOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-sheet="menu" style="position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;border-top:1px solid #000;box-shadow:0 -4px 0 #000">
+        <div style="background:#091e40;min-height:56px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="display:flex;flex-direction:column"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">{{ s.m.a.name }} v {{ s.m.b.name }}</div><div style="font-size:13px;color:#d7e6cc">{{ s.m.date }}</div></div>
+          <a style="font-size:14px;color:#f7f7f3;flex:none;padding:12px 0;margin:-12px 0;text-decoration:none">Cancel</a>
+        </div>
+        <div style="background:#f7f7f3;padding:8px 0 20px;display:flex;flex-direction:column">
+          <sc-for list="{{ menuItems }}" as="mi" hint-placeholder-count="6"><a style="display:flex;align-items:center;min-height:48px;flex:0 0 auto;padding:4px 16px;font-size:16px;color:{{ mi.fg }};text-decoration:none;border-top:{{ mi.bt }};box-sizing:border-box">{{ mi.t }}</a></sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showBallot }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-sheet="ballot" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#3a3ab0;min-height:78px;flex:none;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">{{ s.ballotTitle }}</div>
+          <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a>
+        </div>
+        <div style="background:#f7f7f3;padding:10px 16px 16px 20px;display:flex;flex-direction:column;gap:6px;flex:1;min-height:0;overflow:auto">
+          <div style="font-size:13px;padding-bottom:2px">{{ s.ballotSub }}</div>
+          <sc-for list="{{ s.ballotSides }}" as="bs" hint-placeholder-count="2">
+          <div style="position:relative;height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;margin-top:4px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#000;border:1px solid #000"></div><span style="position:relative;width:14px;height:14px;border-radius:50%;background:{{ bs.hex }};border:1px solid #f7f7f3;flex:none"></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3">{{ bs.name }}</span></div>
+          <sc-for list="{{ bs.rows }}" as="r" hint-placeholder-count="6">
+          <a style="position:relative;height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ r.fg }}">{{ r.name }}</span><span style="position:relative;font-size:12px;color:{{ r.fg }}">{{ r.meta }}</span>
+            <sc-if value="{{ r.hasPick }}" hint-placeholder-val="{{ false }}"><span style="position:relative;margin-left:auto;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></span><span style="position:absolute;inset:0;transform:scale(0.84);background:#f4e937;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:13px;line-height:1;margin-top:4px;color:#000">{{ r.pick }}</span></span></sc-if>
+            <sc-if value="{{ r.pickable }}" hint-placeholder-val="{{ false }}"><span style="position:relative;margin-left:auto;width:24px;height:24px;border-radius:50%;border:1px solid #000;background:#f7f7f3;flex:none;box-sizing:border-box"></span></sc-if>
+          </a>
+          </sc-for>
+          </sc-for>
+        </div>
+        <div style="background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;align-items:center;gap:12px;box-sizing:border-box;flex:none">
+          <span style="font-size:13px;flex:1">{{ s.castNote }}</span>
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;width:180px;height:44px;margin-left:4px;background:{{ s.castBg }};border:1px solid #000;color:{{ s.castFg }};font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000;flex:none">Cast ballot</a>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showRecord }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-sheet="record" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#07361c;min-height:78px;flex:none;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Change record</div>
+          <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Close</a>
+        </div>
+        <div style="background:#f7f7f3;padding:8px 16px 0;display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto">
+          <sc-for list="{{ recordRows }}" as="rr" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;gap:2px;padding:10px 0;border-bottom:1px solid #bcc5ce">
+            <div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px">{{ rr.actor }}</span><span style="font-size:14px">{{ rr.act }}</span><span style="margin-left:auto;font-size:12px;white-space:nowrap">{{ rr.when }}</span></div>
+            <sc-if value="{{ rr.hasVals }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;font-size:14px;flex-wrap:wrap"><span style="text-decoration:line-through;color:#8c8f94">{{ rr.old }}</span><span>→</span><span style="font-weight:700">{{ rr.new }}</span></div></sc-if>
+          </div>
+          </sc-for>
+        </div>
+        <a style="display:flex;align-items:center;justify-content:center;height:44px;flex:none;background:#f7f7f3;border-top:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box">Show more</a>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showPrompt }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-sheet="prompt" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#42af36;min-height:78px;flex:none;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Ballot cast</div><a style="font-size:14px;color:#f7f7f3;flex:none;padding:12px 0;margin:-12px 0;text-decoration:none">Cancel</a></div>
+        <div style="background:#f7f7f3;padding:20px 16px 8px;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;overflow:auto">
+          <div style="font-size:18px;font-weight:700;text-wrap:pretty">Remind me by email before a vote closes?</div>
+          <div style="font-size:14px;text-wrap:pretty">One mail the day before, only for matches you played. You can change this in Account settings.</div>
+        </div>
+        <div style="background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;gap:10px;box-sizing:border-box;flex:none">
+          <a style="display:flex;align-items:center;justify-content:center;flex:1;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box">Not now</a>
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;flex:1;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Yes</a>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;height:{{ s.deskH }};background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+        </nav>
+        <div style="flex:1"></div>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">{{ s.openVotes }}</span></a>
+      </div>
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;min-width:0;padding:40px 40px 48px;gap:24px;box-sizing:border-box">
+
+        <div style="display:flex;align-items:center;gap:24px">
+          <a style="font-size:14px;color:#000;flex:none;display:inline-flex;align-items:center;height:44px;padding:0 12px;background:#f7f7f3;border:1px solid #000;text-decoration:none;box-sizing:border-box">‹ {{ s.m.comp }}</a>
+          <div data-band="" style="flex:1;min-width:0;margin-left:8px;height:72px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;align-items:center;gap:16px;padding:0 20px;box-sizing:border-box;position:relative">
+            <span style="display:inline-flex;align-items:center;gap:12px;white-space:nowrap"><span style="width:20px;height:20px;border-radius:50%;background:{{ s.m.a.hex }};border:1px solid {{ s.m.a.bd }};flex:none"></span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;color:#3a3ab0;text-shadow:-5px 5px 0 #000">{{ s.m.a.name }}</span></span>
+            <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;color:#3a3ab0;text-shadow:-5px 5px 0 #000;white-space:nowrap">{{ s.m.a.score }}-{{ s.m.b.score }}</span>
+            <span style="display:inline-flex;align-items:center;gap:12px;white-space:nowrap;padding-right:6px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;color:#3a3ab0;text-shadow:-5px 5px 0 #000">{{ s.m.b.name }}</span><span style="width:20px;height:20px;border-radius:50%;background:{{ s.m.b.hex }};border:1px solid {{ s.m.b.bd }};flex:none"></span></span>
+            <div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none;margin-left:8px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ s.m.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ s.m.tag }}</span></div>
+            <span style="font-size:14px">{{ s.m.date }}</span>
+            <div style="margin-left:auto;display:flex;gap:10px;position:relative">
+              <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 20px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:15px;text-decoration:none;box-sizing:border-box">Share</a>
+              <sc-if value="{{ s.manager }}" hint-placeholder-val="{{ false }}">
+              <a style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:{{ s.menuBg }};border:1px solid #000;color:{{ s.menuFg }};font-size:18px;font-weight:700;text-decoration:none;box-sizing:border-box;letter-spacing:1px">···</a>
+              </sc-if>
+              <sc-if value="{{ s.menuOpen }}" hint-placeholder-val="{{ false }}">
+              <div data-menu="" style="position:absolute;right:0;top:48px;width:220px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;z-index:5;display:flex;flex-direction:column">
+                <sc-for list="{{ menuItems }}" as="mi" hint-placeholder-count="6"><a style="display:flex;align-items:center;height:44px;padding:0 16px;font-size:15px;color:{{ mi.fg }};text-decoration:none;border-top:{{ mi.bt }}">{{ mi.t }}</a></sc-for>
+              </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+
+        <div data-panel="vote" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:{{ s.hdrBg }};height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:{{ s.hdrFg }}">Man of the match</div>
+            <span style="font-size:14px;color:{{ s.hdrFg }}">{{ s.hdrRight }}</span>
+          </div>
+          <div style="background:#f7f7f3;padding:20px 24px 24px;display:flex;gap:32px;align-items:flex-start">
+            <sc-if value="{{ s.voteNone }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:16px">Voting is off for this match.</div>
+            </sc-if>
+            <sc-if value="{{ s.voteNotRated }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px;flex:1;min-width:0">
+              <div style="font-size:16px">Not rated, {{ s.turnoutLine }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:12px 10px;padding:2px 6px">
+                <sc-for list="{{ s.turnout }}" as="t" hint-placeholder-count="12">
+                <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;color:{{ t.fg }};font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ t.bg }};border:1px solid #000;transform:rotate({{ t.rot }});box-shadow:-3px 3px 0 #000"></span>{{ t.name }}</span>
+                </sc-for>
+              </div>
+            </div>
+            </sc-if>
+            <sc-if value="{{ s.voteOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px;flex:1;min-width:0">
+              <div style="font-size:16px">{{ s.turnoutLine }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:12px 10px;padding:2px 6px">
+                <sc-for list="{{ s.turnout }}" as="t" hint-placeholder-count="12">
+                <div style="display:inline-flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;color:{{ t.fg }};font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ t.bg }};border:1px solid #000;transform:rotate({{ t.rot }});box-shadow:-3px 3px 0 #000"></span>{{ t.name }}</span><sc-if value="{{ t.enter }}" hint-placeholder-val="{{ false }}"><a style="display:inline-flex;align-items:center;height:44px;padding:0 10px;font-size:13px;color:#000;text-decoration:none;flex:none">Enter ballot</a></sc-if></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;gap:20px;padding-top:4px">
+                <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 20px;margin-left:8px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:15px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000;flex:none;white-space:nowrap">Copy reminder text</a>
+                <span style="font-size:14px">{{ s.reminderNote }}</span>
+              </div>
+            </div>
+            <sc-if value="{{ s.showStar }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:24px;flex:none;padding-right:12px">
+              <div style="font-size:14px;max-width:200px;text-align:right;text-wrap:pretty">You played in this match and haven't voted yet.</div>
+              <div style="position:relative;width:176px;height:176px;flex:none;filter:drop-shadow(-6px 6px 0 #000);margin:-8px 0">
+                <div style="position:absolute;inset:0;transform:rotate(21.5deg);background:#000;clip-path:polygon(50.0% 0.0%, 58.8% 17.2%, 75.0% 6.7%, 74.0% 26.0%, 93.3% 25.0%, 82.8% 41.2%, 100.0% 50.0%, 82.8% 58.8%, 93.3% 75.0%, 74.0% 74.0%, 75.0% 93.3%, 58.8% 82.8%, 50.0% 100.0%, 41.2% 82.8%, 25.0% 93.3%, 26.0% 74.0%, 6.7% 75.0%, 17.2% 58.8%, 0.0% 50.0%, 17.2% 41.2%, 6.7% 25.0%, 26.0% 26.0%, 25.0% 6.7%, 41.2% 17.2%)"></div>
+                <div style="position:absolute;inset:0;transform:rotate(21.5deg) scale(0.965);background:#ed1c24;clip-path:polygon(50.0% 0.0%, 58.8% 17.2%, 75.0% 6.7%, 74.0% 26.0%, 93.3% 25.0%, 82.8% 41.2%, 100.0% 50.0%, 82.8% 58.8%, 93.3% 75.0%, 74.0% 74.0%, 75.0% 93.3%, 58.8% 82.8%, 50.0% 100.0%, 41.2% 82.8%, 25.0% 93.3%, 26.0% 74.0%, 6.7% 75.0%, 17.2% 58.8%, 0.0% 50.0%, 17.2% 41.2%, 6.7% 25.0%, 26.0% 26.0%, 25.0% 6.7%, 41.2% 17.2%)"></div>
+                <a style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:0.95;color:#f7f7f3;text-transform:uppercase;text-decoration:none">Vote<br>now</a>
+              </div>
+            </div>
+            </sc-if>
+            <sc-if value="{{ s.showCast }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:24px;flex:none;padding-right:8px">
+              <div style="font-size:14px;max-width:200px;text-align:right;text-wrap:pretty">Your ballot is in. You can change it until the vote closes.</div>
+              <div style="width:200px;flex:none;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+                <div style="background:#42af36;padding:22px 16px 28px;clip-path:polygon(0 0,100% 0,100% 84%,0 100%);font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;color:#f7f7f3;text-transform:uppercase;line-height:1;text-align:center">Ballot cast</div>
+                <div style="margin-top:-12px;background:#3a3ab0;padding:20px 16px 14px;clip-path:polygon(0 18%,100% 0,100% 100%,0 100%);display:flex;flex-direction:column;gap:6px;font-size:14px;text-align:center"><a style="display:flex;align-items:center;justify-content:center;height:44px;color:#f7f7f3;text-decoration:none">See your ballot</a><a style="display:flex;align-items:center;justify-content:center;height:44px;color:#f7f7f3;text-decoration:none">Change ballot</a></div>
+              </div>
+            </div>
+            </sc-if>
+            </sc-if>
+            <sc-if value="{{ s.voteRated }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:{{ s.motmDir }};gap:40px;align-items:{{ s.motmAlign }};padding:8px 0 4px 12px;flex:1;min-width:0">
+              <div style="display:flex;flex-direction:row;flex-wrap:wrap;gap:36px 40px;flex:none;padding-bottom:12px">
+                <sc-for list="{{ s.motmCards }}" as="mc" hint-placeholder-count="1">
+                <div style="position:relative;width:180px;height:244px;flex:none">
+                  <div style="position:absolute;left:-12px;bottom:-12px;width:100%;height:100%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+                  <div style="position:absolute;inset:0;background:#f93a07;border:1px solid #000;padding:14px 14px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+                    <div style="position:absolute;top:0;right:0;width:20px;height:70%;background:radial-gradient(#f4e937 1.4px,transparent 1.9px) 0 0/7px 7px"></div>
+                    <div style="position:relative;flex:1;border:1px solid #000;background:repeating-linear-gradient(135deg,#bcc5ce 0 6px,#f7f7f3 6px 12px);display:flex;align-items:flex-end;justify-content:center;padding:6px"><div style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#f7f7f3;padding:1px 5px;border:1px solid #000">Google avatar</div></div>
+                    <div style="position:relative;background:#f7f7f3;border:2px solid #3a3ab0;outline:1px solid #000;padding:7px;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;line-height:1">{{ mc.name }}</div>
+                    <div style="position:absolute;top:20px;left:-58px;width:200px;transform:rotate(-45deg);background:#3a3ab0;border:1px solid #000;padding:3px 0;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:12px;color:#f7f7f3">Man of the match</div>
+                  </div>
+                  <div style="position:absolute;top:-18px;right:-16px;width:40px;height:33px;transform:rotate(12deg)"><div style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div><div style="position:absolute;inset:2.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div></div>
+                </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px;flex:1;min-width:0">
+                <div style="font-size:14px">{{ s.ballots }}</div>
+                <div data-table="results" style="background:#000;border:1px solid #000;overflow-x:auto;padding:8px 8px 8px 0">
+                  <div style="display:grid;grid-template-columns:minmax(210px,1fr) repeat(5,76px);gap:4px">
+                    <div style="display:flex;align-items:center;height:40px;padding-left:8px"><span style="font-size:13px;color:#f7f7f3">Player</span></div>
+                    <sc-for list="{{ tableCols }}" as="c" hint-placeholder-count="5">
+                    <div style="position:relative;height:40px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-size:13px;color:#000;white-space:nowrap">{{ c }}</span></div>
+                    </sc-for>
+                    <sc-for list="{{ s.table }}" as="p" hint-placeholder-count="12">
+                    <a style="position:relative;height:44px;display:flex;align-items:center;gap:10px;padding:0 20px;text-decoration:none;margin-left:6px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#3a3ab0;border:1px solid #000"></div><span style="position:relative;width:14px;height:14px;border-radius:50%;background:{{ p.hex }};border:1px solid {{ p.bd }};flex:none;box-sizing:border-box"></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#f7f7f3;min-width:0;white-space:nowrap;line-height:1.1">{{ p.name }}</span><sc-if value="{{ p.crowned }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:24px;height:20px;flex:none;display:inline-block"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:2px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if></a>
+                    <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="5">
+                    <div style="position:relative;height:44px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#f7f7f3;white-space:nowrap">{{ c }}</span></div>
+                    </sc-for>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-left:13px">
+          <sc-for list="{{ s.m.sides }}" as="side" hint-placeholder-count="2">
+          <div data-panel="side" style="position:relative;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:56px;background:{{ side.hex }};border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:#000;height:56px;padding:0 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+              <span style="width:18px;height:18px;border-radius:50%;background:{{ side.hex }};border:1px solid #f7f7f3;flex:none"></span>
+              <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3">{{ side.name }}</span>
+              <span style="margin-left:auto;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1;color:#f7f7f3">{{ side.score }}</span>
+              <span style="font-size:13px;color:#bcc5ce">{{ side.formLabel }}</span>
+            </div>
+            <div data-halfpitch="" style="position:relative;height:340px;background:#42af36;border-bottom:1px solid #000;overflow:hidden">
+              <div style="position:absolute;inset:12px;border:2px solid rgba(247,247,243,0.85)"></div>
+              <div style="position:absolute;top:12px;left:50%;width:120px;height:60px;transform:translateX(-50%);border:2px solid rgba(247,247,243,0.85);border-top:none;border-radius:0 0 60px 60px;box-sizing:border-box"></div>
+              <div style="position:absolute;bottom:12px;left:50%;width:52%;height:26%;transform:translateX(-50%);border:2px solid rgba(247,247,243,0.85);border-bottom:none;box-sizing:border-box"></div>
+              <div style="position:absolute;bottom:12px;left:50%;width:26%;height:11%;transform:translateX(-50%);border:2px solid rgba(247,247,243,0.85);border-bottom:none;box-sizing:border-box"></div>
+              <div style="position:absolute;inset:14px 12px 14px;display:flex;flex-direction:column;justify-content:space-around">
+                <sc-for list="{{ side.rows }}" as="row" hint-placeholder-count="4">
+                <div style="display:flex;justify-content:space-around;align-items:flex-start">
+                  <sc-for list="{{ row.players }}" as="p" hint-placeholder-count="1">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                    <div style="position:relative;width:44px;height:40px"><div style="position:absolute;inset:0;background:#000;clip-path:polygon(28% 0,40% 9%,60% 9%,72% 0,100% 16%,90% 38%,80% 32%,80% 100%,20% 100%,20% 32%,10% 38%,0 16%)"></div><div style="position:absolute;inset:0;transform:scale(0.88);background:{{ side.hex }};clip-path:polygon(28% 0,40% 9%,60% 9%,72% 0,100% 16%,90% 38%,80% 32%,80% 100%,20% 100%,20% 32%,10% 38%,0 16%)"></div></div>
+                    <div style="display:flex;align-items:center;gap:4px"><span style="background:#f7f7f3;border:1px solid #000;padding:2px 7px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:13px;line-height:1.3;white-space:nowrap">{{ p.name }}</span><sc-for list="{{ p.chips }}" as="c" hint-placeholder-count="0"><span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;background:{{ c.bg }};border:1px solid #000;font-size:12px;font-weight:700;color:#000;line-height:1">{{ c.t }}</span></sc-for></div>
+                  </div>
+                  </sc-for>
+                </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:#f7f7f3;padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-height:56px;box-sizing:border-box">
+              <span style="font-size:14px">Bench</span>
+              <sc-for list="{{ side.benchList }}" as="bn" hint-placeholder-count="1">
+              <div style="display:inline-flex;align-items:center;gap:5px"><span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;color:{{ side.fg }};font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ side.hex }};border:1px solid #000;transform:rotate(-1deg);box-shadow:-3px 3px 0 #000"></span>{{ bn.name }}</span><sc-for list="{{ bn.chips }}" as="c" hint-placeholder-count="0"><span style="display:inline-flex;align-items:center;height:18px;padding:0 5px;background:{{ c.bg }};border:1px solid #000;font-size:12px;font-weight:700;color:#000;line-height:1">{{ c.t }}</span></sc-for></div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-for>
+        </div>
+
+        <div data-panel="details" style="position:relative;margin-left:13px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;padding:16px 24px;display:grid;grid-template-columns:1fr 2fr auto;gap:32px;align-items:start">
+          <div style="position:absolute;left:-13px;top:-1px;bottom:-1px;width:12px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-size:13px">Video</span><a style="font-size:16px;color:#000;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:12px 0;margin:-12px 0">▶ {{ s.m.video }}</a></div>
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-size:13px">Note</span><div style="font-size:16px;text-wrap:pretty">{{ s.m.note }}</div></div>
+          <div style="font-size:14px;text-align:right;white-space:nowrap;align-self:end">Recorded by {{ s.m.recorder }} · {{ s.m.recordedAt }}</div>
+        </div>
+      </div>
+
+      <sc-if value="{{ s.showBallot }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-dialog="ballot" style="position:absolute;left:50%;top:64px;transform:translateX(-50%);width:760px;margin-left:142px;display:flex;flex-direction:column;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+        <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">{{ s.ballotTitle }}</div>
+          <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a>
+        </div>
+        <div style="background:#f7f7f3;padding:16px 24px 8px 28px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-size:14px">{{ s.ballotSub }}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
+            <sc-for list="{{ s.ballotSides }}" as="bs" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+              <div style="position:relative;height:40px;display:flex;align-items:center;gap:10px;padding:0 16px;margin-bottom:2px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#000;border:1px solid #000"></div><span style="position:relative;width:16px;height:16px;border-radius:50%;background:{{ bs.hex }};border:1px solid #f7f7f3;flex:none"></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">{{ bs.name }}</span></div>
+              <sc-for list="{{ bs.rows }}" as="r" hint-placeholder-count="6">
+              <a style="position:relative;height:48px;display:flex;align-items:center;gap:12px;padding:0 16px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ r.fg }}">{{ r.name }}</span><span style="position:relative;font-size:12px;color:{{ r.fg }}">{{ r.meta }}</span>
+                <sc-if value="{{ r.hasPick }}" hint-placeholder-val="{{ false }}"><span style="position:relative;margin-left:auto;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></span><span style="position:absolute;inset:0;transform:scale(0.84);background:#f4e937;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;line-height:1;margin-top:4px;color:#000">{{ r.pick }}</span></span></sc-if>
+                <sc-if value="{{ r.pickable }}" hint-placeholder-val="{{ false }}"><span style="position:relative;margin-left:auto;width:24px;height:24px;border-radius:50%;border:1px solid #000;background:#f7f7f3;flex:none;box-sizing:border-box"></span></sc-if>
+              </a>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#f7f7f3;border-top:1px solid #000;padding:16px 24px 24px;display:flex;align-items:center;gap:20px;box-sizing:border-box">
+          <span style="font-size:14px;flex:1">{{ s.castNote }}</span>
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;width:220px;height:44px;margin-left:8px;background:{{ s.castBg }};border:1px solid #000;color:{{ s.castFg }};font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000;flex:none">Cast ballot</a>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showRecord }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-dialog="record" style="position:absolute;left:50%;top:80px;transform:translateX(-50%);width:1000px;margin-left:142px;display:flex;flex-direction:column;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+        <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Change record</div>
+          <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Close</a>
+        </div>
+        <div style="background:#f7f7f3;padding:8px 24px 0;display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.2fr) auto;column-gap:0;align-items:stretch">
+          <span style="font-size:12px;padding:8px 20px 8px 0">Who</span><span style="font-size:12px;padding:8px 20px 8px 0">What</span><span style="font-size:12px;padding:8px 20px 8px 0">Old</span><span style="font-size:12px;padding:8px 20px 8px 0">New</span><span style="font-size:12px;padding:8px 0;text-align:right">When</span>
+          <sc-for list="{{ recordRows }}" as="rr" hint-placeholder-count="6">
+          <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;padding:10px 20px 10px 0;border-top:1px solid #bcc5ce">{{ rr.actor }}</span>
+          <span style="font-size:15px;padding:10px 20px 10px 0;border-top:1px solid #bcc5ce">{{ rr.act }}</span>
+          <span style="font-size:14px;padding:10px 20px 10px 0;border-top:1px solid #bcc5ce;color:#8c8f94;text-decoration:line-through;overflow-wrap:anywhere">{{ rr.old }}</span>
+          <span style="font-size:14px;font-weight:700;padding:10px 20px 10px 0;border-top:1px solid #bcc5ce;overflow-wrap:anywhere">{{ rr.new }}</span>
+          <span style="font-size:13px;padding:10px 0;border-top:1px solid #bcc5ce;text-align:right;white-space:nowrap">{{ rr.when }}</span>
+          </sc-for>
+        </div>
+        <a style="display:flex;align-items:center;justify-content:center;height:44px;flex:none;background:#f7f7f3;border-top:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box">Show more</a>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showPrompt }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-dialog="prompt" style="position:absolute;left:50%;top:240px;transform:translateX(-50%);width:480px;margin-left:142px;display:flex;flex-direction:column;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+        <div style="background:#42af36;height:64px;padding:0 20px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Ballot cast</div></div>
+        <div style="background:#f7f7f3;padding:24px 24px 8px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:20px;font-weight:700;text-wrap:pretty">Remind me by email before a vote closes?</div>
+          <div style="font-size:14px;text-wrap:pretty">One mail the day before, only for matches you played. You can change this in Account settings.</div>
+        </div>
+        <div style="background:#f7f7f3;padding:16px 24px 24px;display:flex;gap:16px;justify-content:flex-end;box-sizing:border-box">
+          <a style="display:flex;align-items:center;justify-content:center;width:140px;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box">Not now</a>
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;width:160px;height:44px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">Yes</a>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;},&quot;sideColours&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Red · Blue&quot;,&quot;Green · Yellow&quot;,&quot;Navy · White&quot;],&quot;default&quot;:&quot;Red · Blue&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sides&quot;},&quot;formation&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;1-2-1&quot;,&quot;2-1-1&quot;,&quot;1-1-2&quot;,&quot;2-2&quot;],&quot;default&quot;:&quot;1-2-1&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sides&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+  }
+  renderVals() {
+    const C = { Red: '#ed1c24', Blue: '#3a3ab0', Green: '#42af36', Yellow: '#f4e937', Navy: '#091e40', White: '#f7f7f3' };
+    const light = n => n === 'Yellow' || n === 'White';
+    const mk = n => ({ name: n, hex: C[n], bd: ['Navy', 'Black', 'Dark green'].includes(n) ? '#f7f7f3' : '#000', fg: light(n) ? '#000' : '#f7f7f3' });
+    const pair = (this.props.sideColours ?? 'Red · Blue').split(' · ');
+    const a = mk(pair[0]), b = mk(pair[1]);
+    const form = this.props.formation ?? '1-2-1';
+    const chips = (g, as) => { const o = []; if (g) o.push({ t: g + 'G', bg: '#f7f7f3' }); if (as) o.push({ t: as + 'A', bg: '#bcc5ce' }); return o; };
+    const P = (name, g, as) => ({ name, chips: chips(g, as) });
+    const rowsFor = players => {
+      const groups = form.split('-').map(Number); const out = []; let i = 1;
+      for (const n of groups) { out.push(players.slice(i, i + n)); i += n; }
+      out.reverse(); out.push([players[0]]);
+      return out.map(r => ({ players: r }));
+    };
+    const side = (col, players, bench, score) => ({ ...col, score, rows: rowsFor(players), benchList: bench, formLabel: form, all: [...players, ...bench].map(p => p.name) });
+    // Pickup: Sunday league
+    const redP = [P('Paja'), P('Ivan', 0, 1), P('Marko', 1), P('Cope', 1, 1), P('Ana', 2, 1)];
+    const blueP = [P('Nikola'), P('Bogdan', 0, 1), P('Dinić', 1, 1), P('Luka', 1), P('Pule', 1)];
+    const pickup = (date) => ({ comp: 'Sunday league', tag: 'Pickup', tagBg: '#3a3ab0', date, video: 'youtu.be/k3RzQ8-sunday', note: 'Rain at half time, moved to the covered pitch.', recorder: 'Ana', recordedAt: date + ' 21:40',
+      a: side(a, redP, [P('Sale')], 4), b: side(b, blueP, [P('Vlada')], 3) });
+    // League: Zimska liga, team colours are the teams' own
+    const navy = { name: 'Bulevar', hex: '#091e40', bd: '#f7f7f3', fg: '#f7f7f3' }, yellow = { name: 'Grbavica', hex: '#f4e937', bd: '#000', fg: '#000' };
+    const bulP = [P('Vuk'), P('Miloš', 0, 1), P('Đole', 2), P('Saša'), P('Filip', 0, 1)];
+    const grbP = [P('Goran'), P('Nemanja', 1), P('Zoran', 0, 1), P('Dejan', 1), P('Boban', 0, 1)];
+    const league = (date) => ({ comp: 'Zimska liga', tag: 'League', tagBg: '#0c542c', date, video: 'youtu.be/zl-r7-bulevar', note: 'Round 7. Grbavica equalised in the last minute.', recorder: 'Miloš', recordedAt: date + ' 19:05',
+      a: side(navy, bulP, [P('Steva')], 2), b: side(yellow, grbP, [P('Mika')], 2) });
+    const withSides = m => ({ ...m, sides: [m.a, m.b] });
+    const rots = ['-1.5deg', '1deg', '-1deg', '1.5deg', '-0.8deg', '1.2deg'];
+    const turnoutFor = (m, voted, enterFor) => [...m.a.all.map(n => [n, m.a]), ...m.b.all.map(n => [n, m.b])].map(([name, col], i) => {
+      const v = voted.includes(name);
+      return { name, bg: v ? col.hex : '#bcc5ce', fg: v ? col.fg : '#000', rot: rots[i % rots.length], enter: !!enterFor && !v };
+    });
+    const ballotFor = (m, own, picks) => [m.a, m.b].map(col => ({ ...col, rows: col.all.map((name, i) => {
+      const isOwn = name === own, pick = picks.indexOf(name) + 1;
+      return { name, pick, hasPick: pick > 0, own: isOwn, pickable: !isOwn && pick === 0, bg: isOwn ? '#28477a' : (pick ? '#171775' : (i % 2 ? '#0d2e63' : '#091e40')), fg: isOwn ? '#bcc5ce' : '#f7f7f3', meta: isOwn ? (own === 'Cope' ? 'you' : 'his own row') : '' };
+    }) }));
+    const votedOpen = ['Ana', 'Marko', 'Luka', 'Dinić', 'Pule', 'Ivan', 'Bogdan'];
+    const base = { phoneH: 'auto', deskH: 'auto', manager: false, menuOpen: false, menuBg: '#f7f7f3', menuFg: '#000', showBallot: false, showPrompt: false, showRecord: false, roleLine: 'Member · 2 open votes', openVotes: '2',
+      voteOpen: false, voteRated: false, voteNotRated: false, voteNone: false, showStar: false, showCast: false, showTurnout: false, turnout: [], turnoutLine: '', hdrBg: '#3a3ab0', hdrFg: '#f7f7f3', hdrRight: '',
+      reminderNote: 'Copies a short message with the link, for the Group chat.', motmCards: [], motmDir: 'row', motmAlign: 'flex-start', ballots: '', table: [], ballotTitle: '', ballotSub: '', ballotSides: [], castNote: '', castBg: '#bcc5ce', castFg: '#000' };
+    const m1 = withSides(pickup('Sun 14 Sep'));
+    const open = (voted, viewerVoted, mgr) => ({ voteOpen: true, showTurnout: true, hdrBg: '#3a3ab0', hdrFg: '#f7f7f3', hdrRight: 'Open · closes Friday', showStar: !viewerVoted, showCast: viewerVoted,
+      turnout: turnoutFor(m1, voted, mgr), turnoutLine: `${voted.length} of 12 ballots · closes Friday` });
+    const mgr = { manager: true, roleLine: 'Manager · 1 open vote', openVotes: '1' };
+    const mL = withSides(league('Sat 6 Sep'));
+    const tableCols = ['Rating', 'Points', 'Firsts', 'Seconds', 'Thirds'];
+    const tally = ballots => {
+      const col = n => (mL.a.all.includes(n) ? mL.a : mL.b);
+      const rows = [...mL.a.all, ...mL.b.all].map(n => { const [f, s, t] = ballots[n] || [0, 0, 0]; return { n, f, s, t, pts: 3 * f + 2 * s + t }; });
+      rows.sort((x, y) => y.pts - x.pts || y.f - x.f || y.s - x.s || x.n.localeCompare(y.n));
+      const top = rows[0].pts;
+      return rows.map((r, i) => ({ name: r.n, hex: col(r.n).hex, bd: col(r.n).bd, crowned: r.pts === top, bg: i % 2 ? '#0d2e63' : '#091e40', cells: [(r.pts / 12).toFixed(2), String(r.pts), String(r.f), String(r.s), String(r.t)] }));
+    };
+    const tSingle = tally({ 'Đole': [6, 4, 3], Nemanja: [3, 3, 2], Goran: [2, 2, 1], Vuk: [1, 1, 2], Dejan: [0, 1, 2], 'Miloš': [0, 1, 1], Zoran: [0, 0, 1] });
+    const tShared = tally({ 'Đole': [5, 3, 2], Nemanja: [5, 3, 2], Goran: [1, 2, 2], Vuk: [1, 2, 1], Dejan: [0, 1, 2], 'Miloš': [0, 1, 1], Zoran: [0, 0, 1], Boban: [0, 0, 1] });
+    const sections = [
+      { ...base, id: '8a', label: '8a Match page, vote open, not voted', m: m1, ...open(votedOpen, false, false),
+        blurb: `${a.name} 4-3 ${b.name}, Pickup, Sun 14 Sep · vote open, closes Friday, 7 of 12 ballots · Cope has not voted: the starburst · turnout as name stickers, voted in the side colour, waiting greyed · Copy reminder text · half-pitches in ${form} with goal and assist marks, the bench beneath · video, note, Recorded by Ana · Share` },
+      { ...base, id: '8b', label: '8b Vote open, voted, Manager', m: m1, ...open([...votedOpen, 'Cope'], true, true), ...mgr, menuOpen: true, menuBg: '#ed1c24', menuFg: '#f7f7f3', phoneH: '844px',
+        blurb: 'Same match, Cope as a Manager who has voted · the green box, See your ballot and Change ballot · Enter ballot beside each name still waiting · the overflow menu open: Edit, Un-complete, Delete, Close now, Extend, Change record' },
+      { ...base, id: '8c', label: '8c Rated', m: mL, voteRated: true, hdrBg: '#faf15d', hdrFg: '#000', hdrRight: 'Rated · closed 12 Sep', motmCards: [{ name: 'Đole' }], ballots: '12 ballots', table: tSingle, roleLine: 'Member · 2 open votes', openVotes: '2',
+        blurb: 'Bulevar 2-2 Grbavica, League, team colours Navy and Yellow · rated: Đole man of the match on a sticker card with a crown · the results table: every Player of the match, highest rating first, Rating · Points · Firsts · Seconds · Thirds, the top row crowned · the name cell pinned on a phone, the numerals scroll · nobody\'s picks' },
+      { ...base, id: '8c-2', label: '8c-2 Rated, shared crown', m: mL, voteRated: true, motmDir: 'column', motmAlign: 'stretch', hdrBg: '#faf15d', hdrFg: '#000', hdrRight: 'Rated · closed 12 Sep', motmCards: [{ name: 'Đole' }, { name: 'Nemanja' }], ballots: '12 ballots', table: tShared, roleLine: 'Member · 2 open votes', openVotes: '2',
+        blurb: 'Same match, Đole and Nemanja level on points · two sticker cards, one under the other on a phone and side by side above the table on a desktop, both top rows of the table crowned' },
+      { ...base, id: '8d', label: '8d Not rated', m: withSides(pickup('Sun 7 Sep')), voteNotRated: true, showTurnout: true, hdrBg: '#07361c', hdrFg: '#f7f7f3', hdrRight: 'Closed 12 Sep', turnout: turnoutFor(m1, ['Ana', 'Luka'], false), turnoutLine: '2 of 12 ballots',
+        blurb: '"Not rated, 2 of 12 ballots" and the turnout only · below the Award threshold, so no man of the match' },
+      { ...base, id: '8e', label: '8e Voting off', m: withSides(league('Sat 30 Aug')), voteNone: true, hdrBg: '#07361c', hdrFg: '#f7f7f3', hdrRight: 'Off',
+        blurb: '"Voting is off for this match" · the competition runs without a vote' },
+      { ...base, id: '8f', label: '8f Ballot sheet', m: m1, ...open(votedOpen, false, false), showBallot: true, phoneH: '960px', deskH: '1040px',
+        ballotTitle: 'Your ballot', ballotSub: 'Tap in order: first, second, third. Every Player of the match, both sides.', ballotSides: ballotFor(m1, 'Cope', ['Ana', 'Luka', 'Dinić']), castNote: '3 of 3 picked', castBg: '#ed1c24', castFg: '#f7f7f3',
+        blurb: 'The ballot sheet · every Player of the match in both colours · tapped in order, a numbered star for first, second and third · Cope\'s own row greyed · Cast ballot red at three · a sheet on a phone, a dialog on a desktop' },
+      { ...base, id: '8g', label: '8g Ballot on behalf', m: m1, ...open([...votedOpen, 'Cope'], true, true), ...mgr, showBallot: true, phoneH: '960px', deskH: '1040px',
+        ballotTitle: 'Ballot for Pule', ballotSub: 'Entered by Cope on Pule\'s behalf. Tap in order: first, second, third.', ballotSides: ballotFor(m1, 'Pule', ['Ana']), castNote: '1 of 3 picked · two more', castBg: '#bcc5ce', castFg: '#000',
+        blurb: 'On behalf · a Manager tapped Enter ballot beside Pule · titled with his name, his own row greyed · one pick so far, so Cast ballot stays grey' },
+      { ...base, id: '8h', label: '8h Reminder prompt', m: m1, ...open([...votedOpen, 'Cope'], true, false), showPrompt: true, phoneH: '844px', deskH: '960px',
+        blurb: 'The one-time prompt after casting: "Remind me by email before a vote closes?" · Yes and Not now · never shown again' },
+      { ...base, id: '8i', label: '8i Change record', m: m1, ...open([...votedOpen, 'Cope'], true, true), ...mgr, showRecord: true, phoneH: '960px', deskH: '1000px',
+        blurb: 'Change record, from the overflow menu · every act on the match newest first, with actor, old and new values · ends in the Show more bar; nothing else on the match page is paged' }
+    ];
+    const recordRows = [
+      ['Cope', 'entered a ballot for Pule', '', '', 'Wed 17 Sep 20:12'],
+      ['Ana', 'changed the result', 'Red 3-3 Blue', 'Red 4-3 Blue', 'Sun 14 Sep 22:05'],
+      ['Ana', 'added a goal', '', 'Cope, Red', 'Sun 14 Sep 22:05'],
+      ['Ana', 'changed the note', '', 'Rain at half time, moved to the covered pitch.', 'Sun 14 Sep 21:48'],
+      ['Ana', 'set the video link', '', 'youtu.be/k3RzQ8-sunday', 'Sun 14 Sep 21:44'],
+      ['Ana', 'completed the match', 'Draft', 'Completed', 'Sun 14 Sep 21:40'],
+      ['Ana', 'moved Sale to the bench', 'Red, starting', 'Red, bench', 'Sun 14 Sep 21:38'],
+      ['Cope', 'extended the vote', 'closes Wed 17 Sep', 'closes Fri 19 Sep', 'Sun 14 Sep 21:20']
+    ].map(([actor, act, o, n, when]) => ({ actor, act, old: o, new: n, when, hasVals: !!(o || n) }));
+    const menuItems = [['Edit', '#000', 'none'], ['Un-complete', '#000', 'none'], ['Delete', '#ed1c24', 'none'], ['Close now', '#000', '1px solid #000'], ['Extend', '#000', 'none'], ['Change record', '#000', '1px solid #000']].map(([t, fg, bt]) => ({ t, fg, bt }));
+    return { sections, menuItems, recordRows, tableCols };
+  }
+}
+</script>
+</body>
+</html>

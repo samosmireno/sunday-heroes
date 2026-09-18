@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase">Screen 10 · Player page</div>
+  <div style="font-size:14px">one Player's career in the Group · header, sticker card, six stat blocks, Form and rating chart, breakdown by competition and Season, streaks and attendance, Played with, Played against, best matches, Honours · the match history last, fifty at a time under Show more</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="3">
+<section id="{{ s.id }}" data-screen-label="{{ s.label }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><span style="display:flex;align-items:center;height:28px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3">Player</span></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:12px">
+
+        <div data-band="" style="height:44px;background:#f4e937;border:1px solid #000;display:flex;align-items:center;gap:10px;padding:0 10px;overflow:hidden"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1;text-transform:uppercase;text-shadow:-3px 3px 0 #000;white-space:nowrap;color:#3a3ab0">{{ s.name }}</span><sc-if value="{{ s.linked }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;flex:none"><span style="width:12px;height:12px;border:2px solid #000;border-radius:50%;box-sizing:border-box"></span><span style="width:12px;height:12px;border:2px solid #000;border-radius:50%;box-sizing:border-box;margin-left:-5px"></span></span></sc-if><span style="flex:1;display:flex;justify-content:space-around;color:#ed1c24;font-size:18px;line-height:1"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;padding:6px 10px;background:#f7f7f3;border:1px solid #000;color:#000;align-self:flex-start;margin-left:4px"><span>First match {{ s.first }}</span><span>Last match {{ s.last }}</span><span>{{ s.linkLine }}</span></div>
+
+        <a data-selector="" style="position:relative;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 18px;margin:0 4px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ s.compBg }};border:1px solid #000"></div><span style="position:relative;font-size:14px;color:{{ s.compFg }};min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ s.compLabel }}</span><span style="position:relative;font-size:12px;color:{{ s.compFg }}">▾</span></a>
+
+        <div data-player="" style="display:flex;gap:20px;align-items:flex-start;padding:4px 0 10px 10px">
+          <div style="position:relative;width:160px;height:216px;flex:none">
+            <div style="position:absolute;left:-10px;bottom:-10px;width:100%;height:100%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="position:absolute;inset:0;background:#f93a07;border:1px solid #000;padding:12px 12px 10px;box-sizing:border-box;display:flex;flex-direction:column;gap:8px;overflow:hidden">
+              <div style="position:absolute;top:0;right:0;width:18px;height:70%;background:radial-gradient(#f4e937 1.4px,transparent 1.9px) 0 0/7px 7px"></div>
+              <sc-if value="{{ s.linked }}" hint-placeholder-val="{{ true }}"><div style="position:relative;flex:1;border:1px solid #000;background:repeating-linear-gradient(135deg,#bcc5ce 0 6px,#f7f7f3 6px 12px);display:flex;align-items:flex-end;justify-content:center;padding:6px"><div style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#f7f7f3;padding:1px 5px;border:1px solid #000">Google avatar</div></div></sc-if>
+              <sc-if value="{{ s.unlinked }}" hint-placeholder-val="{{ false }}"><div style="position:relative;flex:1;border:1px solid #000;background:#8c8f94;overflow:hidden;display:flex;align-items:center;justify-content:center"><div style="position:absolute;left:50%;top:22%;width:44px;height:44px;margin-left:-22px;border-radius:50%;background:#bcc5ce"></div><div style="position:absolute;left:50%;top:58%;width:96px;height:80px;margin-left:-48px;border-radius:48px 48px 0 0;background:#bcc5ce"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;color:#000">{{ s.initials }}</span></div></sc-if>
+              <div style="position:relative;background:#f7f7f3;border:2px solid #3a3ab0;outline:1px solid #000;padding:6px;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;line-height:1">{{ s.name }}</div>
+              <div style="position:absolute;top:16px;left:-56px;width:180px;transform:rotate(-45deg);background:#3a3ab0;border:1px solid #000;padding:3px 0;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:12px;color:#f7f7f3">{{ s.since }}</div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;font-size:13px;padding:10px 12px;margin-top:6px;background:#f7f7f3;border:1px solid #000;color:#000;align-self:flex-start">
+            <div><span style="color:#07361c">Competitions</span><br><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ s.compCount }}</span></div>
+            <div><span style="color:#07361c">Seasons</span><br><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ s.seasonCount }}</span></div>
+            <div><span style="color:#07361c">Win rate</span><br><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ s.winRate }}</span></div>
+          </div>
+        </div>
+
+        <div data-stats="" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <sc-for list="{{ s.stats }}" as="st" hint-placeholder-count="6">
+          <div style="position:relative;overflow:hidden;background:#07361c;border:1px solid #000;height:72px;display:flex;align-items:center"><div style="position:absolute;top:0;bottom:0;left:42%;right:-40%;background:#0c542c;border-left:1px solid #000;transform:skewX(-21.5deg);transform-origin:bottom left"></div><div style="position:relative;width:42%;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:{{ st.fsP }};line-height:1;color:#f7f7f3;white-space:nowrap">{{ st.v }}</div><div style="position:relative;flex:1;padding-left:18px;font-size:14px;color:#f7f7f3;line-height:1.2">{{ st.label }}<br><span style="font-size:12px;color:#bcc5ce">{{ st.sub }}</span></div></div>
+          </sc-for>
+        </div>
+
+        <div data-form="" style="display:flex;align-items:center;gap:10px;padding:0 4px">
+          <span style="font-size:13px;display:inline-flex;align-items:center;height:28px;padding:0 8px;background:#f7f7f3;border:1px solid #000;color:#000;flex:none">Form</span>
+          <sc-for list="{{ s.form }}" as="f" hint-placeholder-count="5">
+          <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:{{ f.fg }};position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ f.bg }};border:1px solid #000;box-shadow:-2px 2px 0 #000;transform:rotate({{ f.rot }})"></span>{{ f.l }}</div>
+          </sc-for>
+        </div>
+
+        <div data-panel="chart" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;white-space:nowrap;flex:none">Rating history</div><div style="font-size:12px;color:#bcc5ce;text-align:right;min-width:0;line-height:1.2">{{ s.chartLine }}</div></div>
+          <div style="background:#f7f7f3;padding:14px 12px 10px 12px">
+            <div style="display:flex;gap:8px">
+              <div style="display:flex;flex-direction:column;justify-content:space-between;height:220px;font-size:12px;color:#000;text-align:right;width:18px;line-height:1"><span>3</span><span>2</span><span>1</span><span>0</span></div>
+              <div style="position:relative;flex:1;height:220px;border-left:1px solid #000;border-bottom:1px solid #000;display:flex;align-items:flex-end;gap:2px;padding:0 4px;box-sizing:border-box">
+                <sc-if value="{{ s.hasChart }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;left:0;right:0;top:50%;border-top:1px dashed #8c8f94"></div></sc-if>
+                <sc-if value="{{ s.hasChart }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;left:0;right:0;bottom:{{ s.avgY }};border-top:2px dashed #ed1c24"></div></sc-if>
+                <sc-for list="{{ s.bars }}" as="b" hint-placeholder-count="30">
+                <div style="flex:1 1 0;max-width:24px;min-width:2px;height:{{ b.h }};background:{{ b.bg }};border:1px solid #000;border-bottom:0;box-sizing:border-box"></div>
+                </sc-for>
+              </div>
+            </div>
+            <sc-if value="{{ s.hasChart }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0 0 26px"><span>{{ s.chartFirst }}</span><span style="color:#ed1c24">average {{ s.ratingAvg }}</span><span>{{ s.chartLast }}</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;padding:6px 0 0 26px"><span style="display:inline-flex;align-items:center;gap:5px"><span style="display:inline-block;width:10px;height:10px;background:#0c542c;border:1px solid #000"></span>won</span><span style="display:inline-flex;align-items:center;gap:5px"><span style="display:inline-block;width:10px;height:10px;background:#8c8f94;border:1px solid #000"></span>drawn</span><span style="display:inline-flex;align-items:center;gap:5px"><span style="display:inline-block;width:10px;height:10px;background:#ed1c24;border:1px solid #000"></span>lost</span></div>
+            </sc-if>
+            <sc-if value="{{ s.noChart }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;padding:8px 0 2px 26px">No Rated match yet.</div></sc-if>
+          </div>
+        </div>
+
+        <div data-panel="breakdown" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">By competition</div></div>
+          <div style="background:#000;overflow-x:auto;padding:8px 8px 8px 0">
+            <div style="display:grid;grid-template-columns:150px repeat(6,68px);gap:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding-left:8px;display:flex;align-items:center;height:32px"><span style="font-size:13px;color:#f7f7f3">Competition</span></div>
+              <sc-for list="{{ s.bCols }}" as="c" hint-placeholder-count="6">
+              <div style="position:relative;height:32px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }};white-space:nowrap">{{ c.name }}</span></div>
+              </sc-for>
+              <sc-for list="{{ s.bRows }}" as="r" hint-placeholder-count="5">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding-left:8px"><div style="position:relative;height:44px;display:flex;align-items:center;gap:8px;padding:0 12px 0 {{ r.pad }}"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.bg }};border:1px solid #000"></div><sc-if value="{{ r.hasTag }}" hint-placeholder-val="{{ true }}"><div style="position:relative;display:inline-flex;align-items:center;height:20px;padding:0 8px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ r.tag }}</span></div></sc-if><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:{{ r.fs }};color:#f7f7f3;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ r.name }}</span></div></div>
+              <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="6">
+              <div style="position:relative;height:44px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.cellBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;white-space:nowrap">{{ c }}</span></div>
+              </sc-for>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div data-panel="streaks" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:52px;padding:0 16px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Streaks</div></div>
+          <div style="background:#f7f7f3;padding:4px 16px;display:flex;flex-direction:column">
+            <sc-for list="{{ s.facts }}" as="f" hint-placeholder-count="5">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-top:1px solid #bcc5ce"><span style="font-size:14px">{{ f.k }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;white-space:nowrap;text-align:right">{{ f.v }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-panel="with" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Played with</div><div style="display:flex;align-items:center;gap:8px"><div style="width:48px;height:24px;background:repeating-linear-gradient(90deg,#000 0 5px,transparent 5px 10px)"></div><div style="width:12px;height:12px;border-radius:50%;background:#000"></div></div></div>
+          <div style="background:#000;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <sc-for list="{{ s.withCards }}" as="t" hint-placeholder-count="4">
+            <a style="display:flex;flex-direction:column;text-decoration:none;color:#f7f7f3;border:1px solid #000">
+              <div style="display:flex;align-items:stretch;height:40px;background:#091e40"><span style="width:40px;display:flex;align-items:center;justify-content:center;background:#f7f7f3;color:#000;border-right:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px">{{ t.rank }}</span><span style="flex:1;display:flex;align-items:center;padding:0 10px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ t.name }}</span></div>
+              <div style="background:#3a3ab0;padding:10px 12px;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:1.3"><span>{{ t.n }} matches</span><span style="font-weight:700">{{ t.wdl }}</span><span>{{ t.win }} win rate</span></div>
+            </a>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-panel="against" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Played against</div><div style="display:flex;align-items:center;gap:8px"><div style="width:48px;height:24px;background:repeating-linear-gradient(90deg,#0c542c 0 5px,transparent 5px 10px)"></div><div style="width:12px;height:12px;border-radius:50%;background:#42af36"></div></div></div>
+          <div style="background:#000;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <sc-for list="{{ s.againstCards }}" as="t" hint-placeholder-count="4">
+            <a style="display:flex;flex-direction:column;text-decoration:none;color:#f7f7f3;border:1px solid #000">
+              <div style="display:flex;align-items:stretch;height:40px;background:#000"><span style="width:40px;display:flex;align-items:center;justify-content:center;background:#f7f7f3;color:#000;border-right:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px">{{ t.rank }}</span><span style="flex:1;display:flex;align-items:center;padding:0 10px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ t.name }}</span></div>
+              <div style="background:#0c542c;padding:10px 12px;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:1.3"><span>{{ t.n }} matches</span><span style="font-weight:700">{{ t.wdl }}</span><span>{{ t.win }} win rate</span></div>
+            </a>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-panel="best" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Best matches</div></div>
+          <div style="background:#0c542c;padding:12px 12px 16px 14px;display:flex;flex-direction:column;gap:12px">
+            <sc-if value="{{ s.noBest }}" hint-placeholder-val="{{ false }}"><div style="background:#f7f7f3;border:1px solid #000;padding:8px 12px;font-size:14px;color:#000">No Rated match yet.</div></sc-if>
+            <sc-for list="{{ s.best }}" as="m" hint-placeholder-count="3">
+            <a style="background:#091e40;border:1px solid #000;box-shadow:-4px 4px 0 #000;padding:10px 12px;display:flex;flex-direction:column;gap:8px;color:#f7f7f3;text-decoration:none">
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#bcc5ce"><div style="position:relative;display:inline-flex;align-items:center;height:22px;padding:0 10px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ m.format }}</span></div><span style="flex:1;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ m.comp }}</span><span style="flex:none">{{ m.date }}</span></div>
+              <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px">
+                <div style="display:flex;align-items:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;min-width:0"><span style="width:12px;height:12px;border-radius:50%;background:{{ m.aC }};border:1px solid {{ m.aBd }};flex:none"></span><span style=";min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ m.a }}</span></div>
+                <div style="display:flex;gap:4px"><div style="position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;color:#000">{{ m.aS }}</span></div><div style="position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;color:#000">{{ m.bS }}</span></div></div>
+                <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;min-width:0"><span style=";min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ m.b }}</span><span style="width:12px;height:12px;border-radius:50%;background:{{ m.bC }};border:1px solid {{ m.bBd }};flex:none"></span></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:14px"><span style="flex:1">{{ m.line }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px">{{ m.rating }}</span><sc-if value="{{ m.crown }}" hint-placeholder-val="{{ false }}"><div style="position:relative;width:18px;height:15px;flex:none"><div style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div><div style="position:absolute;inset:1.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div></div></sc-if></div>
+            </a>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-panel="honours" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#faf15d;height:52px;padding:0 16px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#000">Honours</div></div>
+          <div style="position:relative;background:#faf15d;padding:12px 44px 14px 16px;overflow:hidden;display:flex;flex-direction:column;gap:8px">
+            <div style="position:absolute;right:-8px;top:0;bottom:0;width:24px;background:#cec311;border-left:1px solid #000;transform:skewX(-15deg)"></div>
+            <sc-for list="{{ s.honours }}" as="h" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:10px"><span style="color:#ed1c24;font-size:18px;line-height:1">★</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ h.title }}</span><span style="font-size:14px">{{ h.where }}</span></div>
+            </sc-for>
+            <sc-if value="{{ s.noHonours }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px">No honours yet.</div></sc-if>
+          </div>
+        </div>
+
+        <div data-panel="history" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;white-space:nowrap;flex:none">Match history</div><div style="font-size:12px;color:#bcc5ce;text-align:right;min-width:0;line-height:1.2">{{ s.historyLine }}</div></div>
+          <div style="background:#0c542c;padding:12px 12px 16px 14px;display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ s.history }}" as="m" hint-placeholder-count="8">
+            <a style="background:{{ m.bg }};border:1px solid #000;box-shadow:-4px 4px 0 #000;padding:10px 12px;display:flex;flex-direction:column;gap:8px;color:#f7f7f3;text-decoration:none">
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#bcc5ce"><div style="position:relative;display:inline-flex;align-items:center;height:22px;padding:0 10px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ m.format }}</span></div><span style="flex:1;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ m.comp }}</span><span style="flex:none">{{ m.date }}</span></div>
+              <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px">
+                <div style="display:flex;align-items:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;min-width:0"><span style="width:12px;height:12px;border-radius:50%;background:{{ m.aC }};border:1px solid {{ m.aBd }};flex:none"></span><span style=";min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ m.a }}</span></div>
+                <div style="display:flex;gap:4px"><div style="position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;color:#000">{{ m.aS }}</span></div><div style="position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;color:#000">{{ m.bS }}</span></div></div>
+                <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;min-width:0"><span style=";min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ m.b }}</span><span style="width:12px;height:12px;border-radius:50%;background:{{ m.bC }};border:1px solid {{ m.bBd }};flex:none"></span></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:14px"><div style="width:28px;height:28px;background:{{ m.resBg }};border:1px solid #000;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ m.resFg }};flex:none">{{ m.res }}</div><span style="flex:1">{{ m.line }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:{{ m.ratingFg }}">{{ m.rating }}</span><sc-if value="{{ m.crown }}" hint-placeholder-val="{{ false }}"><div style="position:relative;width:18px;height:15px;flex:none"><div style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div><div style="position:absolute;inset:1.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div></div></sc-if></div>
+            </a>
+            </sc-for>
+            <sc-if value="{{ s.loading }}" hint-placeholder-val="{{ false }}"><div style="height:118px;background:#bcc5ce;border:1px solid #000;box-shadow:-4px 4px 0 #000"></div></sc-if>
+            <sc-if value="{{ s.hasMore }}" hint-placeholder-val="{{ true }}"><a style="display:flex;align-items:center;justify-content:center;height:44px;margin-top:4px;background:#f7f7f3;border:1px solid #000;color:{{ s.moreFg }};font-size:16px;text-decoration:none;box-shadow:-4px 4px 0 #000">Show more</a></sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div data-tabbar="" style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr);height:60px;box-sizing:border-box">
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Competitions</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;background:#ed1c24;border-left:1px solid #000;border-right:1px solid #000;text-decoration:none">Players</a>
+        <a style="display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You<span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#ed1c24;border:1px solid #000;font-size:12px;color:#f7f7f3;box-sizing:border-box">2</span></a>
+      </div>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+        </nav>
+        <div style="flex:1"></div>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">2</span></a>
+      </div>
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;min-width:0;padding:40px 40px 48px;gap:24px;box-sizing:border-box">
+
+        <div style="display:flex;align-items:center;gap:16px;font-size:14px;align-self:flex-start;margin-left:8px;padding:0 14px;min-height:44px;background:#f7f7f3;border:1px solid #000;color:#000;box-sizing:border-box"><a style="color:#000;display:inline-flex;align-items:center;min-height:44px">Players</a><span>›</span><span>{{ s.name }}</span></div>
+
+        <div data-band="" style="margin-left:8px;height:72px;background:#f4e937;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;align-items:center;gap:20px;padding:0 20px;box-sizing:border-box;position:relative">
+          <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;white-space:nowrap;padding-right:6px;color:#3a3ab0">{{ s.name }}</span>
+          <sc-if value="{{ s.linked }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;flex:none"><span style="width:16px;height:16px;border:3px solid #000;border-radius:50%;box-sizing:border-box"></span><span style="width:16px;height:16px;border:3px solid #000;border-radius:50%;box-sizing:border-box;margin-left:-6px"></span></span></sc-if>
+          <span style="flex:1;min-width:140px;display:flex;justify-content:space-around;color:#ed1c24;font-size:20px;line-height:1"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></span>
+          <a data-selector="" style="position:relative;width:300px;height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;text-decoration:none;box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ s.compBg }};border:1px solid #000"></div><span style="position:relative;font-size:15px;color:{{ s.compFg }};white-space:nowrap">{{ s.compLabel }}</span><span style="position:relative;font-size:12px;color:{{ s.compFg }}">▾</span></a>
+        </div>
+
+        <div style="display:flex;gap:16px;font-size:14px;margin:0 0 0 8px;padding:8px 12px;background:#f7f7f3;border:1px solid #000;color:#000;align-self:flex-start"><span>First match {{ s.first }}</span><span>·</span><span>Last match {{ s.last }}</span><span>·</span><span>{{ s.linkLine }}</span></div>
+        <div data-player="" style="display:flex;gap:32px;align-items:flex-start;padding-left:20px">
+          <div style="position:relative;width:200px;height:270px;flex:none">
+            <div style="position:absolute;left:-12px;bottom:-12px;width:100%;height:100%;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="position:absolute;inset:0;background:#f93a07;border:1px solid #000;padding:14px 14px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+              <div style="position:absolute;top:0;right:0;width:22px;height:70%;background:radial-gradient(#f4e937 1.6px,transparent 2.1px) 0 0/8px 8px"></div>
+              <sc-if value="{{ s.linked }}" hint-placeholder-val="{{ true }}"><div style="position:relative;flex:1;border:1px solid #000;background:repeating-linear-gradient(135deg,#bcc5ce 0 6px,#f7f7f3 6px 12px);display:flex;align-items:flex-end;justify-content:center;padding:6px"><div style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#f7f7f3;padding:1px 5px;border:1px solid #000">Google avatar</div></div></sc-if>
+              <sc-if value="{{ s.unlinked }}" hint-placeholder-val="{{ false }}"><div style="position:relative;flex:1;border:1px solid #000;background:#8c8f94;overflow:hidden;display:flex;align-items:center;justify-content:center"><div style="position:absolute;left:50%;top:22%;width:56px;height:56px;margin-left:-28px;border-radius:50%;background:#bcc5ce"></div><div style="position:absolute;left:50%;top:58%;width:120px;height:100px;margin-left:-60px;border-radius:60px 60px 0 0;background:#bcc5ce"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:36px;color:#000">{{ s.initials }}</span></div></sc-if>
+              <div style="position:relative;background:#f7f7f3;border:2px solid #3a3ab0;outline:1px solid #000;padding:8px;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;line-height:1">{{ s.name }}</div>
+              <div style="position:absolute;top:20px;left:-66px;width:220px;transform:rotate(-45deg);background:#3a3ab0;border:1px solid #000;padding:4px 0;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:12px;color:#f7f7f3">{{ s.since }}</div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:14px">
+            <div data-stats="" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+              <sc-for list="{{ s.stats }}" as="st" hint-placeholder-count="6">
+              <div style="position:relative;overflow:hidden;background:#07361c;border:1px solid #000;height:96px;display:flex;align-items:center"><div style="position:absolute;top:0;bottom:0;left:40%;right:-40%;background:#0c542c;border-left:1px solid #000;transform:skewX(-21.5deg);transform-origin:bottom left"></div><div style="position:relative;width:40%;text-align:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:{{ st.fsD }};line-height:1;color:#f7f7f3;white-space:nowrap">{{ st.v }}</div><div style="position:relative;flex:1;padding-left:28px;font-size:16px;color:#f7f7f3;line-height:1.25">{{ st.label }}<br><span style="font-size:13px;color:#bcc5ce">{{ st.sub }}</span></div></div>
+              </sc-for>
+            </div>
+            <div data-form="" style="display:flex;align-items:center;gap:14px;padding:0 4px">
+              <span style="font-size:16px;display:inline-flex;align-items:center;height:32px;padding:0 10px;background:#f7f7f3;border:1px solid #000;color:#000;flex:none">Form</span>
+              <sc-for list="{{ s.form }}" as="f" hint-placeholder-count="5">
+              <div style="width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:26px;color:{{ f.fg }};position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ f.bg }};border:1px solid #000;box-shadow:-3px 3px 0 #000;transform:rotate({{ f.rot }})"></span>{{ f.l }}</div>
+              </sc-for>
+              <span style="margin-left:auto;font-size:14px;display:inline-flex;align-items:center;height:32px;padding:0 10px;background:#f7f7f3;border:1px solid #000;color:#000">{{ s.formLine }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:3fr 2fr;gap:24px;align-items:start">
+          <div data-panel="chart" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3;white-space:nowrap">Rating history</div><div style="font-size:14px;color:#bcc5ce">{{ s.chartLine }}</div></div>
+            <div style="background:#f7f7f3;padding:20px 20px 14px">
+              <div style="display:flex;gap:10px">
+                <div style="display:flex;flex-direction:column;justify-content:space-between;height:320px;font-size:12px;text-align:right;width:20px;line-height:1"><span>3</span><span>2</span><span>1</span><span>0</span></div>
+                <div style="position:relative;flex:1;height:320px;border-left:1px solid #000;border-bottom:1px solid #000;display:flex;align-items:flex-end;gap:3px;padding:0 6px;box-sizing:border-box">
+                  <sc-if value="{{ s.hasChart }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;left:0;right:0;top:50%;border-top:1px dashed #8c8f94"></div></sc-if>
+                  <sc-if value="{{ s.hasChart }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;left:0;right:0;bottom:{{ s.avgY }};border-top:2px dashed #ed1c24"></div></sc-if>
+                  <sc-for list="{{ s.bars }}" as="b" hint-placeholder-count="30">
+                  <div style="flex:1 1 0;max-width:24px;min-width:3px;height:{{ b.h }};background:{{ b.bg }};border:1px solid #000;border-bottom:0;box-sizing:border-box"></div>
+                  </sc-for>
+                </div>
+              </div>
+              <sc-if value="{{ s.hasChart }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0 0 30px"><span>{{ s.chartFirst }}</span><span style="display:flex;gap:16px"><span style="color:#ed1c24">average {{ s.ratingAvg }}</span><span><span style="display:inline-block;width:10px;height:10px;background:#0c542c;border:1px solid #000;vertical-align:middle"></span> won</span><span><span style="display:inline-block;width:10px;height:10px;background:#8c8f94;border:1px solid #000;vertical-align:middle"></span> drawn</span><span><span style="display:inline-block;width:10px;height:10px;background:#ed1c24;border:1px solid #000;vertical-align:middle"></span> lost</span></span><span>{{ s.chartLast }}</span></div>
+              </sc-if>
+              <sc-if value="{{ s.noChart }}" hint-placeholder-val="{{ false }}"><div style="font-size:16px;padding:10px 0 2px 30px">No Rated match yet.</div></sc-if>
+            </div>
+          </div>
+          <div data-panel="streaks" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:#0c542c;height:64px;padding:0 20px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Streaks</div></div>
+            <div style="background:#f7f7f3;padding:6px 20px;display:flex;flex-direction:column">
+              <sc-for list="{{ s.facts }}" as="f" hint-placeholder-count="5">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:11px 0;border-top:1px solid #bcc5ce"><span style="font-size:15px">{{ f.k }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;white-space:nowrap;text-align:right">{{ f.v }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div data-panel="breakdown" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">By competition</div><div style="font-size:14px;color:#f7f7f3">every Season, every row</div></div>
+          <div style="background:#000;padding:12px 12px 12px 16px">
+            <div style="display:grid;grid-template-columns:320px repeat(6,minmax(0,1fr));gap:4px 6px">
+              <div style="display:flex;align-items:center;height:32px;padding-left:8px"><span style="font-size:13px;color:#f7f7f3">Competition</span></div>
+              <sc-for list="{{ s.bCols }}" as="c" hint-placeholder-count="6">
+              <div style="position:relative;height:32px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }};white-space:nowrap">{{ c.name }}</span></div>
+              </sc-for>
+              <sc-for list="{{ s.bRows }}" as="r" hint-placeholder-count="5">
+              <div style="position:relative;height:44px;display:flex;align-items:center;gap:10px;padding:0 20px 0 {{ r.padD }};margin-left:6px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.bg }};border:1px solid #000"></div><sc-if value="{{ r.hasTag }}" hint-placeholder-val="{{ true }}"><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ r.tag }}</span></div></sc-if><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#f7f7f3;white-space:nowrap">{{ r.name }}</span></div>
+              <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="6">
+              <div style="position:relative;height:44px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.cellBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3">{{ c }}</span></div>
+              </sc-for>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+          <div data-panel="with" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Played with</div><div style="display:flex;align-items:center;gap:8px"><div style="width:64px;height:28px;background:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 12px)"></div><div style="width:14px;height:14px;border-radius:50%;background:#000"></div></div></div>
+            <div style="background:#000;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <sc-for list="{{ s.withCards }}" as="t" hint-placeholder-count="4">
+              <a style="display:flex;flex-direction:column;text-decoration:none;color:#f7f7f3;border:1px solid #000">
+                <div style="display:flex;align-items:stretch;height:44px;background:#091e40"><span style="width:48px;display:flex;align-items:center;justify-content:center;background:#f7f7f3;color:#000;border-right:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px">{{ t.rank }}</span><span style="flex:1;display:flex;align-items:center;padding:0 14px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase">{{ t.name }}</span></div>
+                <div style="background:#3a3ab0;padding:12px 14px;display:flex;flex-direction:column;gap:2px;font-size:15px;line-height:1.3"><span>{{ t.n }} matches</span><span style="font-weight:700">{{ t.wdl }}</span><span>{{ t.win }} win rate</span></div>
+              </a>
+              </sc-for>
+            </div>
+          </div>
+          <div data-panel="against" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Played against</div><div style="display:flex;align-items:center;gap:8px"><div style="width:64px;height:28px;background:repeating-linear-gradient(90deg,#0c542c 0 6px,transparent 6px 12px)"></div><div style="width:14px;height:14px;border-radius:50%;background:#42af36"></div></div></div>
+            <div style="background:#000;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <sc-for list="{{ s.againstCards }}" as="t" hint-placeholder-count="4">
+              <a style="display:flex;flex-direction:column;text-decoration:none;color:#f7f7f3;border:1px solid #000">
+                <div style="display:flex;align-items:stretch;height:44px;background:#000"><span style="width:48px;display:flex;align-items:center;justify-content:center;background:#f7f7f3;color:#000;border-right:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px">{{ t.rank }}</span><span style="flex:1;display:flex;align-items:center;padding:0 14px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase">{{ t.name }}</span></div>
+                <div style="background:#0c542c;padding:12px 14px;display:flex;flex-direction:column;gap:2px;font-size:15px;line-height:1.3"><span>{{ t.n }} matches</span><span style="font-weight:700">{{ t.wdl }}</span><span>{{ t.win }} win rate</span></div>
+              </a>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+          <div data-panel="best" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Best matches</div></div>
+            <div style="background:#0c542c;padding:16px 16px 20px 20px;display:flex;flex-direction:column;gap:14px">
+              <sc-if value="{{ s.noBest }}" hint-placeholder-val="{{ false }}"><div style="background:#f7f7f3;border:1px solid #000;padding:10px 14px;font-size:16px;color:#000">No Rated match yet.</div></sc-if>
+              <sc-for list="{{ s.best }}" as="m" hint-placeholder-count="3">
+              <a style="display:flex;align-items:center;gap:6px;padding:0 14px;height:56px;background:#091e40;border:1px solid #000;box-shadow:-8px 8px 0 #000;color:#f7f7f3;text-decoration:none">
+                <div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ m.format }}</span></div>
+                <div style="position:relative;display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;flex:1;min-width:0;margin-left:8px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#0d2e63;border:1px solid #000"></div><span style="position:relative;width:12px;height:12px;border-radius:50%;background:{{ m.aC }};border:1px solid {{ m.aBd }};flex:none"></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;white-space:nowrap">{{ m.a }} {{ m.aS }}-{{ m.bS }} {{ m.b }}</span><span style="position:relative;width:12px;height:12px;border-radius:50%;background:{{ m.bC }};border:1px solid {{ m.bBd }};flex:none"></span></div>
+                <span style="font-size:14px;color:#bcc5ce;white-space:nowrap;margin-left:8px">{{ m.line }}</span>
+                <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;margin-left:8px">{{ m.rating }}</span>
+                <sc-if value="{{ m.crown }}" hint-placeholder-val="{{ false }}"><div style="position:relative;width:22px;height:18px;flex:none;margin-left:4px"><div style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div><div style="position:absolute;inset:2px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div></div></sc-if>
+                <span style="font-size:14px;color:#bcc5ce;white-space:nowrap;margin-left:8px">{{ m.date }}</span>
+              </a>
+              </sc-for>
+            </div>
+          </div>
+          <div data-panel="honours" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+            <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+            <div style="background:#faf15d;height:64px;padding:0 20px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#000">Honours</div></div>
+            <div style="position:relative;background:#faf15d;padding:20px 56px 20px 20px;overflow:hidden;display:flex;flex-direction:column;gap:12px;min-height:120px">
+              <div style="position:absolute;right:-8px;top:0;bottom:0;width:28px;background:#cec311;border-left:1px solid #000;transform:skewX(-15deg)"></div>
+              <sc-for list="{{ s.honours }}" as="h" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:12px"><span style="color:#ed1c24;font-size:22px;line-height:1">★</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px">{{ h.title }}</span><span style="font-size:16px">{{ h.where }}</span></div>
+              </sc-for>
+              <sc-if value="{{ s.noHonours }}" hint-placeholder-val="{{ false }}"><div style="font-size:16px">No honours yet.</div></sc-if>
+            </div>
+          </div>
+        </div>
+
+        <div data-panel="history" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Match history</div><div style="font-size:14px;color:#bcc5ce">{{ s.historyLine }}</div></div>
+          <div style="background:#0c542c;padding:12px 16px 20px 20px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:6px;padding:0 15px;height:28px;font-size:13px;color:#f7f7f3"><span style="width:120px;flex:none">Date</span><span style="width:96px;flex:none;margin-left:6px">Competition</span><span style="flex:1;margin-left:14px">Result</span><span style="width:40px;flex:none;text-align:center;margin-left:8px"></span><span style="width:72px;flex:none;text-align:center;margin-left:8px">Goals</span><span style="width:72px;flex:none;text-align:center">Assists</span><span style="width:96px;flex:none;text-align:center">Rating</span><span style="width:40px;flex:none;text-align:center">Crown</span></div>
+            <sc-for list="{{ s.history }}" as="m" hint-placeholder-count="8">
+            <a style="display:flex;align-items:center;gap:6px;padding:0 14px;height:56px;background:{{ m.bg }};border:1px solid #000;color:#f7f7f3;text-decoration:none">
+              <div style="position:relative;display:flex;align-items:center;height:40px;width:120px;flex:none;box-sizing:border-box;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.cellBg }};border:1px solid #000"></div><span style="position:relative;font-size:14px;color:#bcc5ce">{{ m.date }}</span></div>
+              <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:24px;width:96px;flex:none;margin-left:6px;box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.tagBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ m.format }}</span></div>
+              <div style="position:relative;display:flex;align-items:center;gap:10px;height:40px;padding:0 16px;flex:1;min-width:0;margin-left:14px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.cellBg }};border:1px solid #000"></div><span style="position:relative;width:14px;height:14px;border-radius:50%;background:{{ m.aC }};border:1px solid {{ m.aBd }};flex:none"></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;white-space:nowrap">{{ m.a }} {{ m.aS }}-{{ m.bS }} {{ m.b }}</span><span style="position:relative;width:14px;height:14px;border-radius:50%;background:{{ m.bC }};border:1px solid {{ m.bBd }};flex:none"></span><span style="position:relative;flex:1;text-align:right;font-size:13px;color:#bcc5ce;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ m.comp }}</span></div>
+              <div style="width:40px;height:40px;flex:none;margin-left:8px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:{{ m.resFg }};position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ m.resBg }};border:1px solid #000;transform:rotate({{ m.rot }})"></span>{{ m.res }}</div>
+              <div style="position:relative;width:72px;height:40px;flex:none;margin-left:8px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.cellBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px">{{ m.goals }}</span></div>
+              <div style="position:relative;width:72px;height:40px;flex:none;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.cellBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px">{{ m.assists }}</span></div>
+              <div style="position:relative;width:96px;height:40px;flex:none;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.cellBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:{{ m.ratingFg }}">{{ m.rating }}</span></div>
+              <div style="width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center"><sc-if value="{{ m.crown }}" hint-placeholder-val="{{ false }}"><div style="position:relative;width:24px;height:20px"><div style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div><div style="position:absolute;inset:2px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></div></div></sc-if></div>
+            </a>
+            </sc-for>
+            <sc-if value="{{ s.loading }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:6px;padding:0 14px;height:56px;background:#bcc5ce;border:1px solid #000"><div style="position:relative;height:40px;width:120px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#8c8f94;border:1px solid #000"></div></div><div style="position:relative;height:40px;flex:1;margin-left:116px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#8c8f94;border:1px solid #000"></div></div></div></sc-if>
+            <sc-if value="{{ s.hasMore }}" hint-placeholder-val="{{ true }}"><a style="display:flex;align-items:center;justify-content:center;height:44px;margin-top:8px;background:#f7f7f3;border:1px solid #000;color:{{ s.moreFg }};font-size:16px;text-decoration:none;box-shadow:-8px 8px 0 #000">Show more</a></sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showMoreState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Idle&quot;,&quot;Loading&quot;],&quot;default&quot;:&quot;Idle&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Match history (10b)&quot;},&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+  }
+  renderVals() {
+    const moreState = this.props.showMoreState ?? 'Idle';
+    const COL = { Red: '#ed1c24', Orange: '#f93a07', Yellow: '#f4e937', Green: '#42af36', Blue: '#3a3ab0', Navy: '#091e40', Black: '#161616', White: '#f7f7f3', Sky: '#4fb3e8', Purple: '#7b3fb5', Pink: '#f06aa8', Teal: '#1a9e8f' };
+    const SIDES = ['Red', 'Blue', 'Yellow', 'Navy', 'Green', 'White', 'Orange', 'Black', 'Sky', 'Purple'];
+    const TEAMS = [['Sokoli', 'Green'], ['Vukovi', 'Navy'], ['Orlovi', 'Red'], ['Zmajevi', 'Sky']];
+    const POOL = ['Ana', 'Marko', 'Luka', 'Đole', 'Ivan', 'Cope', 'Paja', 'Miloš', 'Pule', 'Dinić', 'Vuk', 'Bogdan', 'Nikola', 'Sale', 'Vlada'];
+    const COMP = { P: { name: 'Sunday league', format: 'Pickup', tag: '#3a3ab0' }, L: { name: 'Zimska liga', format: 'League', tag: '#0c542c' } };
+    const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const RES = { W: ['#0c542c', '#f7f7f3'], D: ['#8c8f94', '#000'], L: ['#ed1c24', '#f7f7f3'] };
+    const pad = n => String(n).padStart(2, '0');
+    const fmtD = d => `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}.`;
+    const rnd = seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const season = (comp, d) => {
+      const y = d.getFullYear(), m = d.getMonth() + 1;
+      if (comp === 'P') { const n = (y > 2026 || (y === 2026 && m >= 3)) ? 3 : (y > 2025 || (y === 2025 && m >= 3)) ? 2 : 1; return `Season ${n} · ${2023 + n}/${24 + n}`; }
+      const sy = m >= 11 ? y : y - 1; return `Season ${sy - 2023} · ${sy}/${String(sy + 1).slice(2)}`;
+    };
+    const gen = (me, seed, o) => {
+      const r = rnd(seed); let d = new Date(2026, 4, 17); const weeks = [];
+      while (weeks.length < o.weeks) { const m = d.getMonth() + 1; const comp = (o.league && (m >= 11 || m <= 2) && r() < 0.6) ? 'L' : 'P'; weeks.push({ date: new Date(d), comp }); d = new Date(d.getTime() - 7 * 864e5); }
+      const list = [], missed = { P: 0, L: 0 };
+      weeks.forEach(w => {
+        if (r() > o.attend) { missed[w.comp]++; return; }
+        const others = POOL.filter(p => p !== me).sort(() => r() - 0.5);
+        let a, b, aC, bC;
+        if (w.comp === 'P') { const s = [...SIDES].sort(() => r() - 0.5); a = s[0]; b = s[1]; aC = COL[a]; bC = COL[b]; }
+        else { a = 'Sokoli'; aC = COL.Green; const t = TEAMS[1 + Math.floor(r() * 3)]; b = t[0]; bC = COL[t[1]]; }
+        const aS = Math.floor(r() * 7), bS = Math.floor(r() * 6), res = aS > bS ? 'W' : aS < bS ? 'L' : 'D';
+        const g = r(); const goals = Math.min(aS, g < 0.45 ? 0 : g < 0.72 ? 1 : g < 0.92 ? 2 : 3);
+        const asr = r(); const assists = Math.min(Math.max(aS - goals, 0), asr < 0.5 ? 0 : asr < 0.85 ? 1 : 2);
+        const voting = r() < 0.88, rated = voting && r() < 0.95;
+        const rating = rated ? Math.round((1 + r() * 2 + (o.bias || 0)) * 100) / 100 : null;
+        const crown = rated && r() < (o.crownP || 0.14) && (goals > 0 || r() < 0.3);
+        list.push({ date: w.date, comp: w.comp, season: season(w.comp, w.date), a, b, aC, bC, aS, bS, res, goals, assists, voting, rated, rating: rating && Math.min(rating, 3), crown, voted: voting && r() < 0.85, with_: others.slice(0, 4), against: others.slice(4, 9) });
+      });
+      return { list, missed };
+    };
+    const sum = (L, f) => L.reduce((t, m) => t + f(m), 0);
+    const avg = L => L.length ? (sum(L, m => m.rating) / L.length).toFixed(2) : null;
+    const wdl = L => `${L.filter(m => m.res === 'W').length}W-${L.filter(m => m.res === 'D').length}D-${L.filter(m => m.res === 'L').length}L`;
+    const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '–';
+    const build = o => {
+      const { list: all, missed } = gen(o.name, o.seed, o.gen);
+      if (o.noRated) all.forEach(m => { m.rated = false; m.rating = null; m.crown = false; });
+      const L = o.compKey ? all.filter(m => m.comp === o.compKey) : all;
+      const missedN = o.compKey ? missed[o.compKey] : missed.P + missed.L;
+      const n = L.length, W = L.filter(m => m.res === 'W').length, D = L.filter(m => m.res === 'D').length, Lo = n - W - D;
+      const rated = L.filter(m => m.rated), ratingAvg = avg(rated), crowns = L.filter(m => m.crown).length;
+      const chrono = [...L].reverse();
+      let best = 0, run = 0; chrono.forEach(m => { run = m.res === 'W' ? run + 1 : 0; best = Math.max(best, run); });
+      let cur = 0; for (const m of L) { if (m.res === 'W') cur++; else break; }
+      const cnt = (name, f) => { const map = {}; L.forEach(m => f(m).forEach(p => { const e = map[p] = map[p] || { name: p, n: 0, w: 0, d: 0, l: 0 }; e.n++; e[m.res.toLowerCase()]++; })); return Object.values(map).sort((x, y) => y.n - x.n || y.w - x.w).slice(0, 4).map((e, i) => ({ rank: '#' + (i + 1), name: e.name, n: e.n, wdl: `${e.w}W-${e.d}D-${e.l}L`, win: pct(e.w, e.n) })); };
+      const first = chrono[0], last = L[0];
+      const stats = [
+        { v: String(n), label: 'Played', sub: `${missedN} missed`, fsP: '36px', fsD: '56px' },
+        { v: `${W}-${D}-${Lo}`, label: 'W-D-L', sub: `${pct(W, n)} win rate`, fsP: '20px', fsD: '30px' },
+        { v: String(sum(L, m => m.goals)), label: 'Goals', sub: n ? (sum(L, m => m.goals) / n).toFixed(2) + ' a match' : '', fsP: '36px', fsD: '56px' },
+        { v: String(sum(L, m => m.assists)), label: 'Assists', sub: n ? (sum(L, m => m.assists) / n).toFixed(2) + ' a match' : '', fsP: '36px', fsD: '56px' },
+        { v: ratingAvg || '–', label: 'Rating', sub: rated.length ? `· ${rated.length} rated` : 'not rated yet', fsP: '36px', fsD: '56px' },
+        { v: String(crowns), label: 'Crowns', sub: rated.length ? `in ${rated.length} rated` : '', fsP: '36px', fsD: '56px' }
+      ];
+      const ROT = ['-2deg', '1.5deg', '-1deg', '2deg', '-1.5deg'];
+      const form = L.slice(0, 5).map((m, i) => ({ l: m.res, bg: RES[m.res][0], fg: RES[m.res][1], rot: ROT[i] }));
+      const bars = chrono.filter(m => m.rated).slice(-40).map(m => ({ h: Math.round(m.rating / 3 * 100) + '%', bg: RES[m.res][0] }));
+      const ratedChrono = chrono.filter(m => m.rated);
+      const groups = {}; L.forEach(m => { const g = groups[m.comp] = groups[m.comp] || { comp: m.comp, list: [], seasons: {} }; g.list.push(m); (g.seasons[m.season] = g.seasons[m.season] || []).push(m); });
+      const cells = X => { const Xr = X.filter(m => m.rated); return [String(X.length), wdl(X), String(sum(X, m => m.goals)), String(sum(X, m => m.assists)), Xr.length ? `${avg(Xr)} · ${Xr.length}` : '–', String(X.filter(m => m.crown).length)]; };
+      const bRows = []; Object.values(groups).sort((x, y) => y.list.length - x.list.length).forEach(g => {
+        bRows.push({ name: COMP[g.comp].name, hasTag: true, tag: COMP[g.comp].format, tagBg: COMP[g.comp].tag, bg: '#3a3ab0', cellBg: '#0d2e63', pad: '12px', padD: '20px', fs: '15px', cells: cells(g.list) });
+        Object.keys(g.seasons).sort().reverse().forEach(sn => bRows.push({ name: sn, hasTag: false, tag: '', tagBg: '', bg: '#091e40', cellBg: '#091e40', pad: '28px', padD: '56px', fs: '14px', cells: cells(g.seasons[sn]) }));
+      });
+      const bestM = [...rated].sort((x, y) => (y.goals + y.assists * 0.5 + y.rating + (y.crown ? 1 : 0)) - (x.goals + x.assists * 0.5 + x.rating + (x.crown ? 1 : 0))).slice(0, 3);
+      const line = m => `${m.goals} ${m.goals === 1 ? 'goal' : 'goals'} · ${m.assists} ${m.assists === 1 ? 'assist' : 'assists'}`;
+      const row = (m, i) => ({ date: fmtD(m.date), comp: COMP[m.comp].name, format: COMP[m.comp].format, tagBg: COMP[m.comp].tag, a: m.a, b: m.b, aC: m.aC, bC: m.bC, aBd: ['#091e40', '#161616', '#0c542c'].includes(m.aC) ? '#f7f7f3' : '#000', bBd: ['#091e40', '#161616', '#0c542c'].includes(m.bC) ? '#f7f7f3' : '#000', aS: m.aS, bS: m.bS, res: m.res, resBg: RES[m.res][0], resFg: RES[m.res][1], rot: ROT[i % 5], goals: String(m.goals), assists: String(m.assists), line: line(m), rating: m.rated ? m.rating.toFixed(2) : (m.voting ? 'not rated' : 'no vote'), ratingFg: m.rated ? '#f7f7f3' : '#bcc5ce', crown: m.crown, bg: i % 2 ? '#0d2e63' : '#091e40', cellBg: i % 2 ? '#091e40' : '#0d2e63' });
+      const voteable = L.filter(m => m.voting).length, voted = L.filter(m => m.voted).length, clean = L.filter(m => m.bS === 0).length, scored = L.filter(m => m.goals > 0).length;
+      const page = L.slice(0, 50), hasMore = L.length > 50, loading = hasMore && (o.loading || false);
+      const seasons = new Set(L.map(m => m.season)).size;
+      return {
+        id: o.id, label: o.label, blurb: o.blurb, name: o.name, initials: o.name.slice(0, 2).toUpperCase(), linked: o.linked, unlinked: !o.linked,
+        linkLine: o.linked ? 'Linked to an account' : 'No account linked', since: first ? `since ${MON[first.date.getMonth()]} ${first.date.getFullYear()}` : 'new Player',
+        first: first ? fmtD(first.date) : '–', last: last ? fmtD(last.date) : '–',
+        compLabel: o.compKey ? COMP[o.compKey].name : 'All competitions', compBg: o.compKey ? COMP[o.compKey].tag : '#f7f7f3', compFg: o.compKey ? '#f7f7f3' : '#000',
+        compCount: String(Object.keys(groups).length), seasonCount: String(seasons), winRate: pct(W, n),
+        stats, form, formLine: n ? `last ${Math.min(5, n)}, newest first` : 'no matches yet',
+        hasChart: bars.length > 0, noChart: bars.length === 0, bars, avgY: ratingAvg ? Math.round(ratingAvg / 3 * 100) + '%' : '0%', ratingAvg: ratingAvg || '–',
+        chartLine: ratedChrono.length ? `${Math.min(ratedChrono.length, 40)} rated matches, oldest left` : '', chartFirst: ratedChrono.length ? fmtD(ratedChrono.slice(-40)[0].date) : '', chartLast: ratedChrono.length ? fmtD(ratedChrono[ratedChrono.length - 1].date) : '',
+        bCols: ['Played', 'W-D-L', 'Goals', 'Assists', 'Rating', 'Crowns'].map((name, i) => i % 2 === 0 ? { name, bg: '#f7f7f3', bd: '#000', fg: '#000' } : { name, bg: 'transparent', bd: 'transparent', fg: '#f7f7f3' }),
+        bRows,
+        facts: [
+          { k: 'Win streak', v: cur ? `${cur} now · best ${best}` : `none now · best ${best}` },
+          { k: 'Clean sheets', v: `${clean} of ${n}` },
+          { k: 'Attendance', v: `${n} of ${n + missedN} matches · ${pct(n, n + missedN)}` },
+          { k: 'Scored in', v: `${scored} of ${n}` },
+          { k: 'Voted in', v: `${voted} of ${voteable}` }
+        ],
+        withCards: cnt('with', m => m.with_), againstCards: cnt('against', m => m.against),
+        best: bestM.map(m => ({ ...row(m, 0), rating: m.rating.toFixed(2) })), noBest: bestM.length === 0,
+        honours: o.honours, noHonours: o.honours.length === 0,
+        history: page.map(row), hasMore, loading, moreFg: loading ? '#bcc5ce' : '#000',
+        historyLine: `${o.compKey ? COMP[o.compKey].name : 'All competitions'} · newest first`
+      };
+    };
+    const sections = [
+      build({ id: '10a', label: '10a Ana, all competitions', name: 'Ana', seed: 7, linked: true, gen: { weeks: 110, attend: 0.8, league: true, bias: 0.3, crownP: 0.16 },
+        honours: [{ title: 'MVP', where: 'Season 2 · Zimska liga' }, { title: 'Top scorer', where: 'Season 1 · Sunday league' }, { title: 'Most crowns', where: 'Season 3 · Sunday league' }],
+        blurb: 'Ana, linked to an account: the two rings after the nickname · all competitions · six stat blocks, Form, the rating chart over her rated matches · By competition with Season sub-rows · streaks and attendance · Played with, Played against · best matches · Honours · the match history: the fifty newest, then Show more' }),
+      build({ id: '10b', label: '10b Paja, Sunday league, loading more', name: 'Paja', seed: 31, linked: false, compKey: 'P', gen: { weeks: 70, attend: 0.85, league: false, bias: -0.1, crownP: 0.08 }, loading: moreState === 'Loading',
+        honours: [{ title: 'Most matches', where: 'Season 2 · Sunday league' }],
+        blurb: 'Paja, no account: no rings, the missing sticker with initials in the frame · the competition filter set to Sunday league, so the selector wears the Pickup blue and every number above is for that scope · Show more ' + (moreState === 'Loading' ? 'tapped: one skeleton row, the bar greyed' : 'idle') }),
+      build({ id: '10c', label: '10c Vlada, four matches', name: 'Vlada', seed: 3, linked: true, gen: { weeks: 4, attend: 1, league: false, bias: -0.4, crownP: 0 }, honours: [],
+        blurb: 'A new Player with four matches · every section still complete: the chart over what is rated, one competition and one Season, cards only for those played with · No honours yet · the history is one page, so no Show more' }),
+      build({ id: '10d', label: '10d Bogdan, no Rated match', name: 'Bogdan', seed: 19, linked: false, noRated: true, gen: { weeks: 12, attend: 0.75, league: false, bias: 0, crownP: 0 }, honours: [],
+        blurb: 'A Player whose matches were never rated: the Rating and Crowns blocks read – · Rating history keeps its title and its axes, draws no bars and no average line, and carries the sentence on the paper body' })
+    ];
+    return { sections };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase;flex:none">Screen 18 · Members</div>
+  <div style="font-size:14px">the Members nav item on a desktop, "This Group" in the Group switcher's sheet on a phone · four paper panels for an admin: Members, Pending invitations, Join links, Past invitations · a Member sees names and nicknames only · the Member ⋯ · the Invite a Player and Assign as Manager sheets · empty · loading</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="7">
+<section id="{{ s.id }}" data-screen-label="{{ s.label }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><span style="display:flex;align-items:center;height:28px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3">Members</span></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:20px">
+
+        <div data-panel="members" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <sc-if value="{{ s.loading }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#bcc5ce;height:52px;padding:0 16px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="width:140px;height:18px;background:#f7f7f3;border:1px solid #000"></div></div>
+          <div style="background:#f7f7f3;display:flex;flex-direction:column">
+            <sc-for list="{{ s.skel }}" as="k" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:12px;flex:0 0 64px;padding:0 12px 0 16px;border-top:1px solid #bcc5ce;box-sizing:border-box"><div style="flex:1;display:flex;flex-direction:column;gap:8px"><div style="height:14px;width:{{ k.w1 }};background:#bcc5ce"></div><div style="height:10px;width:{{ k.w2 }};background:#bcc5ce"></div></div><div style="width:64px;height:20px;background:#bcc5ce;flex:none"></div><div style="width:44px;height:44px;flex:none"></div></div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <sc-if value="{{ s.ready }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Members</div>
+            <div style="font-size:13px;color:#f7f7f3;white-space:nowrap">{{ s.memberCount }}</div>
+          </div>
+          <div style="background:#f7f7f3;display:flex;flex-direction:column">
+            <sc-for list="{{ s.members }}" as="m" hint-placeholder-count="7">
+            <div style="display:flex;align-items:center;gap:10px;flex:0 0 auto;min-height:64px;padding:8px 6px 8px 16px;border-top:1px solid {{ m.bd }};box-sizing:border-box">
+              <a style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:#000">
+                <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;line-height:1.1;min-width:0;overflow-wrap:anywhere">{{ m.name }}</span><sc-if value="{{ m.hasNick }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;height:22px;padding:0 8px;background:#f7f7f3;border:1px solid #000;font-size:12px;box-sizing:border-box;flex:none">{{ m.nick }}</span></sc-if><sc-if value="{{ m.noNick }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#4b5560">no Player</span></sc-if><sc-if value="{{ m.hasTag }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 10px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.tagBg }};border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3;white-space:nowrap">{{ m.role }}</span></span></sc-if></span>
+                <sc-if value="{{ s.showEmail }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;line-height:1.2;min-width:0;overflow-wrap:anywhere">{{ m.email }}</span></sc-if>
+              </a>
+              <sc-if value="{{ s.showDots }}" hint-placeholder-val="{{ true }}"><a aria-label="Member acts" style="width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:{{ m.dotsFg }};background:{{ m.dotsBg }};border:1px solid {{ m.dotsBd }};box-sizing:border-box;text-decoration:none">⋯</a></sc-if>
+            </div>
+            </sc-for>
+            <sc-if value="{{ s.isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="border-top:1px solid #000;padding:24px 16px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center">
+              <img src="assets/balls.png" alt="" style="width:220px;height:auto">
+              <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1.1;text-wrap:pretty">Invite the people you play with</div>
+              <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:100%;max-width:300px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>Invite a Player</a>
+              <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:100%;max-width:300px;margin-left:4px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New join link</a>
+            </div>
+            </sc-if>
+          </div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ s.hasInvites }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="pending" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Pending invitations</div>
+            <div style="font-size:13px;color:#f7f7f3;white-space:nowrap">{{ s.pendingCount }}</div>
+          </div>
+          <div style="background:#f7f7f3;padding:12px 12px 12px 16px"><a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>Invite a Player</a></div>
+          <div style="background:#f7f7f3;display:flex;flex-direction:column">
+            <sc-for list="{{ s.pending }}" as="p" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:6px;flex:0 0 auto;padding:12px 12px 6px 16px;border-top:1px solid #000">
+              <div style="display:flex;align-items:center;gap:12px;min-height:28px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;flex:1;min-width:0;overflow-wrap:anywhere">{{ p.nick }}</span><span style="display:inline-flex;align-items:center;padding:4px 10px 4px {{ p.stPadL }};font-size:13px;color:#000;position:relative;z-index:0;flex:none"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ p.stBg }};border:1px solid #000;border-left:{{ p.stEdge }};transform:rotate(-1.5deg);box-shadow:-2px 2px 0 #000"></span>{{ p.state }}</span></div>
+              <div style="font-size:13px;line-height:1.2;min-width:0;overflow-wrap:anywhere">{{ p.target }} · expires {{ p.expires }}</div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:6px"><sc-if value="{{ p.failed }}" hint-placeholder-val="{{ false }}"><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#000;text-decoration:none;box-sizing:border-box;flex:none">Resend</a></sc-if><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#000;text-decoration:none;box-sizing:border-box;flex:none">Copy link</a><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#ed1c24;text-decoration:none;box-sizing:border-box;flex:none">Revoke</a></div>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-panel="joinlinks" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Join links</div>
+            <div style="font-size:13px;color:#f7f7f3;white-space:nowrap">anyone with the link joins</div>
+          </div>
+          <div style="background:#f7f7f3;padding:12px 12px 12px 16px"><a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New join link</a></div>
+          <div style="background:#f7f7f3;display:flex;flex-direction:column">
+            <sc-for list="{{ s.links }}" as="l" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:4px;flex:0 0 auto;padding:12px 12px 6px 16px;border-top:1px solid #000">
+              <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">Join link</div>
+              <div style="font-size:13px;line-height:1.2">{{ l.line }}</div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:6px"><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#000;text-decoration:none;box-sizing:border-box;flex:none">Copy link</a><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#ed1c24;text-decoration:none;box-sizing:border-box;flex:none">Revoke</a></div>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-panel="past" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Past invitations</div>
+            <div style="font-size:13px;color:#f7f7f3;white-space:nowrap">newest first</div>
+          </div>
+          <div style="background:#f7f7f3;display:flex;flex-direction:column">
+            <sc-for list="{{ s.past }}" as="q" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:12px;flex:0 0 48px;padding:0 16px;border-top:1px solid {{ q.bd }};box-sizing:border-box"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;flex:none">{{ q.nick }}</span><span style="font-size:13px;color:#4b5560;min-width:0;overflow-wrap:anywhere;line-height:1.2">{{ q.line }}</span></div>
+            </sc-for>
+            <div style="padding:12px 12px 16px 16px;border-top:1px solid #bcc5ce"><a style="display:flex;align-items:center;justify-content:center;height:44px;margin-left:4px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Show more</a></div>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+
+      <div data-tabbar="" style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr);height:60px;box-sizing:border-box">
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Competitions</a>
+        <a style="display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Players</a>
+        <a style="display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You<span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#ed1c24;border:1px solid #000;font-size:12px;color:#f7f7f3;box-sizing:border-box">2</span></a>
+      </div>
+
+      <sc-if value="{{ s.showMenu }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-sheet="overflow" style="position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;border-top:1px solid #000;box-shadow:0 -4px 0 #000">
+        <div style="background:#091e40;min-height:56px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="display:flex;flex-direction:column;min-width:0"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">{{ s.menuName }}</div><div style="font-size:13px;color:#d7e6cc">{{ s.menuSub }}</div></div>
+          <a style="font-size:14px;color:#f7f7f3;flex:none;padding:12px 0;margin:-12px 0">Cancel</a>
+        </div>
+        <div style="background:#f7f7f3;padding:8px 0 20px;display:flex;flex-direction:column">
+          <sc-for list="{{ s.menu }}" as="i" hint-placeholder-count="6">
+          <sc-if value="{{ i.isDivider }}" hint-placeholder-val="{{ false }}"><div style="height:1px;background:#000;margin:8px 16px"></div></sc-if>
+          <sc-if value="{{ i.isItem }}" hint-placeholder-val="{{ true }}"><a style="display:flex;flex-direction:column;justify-content:center;min-height:48px;flex:0 0 auto;padding:4px 16px;text-decoration:none;color:{{ i.fg }};box-sizing:border-box;line-height:1.25"><span style="font-size:16px">{{ i.t }}</span><sc-if value="{{ i.hasSub }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:{{ i.subFg }}">{{ i.sub }}</span></sc-if></a></sc-if>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showInvite }}" hint-placeholder-val="{{ false }}">
+      <div data-sheet="invite" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#3a3ab0;border-bottom:1px solid #000;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;min-height:78px;box-sizing:border-box;flex:none"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">Invite a Player</div><a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a></div>
+        <sc-if value="{{ s.inv.picking }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:14px">Which Player is this for? Unlinked Players only.</div>
+            <div style="height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;gap:10px;padding:0 12px;box-sizing:border-box"><span style="width:14px;height:14px;border:2px solid #000;border-radius:50%;flex:none;box-sizing:border-box;position:relative"><span style="position:absolute;width:2px;height:7px;background:#000;right:-4px;bottom:-6px;transform:rotate(-45deg)"></span></span><span style="font-size:15px;color:#4b5560">Search Players</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;padding:0 6px">
+            <sc-for list="{{ s.inv.pool }}" as="p" hint-placeholder-count="5">
+            <a style="position:relative;display:flex;align-items:center;gap:12px;flex:0 0 48px;height:48px;padding:0 14px;text-decoration:none;color:{{ p.fg }}"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.bg }};border:1px solid #000"></div><div style="position:relative;width:32px;height:42px;background:#f93a07;border:1px solid #000;padding:3px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;flex:none"><div style="flex:1;background:#8c8f94;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:12px;color:#000">{{ p.ini }}</div><div style="height:7px;background:#f7f7f3;border:1px solid #3a3ab0"></div></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;flex:1;min-width:0;overflow-wrap:anywhere">{{ p.nick }}</span><span style="position:relative;font-size:13px;flex:none">{{ p.line }}</span><span style="position:relative;width:24px;height:24px;border-radius:50%;border:1px solid #000;background:#f7f7f3;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;flex:none;box-sizing:border-box">{{ p.mark }}</span></a>
+            </sc-for>
+          </div>
+          <div style="font-size:14px;padding-top:2px">How does it reach them?</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ s.inv.ways }}" as="w" hint-placeholder-count="2">
+            <a style="position:relative;display:flex;flex-direction:column;gap:6px;padding:14px 16px;border:{{ w.bd }} solid #000;background:#f7f7f3;color:#000;box-sizing:border-box;margin-left:4px;box-shadow:{{ w.shadow }};text-decoration:none">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1">{{ w.title }}</span><span style="width:24px;height:24px;border-radius:50%;border:1px solid #000;background:#f7f7f3;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex:none;box-sizing:border-box">{{ w.mark }}</span></div>
+              <span style="font-size:13px;line-height:1.3">{{ w.line }}</span>
+              <sc-if value="{{ w.hasEmail }}" hint-placeholder-val="{{ false }}"><label style="display:flex;flex-direction:column;gap:6px;margin-top:6px"><span style="font-size:13px">Email</span><div style="height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;padding:0 12px;box-sizing:border-box;font-size:15px;color:{{ s.inv.emailFg }}">{{ s.inv.emailText }}</div></label></sc-if>
+            </a>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:none;background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <a style="font-size:16px;color:#000;padding:12px 0;margin:-12px 0;flex:none;text-decoration:none">Cancel</a>
+          <a style="display:flex;align-items:center;justify-content:center;height:44px;flex:1;max-width:240px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Create invitation</a>
+        </div>
+        </sc-if>
+        <sc-if value="{{ s.inv.created }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;min-height:0;overflow:auto;padding:20px 16px 24px;display:flex;flex-direction:column;gap:16px">
+          <div style="font-size:16px;text-wrap:pretty">{{ s.inv.createdLine }}</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-left:4px">
+            <div style="min-height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;padding:10px 12px;box-sizing:border-box;font-family:ui-monospace,Menlo,monospace;font-size:14px;overflow-wrap:anywhere;box-shadow:-4px 4px 0 #000">{{ s.inv.url }}</div>
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Copy link</a>
+          </div>
+          <div style="font-size:13px;color:#4b5560">{{ s.inv.createdNote }}</div>
+        </div>
+        <div style="flex:none;background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;align-items:center;justify-content:flex-end;gap:16px">
+          <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 32px;margin-left:4px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Done</a>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showAssign }}" hint-placeholder-val="{{ false }}">
+      <div data-sheet="assign" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#3a3ab0;border-bottom:1px solid #000;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;min-height:78px;box-sizing:border-box;flex:none"><div style="display:flex;flex-direction:column"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">Assign as Manager</div><div style="font-size:13px;color:#d7e6cc">Marko Jovanović</div></div><a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a></div>
+        <div style="flex:1;min-height:0;overflow:auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px">
+          <div style="font-size:14px;text-wrap:pretty">A Manager records matches and sets fixtures in the competitions ticked here.</div>
+          <div style="display:flex;flex-direction:column;gap:6px;padding:0 6px">
+            <sc-for list="{{ comps }}" as="c" hint-placeholder-count="3">
+            <a style="position:relative;display:flex;align-items:center;gap:12px;flex:0 0 56px;height:56px;padding:0 14px;text-decoration:none;color:{{ c.fg }}"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 10px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ c.fmt }}</span></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;flex:1;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ c.name }}</span><span style="position:relative;width:24px;height:24px;border:1px solid #000;background:#f7f7f3;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;flex:none;box-sizing:border-box">{{ c.mark }}</span></a>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:none;background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <a style="font-size:16px;color:#000;padding:12px 0;margin:-12px 0;flex:none;text-decoration:none">Cancel</a>
+          <a style="display:flex;align-items:center;justify-content:center;height:44px;flex:1;max-width:240px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Done</a>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Members</a>
+          <sc-if value="{{ s.isAdmin }}" hint-placeholder-val="{{ true }}">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Activity record</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Group settings</a>
+          </sc-if>
+        </nav>
+        <div style="flex:1"></div>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">{{ s.viewerIni }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">{{ s.viewer }}</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">2</span></a>
+      </div>
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;min-width:0;padding:40px 40px 48px;gap:28px;box-sizing:border-box">
+
+        <div data-band="" style="margin-left:8px;height:72px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;align-items:center;gap:20px;padding:0 20px;box-sizing:border-box;position:relative">
+          <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;white-space:nowrap;padding-right:6px;color:#3a3ab0">Members</span>
+          <span style="font-size:14px;white-space:nowrap">{{ s.bandLine }}</span>
+        </div>
+
+        <div data-panel="members" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <sc-if value="{{ s.loading }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#bcc5ce;height:64px;padding:0 20px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box"><div style="width:200px;height:24px;background:#f7f7f3;border:1px solid #000"></div></div>
+          <div style="background:#f7f7f3;padding:0 0 4px;display:flex;flex-direction:column">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 180px 150px 170px 56px;gap:0 16px;align-items:center;height:36px;padding:0 20px;box-sizing:border-box"><div style="height:12px;width:80px;background:#bcc5ce"></div><div style="height:12px;width:60px;background:#bcc5ce"></div><div style="height:12px;width:40px;background:#bcc5ce"></div><div style="height:12px;width:60px;background:#bcc5ce"></div><span></span></div>
+            <sc-for list="{{ s.skel }}" as="k" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 180px 150px 170px 56px;gap:0 16px;align-items:center;height:64px;padding:0 20px;border-top:1px solid #bcc5ce;box-sizing:border-box"><div style="display:flex;flex-direction:column;gap:8px"><div style="height:16px;width:{{ k.w1 }};background:#bcc5ce"></div><div style="height:12px;width:{{ k.w2 }};background:#bcc5ce"></div></div><div style="height:22px;width:72px;background:#bcc5ce"></div><div style="height:24px;width:{{ k.w3 }};background:#bcc5ce"></div><div style="height:12px;width:100px;background:#bcc5ce"></div><span></span></div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <sc-if value="{{ s.ready }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Members</div>
+            <div style="font-size:14px;color:#f7f7f3">{{ s.memberNote }}</div>
+          </div>
+          <div style="background:#f7f7f3;padding:0 0 4px;display:flex;flex-direction:column">
+            <div style="display:grid;grid-template-columns:{{ s.gridDesk }};gap:0 16px;align-items:center;height:36px;padding:0 20px;font-size:13px;box-sizing:border-box">
+              <span>Member</span><span>Player</span>
+              <sc-if value="{{ s.showRole }}" hint-placeholder-val="{{ true }}"><span>Role</span><span>Joined</span><span></span></sc-if>
+            </div>
+            <sc-for list="{{ s.members }}" as="m" hint-placeholder-count="7">
+            <div style="display:grid;grid-template-columns:{{ s.gridDesk }};gap:0 16px;align-items:center;min-height:64px;padding:8px 20px;border-top:1px solid {{ m.bd }};box-sizing:border-box">
+              <a style="display:flex;flex-direction:column;gap:2px;text-decoration:none;color:#000;min-width:0"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;min-width:0;overflow-wrap:anywhere">{{ m.name }}</span><sc-if value="{{ s.showEmail }}" hint-placeholder-val="{{ true }}"><span style="font-size:14px;min-width:0;overflow-wrap:anywhere">{{ m.email }}</span></sc-if></a>
+              <div style="display:flex;align-items:center;min-width:0"><sc-if value="{{ m.hasNick }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;background:#f7f7f3;border:1px solid #000;font-size:13px;box-sizing:border-box;white-space:nowrap">{{ m.nick }}</span></sc-if><sc-if value="{{ m.noNick }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#4b5560">no Player</span></sc-if></div>
+              <sc-if value="{{ s.showRole }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center"><sc-if value="{{ m.hasTag }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ m.tagBg }};border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3;white-space:nowrap">{{ m.role }}</span></span></sc-if></div>
+              <span style="font-size:14px;white-space:nowrap">joined {{ m.joined }}</span>
+              <div style="position:relative;display:flex;justify-content:flex-end">
+                <a aria-label="Member acts" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:{{ m.dotsFg }};background:{{ m.dotsBg }};border:1px solid {{ m.dotsBd }};box-sizing:border-box;text-decoration:none">⋯</a>
+                <sc-if value="{{ m.menuOpen }}" hint-placeholder-val="{{ false }}">
+                <div data-menu="member" style="position:absolute;right:0;top:50px;width:320px;z-index:5;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;padding:6px 0 8px;display:flex;flex-direction:column;color:#000">
+                  <sc-for list="{{ s.menu }}" as="i" hint-placeholder-count="6">
+                  <sc-if value="{{ i.isDivider }}" hint-placeholder-val="{{ false }}"><div style="height:1px;background:#000;margin:6px 16px"></div></sc-if>
+                  <sc-if value="{{ i.isItem }}" hint-placeholder-val="{{ true }}"><a style="display:flex;flex-direction:column;justify-content:center;min-height:48px;flex:0 0 auto;padding:4px 16px;text-decoration:none;color:{{ i.fg }};box-sizing:border-box;line-height:1.25"><span style="font-size:15px">{{ i.t }}</span><sc-if value="{{ i.hasSub }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:{{ i.subFg }}">{{ i.sub }}</span></sc-if></a></sc-if>
+                  </sc-for>
+                </div>
+                </sc-if>
+              </div>
+              </sc-if>
+            </div>
+            </sc-for>
+            <sc-if value="{{ s.isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="border-top:1px solid #000;padding:36px 24px 40px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+              <img src="assets/balls.png" alt="" style="width:300px;height:auto">
+              <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1.1">Invite the people you play with</div>
+              <div style="display:flex;gap:24px;align-items:center;margin-left:8px">
+                <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 24px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>Invite a Player</a>
+                <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 24px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New join link</a>
+              </div>
+            </div>
+            </sc-if>
+          </div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ s.hasInvites }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="pending" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Pending invitations</div>
+            <div style="display:flex;align-items:center;gap:20px"><span style="font-size:14px;color:#f7f7f3">{{ s.pendingCount }}</span><a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 20px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:15px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000;white-space:nowrap"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>Invite a Player</a></div>
+          </div>
+          <div style="background:#f7f7f3;padding:0 0 4px;display:flex;flex-direction:column">
+            <div style="display:grid;grid-template-columns:180px minmax(0,1fr) 150px 260px 200px;gap:0 16px;align-items:center;height:36px;padding:0 20px;font-size:13px;box-sizing:border-box"><span>Player</span><span>Sent as</span><span>Expires</span><span>State</span><span></span></div>
+            <sc-for list="{{ s.pending }}" as="p" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:180px minmax(0,1fr) 150px 260px 200px;gap:0 16px;align-items:center;min-height:64px;padding:6px 20px;border-top:1px solid {{ p.bd }};box-sizing:border-box">
+              <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ p.nick }}</span>
+              <span style="font-size:14px;min-width:0;overflow-wrap:anywhere">{{ p.target }}</span>
+              <span style="font-size:14px;white-space:nowrap">{{ p.expires }}</span>
+              <div style="display:flex;align-items:center;gap:16px"><span style="display:inline-flex;align-items:center;padding:5px 12px 5px {{ p.stPadL }};font-size:13px;color:#000;position:relative;z-index:0;flex:none"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ p.stBg }};border:1px solid #000;border-left:{{ p.stEdge }};transform:rotate(-1.5deg);box-shadow:-3px 3px 0 #000"></span>{{ p.state }}</span><sc-if value="{{ p.failed }}" hint-placeholder-val="{{ false }}"><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#000;text-decoration:none;box-sizing:border-box;flex:none">Resend</a></sc-if></div>
+              <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px"><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#000;text-decoration:none;box-sizing:border-box;flex:none">Copy link</a><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#ed1c24;text-decoration:none;box-sizing:border-box;flex:none">Revoke</a></div>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-panel="joinlinks" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Join links</div>
+            <div style="display:flex;align-items:center;gap:20px"><span style="font-size:14px;color:#f7f7f3">anyone with the link joins as a Member</span><a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 20px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:15px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000;white-space:nowrap"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New join link</a></div>
+          </div>
+          <div style="background:#f7f7f3;padding:0 0 4px;display:flex;flex-direction:column">
+            <sc-for list="{{ s.links }}" as="l" hint-placeholder-count="2">
+            <div style="display:grid;grid-template-columns:180px minmax(0,1fr) 200px;gap:0 16px;align-items:center;min-height:64px;padding:6px 20px;border-top:1px solid {{ l.bd }};box-sizing:border-box">
+              <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px">Join link</span>
+              <span style="font-size:14px">{{ l.line }}</span>
+              <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px"><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#000;text-decoration:none;box-sizing:border-box;flex:none">Copy link</a><a style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;font-size:14px;color:#ed1c24;text-decoration:none;box-sizing:border-box;flex:none">Revoke</a></div>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-panel="past" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Past invitations</div>
+            <div style="font-size:14px;color:#f7f7f3">newest first</div>
+          </div>
+          <div style="background:#f7f7f3;display:flex;flex-direction:column">
+            <sc-for list="{{ s.past }}" as="q" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:180px minmax(0,1fr);gap:0 16px;align-items:center;height:48px;padding:0 20px;border-top:1px solid {{ q.bd }};box-sizing:border-box"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px">{{ q.nick }}</span><span style="font-size:14px;color:#4b5560">{{ q.line }}</span></div>
+            </sc-for>
+            <div style="padding:16px 20px 20px 28px;border-top:1px solid #bcc5ce"><a style="display:flex;align-items:center;justify-content:center;height:44px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">Show more</a></div>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ s.showInvite }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62);display:flex;align-items:center;justify-content:center">
+        <div data-dialog="invite" style="width:680px;margin-left:12px;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;flex-direction:column;position:relative;background:#f7f7f3">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:24px;color:#f7f7f3;line-height:1.2">Invite a Player</div><a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a></div>
+          <sc-if value="{{ s.inv.picking }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:20px 24px 24px 28px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:20px"><span style="font-size:14px">Which Player is this for? Unlinked Players only.</span><div style="width:260px;height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;gap:10px;padding:0 12px;box-sizing:border-box;flex:none"><span style="width:14px;height:14px;border:2px solid #000;border-radius:50%;flex:none;box-sizing:border-box;position:relative"><span style="position:absolute;width:2px;height:7px;background:#000;right:-4px;bottom:-6px;transform:rotate(-45deg)"></span></span><span style="font-size:15px;color:#4b5560">Search Players</span></div></div>
+            <div style="display:flex;flex-direction:column;gap:6px;padding:0 8px">
+              <sc-for list="{{ s.inv.pool }}" as="p" hint-placeholder-count="5">
+              <a style="position:relative;display:flex;align-items:center;gap:14px;flex:0 0 56px;height:56px;padding:0 16px;text-decoration:none;color:{{ p.fg }}"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.bg }};border:1px solid #000"></div><div style="position:relative;width:32px;height:42px;background:#f93a07;border:1px solid #000;padding:3px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;flex:none"><div style="flex:1;background:#8c8f94;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:12px;color:#000">{{ p.ini }}</div><div style="height:7px;background:#f7f7f3;border:1px solid #3a3ab0"></div></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;flex:1">{{ p.nick }}</span><span style="position:relative;font-size:13px">{{ p.line }}</span><span style="position:relative;width:24px;height:24px;border-radius:50%;border:1px solid #000;background:#f7f7f3;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;flex:none;box-sizing:border-box">{{ p.mark }}</span></a>
+              </sc-for>
+            </div>
+            <div style="font-size:14px;padding-top:4px">How does it reach them?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-left:8px">
+              <sc-for list="{{ s.inv.ways }}" as="w" hint-placeholder-count="2">
+              <a style="position:relative;display:flex;flex-direction:column;gap:8px;padding:16px;border:{{ w.bd }} solid #000;background:#f7f7f3;color:#000;box-sizing:border-box;box-shadow:{{ w.shadowD }};text-decoration:none;min-height:150px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1.1">{{ w.title }}</span><span style="width:24px;height:24px;border-radius:50%;border:1px solid #000;background:#f7f7f3;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex:none;box-sizing:border-box">{{ w.mark }}</span></div>
+                <span style="font-size:14px;line-height:1.35;text-wrap:pretty">{{ w.line }}</span>
+                <sc-if value="{{ w.hasEmail }}" hint-placeholder-val="{{ false }}"><label style="display:flex;flex-direction:column;gap:6px;margin-top:auto"><span style="font-size:13px">Email</span><div style="height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;padding:0 12px;box-sizing:border-box;font-size:15px;color:{{ s.inv.emailFg }}">{{ s.inv.emailText }}</div></label></sc-if>
+              </a>
+              </sc-for>
+            </div>
+          </div>
+          <div style="border-top:1px solid #000;padding:16px 24px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <a style="font-size:16px;color:#000;padding:12px 0;margin:-12px 0;text-decoration:none">Cancel</a>
+            <a style="display:flex;align-items:center;justify-content:center;width:260px;height:44px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">Create invitation</a>
+          </div>
+          </sc-if>
+          <sc-if value="{{ s.inv.created }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:24px 24px 28px 28px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:16px;text-wrap:pretty">{{ s.inv.createdLine }}</div>
+            <div style="display:flex;gap:16px;align-items:stretch;margin-left:8px">
+              <div style="flex:1;min-height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;padding:10px 14px;box-sizing:border-box;font-family:ui-monospace,Menlo,monospace;font-size:15px;overflow-wrap:anywhere;box-shadow:-8px 8px 0 #000">{{ s.inv.url }}</div>
+              <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 24px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000;flex:none">Copy link</a>
+            </div>
+            <div style="font-size:13px;color:#4b5560;padding-top:6px">{{ s.inv.createdNote }}</div>
+          </div>
+          <div style="border-top:1px solid #000;padding:16px 24px 24px;display:flex;align-items:center;justify-content:flex-end;gap:16px">
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 32px;margin-left:8px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">Done</a>
+          </div>
+          </sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.showAssign }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62);display:flex;align-items:center;justify-content:center">
+        <div data-dialog="assign" style="width:560px;margin-left:12px;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;flex-direction:column;position:relative;background:#f7f7f3">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#3a3ab0;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box"><div style="display:flex;flex-direction:column"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:24px;color:#f7f7f3;line-height:1.2">Assign as Manager</div><div style="font-size:13px;color:#d7e6cc">Marko Jovanović</div></div><a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a></div>
+          <div style="padding:20px 24px 24px 28px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:14px;text-wrap:pretty">A Manager records matches and sets fixtures in the competitions ticked here.</div>
+            <div style="display:flex;flex-direction:column;gap:6px;padding:0 8px">
+              <sc-for list="{{ comps }}" as="c" hint-placeholder-count="3">
+              <a style="position:relative;display:flex;align-items:center;gap:14px;flex:0 0 56px;height:56px;padding:0 16px;text-decoration:none;color:{{ c.fg }}"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div><span style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:24px;width:96px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.tagBg }};border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">{{ c.fmt }}</span></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;flex:1">{{ c.name }}</span><span style="position:relative;font-size:13px">{{ c.line }}</span><span style="position:relative;width:24px;height:24px;border:1px solid #000;background:#f7f7f3;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;flex:none;box-sizing:border-box">{{ c.mark }}</span></a>
+              </sc-for>
+            </div>
+          </div>
+          <div style="border-top:1px solid #000;padding:16px 24px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <a style="font-size:16px;color:#000;padding:12px 0;margin:-12px 0;text-decoration:none">Cancel</a>
+            <a style="display:flex;align-items:center;justify-content:center;width:200px;height:44px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">Done</a>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;overflowOn&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Marko J.&quot;,&quot;Cope, the only admin&quot;],&quot;default&quot;:&quot;Marko J.&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Member overflow (18c)&quot;},&quot;inviteStep&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Pick a Player&quot;,&quot;Link created&quot;],&quot;default&quot;:&quot;Pick a Player&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Invite a Player (18d)&quot;},&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+  }
+  renderVals() {
+    const menuOn = this.props.overflowOn ?? 'Marko J.';
+    const inviteStep = this.props.inviteStep ?? 'Pick a Player';
+    const PAPER = '#f7f7f3', RED = '#ed1c24', BLUE = '#3a3ab0', GREY = '#8c8f94', SUB = '#4b5560';
+    const FMT = { League: '#0c542c', Knockout: '#f93a07', Pickup: '#3a3ab0' };
+    const ROLE_BG = { 'Group admin': RED, Manager: BLUE };
+
+    const mem = (name, email, nick, role, joined) => ({ name, email, nick: nick || '', hasNick: !!nick, noNick: !nick, role, hasTag: role !== 'Member', tagBg: ROLE_BG[role] || 'transparent', joined });
+    const MEMBERS = [
+      mem('Nikola Copić', 'cope.nikola@gmail.com', 'Cope', 'Group admin', '3 Mar 2024'),
+      mem('Ana Kovač', 'ana.kovac@gmail.com', 'Ana', 'Manager', '3 Mar 2024'),
+      mem('Marko Jovanović', 'marko.jov@gmail.com', 'Marko J.', 'Member', '11 Sep 2024'),
+      mem('Luka Petrović', 'luka.petrovic@gmail.com', 'Luka', 'Manager', '20 Jan 2025'),
+      mem('Stefan Ilić', 'stefan.ilic@gmail.com', 'Stefan', 'Member', '14 Jun 2025'),
+      mem('Nikola Perić', 'nikola.peric@gmail.com', null, 'Member', '2 Feb'),
+      mem('Milan Đorđević', 'milan.dj@gmail.com', 'Milan', 'Member', '5 Sep')
+    ];
+    const dots = open => ({ menuOpen: !!open, dotsBg: open ? RED : 'transparent', dotsBd: open ? '#000' : 'transparent', dotsFg: open ? PAPER : '#000' });
+    const rows = (list, openNick, noTags) => list.map((m, i) => ({ ...m, hasTag: noTags ? false : m.hasTag, bd: i === 0 ? 'transparent' : '#bcc5ce', ...dots(openNick && m.nick === openNick) }));
+
+    const stk = (nick, target, expires, failed) => ({ nick, target, expires, failed: !!failed, state: failed ? 'not delivered' : 'pending', stBg: failed ? '#faf15d' : PAPER, stEdge: failed ? '8px solid #cec311' : '1px solid #000', stPadL: failed ? '18px' : '10px' });
+    const PENDING = [stk('Vuk', 'link', '28 Sep'), stk('Filip', 'filip.nikolic@gmail.com', '25 Sep', true), stk('Đole', 'djordje.m@gmail.com', '30 Sep')].map((p, i) => ({ ...p, bd: i === 0 ? '#000' : '#bcc5ce' }));
+    const LINKS = [{ line: 'made by Ana · 12 Aug · used 6 times' }, { line: 'made by Cope · 2 Sep · not used yet' }].map((l, i) => ({ ...l, bd: i === 0 ? '#000' : '#bcc5ce' }));
+    const PAST = [['Marko J.', 'accepted by Marko J. · 4 Sep'], ['Bane', 'expired · 20 Aug'], ['Igor', 'revoked by Ana · 11 Aug'], ['Stefan', 'accepted by Stefan · 14 Jun 2025']].map(([nick, line], i) => ({ nick, line, bd: i === 0 ? 'transparent' : '#bcc5ce' }));
+
+    const item = (t, sub, x) => ({ t, sub: sub || '', hasSub: !!sub, isItem: true, fg: x && x.off ? GREY : (x && x.danger ? RED : '#000'), subFg: x && x.off ? GREY : SUB });
+    const divider = () => ({ isDivider: true });
+    const menuMarko = [item('Make Group admin', 'manages Members, competitions and settings'), item('Assign as Manager …', 'of chosen competitions'), item('Link to a Player …', 'linked to Marko J. · Unlink first', { off: true }), item('Unlink from Marko J.', 'the Player keeps his record, unlinked'), divider(), item('Remove from the Group', 'his Player stays in the records', { danger: true })];
+    const menuCope = [item('Demote to Member', 'the only Group admin', { off: true }), item('Assign as Manager …', 'of chosen competitions'), item('Link to a Player …', 'linked to Cope · Unlink first', { off: true }), item('Unlink from Cope', 'the Player keeps his record, unlinked'), divider(), item('Remove from the Group', 'the only Group admin', { off: true, danger: true })];
+    const onCope = menuOn !== 'Marko J.';
+
+    const picking = inviteStep === 'Pick a Player';
+    const pool = [['Vuk', 'VK', '14 matches'], ['Filip', 'FN', '9 matches'], ['Đole', 'ĐM', '7 matches'], ['Bane', 'BS', '3 matches'], ['Igor', 'IT', '1 match']].map(([nick, ini, line], i) => ({ nick, ini, line, bg: i === 0 ? '#42af36' : '#091e40', fg: i === 0 ? '#000' : PAPER, mark: i === 0 ? '✓' : '' }));
+    const ways = [
+      { title: 'A link to paste in the chat', line: 'One link for this Player. Whoever opens it signs in and is linked.', on: true, hasEmail: false },
+      { title: 'Send to an email', line: 'We mail the same link. You see if it was not delivered.', on: false, hasEmail: true }
+    ].map(w => ({ ...w, bd: w.on ? '2px' : '1px', shadow: w.on ? '-4px 4px 0 #000' : 'none', shadowD: w.on ? '-8px 8px 0 #000' : 'none', mark: w.on ? '✓' : '' }));
+    const invBase = { pool, ways, emailText: 'name@example.com', emailFg: SUB, url: 'sundayheroes.app/join/7Hk2pQ9v', createdLine: 'The invitation for Vuk is ready. It expires 1 Oct and works once.', createdNote: 'It waits under Pending invitations with Copy link and Revoke.' };
+    const inv = { ...invBase, picking, created: !picking };
+    const invReady = { ...invBase, picking: false, created: true };
+
+    const comps = [['Sunday league', 'League', '12 Teams', true], ['Zlatna lopta', 'Knockout', '6 Entries', false], ['Sredom u osam', 'Pickup', '44 matches', true]].map(([name, fmt, line, on]) => ({ name, fmt, line, tagBg: FMT[fmt], bg: on ? '#42af36' : '#091e40', fg: on ? '#000' : PAPER, mark: on ? '✓' : '' }));
+
+    const skel = [['42%', '60%', '96px'], ['36%', '54%', '0'], ['48%', '62%', '80px'], ['40%', '58%', '0'], ['34%', '50%', '0'], ['44%', '56%', '96px']].map(([w1, w2, w3]) => ({ w1, w2, w3 }));
+
+    const admin = { isAdmin: true, viewer: 'Cope', viewerIni: 'C', showEmail: true, showRole: true, showDots: true, gridDesk: 'minmax(0,1fr) 180px 150px 170px 56px', hasInvites: true, ready: true, loading: false, isEmpty: false,
+      members: rows(MEMBERS), pending: PENDING, links: LINKS, past: PAST, skel, menu: [], menuName: '', menuSub: '', inv,
+      memberCount: '7 Members', memberNote: 'Every Member in one table, no paging · the ⋯ holds the acts', bandLine: '7 Members · 3 invitations open', pendingCount: '3 open',
+      showMenu: false, showInvite: false, showAssign: false };
+    const member = { ...admin, isAdmin: false, viewer: 'Marko J.', viewerIni: 'M', members: rows(MEMBERS, null, true), showEmail: false, showRole: false, showDots: false, gridDesk: 'minmax(0,1fr) 240px', hasInvites: false, memberNote: 'Who plays in Nedeljni heroji', bandLine: '7 Members' };
+
+    const sections = [
+      { ...admin, id: '18a', label: '18a Members, admin',
+        blurb: 'Cope, a Group admin: four paper panels · Members as one table on a desktop: display name over the email, the Player nickname as a paper chip or "no Player", a role tag (Group admin red, Manager blue, none for a Member), joined, a ⋯ · two-line rows on a phone · Pending invitations with a state sticker, Copy link and Revoke, "not delivered" in yellow with Resend · Join links · Past invitations newest first under a Show more bar' },
+      { ...member, id: '18b', label: '18b Members, Member',
+        blurb: 'Marko J., a Member: the Members panel alone, display names and nicknames · no emails, no roles, no ⋯, no invitation panels · the sidebar loses Activity record and Group settings' },
+      { ...admin, id: '18c', label: '18c Member overflow', members: rows(MEMBERS, onCope ? 'Cope' : 'Marko J.'), showMenu: true, menu: onCope ? menuCope : menuMarko, menuName: onCope ? 'Nikola Copić' : 'Marko Jovanović', menuSub: onCope ? 'Group admin · Cope · joined 3 Mar 2024' : 'Member · Marko J. · joined 11 Sep 2024',
+        blurb: onCope ? 'The ⋯ on Cope, the only Group admin: Demote to Member and Remove from the Group greyed with "the only Group admin" · Assign as Manager … and Unlink live · a bottom sheet on a phone, a menu under the button on a desktop · the Tweaks switch to Marko J.' : 'The ⋯ on Marko J., opened by an admin: Make Group admin · Assign as Manager … · Link to a Player … greyed since he is linked · Unlink from Marko J. · a divider, then Remove from the Group in red · a bottom sheet titled with his name on a phone, a menu under the button on a desktop · the Tweaks switch to Cope, the only admin' },
+      { ...admin, id: '18d', label: '18d Invite a Player', hasInvites: false, showInvite: true,
+        blurb: picking ? 'Invite a Player: a full-screen sheet on a phone, a dialog on a desktop · pick an unlinked Player from the pool, search above, the missing sticker with initials beside each, Vuk picked · then two large stickers, A link to paste in the chat or Send to an email with its field; the picked one gets the 2 px stroke and shadow · sticky bar: Cancel and Create invitation · the Tweaks show the created link' : 'After Create invitation: the link in a paper field with a red Copy link beside it, one line on when it expires · Done closes; the invitation waits under Pending invitations · the Tweaks return to the pick' },
+      { ...admin, id: '18e', label: '18e Assign as Manager', hasInvites: false, showAssign: true,
+        blurb: 'Assign as Manager for Marko J.: the Group\'s competitions as picker rows with their Format tag and a checkbox each, ticked rows green · Done' },
+      { ...admin, id: '18f', label: '18f Empty', members: rows(MEMBERS.slice(0, 1)), hasInvites: false, isEmpty: true, memberCount: '1 Member', bandLine: '1 Member', memberNote: 'Just you so far',
+        blurb: 'A Group with one Member and nothing else: Cope alone in the table, then the footballs, "Invite the people you play with" and the two acts, + Invite a Player in red and + New join link on paper · no other panels until something exists' },
+      { ...admin, id: '18g', label: '18g Loading', ready: false, loading: true, hasInvites: false, bandLine: '',
+        blurb: 'Loading: the Members panel in its own shape, a grey head with a paper block, six skeleton rows with name, email, chip, tag and date blocks in #bcc5ce · no motion · the other panels arrive with their data' },
+      { ...admin, id: '18h', label: '18h The only admin', members: rows(MEMBERS, 'Cope'), showMenu: true, menu: menuCope, menuName: 'Nikola Copić', menuSub: 'Group admin · Cope · joined 3 Mar 2024',
+        blurb: 'The ⋯ on Cope, the last Group admin left: Demote to Member and Remove from the Group greyed, each reading "the only Group admin" beneath · Assign as Manager … and Unlink stay live · a bottom sheet on a phone, a menu under the button on a desktop · this state comes from the data, not the Tweaks' },
+      { ...admin, id: '18i', label: '18i Invitation link ready', hasInvites: false, showInvite: true, inv: invReady,
+        blurb: 'The Invite sheet after Create invitation: the link in a paper field with a red Copy link beside it, one line on when it expires, then Done · the invitation waits under Pending invitations · this state comes from the data, not the Tweaks' }
+    ];
+    return { sections, inv, comps };
+  }
+}
+</script>
+</body>
+</html>

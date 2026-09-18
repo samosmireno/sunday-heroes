@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase">Screen 13 · Competition page, Knockout</div>
+  <div style="font-size:14px">title band in the Knockout family · Season selector · yellow Season summary with Still in or the Winner as colour plates · tabs Bracket · Teams · Players · Rules · Ties by Round as a list on a phone, as columns on a desktop · Manager overflow, Redraw confirmation · finished Season with the End suggestion · empty Season · flip the role tweak</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="10">
+<section id="{{ s.id }}" data-screen-label="{{ s.label }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><a style="display:inline-flex;align-items:center;align-self:flex-start;height:44px;padding:0 8px 16px;margin:0 0 -16px -8px;box-sizing:content-box;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3;text-decoration:none;position:relative;z-index:1">‹ Competitions</a></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px">
+        <div data-band="" style="margin-left:4px;min-height:52px;background:#f7f7f3;border:1px solid #000;box-shadow:-4px 4px 0 #000;display:flex;align-items:center;gap:12px;padding:8px 12px;box-sizing:border-box"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1;text-transform:uppercase;text-shadow:-3px 3px 0 #000;flex:1;min-width:0;overflow-wrap:anywhere;color:#3a3ab0">{{ s.comp }}</span><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f93a07;border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">Knockout</span></div></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:0 6px">
+          <a data-selector="" style="position:relative;flex:1;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 16px;text-decoration:none;min-width:0"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#f7f7f3;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ s.season }}</span><sc-if value="{{ s.seasonPast }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none;margin-left:auto"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f55656;border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#000">Past</span></span></sc-if><span style="position:relative;color:#f7f7f3;font-size:12px">▼</span></a>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+          <a data-gear="" aria-label="Competition settings" style="width:44px;height:44px;flex:none;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:22px;color:#000;text-decoration:none;box-sizing:border-box">⚙︎</a>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ s.showEnd }}" hint-placeholder-val="{{ false }}">
+        <div data-sticker="end" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 12px 10px 20px;font-size:14px;color:#000;margin:2px 4px 0 6px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:8px solid #cec311;transform:rotate(-1deg);box-shadow:-3px 3px 0 #000"></span><span>{{ endLine }}</span><sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}"><span style="display:flex;gap:14px;flex:none"><a style="font-weight:700;padding:12px 0;margin:-12px 0">End the season</a><a style="padding:12px 0;margin:-12px 0">Not yet</a></span></sc-if></div>
+        </sc-if>
+
+        <sc-if value="{{ s.showSummary }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="summary" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#faf15d;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;white-space:nowrap;flex:none">Season summary</div><div style="font-size:12px;text-align:right;min-width:0;line-height:1.2">{{ s.summaryMeta }}</div></div>
+          <div style="position:relative;background:#faf15d;padding:16px 36px 16px 16px;overflow:hidden;display:flex;flex-direction:column;gap:8px;font-size:15px">
+            <div style="position:absolute;right:-6px;top:0;bottom:0;width:20px;background:#cec311;border-left:1px solid #000;transform:skewX(-15deg)"></div>
+            <sc-for list="{{ s.summary }}" as="l" hint-placeholder-count="6">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;min-height:28px;flex-wrap:wrap"><span style="padding-top:5px">{{ l.label }}</span>
+              <sc-if value="{{ l.isPlates }}" hint-placeholder-val="{{ true }}"><span style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;flex:1"><sc-for list="{{ l.plates }}" as="p" hint-placeholder-count="4"><span style="position:relative;display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 6px"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></span><span style="position:relative;width:22px;height:22px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ p.hex }};border:1px solid #000"></span></span><sc-if value="{{ p.crown }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:16px;height:13px;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:1.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;color:#f7f7f3;font-size:15px">{{ p.name }}</span></span></sc-for></span></sc-if>
+              <sc-if value="{{ l.isText }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;text-align:right;padding-top:5px">{{ l.value }}</span></sc-if>
+            </div>
+            </sc-for>
+            <div style="font-size:13px;padding-top:2px">{{ s.summaryNote }}</div>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showAct }}" hint-placeholder-val="{{ false }}">
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">{{ s.act }}</a>
+        </sc-if>
+
+        <div data-tabs="" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0 6px">
+          <sc-for list="{{ s.tabs }}" as="t" hint-placeholder-count="4">
+          <a style="position:relative;height:44px;display:flex;align-items:center;justify-content:center;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ t.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ t.fg }}">{{ t.name }}</span></a>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ s.showBracket }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:12px;padding:0 6px">
+          <a data-filter="" style="position:relative;flex:1;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 16px;text-decoration:none;min-width:0"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-size:15px;color:#000">{{ s.teamFilter }}</span><span style="position:relative;color:#000;font-size:12px">▼</span></a>
+          <sc-if value="{{ isManager }}" hint-placeholder-val="{{ true }}"><a aria-label="Bracket acts" style="width:44px;height:44px;flex:none;background:{{ s.mgrBtnBg }};border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:{{ s.mgrBtnFg }};text-decoration:none;box-sizing:border-box">⋯</a></sc-if>
+        </div>
+        <div data-panel="bracket" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Bracket</div>
+            <a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;font-size:13px;color:#f7f7f3">Share</a>
+          </div>
+          <div style="background:#0c542c;padding:12px 12px 16px 14px;display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ s.rounds }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <a style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 4px;color:#f7f7f3;text-decoration:none"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase">{{ r.n }}</span><span style="font-size:13px;color:#d7e6cc">{{ r.date }}</span><span style="flex:1;height:1px;background:#f7f7f3;opacity:0.6"></span><span style="font-size:13px;color:{{ r.statusFg }}">{{ r.status }}</span><span style="width:44px;height:44px;margin-right:-12px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none">{{ r.chev }}</span></a>
+              <sc-if value="{{ r.open }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ r.byes }}" as="b" hint-placeholder-count="0">
+              <div style="display:flex;align-items:center;gap:8px;padding:0 6px;min-height:32px;font-size:14px;color:#f7f7f3"><span style="position:relative;width:18px;height:18px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ b.hex }};border:1px solid #000"></span></span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px">{{ b.label }}</span><span style="font-size:13px;color:#d7e6cc">{{ b.text }}</span></div>
+              </sc-for>
+              <sc-for list="{{ r.ties }}" as="t" hint-placeholder-count="2">
+              <a style="position:relative;background:{{ t.bg }};border:1px solid #000;box-shadow:-4px 4px 0 #000;padding:10px 12px 12px 14px;display:flex;flex-direction:column;gap:8px;color:#f7f7f3;text-decoration:none">
+                <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#bcc5ce"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;color:#f7f7f3">{{ t.label }}</span><span style="flex:1;color:{{ t.statusFg }};white-space:nowrap">{{ t.status }}</span><span style="flex:none">{{ t.date }}</span><sc-if value="{{ isManager }}" hint-placeholder-val="{{ true }}"><span aria-label="Tie acts" style="width:44px;height:44px;margin:-12px -8px -12px 0;display:inline-flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:#f7f7f3;border:1px solid rgba(247,247,243,0.4);box-sizing:border-box;flex:none">⋯</span></sc-if></div>
+                <sc-if value="{{ t.hasHeader }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:4px"><span style="flex:1"></span><sc-for list="{{ t.heads }}" as="h" hint-placeholder-count="3"><span style="width:38px;flex:none;text-align:center;font-size:12px;color:#bcc5ce">{{ h }}</span></sc-for></div>
+                </sc-if>
+                <sc-for list="{{ t.sides }}" as="sd" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:4px;min-height:36px">
+                  <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding-right:6px">
+                    <sc-if value="{{ sd.hasPlate }}" hint-placeholder-val="{{ true }}"><span style="position:relative;width:22px;height:22px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ sd.hex }};border:1px solid #000"></span></span></sc-if>
+                    <sc-if value="{{ sd.noPlate }}" hint-placeholder-val="{{ false }}"><span style="width:22px;height:22px;flex:none;border:1px dashed #bcc5ce;box-sizing:border-box;transform:skewX(-15deg)"></span></sc-if>
+                    <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ sd.fg }};white-space:nowrap;line-height:1.1">{{ sd.label }}</span>
+                    <sc-if value="{{ sd.crown }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:16px;height:13px;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:1.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if>
+                  </div>
+                  <sc-for list="{{ sd.cells }}" as="c" hint-placeholder-count="1"><div style="position:relative;width:38px;height:36px;flex:none;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;color:{{ c.fg }}">{{ c.v }}</span></div></sc-for>
+                </div>
+                </sc-for>
+                <sc-for list="{{ t.lines }}" as="l" hint-placeholder-count="0">
+                <div style="display:flex;align-items:center;gap:8px;font-size:13px"><sc-if value="{{ l.hasMark }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;height:22px;padding:0 8px;color:#000;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;flex:none;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ l.markBg }};border:1px solid #000;transform:rotate(-1.5deg)"></span>{{ l.mark }}</span></sc-if><span style="color:{{ l.fg }}">{{ l.text }}</span></div>
+                </sc-for>
+              </a>
+              </sc-for>
+              </sc-if>
+            </div>
+            </sc-for>
+          </div>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:10px 16px;font-size:13px;display:flex;justify-content:space-between;gap:12px"><span>{{ s.bracketNote }}</span><a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;flex:none">Copy bracket as text</a></div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showTeams }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="teams" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Teams</div>
+            <div style="font-size:13px;color:#f7f7f3">{{ s.teamsMeta }}</div>
+          </div>
+          <div style="background:#000;overflow-x:auto;padding:8px 8px 8px 0">
+            <div style="display:flex;gap:4px;width:max-content;min-width:100%;align-items:center;margin-bottom:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;width:176px;flex:none;display:flex;align-items:center;height:32px;box-sizing:border-box"><span style="font-size:13px;color:#f7f7f3">Team</span></div>
+              <sc-for list="{{ teamCols }}" as="c" hint-placeholder-count="3">
+              <div style="position:relative;height:32px;flex:none;width:{{ c.w }};display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }}">{{ c.name }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ s.teams }}" as="r" hint-placeholder-count="8">
+            <div style="display:flex;gap:4px;width:max-content;min-width:100%;align-items:center;margin-bottom:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;width:176px;flex:none;box-sizing:border-box"><a style="position:relative;height:44px;display:flex;align-items:center;gap:6px;padding:0 10px 0 12px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.nameBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;color:{{ r.fg }};width:26px;flex:none">{{ r.seed }}</span><span style="position:relative;width:24px;height:24px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ r.hex }};border:1px solid #000"></span></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ r.fg }};min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ r.name }}</span><sc-if value="{{ r.crown }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:16px;height:13px;flex:none;margin-left:auto"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:1.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if></a></div>
+              <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3">
+              <div style="position:relative;height:44px;flex:none;width:{{ c.w }};display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ c.fg }};white-space:nowrap">{{ c.v }}</span></div>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:10px 16px;font-size:13px">{{ s.teamsNote }}</div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showPlayers }}" hint-placeholder-val="{{ false }}">
+        <div data-chips="" style="display:flex;gap:10px;padding:0 0 4px 6px;overflow-x:auto">
+          <sc-for list="{{ presetChips }}" as="c" hint-placeholder-count="4">
+          <a style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 16px;flex:none;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000;box-shadow:-2px 2px 0 #000"></div><span style="position:relative;font-size:14px;font-weight:700;color:{{ c.fg }}">{{ c.name }}</span></a>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:12px;padding:0 0 0 6px">
+          <div data-search="" style="flex:1;min-width:0;height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;gap:10px;padding:0 12px;box-sizing:border-box"><span style="width:14px;height:14px;border:2px solid #000;border-radius:50%;flex:none;box-sizing:border-box;position:relative"><span style="position:absolute;width:2px;height:7px;background:#000;right:-4px;bottom:-6px;transform:rotate(-45deg)"></span></span><span style="font-size:15px;color:#4b5560">Search Players</span></div>
+          <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:14px;text-decoration:none;box-sizing:border-box;flex:none">Share</a>
+        </div>
+        <div data-panel="players" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#f93a07;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Players</div>
+            <div style="font-size:13px;color:#f7f7f3">{{ s.seasonShort }}</div>
+          </div>
+          <div style="background:#000;overflow-x:auto;padding:8px 8px 8px 0">
+            <div style="display:flex;gap:4px;width:max-content;min-width:100%;align-items:center;margin-bottom:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;width:148px;flex:none;display:flex;align-items:center;height:32px;box-sizing:border-box"><span style="font-size:13px;color:#f7f7f3">Player</span></div>
+              <sc-for list="{{ playerCols }}" as="c" hint-placeholder-count="11">
+              <div style="position:relative;height:32px;flex:none;width:{{ c.w }};display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }}">{{ c.name }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ players }}" as="p" hint-placeholder-count="8">
+            <div style="display:flex;gap:4px;width:max-content;min-width:100%;align-items:center;margin-bottom:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;width:148px;flex:none;box-sizing:border-box"><a style="position:relative;height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.nameBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;color:{{ p.fg }};width:22px">{{ p.rank }}</span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ p.fg }}">{{ p.name }}</span></a></div>
+              <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="11">
+              <div style="position:relative;height:44px;flex:none;width:{{ c.w }};display:flex;align-items:center;justify-content:{{ c.jc }};gap:6px;padding:0 {{ c.px }};box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div>
+                <sc-if value="{{ c.isTeam }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:20px;height:20px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ c.hex }};border:1px solid #000"></span></span></sc-if>
+                <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ c.fg }};white-space:nowrap">{{ c.v }}</span>
+              </div>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:10px 16px;font-size:13px">{{ qualifiedNote }}</div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showRules }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="rules" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Rules</div>
+            <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}"><a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;font-size:14px;color:#f7f7f3">Change in settings</a></sc-if>
+          </div>
+          <div style="background:#f7f7f3;padding:6px 16px 10px;display:flex;flex-direction:column">
+            <sc-for list="{{ rules }}" as="r" hint-placeholder-count="9">
+            <div style="display:flex;justify-content:space-between;gap:16px;min-height:44px;align-items:center;border-bottom:1px solid #bcc5ce;font-size:15px;padding:6px 0"><span style="flex:none">{{ r.label }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;text-align:right">{{ r.value }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showEmpty }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="bracket-empty" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Bracket</div>
+            <div style="font-size:13px;color:#f7f7f3">{{ s.emptyMeta }}</div>
+          </div>
+          <div style="background:#f7f7f3;padding:28px 16px 24px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+            <img src="assets/balls.png" alt="" style="width:260px;height:auto">
+            <div style="font-size:16px;max-width:280px;text-wrap:pretty">{{ s.emptyLine }}</div>
+            <sc-if value="{{ s.emptyCan }}" hint-placeholder-val="{{ true }}">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:100%;max-width:300px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">{{ s.emptyAct }}</a>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      <div style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr)">
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;background:#ed1c24;border-left:1px solid #000;border-right:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;text-decoration:none">Competitions</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Players</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You<span style="width:22px;height:22px;border-radius:50%;background:#f93a07;border:1px solid #000;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#f7f7f3;box-sizing:border-box">2</span></a>
+      </div>
+
+      <sc-if value="{{ s.showPicker }}" hint-placeholder-val="{{ false }}">
+      <div data-sheet="season" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#07361c;border-bottom:1px solid #000;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;min-height:78px;box-sizing:border-box;flex:none"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">Season</div><a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0;flex:none;text-decoration:none">Cancel</a></div>
+        <div style="flex:1;min-height:0;overflow:auto;padding:16px 16px 24px 20px;display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ s.seasons }}" as="o" hint-placeholder-count="3">
+          <a style="position:relative;height:48px;flex:0 0 48px;display:flex;align-items:center;gap:10px;padding:0 14px;text-decoration:none;color:#f7f7f3"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ o.bg }};border:1px solid #000"></div><div style="position:relative;flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ o.name }}</span><span style="font-size:13px">{{ o.span }}</span></div><sc-if value="{{ o.past }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f55656;border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#000">Past</span></span></sc-if><sc-if value="{{ o.current }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:12px;height:12px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;margin-right:4px"></span></sc-if></a>
+          </sc-for>
+          <div style="height:1px;background:#000;margin:8px 4px"></div>
+          <a style="position:relative;height:48px;flex:0 0 48px;display:flex;align-items:center;padding:0 14px;text-decoration:none;color:#f7f7f3"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">All seasons</span></a>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ s.hasSheet }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-sheet="{{ s.sheetKind }}" style="position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;border-top:1px solid #000;box-shadow:0 -4px 0 #000">
+        <div style="background:{{ s.sheetBg }};min-height:56px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="display:flex;flex-direction:column"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">{{ s.sheetTitle }}</div><div style="font-size:13px;color:#d7e6cc">{{ s.sheetSub }}</div></div>
+          <a style="font-size:14px;color:#f7f7f3;flex:none;padding:12px 0;margin:-12px 0">Cancel</a>
+        </div>
+        <sc-if value="{{ s.sheetIsMenu }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#f7f7f3;padding:8px 0 20px;display:flex;flex-direction:column">
+          <sc-for list="{{ s.menu }}" as="i" hint-placeholder-count="7">
+          <sc-if value="{{ i.isHead }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:baseline;gap:10px;margin:8px 16px 4px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">{{ i.t }}</span><span style="font-size:12px">{{ i.sub }}</span></div></sc-if>
+          <sc-if value="{{ i.isItem }}" hint-placeholder-val="{{ true }}"><a style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:6px 16px;text-decoration:none;color:{{ i.fg }};box-sizing:border-box"><span style="font-size:16px">{{ i.t }}</span><span style="font-size:12px;text-align:right;color:{{ i.subFg }}">{{ i.sub }}</span></a></sc-if>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ s.sheetIsRedraw }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#f7f7f3;padding:16px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-size:14px;text-wrap:pretty">{{ redraw.lead }}</div>
+          <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">Discarded</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding-left:2px">
+            <sc-for list="{{ redraw.discard }}" as="d" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:10px;font-size:15px"><span style="width:10px;height:10px;background:#ed1c24;border:1px solid #000;flex:none"></span><span>{{ d }}</span></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">Kept</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding-left:2px">
+            <sc-for list="{{ redraw.keep }}" as="d" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:10px;font-size:15px"><span style="width:10px;height:10px;background:#42af36;border:1px solid #000;flex:none"></span><span>{{ d }}</span></div>
+            </sc-for>
+          </div>
+          <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:6px 10px 6px 18px;font-size:13px;color:#000;margin:2px 0 0 4px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:8px solid #cec311;transform:rotate(-1deg);box-shadow:-2px 2px 0 #000"></span>{{ redraw.warn }}</div>
+        </div>
+        <div style="background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;flex-direction:column;gap:10px">
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">{{ redraw.cta }}</a>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Activity record</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Group settings</a>
+          </sc-if>
+        </nav>
+        <div style="flex:1"></div>
+        <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin:0 24px 24px 28px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New competition</a>
+        </sc-if>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">2</span></a>
+      </div>
+      <div style="position:relative;flex:1;padding:40px 40px 48px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box;min-width:0">
+        <div style="display:flex;align-items:center;gap:24px">
+          <div data-band="" style="flex:1;min-width:0;margin-left:8px;height:72px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;align-items:center;gap:20px;padding:0 20px;box-sizing:border-box"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;white-space:nowrap;padding-right:6px;color:#3a3ab0">{{ s.comp }}</span><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f93a07;border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">Knockout</span></div></div>
+          <div style="position:relative;flex:none;margin-left:6px"><a data-selector="" style="position:relative;min-width:360px;height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 20px;text-decoration:none;box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#f7f7f3">{{ s.season }}</span><sc-if value="{{ s.seasonPast }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none;margin-left:auto"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f55656;border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#000">Past</span></span></sc-if><span style="position:relative;color:#f7f7f3;font-size:12px">▼</span></a><sc-if value="{{ s.showPicker }}" hint-placeholder-val="{{ false }}"><div data-menu="season" style="position:absolute;left:0;right:0;top:48px;z-index:6;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;padding:6px 0;display:flex;flex-direction:column"><sc-for list="{{ s.seasons }}" as="o" hint-placeholder-count="3"><a style="display:flex;align-items:center;gap:12px;height:48px;flex:0 0 48px;padding:0 16px;background:{{ o.mBg }};color:{{ o.mFg }};text-decoration:none;box-sizing:border-box"><div style="position:relative;flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ o.name }}</span><span style="font-size:13px">{{ o.span }}</span></div><sc-if value="{{ o.past }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f55656;border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#000">Past</span></span></sc-if><sc-if value="{{ o.current }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:12px;height:12px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;margin-right:4px"></span></sc-if></a></sc-for><div style="height:1px;background:#000;margin:6px 16px"></div><a style="display:flex;align-items:center;height:48px;flex:0 0 48px;padding:0 16px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#000;text-decoration:none">All seasons</a></div></sc-if></div>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+          <a data-gear="" aria-label="Competition settings" style="width:44px;height:44px;flex:none;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:22px;color:#000;text-decoration:none;box-sizing:border-box">⚙︎</a>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ s.showEnd }}" hint-placeholder-val="{{ false }}">
+        <div data-sticker="end" style="display:inline-flex;align-self:flex-start;align-items:center;gap:24px;padding:10px 16px 10px 26px;font-size:15px;color:#000;margin-left:12px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:10px solid #cec311;transform:rotate(-1deg);box-shadow:-3px 3px 0 #000"></span><span>{{ endLine }}</span><sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}"><span style="display:flex;gap:16px;flex:none"><a style="font-weight:700;padding:12px 0;margin:-12px 0">End the season</a><a style="padding:12px 0;margin:-12px 0">Not yet</a></span></sc-if></div>
+        </sc-if>
+
+        <sc-if value="{{ s.showSummary }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="summary" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#faf15d;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px">Season summary</div><div style="font-size:14px">{{ s.summaryMeta }}</div></div>
+          <div style="position:relative;background:#faf15d;padding:20px 56px 20px 20px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;font-size:16px;align-content:start">
+            <div style="position:absolute;right:-8px;top:0;bottom:0;width:28px;background:#cec311;border-left:1px solid #000;transform:skewX(-15deg)"></div>
+            <sc-for list="{{ s.summary }}" as="l" hint-placeholder-count="6">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #cec311;padding-bottom:6px;min-height:36px;grid-column:{{ l.span }}"><span>{{ l.label }}</span>
+              <sc-if value="{{ l.isPlates }}" hint-placeholder-val="{{ true }}"><span style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px"><sc-for list="{{ l.plates }}" as="p" hint-placeholder-count="4"><span style="position:relative;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 6px"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></span><span style="position:relative;width:26px;height:26px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ p.hex }};border:1px solid #000"></span></span><sc-if value="{{ p.crown }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:20px;height:16px;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:2px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;color:#f7f7f3;font-size:16px">{{ p.name }}</span></span></sc-for></span></sc-if>
+              <sc-if value="{{ l.isText }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700">{{ l.value }}</span></sc-if>
+            </div>
+            </sc-for>
+            <div style="font-size:14px;align-self:end">{{ s.summaryNote }}</div>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="display:flex;align-items:center;gap:24px;margin-left:8px">
+          <div data-tabs="" style="display:flex;gap:6px;flex:1">
+            <sc-for list="{{ s.tabs }}" as="t" hint-placeholder-count="4">
+            <a style="position:relative;width:160px;height:44px;display:flex;align-items:center;justify-content:center;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ t.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ t.fg }}">{{ t.name }}</span></a>
+            </sc-for>
+          </div>
+          <sc-if value="{{ s.showAct }}" hint-placeholder-val="{{ false }}">
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:240px;flex:none;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">{{ s.act }}</a>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ s.showBracket }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="bracket" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Bracket</div>
+            <div style="display:flex;align-items:center;gap:16px">
+              <span style="font-size:14px;color:#f7f7f3">{{ s.bracketNote }}</span>
+              <a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;font-size:14px;color:#f7f7f3">Share · Copy bracket as text</a>
+              <a data-filter="" style="position:relative;width:220px;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 18px;text-decoration:none;box-sizing:border-box;margin-left:6px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-size:15px;color:#000">{{ s.teamFilter }}</span><span style="position:relative;color:#000;font-size:12px">▼</span></a>
+              <sc-if value="{{ isManager }}" hint-placeholder-val="{{ true }}">
+              <div style="position:relative;flex:none">
+                <a aria-label="Bracket acts" style="width:44px;height:44px;background:{{ s.mgrBtnBg }};border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:{{ s.mgrBtnFg }};text-decoration:none;box-sizing:border-box">⋯</a>
+                <sc-if value="{{ s.showMgrMenu }}" hint-placeholder-val="{{ false }}">
+                <div data-menu="manager" style="position:absolute;right:0;top:48px;width:360px;z-index:5;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;padding:6px 0 8px;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">
+                  <sc-for list="{{ mgrMenu }}" as="i" hint-placeholder-count="7">
+                  <sc-if value="{{ i.isHead }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:baseline;gap:10px;margin:10px 16px 4px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;color:#000">{{ i.t }}</span><span style="font-size:12px;color:#000">{{ i.sub }}</span></div></sc-if>
+                  <sc-if value="{{ i.isItem }}" hint-placeholder-val="{{ true }}"><a style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:4px 16px;text-decoration:none;color:{{ i.fg }};box-sizing:border-box"><span style="font-size:15px;white-space:nowrap">{{ i.t }}</span><span style="font-size:12px;text-align:right;color:{{ i.subFg }}">{{ i.sub }}</span></a></sc-if>
+                  </sc-for>
+                </div>
+                </sc-if>
+              </div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="background:#0c542c;padding:20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;align-items:stretch">
+            <sc-for list="{{ s.rounds }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;min-width:0">
+              <div style="display:flex;flex-direction:column;gap:2px;min-height:52px;padding:0 4px 8px;border-bottom:1px solid #f7f7f3;margin-bottom:12px;color:#f7f7f3"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;line-height:1.1">{{ r.n }}</span><span style="display:flex;justify-content:space-between;gap:8px;font-size:13px;color:#d7e6cc"><span>{{ r.date }}</span><span style="color:{{ r.statusFg }}">{{ r.status }}</span></span></div>
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:12px">
+                <sc-for list="{{ r.byes }}" as="b" hint-placeholder-count="0">
+                <div style="display:flex;align-items:center;gap:8px;padding:0 6px;min-height:32px;font-size:14px;color:#f7f7f3"><span style="position:relative;width:18px;height:18px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ b.hex }};border:1px solid #000"></span></span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px">{{ b.label }}</span><span style="font-size:13px;color:#d7e6cc">{{ b.text }}</span></div>
+                </sc-for>
+                <sc-for list="{{ r.ties }}" as="t" hint-placeholder-count="2">
+                <a style="position:relative;background:{{ t.bg }};border:1px solid #000;box-shadow:-4px 4px 0 #000;padding:10px 12px 12px 14px;display:flex;flex-direction:column;gap:8px;color:#f7f7f3;text-decoration:none;margin-left:4px">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#bcc5ce"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;color:#f7f7f3">{{ t.label }}</span><span style="flex:1;color:{{ t.statusFg }};white-space:nowrap">{{ t.status }}</span><span style="flex:none;white-space:nowrap">{{ t.date }}</span><sc-if value="{{ isManager }}" hint-placeholder-val="{{ true }}"><span aria-label="Tie acts" style="width:44px;height:44px;margin:-12px -8px -12px 0;display:inline-flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:#f7f7f3;border:1px solid rgba(247,247,243,0.4);box-sizing:border-box;flex:none">⋯</span></sc-if></div>
+                  <sc-if value="{{ t.hasHeader }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:4px"><span style="flex:1"></span><sc-for list="{{ t.heads }}" as="h" hint-placeholder-count="3"><span style="width:36px;flex:none;text-align:center;font-size:12px;color:#bcc5ce">{{ h }}</span></sc-for></div>
+                  </sc-if>
+                  <sc-for list="{{ t.sides }}" as="sd" hint-placeholder-count="2">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-height:36px">
+                    <div style="flex:{{ sd.nameFlex }};min-width:0;display:flex;align-items:center;gap:8px;padding-right:6px">
+                      <sc-if value="{{ sd.hasPlate }}" hint-placeholder-val="{{ true }}"><span style="position:relative;width:22px;height:22px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ sd.hex }};border:1px solid #000"></span></span></sc-if>
+                      <sc-if value="{{ sd.noPlate }}" hint-placeholder-val="{{ false }}"><span style="width:22px;height:22px;flex:none;border:1px dashed #bcc5ce;box-sizing:border-box;transform:skewX(-15deg)"></span></sc-if>
+                      <span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ sd.fg }};white-space:nowrap;line-height:1.1">{{ sd.label }}</span>
+                      <sc-if value="{{ sd.crown }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:16px;height:13px;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:1.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if>
+                    </div>
+                    <div style="flex:1 1 auto;display:flex;align-items:center;justify-content:flex-end;gap:4px"><sc-for list="{{ sd.cells }}" as="c" hint-placeholder-count="1"><div style="position:relative;width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;color:{{ c.fg }}">{{ c.v }}</span></div></sc-for></div>
+                  </div>
+                  </sc-for>
+                  <sc-for list="{{ t.lines }}" as="l" hint-placeholder-count="0">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px"><sc-if value="{{ l.hasMark }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;height:22px;padding:0 8px;color:#000;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;flex:none;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ l.markBg }};border:1px solid #000;transform:rotate(-1.5deg)"></span>{{ l.mark }}</span></sc-if><span style="color:{{ l.fg }};text-wrap:pretty">{{ l.text }}</span></div>
+                  </sc-for>
+                </a>
+                </sc-for>
+              </div>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showTeams }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="teams" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000;max-width:900px">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Teams</div>
+            <div style="display:flex;align-items:center;gap:20px;font-size:14px;color:#f7f7f3"><span>{{ s.teamsMeta }}</span><span>{{ s.teamsNote }}</span></div>
+          </div>
+          <div style="background:#000;padding:12px 16px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <div style="width:300px;flex:none;display:flex;align-items:center;height:32px;padding-left:12px;box-sizing:border-box"><span style="font-size:13px;color:#f7f7f3">Team</span></div>
+              <sc-for list="{{ teamCols }}" as="c" hint-placeholder-count="3">
+              <div style="position:relative;height:32px;flex:1 1 {{ c.w }};min-width:0;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }}">{{ c.name }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ s.teams }}" as="r" hint-placeholder-count="8">
+            <div style="display:flex;gap:6px;align-items:center">
+              <a style="position:relative;width:300px;flex:none;height:48px;display:flex;align-items:center;gap:10px;padding:0 16px 0 20px;text-decoration:none;box-sizing:border-box;margin-left:6px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.nameBg }};border:1px solid #000"></div><span style="position:relative;font-size:13px;color:{{ r.fg }};width:30px;flex:none">{{ r.seed }}</span><span style="position:relative;width:28px;height:28px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:5px;transform:skewX(-15deg);background:{{ r.hex }};border:1px solid #000"></span></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ r.fg }};white-space:nowrap">{{ r.name }}</span><sc-if value="{{ r.crown }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:#f4e937"><span style="position:relative;width:20px;height:16px;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:2px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span>Winner</span></sc-if></a>
+              <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3">
+              <div style="position:relative;height:48px;flex:1 1 {{ c.w }};min-width:0;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ c.fg }};white-space:nowrap">{{ c.v }}</span></div>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showPlayers }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:24px;margin-left:8px">
+          <div data-chips="" style="display:flex;gap:12px">
+            <sc-for list="{{ presetChips }}" as="c" hint-placeholder-count="4">
+            <a style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 22px;flex:none;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000;box-shadow:-3px 3px 0 #000"></div><span style="position:relative;font-size:15px;font-weight:700;color:{{ c.fg }}">{{ c.name }}</span></a>
+            </sc-for>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+            <div data-search="" style="width:260px;height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;gap:10px;padding:0 12px;box-sizing:border-box"><span style="width:14px;height:14px;border:2px solid #000;border-radius:50%;flex:none;box-sizing:border-box;position:relative"><span style="position:absolute;width:2px;height:7px;background:#000;right:-4px;bottom:-6px;transform:rotate(-45deg)"></span></span><span style="font-size:15px;color:#4b5560">Search Players</span></div>
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 20px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:15px;text-decoration:none;box-sizing:border-box">Share</a>
+          </div>
+        </div>
+        <div data-panel="players" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#f93a07;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Players</div>
+            <div style="font-size:14px;color:#f7f7f3">{{ s.seasonShort }} · {{ qualifiedNote }}</div>
+          </div>
+          <div style="background:#000;padding:12px 12px 12px 16px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <div style="width:200px;flex:none;display:flex;align-items:center;height:32px;padding-left:8px;box-sizing:border-box"><span style="font-size:13px;color:#f7f7f3">Player</span></div>
+              <sc-for list="{{ playerCols }}" as="c" hint-placeholder-count="11">
+              <div style="position:relative;height:32px;flex:{{ c.flex }};min-width:0;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }};white-space:nowrap">{{ c.name }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ players }}" as="p" hint-placeholder-count="8">
+            <div style="display:flex;gap:6px;align-items:center">
+              <a style="position:relative;width:200px;flex:none;height:44px;display:flex;align-items:center;gap:10px;padding:0 20px;text-decoration:none;margin-left:6px;box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.nameBg }};border:1px solid #000"></div><span style="position:relative;font-size:13px;color:{{ p.fg }};width:26px">{{ p.rank }}</span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ p.fg }}">{{ p.name }}</span></a>
+              <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="11">
+              <div style="position:relative;height:44px;flex:{{ c.flex }};min-width:0;display:flex;align-items:center;justify-content:{{ c.jc }};gap:6px;padding:0 {{ c.px }};box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div>
+                <sc-if value="{{ c.isTeam }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:22px;height:22px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ c.hex }};border:1px solid #000"></span></span></sc-if>
+                <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ c.fg }};white-space:nowrap">{{ c.v }}</span>
+              </div>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showRules }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="rules" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000;max-width:820px">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Rules</div>
+            <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}"><a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;font-size:14px;color:#f7f7f3">Change in Competition settings</a></sc-if>
+          </div>
+          <div style="background:#f7f7f3;padding:8px 24px 12px;display:flex;flex-direction:column">
+            <sc-for list="{{ rules }}" as="r" hint-placeholder-count="9">
+            <div style="display:grid;grid-template-columns:220px 1fr;gap:24px;min-height:48px;align-items:center;border-bottom:1px solid #bcc5ce;font-size:16px"><span>{{ r.label }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700">{{ r.value }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showEmpty }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="bracket-empty" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Bracket</div>
+            <div style="font-size:14px;color:#f7f7f3">{{ s.emptyMeta }}</div>
+          </div>
+          <div style="background:#f7f7f3;padding:56px 24px 48px;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center">
+            <img src="assets/balls.png" alt="" style="width:420px;height:auto">
+            <div style="font-size:16px;max-width:460px;text-wrap:pretty">{{ s.emptyLine }}</div>
+            <sc-if value="{{ s.emptyCan }}" hint-placeholder-val="{{ true }}">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:300px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">{{ s.emptyAct }}</a>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ s.showDialog }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62);display:flex;align-items:center;justify-content:center">
+        <div data-dialog="redraw" style="width:560px;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;flex-direction:column">
+          <div style="background:#0c542c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="display:flex;flex-direction:column"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:24px;color:#f7f7f3;line-height:1.2">{{ s.sheetTitle }}</div><div style="font-size:13px;color:#d7e6cc">{{ s.sheetSub }}</div></div>
+            <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a>
+          </div>
+          <div style="background:#f7f7f3;padding:20px 24px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:15px;text-wrap:pretty">{{ redraw.lead }}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">Discarded</span></div>
+                <sc-for list="{{ redraw.discard }}" as="d" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:10px;font-size:15px"><span style="width:10px;height:10px;background:#ed1c24;border:1px solid #000;flex:none"></span><span>{{ d }}</span></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">Kept</span></div>
+                <sc-for list="{{ redraw.keep }}" as="d" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px;font-size:15px"><span style="width:10px;height:10px;background:#42af36;border:1px solid #000;flex:none"></span><span>{{ d }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:8px 12px 8px 22px;font-size:14px;color:#000;margin-left:4px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:10px solid #cec311;transform:rotate(-1deg);box-shadow:-2px 2px 0 #000"></span>{{ redraw.warn }}</div>
+          </div>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:16px 24px 24px;display:flex;justify-content:flex-end">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;width:280px;height:44px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">{{ redraw.cta }}</a>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;},&quot;viewerRole&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Member&quot;,&quot;Manager&quot;,&quot;Admin&quot;],&quot;default&quot;:&quot;Admin&quot;,&quot;tsType&quot;:&quot;'Member' | 'Manager' | 'Admin'&quot;,&quot;section&quot;:&quot;Viewer&quot;},&quot;walkoverScore&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Rules&quot;},&quot;thirdPlace&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Rules&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+  }
+  renderVals() {
+    const role = this.props.viewerRole ?? 'Admin';
+    const isAdmin = role === 'Admin', isManager = role !== 'Member';
+    const WO = this.props.walkoverScore ?? 3;
+    const third = this.props.thirdPlace ?? true;
+    const COL = { Red: '#ed1c24', Orange: '#f93a07', Yellow: '#f4e937', Green: '#42af36', Blue: '#3a3ab0', Navy: '#091e40', Black: '#161616', Sky: '#4fb3e8', Purple: '#7b3fb5', Pink: '#f06aa8', Teal: '#1a9e8f', Maroon: '#7a1f2b', Brown: '#7a4a1f', Grey: '#8c8f94' };
+    const SEED = { Red: 1, Blue: 2, Green: 3, Yellow: 4, Orange: 5, Sky: 6, Purple: 7, Pink: 8, Teal: 9, Maroon: 10, Brown: 11, Navy: 12, Black: 13, Grey: 14 };
+    const lab = t => '(' + SEED[t] + ') ' + t;
+    const MUTE = '#bcc5ce', PAPER = '#f7f7f3';
+
+    // m: {d, aS, bS, np, wo}   t: {a, b, m, so, w, ua, ub, label, third}
+    const M = (d, aS, bS, x) => ({ d, aS, bS, ...(x || {}) });
+    const T = (label, a, b, m, x) => ({ label, a, b, m: m || [], ...(x || {}) });
+    const R = (n, date, legs, ties, byes, x) => ({ n, date, legs, ties, byes: byes || [], ...(x || {}) });
+
+    const buildTie = (t, r, opts) => {
+      const ms = t.m, legs = r.legs || 1;
+      const played = ms.filter(m => m.aS != null);
+      let A = 0, B = 0; played.forEach(m => { A += m.aS; B += m.bS; });
+      const done = !t.ua && played.length >= legs;
+      let w = null;
+      if (done) w = A > B ? 'a' : B > A ? 'b' : (t.w || null);
+      const hasWO = ms.some(m => m.wo);
+      const status = t.ua ? 'to play' : w ? (hasWO ? 'Walkover' : 'Completed') : played.length ? 'in progress' : (t.plan ? 'to play · ' + t.plan : 'to play');
+      const last = played.length ? played[played.length - 1].d : (ms.find(m => !m.np && m.aS == null) || {}).d;
+      const date = (last || r.date);
+      const cellFor = (m, side) => {
+        if (m.np || m.aS == null) return { v: '–', bg: '#28477a', fg: MUTE };
+        const v = side === 'a' ? m.aS : m.bS;
+        return m.wo ? { v, bg: '#faf15d', fg: '#000' } : { v, bg: PAPER, fg: '#000' };
+      };
+      const aggCell = side => played.length ? { v: side === 'a' ? A : B, bg: '#171775', fg: '#f4e937' } : { v: '–', bg: '#28477a', fg: MUTE };
+      const side = (name, key, ph) => {
+        const lost = w && w !== key;
+        const cells = ms.map(m => cellFor(m, key));
+        if (legs > 1) cells.push(aggCell(key));
+        if (!ms.length) cells.push({ v: '–', bg: '#28477a', fg: MUTE });
+        return { label: ph || lab(name), hasPlate: !ph, noPlate: !!ph, hex: ph ? '' : COL[name], fg: (lost || ph) ? MUTE : PAPER, crown: !!(opts && opts.crown) && w === key, cells, nameFlex: cells.length > 2 ? '1 1 100%' : '1 1 0%' };
+      };
+      const sides = [side(t.a, 'a', t.ua), side(t.b, 'b', t.ub)];
+      const heads = ms.length > 1 || legs > 1 ? [...ms.map(m => m.d.slice(0, 6)), ...(legs > 1 ? ['agg.'] : [])] : [];
+      const lines = [];
+      ms.forEach(m => {
+        if (m.np) lines.push({ hasMark: true, mark: 'Not played', markBg: MUTE, text: m.np, fg: MUTE });
+        if (m.wo) lines.push({ hasMark: true, mark: 'Walkover', markBg: '#faf15d', text: m.wo, fg: MUTE });
+      });
+      if (legs > 1 && played.length) {
+        const agg = A + '-' + B + ' agg.';
+        if (done && t.so) lines.push({ text: agg + ' · ' + t.so, fg: '#f4e937' });
+        else if (done) lines.push({ text: (w === 'a' ? t.a : t.b) + ' through, ' + agg, fg: MUTE });
+        else lines.push({ text: agg + ' after the first leg · second leg ' + ms[1].d, fg: MUTE });
+      } else if (t.so) lines.push({ text: t.so, fg: '#f4e937' });
+      return { label: t.label, status, statusFg: w ? MUTE : '#f4e937', date, hasHeader: heads.length > 0, heads, sides, lines, done: !!w, bg: t.ua ? '#28477a' : (opts && opts.alt ? '#0d2e63' : '#091e40') };
+    };
+    const buildRounds = rounds => rounds.map(r => {
+      const ties = r.ties.filter(t => third || !t.third).map((t, i) => buildTie(t, r, { alt: i % 2 === 1, crown: !!r.final && !t.third }));
+      const doneN = ties.filter(t => t.done).length, n = ties.length;
+      const byesTxt = r.byes.length ? ' · ' + r.byes.length + ' byes' : '';
+      const status = r.current ? 'in progress' : doneN === n ? doneN + ' played' + byesTxt : doneN === 0 ? 'to play' : doneN + ' of ' + n;
+      return { n: r.n, date: r.date, ties, byes: r.byes.map(b => ({ label: lab(b) + ' advances', hex: COL[b], text: 'bye' })), status, statusFg: r.current ? '#f4e937' : '#d7e6cc', open: !!r.open, chev: r.open ? '▴' : '▾' };
+    });
+
+    const r16 = R('Round of 16', '27 Sep', 1, [
+      T('R16-1', 'Pink', 'Teal', [M('27 Sep', 3, 1)]),
+      T('R16-2', 'Yellow', 'Black', [M('27 Sep', 2, 0)]),
+      T('R16-3', 'Orange', 'Navy', [M('27 Sep', 1, 1)], { so: 'Orange won 5-4 on penalties', w: 'a' }),
+      T('R16-4', 'Purple', 'Maroon', [M('27 Sep', WO, 0, { wo: 'Maroon did not show' })]),
+      T('R16-5', 'Green', 'Grey', [M('27 Sep', 4, 2)]),
+      T('R16-6', 'Sky', 'Brown', [M('27 Sep', null, null, { np: 'pitch flooded' }), M('4 Oct', 2, 1)])
+    ], ['Red', 'Blue']);
+    const qf = R('Quarter-finals', '11 Oct and 18 Oct', 2, [
+      T('QF1', 'Red', 'Pink', [M('11 Oct', 2, 1), M('18 Oct', 1, 1)]),
+      T('QF2', 'Yellow', 'Orange', [M('11 Oct', 1, 2), M('18 Oct', 2, 0)]),
+      T('QF3', 'Blue', 'Purple', [M('11 Oct', 3, 0), M('18 Oct', 0, 1)]),
+      T('QF4', 'Green', 'Sky', [M('11 Oct', 1, 1), M('18 Oct', 2, 2)], { so: 'Green won 4-3 on penalties', w: 'a' })
+    ]);
+    const sfMid = R('Semi-finals', '25 Oct and 1 Nov', 2, [
+      T('SF1', 'Red', 'Yellow', [M('25 Oct', 2, 0), M('1 Nov')]),
+      T('SF2', 'Blue', 'Green', [M('25 Oct', 1, 1), M('1 Nov')])
+    ], [], { current: true, open: true });
+    const finMid = R('Final', '8 Nov', 1, [
+      T('Final', '', '', [], { ua: 'Winner of SF1', ub: 'Winner of SF2', plan: 'Sunday 8 Nov' }),
+      T('Third place', '', '', [], { ua: 'Loser of SF1', ub: 'Loser of SF2', plan: 'Sunday 8 Nov', third: true })
+    ], [], { final: true });
+    const sfDone = R('Semi-finals', '25 Oct and 1 Nov', 2, [
+      T('SF1', 'Red', 'Yellow', [M('25 Oct', 2, 0), M('1 Nov', 1, 1)]),
+      T('SF2', 'Blue', 'Green', [M('25 Oct', 1, 1), M('1 Nov', 2, 0)])
+    ]);
+    const finDone = R('Final', '8 Nov', 1, [
+      T('Final', 'Red', 'Blue', [M('8 Nov', 2, 1)]),
+      T('Third place', 'Green', 'Yellow', [M('8 Nov', 3, 2)], { third: true })
+    ], [], { final: true, open: true });
+    const midRounds = buildRounds([r16, { ...qf, open: true }, sfMid, finMid]);
+    const doneRounds = buildRounds([r16, qf, sfDone, finDone]);
+
+    const plates = (label, names, x) => ({ label, isPlates: true, plates: names.map((n, i) => ({ name: n, hex: COL[n], crown: !!(x && x.crown && i === 0) })), span: x && x.span || 'auto' });
+    const line = (label, value) => ({ label, value, isText: true, span: 'auto' });
+
+    const teamCols = ['Result', 'Played', 'Goals'].map((name, i) => ({ name, w: name === 'Result' ? '180px' : '72px', ...(i % 2 === 0 ? { bg: PAPER, bd: '#000', fg: '#000' } : { bg: 'transparent', bd: 'transparent', fg: PAPER }) }));
+    // [name, result, played, gf, ga, kind]  kind: in | out | wd | win | run
+    const teamRows = rows => rows.map(r => {
+      const [name, result, P, GF, GA, kind] = r;
+      const wd = kind === 'wd', out = kind === 'out';
+      const fg = wd ? MUTE : PAPER, bg = wd ? '#28477a' : '#091e40';
+      const resFg = kind === 'in' || kind === 'win' ? '#f4e937' : fg;
+      return { name, seed: '(' + SEED[name] + ')', hex: COL[name], fg, nameBg: wd ? '#28477a' : kind === 'win' ? '#171775' : out ? '#28477a' : '#3a3ab0', crown: kind === 'win',
+        cells: [{ v: result, w: '180px', fg: resFg, bg }, { v: P, w: '72px', fg, bg }, { v: P ? GF + '-' + GA : '–', w: '72px', fg, bg }] };
+    });
+    const outRows = [['Orange', 'out in QF', 3, 3, 4, 'out'], ['Sky', 'out in QF', 3, 5, 4, 'out'], ['Purple', 'out in QF', 2, 1, 3, 'out'], ['Pink', 'out in QF', 3, 5, 4, 'out'],
+      ['Teal', 'out in R16', 1, 1, 3, 'out'], ['Brown', 'out in R16', 1, 1, 2, 'out'], ['Navy', 'out in R16', 1, 1, 1, 'out'], ['Black', 'out in R16', 1, 0, 2, 'out'], ['Grey', 'out in R16', 1, 2, 4, 'out'],
+      ['Maroon', 'Withdrawn · R16', 0, 0, 0, 'wd']];
+    const teamsMid = teamRows([['Red', 'still in · SF', 3, 5, 2, 'in'], ['Blue', 'still in · SF', 3, 4, 2, 'in'], ['Green', 'still in · SF', 4, 8, 6, 'in'], ['Yellow', 'still in · SF', 4, 5, 4, 'in'], ...outRows]);
+    const teamsDone = teamRows([['Red', 'Winner', 5, 8, 4, 'win'], ['Blue', 'Runner-up', 5, 7, 4, 'run'], ['Green', third ? 'Third place' : 'Semi-finalist', third ? 6 : 5, third ? 11 : 8, third ? 10 : 8, 'run'], ['Yellow', 'Semi-finalist', third ? 6 : 5, third ? 8 : 6, third ? 8 : 5, 'run'], ...outRows]);
+
+    const item = (t, sub, x) => ({ t, sub: sub || '', isItem: true, fg: x && x.off ? '#8c8f94' : (x && x.danger ? '#ed1c24' : '#000'), subFg: x && x.off ? '#8c8f94' : '#000' });
+    const head = (t, sub) => ({ t, sub: sub || '', isHead: true });
+    const mgrMenu = [
+      item('Draw', 'bracket drawn', { off: true }),
+      item('Redraw…', 'a new draw from the Semi-finals on', { danger: true }),
+      item('Set the Round\'s date…', 'Semi-finals · 1 Nov'),
+      item('Set the Final\'s date…', '8 Nov'),
+      ...(isAdmin ? [head('Admin', 'Entries'), item('Withdraw…', 'Walkover for the rest of the Tie', { danger: true }), item('Restore', 'Maroon · withdrawn in the Round of 16')] : [])
+    ];
+    const redraw = {
+      lead: 'A new draw for Season 3 from the Semi-finals on. The Round of 16 and the Quarter-finals stay as played; the four Teams still in are paired again.',
+      discard: ['2 Semi-final first legs, completed 25 Oct', '2 second legs to play · 1 Nov', 'The Final' + (third ? ' and the Third-place match' : '') + ' · not yet paired', '1 Round date set by hand'],
+      keep: ['15 completed matches in the Round of 16 and Quarter-finals', 'Every vote on them', '14 Entries, their seeds and rosters'],
+      warn: 'Two completed Semi-final legs lose their place in the bracket. Managers get a note.',
+      cta: 'Redraw · discard 5'
+    };
+
+    const pcolNames = ['Team', 'Played', 'W', 'D', 'L', 'Win rate', 'Goals', 'Assists', 'Own goals', 'Rating', 'Crowns'];
+    const playerCols = pcolNames.map((name, i) => ({ name, flex: name === 'Team' ? '0 0 150px' : name === 'Rating' ? '1 1 80px' : name === 'Own goals' ? '1 1 76px' : '1 1 64px', w: name === 'Team' ? '148px' : name === 'Rating' ? '80px' : '64px', ...(i % 2 === 0 ? { bg: PAPER, bd: '#000', fg: '#000' } : { bg: 'transparent', bd: 'transparent', fg: PAPER }) }));
+    const MIN = 3;
+    const P = [
+      ['Marko', 'Red', 5, 4, 1, 0, 7, 2, 0, '2.41 · 10', 3], ['Ana', 'Red', 5, 4, 1, 0, 3, 5, 0, '2.30 · 10', 2], ['Luka', 'Blue', 5, 3, 1, 1, 2, 5, 0, '2.12 · 9', 1],
+      ['Steva', 'Green', 6, 3, 2, 1, 5, 2, 0, '2.04 · 11', 1], ['Boban', 'Yellow', 6, 3, 1, 2, 4, 1, 0, '1.90 · 10', 1], ['Ivan', 'Red', 5, 4, 1, 0, 1, 2, 1, '1.85 · 9', 0],
+      ['Dinić', 'Blue', 4, 2, 1, 1, 2, 2, 0, '1.77 · 7', 0], ['Zoki', 'Green', 5, 2, 2, 1, 3, 1, 0, '1.70 · 8', 0], ['Gaga', '', 3, 1, 1, 1, 3, 0, 0, '1.62 · 5', 0],
+      ['Pule', 'Orange', 2, 1, 0, 1, 1, 1, 0, '– · 2', 0], ['Kiza', 'Teal', 1, 0, 0, 1, 0, 0, 0, '– · 1', 0]
+    ];
+    const players = P.map((r, i) => {
+      const q = r[2] >= MIN, fg = q ? PAPER : MUTE;
+      const win = q ? Math.round(r[3] / r[2] * 100) + '%' : '–';
+      const vals = [r[2], r[3], r[4], r[5], win, r[6], r[7], r[8], r[9], r[10]];
+      const cells = [{ v: r[1] || 'Guest', isTeam: !!r[1], hex: r[1] ? COL[r[1]] : '', w: '148px', flex: '0 0 150px', jc: 'flex-start', px: '14px', fg: r[1] ? fg : MUTE, bg: '#091e40' }];
+      vals.forEach((v, j) => { const rate = j === 4 || j === 8; cells.push({ v, w: j === 8 ? '80px' : '64px', flex: j === 8 ? '1 1 80px' : j === 7 ? '1 1 76px' : '1 1 64px', jc: 'center', px: '0', fg: (!q && rate) ? MUTE : fg, bg: (!q && rate) ? '#28477a' : '#091e40' }); });
+      return { name: r[0], rank: q ? '#' + (i + 1) : '', nameBg: q ? '#3a3ab0' : '#28477a', fg, cells };
+    });
+    const rules = [
+      { label: 'Format', value: 'Knockout · 14 Entries · seeded · byes to seeds 1 and 2' }, { label: 'Ties', value: 'One match in the Round of 16 and the Final · two legs in the Quarter-finals and Semi-finals' },
+      { label: 'Level Ties', value: 'A shoot-out decides' }, { label: 'Third-place match', value: third ? 'Played' : 'Not played' }, { label: 'Walkover', value: WO + '-0 to the side that showed' },
+      { label: 'Match format', value: '5-a-side' }, { label: 'Voting', value: 'On · man of the match after each result' }, { label: 'Voting period', value: 'Until Friday 20:00 after the match' },
+      { label: 'Minimum matches', value: MIN + ' in a Season to be a Qualified Player' }, { label: 'Managers', value: 'Cope, Ana, Boban' }
+    ];
+
+    const tabsFor = (active, off) => ['Bracket', 'Teams', 'Players', 'Rules'].map(name => name === active ? { name, bg: '#ed1c24', fg: PAPER } : off ? { name, bg: '#28477a', fg: MUTE } : { name, bg: '#091e40', fg: '#d7e6cc' });
+    const base = { comp: 'Zlatna lopta', season: 'Season 3 · 2026/27 · since Sep 2026', seasonShort: 'Season 3', showSummary: true, teamFilter: 'All Teams', mgrBtnBg: PAPER, mgrBtnFg: '#000',
+      hasSheet: false, showMgrMenu: false, showDialog: false, sheetKind: '', sheetBg: '#091e40', sheetTitle: '', sheetSub: '', sheetIsMenu: false, sheetIsRedraw: false, menu: [], emptyCan: false };
+    const mid = { ...base, summaryMeta: 'so far · Semi-finals', summary: [plates('Still in', ['Red', 'Blue', 'Green', 'Yellow'], { span: '1 / -1' }), line('Top scorer', 'Marko · 7'), line('Top assists', 'Luka · 5'), line('Most matches', 'Steva · 6'), line('Most crowns', 'Marko · 3')],
+      summaryNote: '15 completed · 1 walkover · 1 not played · ' + (third ? 4 : 3) + ' to play', rounds: midRounds, bracketNote: '14 Entries · seeds 1 and 2 rested in the Round of 16', teams: teamsMid, teamsMeta: '14 Entries · 4 still in', teamsNote: 'Withdrawn Entries last' };
+    const done = { ...base, showEnd: true, summaryMeta: 'the Final is played', summary: [plates('Winner', ['Red'], { crown: true }), plates('Runner-up', ['Blue']), line('Top scorer', 'Marko · 9'), line('Top assists', 'Luka · 7'), line('Most matches', 'Steva · ' + (third ? 6 : 5)), line('Most crowns', 'Marko · 4')],
+      summaryNote: (third ? 19 : 18) + ' completed · 1 walkover · 1 not played', rounds: doneRounds, bracketNote: '14 Entries · every Tie played', teams: teamsDone, teamsMeta: '14 Entries · Season 3', teamsNote: 'Withdrawn Entries last' };
+    const fresh = { ...base, comp: 'Zimska lopta', season: 'Season 1 · 2026/27 · since Dec 2026', seasonShort: 'Season 1', showSummary: false };
+    const sections = [
+      { ...mid, id: '13a', label: '13a Knockout, Bracket', tab: 'Bracket', showBracket: true,
+        blurb: 'Zlatna lopta, a Knockout · Season 3 · Cope as ' + role + ' · the summary with Still in as four colour plates · Bracket as a list by Round on a phone, the Semi-finals open as the Round in progress, the Quarter-finals opened by a tap · the same Ties as columns on a desktop · seeds "(1) Red", byes "advances", two legs with "agg.", the shoot-out line, Walkover and Not played marks, "Winner of SF1" for the Final · a per-Team path filter above' },
+      { ...mid, id: '13b', label: '13b Knockout, the Manager\'s overflow', tab: 'Bracket', showBracket: true, showMgrMenu: true, mgrBtnBg: '#ed1c24', mgrBtnFg: PAPER,
+        hasSheet: true, sheetKind: 'manager', sheetBg: '#07361c', sheetTitle: 'Bracket', sheetSub: 'Season 3 · Semi-finals', sheetIsMenu: true, menu: mgrMenu,
+        blurb: 'The Manager\'s overflow · Draw greyed because the bracket is drawn · Redraw · the Round\'s and the Final\'s date · for an admin the Entry acts: Withdraw with a Walkover for the rest of the Tie, Restore naming Maroon · a sheet on a phone, a menu on a desktop · Share holds Copy bracket as text' },
+      { ...mid, id: '13c', label: '13c Knockout, Redraw', tab: 'Bracket', showBracket: true, showDialog: true,
+        hasSheet: true, sheetKind: 'redraw', sheetBg: '#0c542c', sheetTitle: 'Redraw the bracket', sheetSub: 'Season 3 · from the Semi-finals', sheetIsRedraw: true,
+        blurb: 'The Redraw confirmation · what is discarded, counted: two completed first legs, two legs to play, the unpaired Final' + (third ? ' and Third-place match' : '') + ', a hand-set date · what is kept · a yellow warning · the red act carries the count' },
+      { ...mid, id: '13d', label: '13d Knockout, Teams', tab: 'Teams', showTeams: true,
+        blurb: 'Teams on the Current season · every Entry with its seed and plate · Result: still in with the Round, out in QF, out in R16 · Maroon Withdrawn, last and greyed · Played and Goals beside' },
+      { ...mid, id: '13e', label: '13e Knockout, Players', tab: 'Players', showPlayers: true,
+        blurb: 'Players · the title bar in the Knockout orange-red · presets, search and Share as on the Players page, All preset shown · a Team column after the pinned name: colour plate and name, Gaga a guest · Qualified from ' + MIN + ' matches and ranked · Pule and Kiza under it, greyed on win rate and rating' },
+      { ...mid, id: '13f', label: '13f Knockout, Rules', tab: 'Rules', showRules: true,
+        blurb: 'Rules · read-only lines: Format with Entries, seeding and byes, Ties and legs by Round, how a level Tie is decided, the Third-place match, the Walkover score, match format, voting, Minimum matches, Managers' },
+      { ...done, id: '13g', label: '13g Knockout, the Final is played', tab: 'Bracket', showBracket: true,
+        blurb: 'The finished Season, still Current · the End suggestion sticker at the top with the act for an admin · Winner Red with a crown and the Runner-up in the summary · the Final and the Third-place match in the Final\'s Round, open on a phone' },
+      { ...done, id: '13h', label: '13h Knockout, Teams after the Final', tab: 'Teams', showTeams: true,
+        blurb: 'Teams once the Final is Completed · Winner with a crown, Runner-up, ' + (third ? 'Third place, ' : '') + 'Semi-finalist, out in QF, out in R16, Withdrawn' },
+      { ...fresh, id: '13i', label: '13i Knockout, rosters without a draw', tab: 'Bracket', showEmpty: true, showAct: isManager, act: 'Draw the bracket', emptyMeta: '8 Entries · not drawn', emptyLine: isManager ? '8 Entries saved in Roster setup. Draw the bracket to start the Season: 8 Entries, no byes.' : '8 Entries saved. A Manager draws the bracket to start the Season.', emptyCan: isManager, emptyAct: 'Draw the bracket',
+        blurb: 'Zimska lopta, Season 1 · eight Entries saved in Roster setup, no bracket yet · Draw the bracket as the primary act for a Manager · no summary panel yet' },
+      { ...fresh, id: '13j', label: '13j Knockout, the empty Season', tab: 'Bracket', showEmpty: true, emptyTabs: true, emptyMeta: 'no Entries', emptyLine: isAdmin ? 'No Entries yet. Set up the rosters to start the Season.' : 'No Entries yet. An admin sets up the rosters to start the Season.', emptyCan: isAdmin, emptyAct: 'Roster setup',
+        blurb: 'The empty Season · no Entries yet · the footballs, one sentence and Roster setup as the primary act for an admin · a Member reads the sentence alone · flip the role tweak' }
+    ].map(s => ({ ...s, tabs: tabsFor(s.tab, !!s.emptyTabs) }));
+    const opt = o => ({ ...o, past: !!o.past, current: !!o.current, bg: o.current ? '#171775' : '#091e40', mBg: o.current ? '#171775' : 'transparent', mFg: o.current ? '#f7f7f3' : '#000' });
+    const byId = id => sections.find(x => x.id === id);
+    const oneSeason = [{ name: 'Season 1', span: 'no matches yet', current: true }].map(opt);
+    const pickerBlurb = 'The Season selector open · a full-screen sheet titled Season with Cancel on a phone, a menu the selector\'s width on a desktop · newest first, 48 px rows · Season 3 as the Current season on #171775 with a filled dot · Seasons 2 and 1 with a coral Past tag · a divider, then All seasons · a tap selects and closes';
+    const oneBlurb = 'The selector open on a competition whose only Season has no matches · one row, Season 1, no matches yet, then All seasons';
+    const seasons = [{ name: 'Season 3 · 2026/27', span: 'since Sep 2026', current: true }, { name: 'Season 2 · 2025/26', span: 'Sep 2025 to May 2026', past: true }, { name: 'Season 1 · 2024/25', span: 'Sep 2024 to May 2025', past: true }].map(opt);
+    sections.push(
+      { ...byId('13a'), id: '13k', label: '13k Knockout, Season selector open', showPicker: true, seasons, blurb: pickerBlurb },
+      { ...byId('13i'), id: '13l', label: '13l Knockout, Season selector, one empty Season', showPicker: true, seasons: oneSeason, blurb: oneBlurb + ' · Zimska lopta' }
+    );
+
+    return { sections, isAdmin, isManager, playerCols, players, rules, mgrMenu, redraw, teamCols,
+      qualifiedNote: 'Qualified from ' + MIN + ' matches · the rest greyed on win rate and rating',
+      presetChips: ['Overview', 'Scoring', 'Voting', 'All'].map(name => ({ name, bg: name === 'All' ? '#ed1c24' : '#f7f7f3', fg: name === 'All' ? '#f7f7f3' : '#000' })),
+      endLine: isAdmin ? 'The Final is played. End the season?' : 'The Final is played. An admin can end the season.' };
+  }
+}
+</script>
+</body>
+</html>

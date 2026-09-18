@@ -1,0 +1,419 @@
+SUNDAY HEROES · CLAUDE DESIGN PROMPTS FOR WHAT IS NOT DRAWN YET
+Written 2026-09-17, after the export audit (export-audit.md).
+
+HISTORICAL, 2026-09-18: every prompt below has been run and the result is
+export/DesignSystemV2/. Kept as a record of what was asked, not as a spec.
+
+Order: run the look-only prompt from export-audit.md first, then paste
+RULES once, then the prompts below one at a time. Prompts 1 to 5 add a
+component to a screen that exists; 6 to 8 are new screens.
+
+The designs are for look and layout only. Sample text and numbers only
+need to be plausible; the build takes copy, numbers and rules from the
+branch docs.
+
+
+================================================================
+RULES · paste once before the first prompt
+================================================================
+
+These rules hold for everything you draw from now on in this project.
+
+- Follow the design system and the screens already in this project. Reuse
+  their panels, rows, tags, stickers, sheets and shells; invent no new
+  component where one exists.
+- Draw every section at 390 px (phone shell) beside 1440 px (desktop
+  shell), labelled like the existing sections (18a, 18b ...).
+- Shadows are black, offset down and left: -4px 4px on a phone, -8px 8px
+  on a desktop. Left edge tab on every panel. 1 px ink stroke on shapes.
+- A competition's title band is paper with the name in ink; only the
+  Format tag carries the family colour (Pickup #3a3ab0, League #0c542c,
+  Knockout #f93a07).
+- An offset title is panel blue #3a3ab0 text over a black copy set down
+  and left. Never ink text with a blue shadow.
+- Button labels are plain, never underlined. The paper circle appears only
+  on a button that adds something, with a + inside it. No other button
+  has a circle.
+- Never skew or rotate text; tilt only the shape behind it. The one
+  exception is the sticker card's corner ribbon, whose text runs along
+  the ribbon.
+- Every tap target is 44 px. List and picker rows never shrink
+  (flex: 0 0 48px). No label below 12 px.
+- Never truncate a name with an ellipsis: widen the cell, wrap, or shrink
+  the numbers.
+- Never set text straight on grass; put it on a paper strip in ink. Text
+  on the light green is ink.
+- Dark swatches (Navy, Black, Dark green) get a paper stroke on navy rows.
+- On a phone a dialog is a full-screen sheet with a title, Cancel, a
+  scrolling body and a sticky action bar. On a desktop it is a dialog or
+  a menu.
+- Dates read "14 Sep", or "12 Oct 2025" outside the current year. Never
+  14.09.2026.
+- A win rate is written "67% · 8-2-2". A rating is written "2.10 · 18".
+- Paging is one paper "Show more" bar under a list, and only where a
+  prompt says so. No page numbers, no totals, no infinite scroll.
+- Warnings are yellow inline stickers with ink text; refusals are red.
+- Never use these words: Dashboard, Home or Away for a side, Pending
+  Votes, Registered, Unregistered, Duel, Leaderboard, Draft, subs,
+  Matchday, walkover for a bye.
+
+
+================================================================
+1 · Match page: the results breakdown table
+================================================================
+
+On screen 8, section 8c (Rated), replace the single line of numbers
+beside the man of the match with the results breakdown as a table.
+
+One row per Player of the match, twelve rows, every row shown, highest
+rating first. Columns: Player · Rating · Points · Firsts · Seconds ·
+Thirds. The name cell is the pinned skewed parallelogram from the Players
+table, with a swatch of the Player's side colour; the top row carries the
+crown mark. The caption above the table reads "12 ballots". Use the navy
+row stripes of the Players table.
+
+Phone: the name cell stays pinned and the five numerals scroll sideways.
+Desktop: the table sits to the right of the sticker card in the same
+panel.
+
+Also draw 8c-2: two Players sharing the crown, their two sticker cards
+side by side above the same table, both top rows crowned.
+
+Nothing else on the page changes. No picks of any voter are shown.
+
+
+================================================================
+2 · Player page: the Rating history chart
+================================================================
+
+On screen 10, keep the chart exactly as it is drawn: one bar per Rated
+match, oldest left, green for a win, grey for a draw, red for a loss, the
+dashed red average line, the two dates under the axis and the legend. Do
+not turn it into a line chart and add no rolling average.
+
+Change only these three things:
+  - the title reads "Rating history", not "Rating over time";
+  - the y axis runs from 0 to 3 with ticks at 0, 1, 2, 3, so a rating
+    below 1 still has a bar;
+  - the label on the dashed line reads "average 2.27", not "career 2.27".
+
+Add one section: a Player with no Rated match. The panel keeps its title
+and its axes, draws no bars and no average line, and carries the sentence
+"No Rated match yet." on the paper body.
+
+Phone: the chart is full width and 220 px tall. Desktop: 320 px tall.
+
+
+================================================================
+3 · The Team column in a team-format scope
+================================================================
+
+Where the Players table shows a League or a Knockout (screen 9 with a
+League filter, the Players tab of screens 12 and 13), add a Team column
+directly after the pinned Player cell.
+
+The cell is the Team's colour plate (a small skewed swatch with an ink
+stroke) followed by the Team's name in Archivo Narrow Bold, never the
+swatch alone. One row in each table is a guest: its cell reads "Guest" in
+muted text with no plate. The column is part of every preset (Overview,
+Scoring, Voting, All) and is not sortable.
+
+On those same Players tabs also add what screen 9 already has above its
+table: the four preset chips, the search field and the Share button. The
+panel's title bar is in the Format's family: green on a League, orange-red
+on a Knockout.
+
+Phone: the Team cell is the first scrolling column and is wide enough for
+the longest Team name on one line.
+
+
+================================================================
+4 · The Season selector, open
+================================================================
+
+Add two sections to screen 6 (and the same selector on screens 12 and
+13) showing the Season selector open.
+
+Closed, it is the skewed dropdown already drawn. Open:
+  - Phone: a full-screen sheet titled "Season", Cancel in the header, no
+    action bar; tapping a row selects and closes.
+  - Desktop: a menu under the selector, the selector's width, with the
+    offset shadow.
+
+Rows, newest first, each 48 px: the Season number and label in Archivo
+Narrow Bold, the played span beneath in body text.
+  "Season 3 · 2026/27"   "since Mar 2026"            the Current season,
+                                                     marked with a filled
+                                                     dot and the active
+                                                     row colour #171775
+  "Season 2 · 2025/26"   "Aug 2025 to Feb 2026"      a coral tag "Past"
+  "Season 1 · 2024/25"   "Apr 2024 to Jun 2025"      a coral tag "Past"
+  a divider, then "All seasons" as the last row, no span.
+
+Also draw the variant for a competition whose only Season has no matches:
+one row, "Season 1", "no matches yet", then "All seasons".
+
+Then draw one more section: the competition page with a Past season
+selected. The selector shows "Season 2 · 2025/26 · Aug 2025 to Feb 2026"
+with the "Past" tag; the Season summary's headings drop "so far" ("MVP",
+not "MVP so far"); there is no red Add match bar.
+
+
+================================================================
+5 · Overflow menus on a Fixture and on a Tie
+================================================================
+
+Draw the "⋯" overflow opened from one Fixture row of the League Schedule
+(screen 12) and from one Tie card of the Knockout Bracket (screen 13).
+The "⋯" button is 44 px and keeps its three dots visible while active.
+
+Phone: a bottom sheet titled with the pairing ("Bulls v Plavi · Round 8").
+Desktop: a menu anchored to the button. Each item is a 48 px row: a label
+and, where useful, one muted line beneath. An item that cannot be used is
+greyed with its reason as the muted line. A destructive item is in brand
+red and sits last, under a divider. Items only an admin sees sit under a
+small heading "Admin".
+
+Draw these sections, as seen by a Manager unless said otherwise:
+  a. a Fixture to play: Set date · Move to another Round · Swap the order
+     of the sides · Walkover ... · Mark Not played
+  b. a Fixture marked Not played: only Restore is live, the rest greyed
+  c. a Fixture that is a Walkover: only Undo walkover is live
+  d. an Extra Fixture to play: as (a), plus Delete in red
+  e. a Completed Fixture: Open match · Change record, nothing else
+  f. a Tie to play, seen by an admin: Set date · Swap the order of the
+     sides · Walkover ... · Mark Not played, and under "Admin": Withdraw
+     a team ...
+  g. a bye line in the bracket, seen by an admin: one item under "Admin",
+     Add a team ...
+  h. any of them seen by a Member: no "⋯" button at all
+
+Then the Walkover sheet that "Walkover ..." opens: title "Walkover", the
+two Teams as two large selectable plates (colour and name), the sentence
+"The match is awarded 3-0. Nobody gets a lineup, goals or a vote.", and a
+sticky bar with Cancel and the red "Award to Bulls", which is disabled
+until a plate is picked.
+
+
+================================================================
+6 · New screen: Members and invitations
+================================================================
+
+Screen 18. Reached from the desktop sidebar's "Members", and on a phone
+from the Group switcher's sheet under "This Group". Page title "Members".
+
+As a Group admin sees it (18a), four panels top to bottom:
+
+  Members. One row per Member: display name in Archivo Narrow Bold, the
+  email beneath in body text, the nickname of their Player as a small
+  paper chip or "no Player" in muted text, a role tag (Group admin in
+  brand red, Manager in panel blue, Member with no tag), "joined 3 Mar
+  2024", and a "⋯". Desktop: these are columns of one table. Phone: each
+  Member is a two-line row with the "⋯" at the right. Every Member is a
+  row; no paging.
+
+  Pending invitations. Rows: "Marko" (the Player's nickname), then either
+  "link" or the address it was sent to, "expires 28 Sep", and a state
+  sticker: pending (paper), or the yellow sticker "not delivered" with a
+  Resend button beside it. Each row ends with Copy link and Revoke. Above
+  the list a button "+ Invite a Player" (plus circle).
+
+  Join links. Rows: "Join link", "made by Ana · 12 Aug · used 6 times",
+  Copy link, Revoke. A button "+ New join link".
+
+  Past invitations. Rows with a state word in muted text: "accepted by
+  Marko J. · 4 Sep", "expired · 20 Aug", "revoked by Ana · 11 Aug".
+  Newest first, ending in the paper Show more bar.
+
+Further sections:
+  18b. As a Member sees it: only the Members panel, showing display names
+       and nicknames. No emails, no roles column, no "⋯", no other panels.
+  18c. A Member's "⋯" opened by an admin: Make Group admin · Assign as
+       Manager ... · Link to a Player ... · Unlink from Marko · under a
+       divider, in red, Remove from the Group. For the only admin, "Remove"
+       and "Demote" are greyed with "the only Group admin".
+  18d. The "Invite a Player" sheet: pick an unlinked Player from the pool
+       (search, the missing-sticker initials beside each), then a choice
+       of two large stickers: "A link to paste in the chat" and "Send to
+       an email" with an email field. Sticky bar: Cancel and "Create
+       invitation". After creating a link: the link in a paper field with
+       a red "Copy link".
+  18e. The "Assign as Manager" sheet: the Group's competitions as rows
+       with their Format tags and a checkbox each; Done.
+  18f. Empty: a Group with one Member and nothing else. "Invite the
+       people you play with" and the two acts "+ Invite a Player" and
+       "+ New join link".
+  18g. Loading: skeleton rows in the Members panel's own shape.
+
+
+================================================================
+7 · New screen: Activity record
+================================================================
+
+Screen 19. Group admins only. Reached from the sidebar's "Activity
+record", and on a phone from the Group switcher's sheet. Page title
+"Activity record".
+
+One panel. Above the list a row of filter chips by kind, scrolling
+sideways on a phone: All · Members · Roles · Players · Invitations ·
+Teams · Settings. One chip is active.
+
+The list is newest first, grouped under date headings ("Today", "14 Sep",
+"2 Sep"). Each entry is a row, not a card: the time ("21:40") in muted
+text at the left, then one sentence with the actor and the subject in
+Archivo Narrow Bold and the verb in body text, then on a second line the
+old and new values where there are any, old struck through in muted text
+and new in ink:
+  "Ana merged the Player Pule into Paja"
+  "Cope renamed the Player Dinic"      Dinic -> Dinić
+  "Ana made Marko J. a Manager of Sunday five-a-side"
+  "Marko J. joined with a join link"
+  "Ana changed the Group's time zone"  Europe/London -> Europe/Belgrade
+  "a deleted Account revoked an invitation for Steva"
+"a deleted Account" is in muted text, not bold. A small kind
+icon in a paper circle starts each row, one icon per filter kind.
+
+The list ends in the paper Show more bar.
+
+Sections:
+  19a. All kinds, about twelve entries over three dates.
+  19b. The "Players" chip active; the list starts again from the top.
+  19c. Show more pressed: a skeleton row under the last entry, the bar
+       greyed.
+  19d. The last page: no Show more bar; the final entry is "Group created
+       by Ana".
+  19e. A migrated Group: the oldest entry reads "Imported from the old
+       Sunday Heroes · 63 Players · 4 competitions · 212 matches · 1,840
+       ballots", with no actor.
+  19f. A filter with nothing in it: "Nothing of this kind yet."
+
+Phone: the time sits above the sentence, the sentence wraps freely.
+Desktop: the panel is at most 900 px wide; time, icon, sentence in one row.
+
+
+================================================================
+8 · New screen: mail templates
+================================================================
+
+Screen 20. These are emails, not app screens: no shell, no grass behind
+the text, no web fonts assumed. Draw each mail at 600 px wide (a desktop
+mail client) beside 360 px (a phone mail client), on a neutral grey
+surround standing in for the client.
+
+The one layout every mail shares:
+  - a header strip in grass green #42af36 with the logo centred, 64 px;
+  - a paper #f7f7f3 body with an ink stroke and the offset shadow down
+    and left, 32 px padding (20 px at 360);
+  - a heading in a slab serif (Ultra, falling back to Georgia bold);
+  - one or two short paragraphs in the system sans, 16 px, ink;
+  - exactly one red bar button, 48 px, plain paper label, no circle, no
+    underline;
+  - under the button, in 13 px muted text: "Or paste this link:" and the
+    bare URL on its own line, allowed to wrap;
+  - a footer in 13 px muted text: "Sunday Heroes" and one line saying why
+    the person got the mail.
+An Account mail has no unsubscribe. A Notice has a footer line "Stop
+these reminders" as a plain link, and nothing else differs.
+
+Draw these:
+  20a. Verify your email. Heading "Confirm your email". Button "Confirm
+       email". Note: "The link works for 24 hours."
+  20b. An Account already exists. Heading "You already have an account".
+       Button "Sign in". No hint of who asked.
+  20c. Reset your password. Button "Set a new password". A second variant
+       for a Google-only Account reads "Set a password".
+  20d. A security notice (one drawing stands for all four): heading "Your
+       password was changed", one paragraph with the date and "If this
+       was not you, reset your password now.", button "Reset password".
+  20e. A Player invitation. Heading "Ana invited you to Nedeljni heroji".
+       Body: "You will be Marko." Button "Accept invitation". Note: "The
+       invitation works for 14 days."
+  20f. The Vote reminder, the one Notice. Subject shown above the mail:
+       "Nedeljni heroji: the vote closes tomorrow". Heading "The vote
+       closes tomorrow". Body: the result line "Red 4-3 Blue" with two
+       colour swatches and "Sun 14 Sep". Button "Vote now". Footer with
+       "Stop these reminders".
+  20g. The plain-text part of 20e, in a monospace block beside it, to show
+       the same mail with no styling: heading, body, the bare URL, footer.
+
+Keep every mail to one screen at 600 px. No images other than the logo;
+the swatches in 20f are coloured table cells, not images.
+
+
+================================================================
+9 · Fix-up after the second export (look and layout only)
+================================================================
+
+Change only look and layout; do not touch copy, sample data or states.
+
+1. No text may leave its shape. Give these room (widen the cell, allow
+   two clean lines, or shrink the neighbours), and never break a word in
+   the middle: the note "Dinamo Blok 45 did not show" and "pitch closed"
+   (12b to 12e, 17b, 17c); the withdrawn Stari lavovi row (12h, 12i); the
+   status "Completed" on the third-place card (13g); the Team name "Red"
+   in the side header (14d, 14e phone); "Lokomotiva" (12b, 17e, 17h
+   phone); a seed and its name stay on one line ("(4) Yellow") and "to
+   play" stays on one line on every bracket card; "3 Players" beside
+   "Guest appearances" (16a desktop).
+2. A panel title never wraps out of its band on a phone: "Active
+   competitions" (4a, 4b), "Season summary" (12, 13), "Match history"
+   (10). Shrink the meta beside it or move the meta under the band.
+3. On a phone every dialog is a full-screen sheet with a title, Cancel in
+   the header, a scrolling body and a sticky action bar, and nothing is
+   hidden behind the bar: 3a, 3b, 5b, 7b, 11b, 11c, 11e, 11f (the Bracket
+   block), 14b, 14c, 8h, 18d (the email field). The menus on 8b and 9c
+   become bottom sheets on a phone like the ones on screen 17.
+4. Remove every underline left on a label: "+ add" (7), "+ add Players"
+   and "+ add Team" (11), "Lineup" (14), "Cancel" in a sheet header (15b),
+   the back links "‹ Players" and "‹ Teams" (10, 16).
+5. No text on grass. Put these on a paper strip in ink: the email under
+   the nickname (2), "Form" and its caption (4a, 10), the empty sentences
+   (4b, 4c, 4d), the field labels and attribution lines on the phone match
+   form (7), the desktop breadcrumbs (7, 8, 9, 11).
+6. 44 px tap targets: the bracket cards' overflow buttons; Copy link,
+   Revoke and Resend on 18 become small outlined buttons; the Team rows on
+   15; "Show", "Change", "Enter ballot", "Share", "Copy as text"; the
+   guest search field and "+ new nickname" on 14c; the round carets on
+   12b; the Group switcher chevron. The active overflow on 12d shows its
+   three dots, in the one active style used on screen 17. No label under
+   12 px: the bracket card labels and leg dates, the initials on 18d.
+7. Screen 18: a phone Member row is two lines, the role tag on the first
+   line beside the name, no orphan dot. 18b hides role tags on the phone
+   as it does on the desktop. Draw the two missing states: the only
+   admin's menu with Remove and Demote greyed and "the only Group admin"
+   beneath, and the Invite sheet after creating a link (the link in a
+   paper field with a red "Copy link").
+8. 8c-2: the two sticker cards sit side by side above the table on a
+   desktop. 8i: one rule per row across all columns.
+9. One phone top bar everywhere: Group home gains the page title, the
+   Player page loses its extra "‹ Players" link.
+10. 19f: the active chip is scrolled into view on the phone.
+11. 10c: a bar has a maximum width of 24 px; few bars sit at the left,
+    they do not stretch across the plot.
+
+Then run prompt 2 (the Rating history chart), which has not been applied.
+
+
+================================================================
+10 · Last pass (look and layout only)
+================================================================
+
+Change only look and layout; do not touch copy, sample data or states.
+
+1. 13a, 13b, 13g, 13k desktop: on a two-leg card the seed and name
+   ("(5) Orange") never touch the score boxes; narrow the boxes or give
+   the name its own line.
+2. 14c phone: the guest search field and "+ new nickname" are 44 px.
+3. 18d phone: the email input is visible above the sticky bar.
+4. 18a phone: every Member row is two lines; if the email and the joined
+   date do not fit, the date goes.
+5. The phone top bar: the Group name and its chevron are one 44 px
+   switcher button on every screen; 4c and 4d get the "Group" title line
+   the other Group home sections have.
+6. 8i desktop: one rule per row across every column.
+7. Screen 10: the phone chart gets the won, drawn, lost legend the desktop
+   has; the desktop breadcrumb goes on a paper strip; 10d has no gridline
+   in the empty chart.
+8. 7b: the side colour dot in the sheet title is filled.
+9. 1a to 1e: "Show" and "Change" are 44 px. 11b: the colour swatches are
+   44 px.

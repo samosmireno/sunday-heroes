@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Ultra&family=Archivo+Narrow:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f7f3;color:#000}
+a{color:#000}a:hover{color:#3a3ab0}
+</style>
+</helmet>
+<div style="width:1980px;padding:48px;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.4;color:#000;display:flex;flex-direction:column;gap:56px">
+
+<header style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #000;padding-bottom:8px">
+  <div style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase">Screen 12 · Competition page, League</div>
+  <div style="font-size:14px">title band in the League family · Season selector · yellow Season summary with the leader as a Team colour plate · tabs Standings · Schedule · Players · Rules · Manager and Fixture overflows · Regenerate confirmation · Past season, All seasons, rosters without a schedule, the empty Season · flip the role tweak</div>
+</header>
+
+<sc-for list="{{ sections }}" as="s" hint-placeholder-count="11">
+<section id="{{ s.id }}" data-screen-label="{{ s.label }}" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#000;color:#f7f7f3;padding:2px 8px">{{ s.id }}</span><span style="font-size:14px">{{ s.blurb }}</span></div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+
+    <div data-frame="" style="position:relative;width:390px;min-height:844px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex;flex-direction:column">
+      <div data-pitch="" style="position:absolute;right:-140px;top:40px;width:320px;height:320px;border:6px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:6px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-32deg)"></div></div>
+      <div style="position:relative;background:#07361c;border-bottom:1px solid #000;padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between;min-height:78px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column"><a style="display:inline-flex;align-items:flex-end;align-self:flex-start;gap:6px;height:44px;margin-left:-8px;padding:0 8px 2px;font-size:13px;line-height:1.2;color:#d7e6cc;text-decoration:none;box-sizing:border-box">Nedeljni heroji<span style="font-size:12px">▾</span></a><a style="display:inline-flex;align-items:center;align-self:flex-start;height:44px;padding:0 8px 16px;margin:0 0 -16px -8px;box-sizing:content-box;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;line-height:1;color:#f7f7f3;text-decoration:none;position:relative;z-index:1">‹ Competitions</a></div>
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:40px;height:40px">
+      </div>
+      <div style="position:relative;flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px">
+        <div data-band="" style="margin-left:4px;min-height:52px;background:#f7f7f3;border:1px solid #000;box-shadow:-4px 4px 0 #000;display:flex;align-items:center;gap:12px;padding:8px 12px;box-sizing:border-box"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:28px;line-height:1;text-transform:uppercase;text-shadow:-3px 3px 0 #000;flex:1;min-width:0;overflow-wrap:anywhere;color:#3a3ab0">{{ s.comp }}</span><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#0c542c;border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">League</span></div></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:0 6px">
+          <a data-selector="" style="position:relative;flex:1;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 16px;text-decoration:none;min-width:0"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#f7f7f3;min-width:0;overflow-wrap:anywhere;line-height:1.1">{{ s.season }}</span><sc-if value="{{ s.seasonPast }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none;margin-left:auto"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f55656;border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#000">Past</span></span></sc-if><span style="position:relative;color:#f7f7f3;font-size:12px">▼</span></a>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+          <a data-gear="" aria-label="Competition settings" style="width:44px;height:44px;flex:none;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:22px;color:#000;text-decoration:none;box-sizing:border-box">⚙︎</a>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ s.showSummary }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="summary" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#faf15d;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;white-space:nowrap;flex:none">{{ s.summaryTitle }}</div><div style="font-size:12px;text-align:right;min-width:0;line-height:1.2">{{ s.summaryMeta }}</div></div>
+          <div style="position:relative;background:#faf15d;padding:16px 36px 16px 16px;overflow:hidden;display:flex;flex-direction:column;gap:8px;font-size:15px">
+            <div style="position:absolute;right:-6px;top:0;bottom:0;width:20px;background:#cec311;border-left:1px solid #000;transform:skewX(-15deg)"></div>
+            <sc-for list="{{ s.summary }}" as="l" hint-placeholder-count="5">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:28px"><span>{{ l.label }}</span>
+              <sc-if value="{{ l.isPlate }}" hint-placeholder-val="{{ true }}"><span style="position:relative;display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 6px"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ l.plateBg }};border:1px solid #000"></span><span style="position:relative;width:22px;height:22px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ l.hex }};border:1px solid #000"></span></span><sc-if value="{{ l.crown }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:16px;height:13px;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:1.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;color:#f7f7f3;font-size:15px">{{ l.value }}</span></span></sc-if>
+              <sc-if value="{{ l.isText }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;text-align:right">{{ l.value }}</span></sc-if>
+            </div>
+            </sc-for>
+            <div style="font-size:13px;padding-top:2px">{{ s.summaryNote }}</div>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showAct }}" hint-placeholder-val="{{ false }}">
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">{{ s.act }}</a>
+        </sc-if>
+
+        <div data-tabs="" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0 6px">
+          <sc-for list="{{ s.tabs }}" as="t" hint-placeholder-count="4">
+          <a style="position:relative;height:44px;display:flex;align-items:center;justify-content:center;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ t.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ t.fg }}">{{ t.name }}</span></a>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ s.showStandings }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="standings" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Standings</div>
+            <a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;font-size:13px;color:#f7f7f3">Share</a>
+          </div>
+          <div style="background:#000;overflow-x:auto;padding:8px 8px 8px 0">
+            <div style="display:flex;gap:4px;width:max-content;min-width:100%;align-items:center;margin-bottom:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;width:210px;flex:none;display:flex;align-items:center;height:32px;box-sizing:border-box"><span style="font-size:13px;color:#f7f7f3">Team</span></div>
+              <sc-for list="{{ s.stCols }}" as="c" hint-placeholder-count="9">
+              <div style="position:relative;height:32px;flex:none;width:{{ c.w }};display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }}">{{ c.name }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ s.standings }}" as="r" hint-placeholder-count="5">
+            <div style="display:flex;gap:4px;width:max-content;min-width:100%;align-items:center;margin-bottom:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;width:210px;flex:none;box-sizing:border-box"><a style="position:relative;height:44px;display:flex;align-items:center;gap:6px;padding:0 10px 0 12px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.nameBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;color:{{ r.fg }};width:22px;flex:none">{{ r.pos }}</span><span style="position:relative;width:24px;height:24px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ r.hex }};border:1px solid #000"></span></span><span style="position:relative;display:flex;flex-direction:column;min-width:0"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;line-height:1.1;color:{{ r.fg }};white-space:nowrap">{{ r.name }}</span><sc-if value="{{ r.withdrawn }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;white-space:nowrap;color:{{ r.fg }}">{{ r.wdText }}</span></sc-if></span><sc-if value="{{ r.champion }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:16px;height:13px;flex:none;margin-left:auto"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:1.5px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if></a></div>
+              <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="9">
+              <div style="position:relative;height:44px;flex:none;width:{{ c.w }};display:flex;align-items:center;justify-content:center;gap:4px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div>
+                <sc-if value="{{ c.isText }}" hint-placeholder-val="{{ true }}"><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ c.fg }}">{{ c.v }}</span></sc-if>
+                <sc-if value="{{ c.isForm }}" hint-placeholder-val="{{ false }}"><sc-for list="{{ c.form }}" as="f" hint-placeholder-count="5"><span style="position:relative;width:18px;height:18px;flex:none;display:inline-flex;align-items:center;justify-content:center;color:{{ f.fg }};font-size:12px;font-weight:700;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ f.bg }};border:1px solid #000;transform:rotate({{ f.rot }})"></span>{{ f.v }}</span></sc-for></sc-if>
+              </div>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:10px 16px;font-size:13px;display:flex;justify-content:space-between;gap:12px"><span>{{ s.stNote }}</span><a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;flex:none">Copy as text</a></div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showSchedule }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:12px;padding:0 6px">
+          <a data-filter="" style="position:relative;flex:1;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 16px;text-decoration:none;min-width:0"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-size:15px;color:#000">{{ s.teamFilter }}</span><span style="position:relative;color:#000;font-size:12px">▼</span></a>
+          <sc-if value="{{ isManager }}" hint-placeholder-val="{{ true }}"><a aria-label="Schedule acts" style="width:44px;height:44px;flex:none;background:{{ s.mgrBtnBg }};border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:{{ s.mgrBtnFg }};text-decoration:none;box-sizing:border-box">⋯</a></sc-if>
+        </div>
+        <div data-panel="schedule" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Schedule</div>
+            <div style="font-size:13px;color:#f7f7f3">{{ s.schedMeta }}</div>
+          </div>
+          <div style="background:#0c542c;padding:12px 12px 16px 14px;display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ s.rounds }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <a style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 4px;color:#f7f7f3;text-decoration:none"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase">{{ r.n }}</span><span style="font-size:13px;color:#d7e6cc">{{ r.date }}</span><span style="flex:1;height:1px;background:#f7f7f3;opacity:0.6"></span><span style="font-size:13px;color:{{ r.statusFg }}">{{ r.status }}</span><span style="width:44px;height:44px;margin-right:-12px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none">{{ r.chev }}</span></a>
+              <sc-if value="{{ r.open }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ r.fixtures }}" as="f" hint-placeholder-count="2">
+              <a style="position:relative;background:{{ f.bg }};border:1px solid #000;box-shadow:-4px 4px 0 #000;padding:10px 12px 12px 16px;display:flex;flex-direction:column;gap:10px;color:{{ f.fg }};text-decoration:none">
+                <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#bcc5ce;min-height:20px"><span style="flex:1">{{ f.status }}</span><span style="flex:none">{{ f.date }}</span><sc-if value="{{ isManager }}" hint-placeholder-val="{{ true }}"><span aria-label="Fixture acts" style="width:44px;height:44px;margin:-12px -8px -12px 0;display:inline-flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:{{ f.dotsFg }};border:1px solid {{ f.dotsBd }};background:{{ f.dotsBg }};box-sizing:border-box;flex:none">⋯</span></sc-if></div>
+                <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px">
+                  <div style="display:flex;align-items:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;min-width:0"><span style="position:relative;width:22px;height:22px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ f.aHex }};border:1px solid #000"></span></span><span style="min-width:0;line-height:1.1;font-size:15px">{{ f.a }}</span></div>
+                  <div style="display:flex;gap:4px"><div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.scoreBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:26px;color:{{ f.scoreFg }}">{{ f.aS }}</span></div><div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.scoreBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:26px;color:{{ f.scoreFg }}">{{ f.bS }}</span></div></div>
+                  <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;min-width:0"><span style="min-width:0;line-height:1.1;font-size:15px;text-align:right">{{ f.b }}</span><span style="position:relative;width:22px;height:22px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ f.bHex }};border:1px solid #000"></span></span></div>
+                </div>
+                <sc-if value="{{ f.hasMark }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="display:inline-flex;align-items:center;height:22px;padding:0 8px;color:{{ f.markFg }};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;flex:none;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ f.markBg }};border:1px solid #000;transform:rotate(-1.5deg)"></span>{{ f.mark }}</span><span style="color:#bcc5ce;min-width:0;line-height:1.2">{{ f.markLine }}</span></div>
+                </sc-if>
+              </a>
+              </sc-for>
+              <sc-if value="{{ r.hasBye }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;gap:8px;padding:0 6px 4px;font-size:14px;color:#f7f7f3"><span style="position:relative;width:18px;height:18px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ r.byeHex }};border:1px solid #000"></span></span><span>{{ r.bye }}</span></div>
+              </sc-if>
+              </sc-if>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showPlayers }}" hint-placeholder-val="{{ false }}">
+        <div data-chips="" style="display:flex;gap:10px;padding:0 0 4px 6px;overflow-x:auto">
+          <sc-for list="{{ presetChips }}" as="c" hint-placeholder-count="4">
+          <a style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 16px;flex:none;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000;box-shadow:-2px 2px 0 #000"></div><span style="position:relative;font-size:14px;font-weight:700;color:{{ c.fg }}">{{ c.name }}</span></a>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:12px;padding:0 0 0 6px">
+          <div data-search="" style="flex:1;min-width:0;height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;gap:10px;padding:0 12px;box-sizing:border-box"><span style="width:14px;height:14px;border:2px solid #000;border-radius:50%;flex:none;box-sizing:border-box;position:relative"><span style="position:absolute;width:2px;height:7px;background:#000;right:-4px;bottom:-6px;transform:rotate(-45deg)"></span></span><span style="font-size:15px;color:#4b5560">Search Players</span></div>
+          <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 14px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:14px;text-decoration:none;box-sizing:border-box;flex:none">Share</a>
+        </div>
+        <div data-panel="players" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Players</div>
+            <div style="font-size:13px;color:#f7f7f3">{{ s.seasonShort }}</div>
+          </div>
+          <div style="background:#000;overflow-x:auto;padding:8px 8px 8px 0">
+            <div style="display:flex;gap:4px;width:max-content;min-width:100%;align-items:center;margin-bottom:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;width:148px;flex:none;display:flex;align-items:center;height:32px;box-sizing:border-box"><span style="font-size:13px;color:#f7f7f3">Player</span></div>
+              <sc-for list="{{ playerCols }}" as="c" hint-placeholder-count="11">
+              <div style="position:relative;height:32px;flex:none;width:{{ c.w }};display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }}">{{ c.name }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ players }}" as="p" hint-placeholder-count="8">
+            <div style="display:flex;gap:4px;width:max-content;min-width:100%;align-items:center;margin-bottom:4px">
+              <div style="position:sticky;left:0;z-index:2;background:#000;padding:0 0 0 8px;width:148px;flex:none;box-sizing:border-box"><a style="position:relative;height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.nameBg }};border:1px solid #000"></div><span style="position:relative;font-size:12px;color:{{ p.fg }};width:22px">{{ p.rank }}</span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ p.fg }}">{{ p.name }}</span></a></div>
+              <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="11">
+              <div style="position:relative;height:44px;flex:none;width:{{ c.w }};display:flex;align-items:center;justify-content:{{ c.jc }};gap:6px;padding:0 {{ c.px }};box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div>
+                <sc-if value="{{ c.isTeam }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:20px;height:20px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ c.hex }};border:1px solid #000"></span></span></sc-if>
+                <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ c.fg }};white-space:nowrap">{{ c.v }}</span>
+              </div>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:10px 16px;font-size:13px">{{ qualifiedNote }}</div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showRules }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="rules" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Rules</div>
+            <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}"><a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;font-size:14px;color:#f7f7f3">Change in settings</a></sc-if>
+          </div>
+          <div style="background:#f7f7f3;padding:6px 16px 10px;display:flex;flex-direction:column">
+            <sc-for list="{{ rules }}" as="r" hint-placeholder-count="7">
+            <div style="display:flex;justify-content:space-between;gap:16px;min-height:44px;align-items:center;border-bottom:1px solid #bcc5ce;font-size:15px;padding:6px 0"><span style="flex:none">{{ r.label }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;text-align:right">{{ r.value }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showEmpty }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="entries-empty" style="position:relative;margin-left:9px;border:1px solid #000;box-shadow:-4px 4px 0 #000">
+          <div style="position:absolute;left:-9px;top:-1px;width:8px;height:52px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3">Standings</div>
+          </div>
+          <div style="background:#f7f7f3;padding:28px 16px 24px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+            <img src="assets/balls.png" alt="" style="width:260px;height:auto">
+            <div style="font-size:16px;max-width:280px;text-wrap:pretty">{{ emptyLine }}</div>
+            <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:100%;max-width:300px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">Roster setup</a>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      <div style="position:relative;background:#07361c;border-top:1px solid #000;display:grid;grid-template-columns:repeat(4,1fr)">
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Home</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;background:#ed1c24;border-left:1px solid #000;border-right:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#f7f7f3;text-decoration:none">Competitions</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">Players</a>
+        <a style="height:56px;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#d7e6cc;text-decoration:none">You<span style="width:22px;height:22px;border-radius:50%;background:#f93a07;border:1px solid #000;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#f7f7f3;box-sizing:border-box">2</span></a>
+      </div>
+
+      <sc-if value="{{ s.showPicker }}" hint-placeholder-val="{{ false }}">
+      <div data-sheet="season" style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;background:#f7f7f3">
+        <div style="background:#07361c;border-bottom:1px solid #000;padding:0 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;min-height:78px;box-sizing:border-box;flex:none"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">Season</div><a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0;flex:none;text-decoration:none">Cancel</a></div>
+        <div style="flex:1;min-height:0;overflow:auto;padding:16px 16px 24px 20px;display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ s.seasons }}" as="o" hint-placeholder-count="3">
+          <a style="position:relative;height:48px;flex:0 0 48px;display:flex;align-items:center;gap:10px;padding:0 14px;text-decoration:none;color:#f7f7f3"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ o.bg }};border:1px solid #000"></div><div style="position:relative;flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ o.name }}</span><span style="font-size:13px">{{ o.span }}</span></div><sc-if value="{{ o.past }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f55656;border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#000">Past</span></span></sc-if><sc-if value="{{ o.current }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:12px;height:12px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;margin-right:4px"></span></sc-if></a>
+          </sc-for>
+          <div style="height:1px;background:#000;margin:8px 4px"></div>
+          <a style="position:relative;height:48px;flex:0 0 48px;display:flex;align-items:center;padding:0 14px;text-decoration:none;color:#f7f7f3"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">All seasons</span></a>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ s.hasSheet }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62)"></div>
+      <div data-sheet="{{ s.sheetKind }}" style="position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;border-top:1px solid #000;box-shadow:0 -4px 0 #000">
+        <div style="background:{{ s.sheetBg }};min-height:56px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+          <div style="display:flex;flex-direction:column"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:20px;color:#f7f7f3;line-height:1.2">{{ s.sheetTitle }}</div><div style="font-size:13px;color:#d7e6cc">{{ s.sheetSub }}</div></div>
+          <a style="font-size:14px;color:#f7f7f3;flex:none;padding:12px 0;margin:-12px 0">Cancel</a>
+        </div>
+        <sc-if value="{{ s.sheetIsMenu }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#f7f7f3;padding:8px 0 20px;display:flex;flex-direction:column">
+          <sc-for list="{{ s.menu }}" as="i" hint-placeholder-count="7">
+          <sc-if value="{{ i.isHead }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:baseline;gap:10px;margin:8px 16px 4px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">{{ i.t }}</span><span style="font-size:12px">{{ i.sub }}</span></div></sc-if>
+          <sc-if value="{{ i.isItem }}" hint-placeholder-val="{{ true }}"><a style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:6px 16px;text-decoration:none;color:{{ i.fg }};box-sizing:border-box"><span style="font-size:16px">{{ i.t }}</span><span style="font-size:12px;text-align:right;color:{{ i.subFg }}">{{ i.sub }}</span></a></sc-if>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ s.sheetIsRegen }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#f7f7f3;padding:16px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-size:14px;text-wrap:pretty">{{ regen.lead }}</div>
+          <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">Discarded</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding-left:2px">
+            <sc-for list="{{ regen.discard }}" as="d" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:10px;font-size:15px"><span style="width:10px;height:10px;background:#ed1c24;border:1px solid #000;flex:none"></span><span>{{ d }}</span></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">Kept</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding-left:2px">
+            <sc-for list="{{ regen.keep }}" as="d" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:10px;font-size:15px"><span style="width:10px;height:10px;background:#42af36;border:1px solid #000;flex:none"></span><span>{{ d }}</span></div>
+            </sc-for>
+          </div>
+          <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:6px 10px 6px 18px;font-size:13px;color:#000;margin:2px 0 0 4px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:8px solid #cec311;transform:rotate(-1deg);box-shadow:-2px 2px 0 #000"></span>{{ regen.warn }}</div>
+        </div>
+        <div style="background:#f7f7f3;border-top:1px solid #000;padding:12px 16px 20px;display:flex;flex-direction:column;gap:10px">
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin-left:4px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000">{{ regen.cta }}</a>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+    </div>
+
+    <div data-frame="" style="position:relative;width:1440px;min-height:960px;background:#42af36;border:1px solid #000;box-sizing:border-box;overflow:hidden;flex:none;display:flex">
+      <div data-pitch="" style="position:absolute;right:-120px;top:-200px;width:620px;height:620px;border:10px solid #f7f7f3;border-radius:50%;opacity:0.85;box-sizing:border-box"><div data-pitch-line="" style="position:absolute;left:50%;top:50%;width:4000px;height:10px;background:#f7f7f3;transform:translate(-50%,-50%) rotate(-30deg)"></div></div>
+      <div style="position:relative;width:285px;flex:none;background:#07361c;border-right:1px solid #000;display:flex;flex-direction:column;padding-top:32px;box-sizing:border-box">
+        <img src="assets/logo.svg" alt="Sunday Heroes" style="width:120px;height:120px;margin:0 32px 28px">
+        <a style="display:flex;align-items:center;justify-content:space-between;padding:12px 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none;border-top:1px solid #000;border-bottom:1px solid #000">Nedeljni heroji<span style="font-size:14px">▾</span></a>
+        <nav style="display:flex;flex-direction:column;padding:16px 0">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Home</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;background:#ed1c24;border-top:1px solid #000;border-bottom:1px solid #000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#f7f7f3;text-decoration:none">Competitions</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Players</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Teams</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Members</a>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Activity record</a>
+          <a style="display:flex;align-items:center;height:44px;padding:0 32px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:#d7e6cc;text-decoration:none">Group settings</a>
+          </sc-if>
+        </nav>
+        <div style="flex:1"></div>
+        <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+        <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;margin:0 24px 24px 28px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-4px 4px 0 #000"><span style="width:18px;height:18px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;color:#000;font-size:15px;line-height:1;font-weight:700;box-sizing:border-box">+</span>New competition</a>
+        </sc-if>
+        <a style="display:flex;align-items:center;gap:14px;padding:16px 32px;background:#42af36;border-top:1px solid #000;text-decoration:none;color:#000"><span style="width:44px;height:44px;border-radius:50%;background:#ed1c24;border:1px solid #000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;color:#f7f7f3">C</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;line-height:1.1;flex:1;min-width:0">Cope</span><span aria-label="open votes" style="margin-left:auto;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#f4e937;border:1px solid #000;color:#000;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none">2</span></a>
+      </div>
+      <div style="position:relative;flex:1;padding:40px 40px 48px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box;min-width:0">
+        <div style="display:flex;align-items:center;gap:24px">
+          <div data-band="" style="flex:1;min-width:0;margin-left:8px;height:72px;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;align-items:center;gap:20px;padding:0 20px;box-sizing:border-box"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:48px;line-height:1;text-transform:uppercase;text-shadow:-5px 5px 0 #000;white-space:nowrap;padding-right:6px;color:#3a3ab0">{{ s.comp }}</span><div style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#0c542c;border:1px solid #000"></div><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#f7f7f3">League</span></div></div>
+          <div style="position:relative;flex:none;margin-left:6px"><a data-selector="" style="position:relative;min-width:360px;height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 20px;text-decoration:none;box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#091e40;border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#f7f7f3">{{ s.season }}</span><sc-if value="{{ s.seasonPast }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none;margin-left:auto"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f55656;border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#000">Past</span></span></sc-if><span style="position:relative;color:#f7f7f3;font-size:12px">▼</span></a><sc-if value="{{ s.showPicker }}" hint-placeholder-val="{{ false }}"><div data-menu="season" style="position:absolute;left:0;right:0;top:48px;z-index:6;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;padding:6px 0;display:flex;flex-direction:column"><sc-for list="{{ s.seasons }}" as="o" hint-placeholder-count="3"><a style="display:flex;align-items:center;gap:12px;height:48px;flex:0 0 48px;padding:0 16px;background:{{ o.mBg }};color:{{ o.mFg }};text-decoration:none;box-sizing:border-box"><div style="position:relative;flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px">{{ o.name }}</span><span style="font-size:13px">{{ o.span }}</span></div><sc-if value="{{ o.past }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 12px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f55656;border:1px solid #000"></span><span style="position:relative;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#000">Past</span></span></sc-if><sc-if value="{{ o.current }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:12px;height:12px;border-radius:50%;background:#f7f7f3;border:1px solid #000;flex:none;margin-right:4px"></span></sc-if></a></sc-for><div style="height:1px;background:#000;margin:6px 16px"></div><a style="display:flex;align-items:center;height:48px;flex:0 0 48px;padding:0 16px;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:#000;text-decoration:none">All seasons</a></div></sc-if></div>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+          <a data-gear="" aria-label="Competition settings" style="width:44px;height:44px;flex:none;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:22px;color:#000;text-decoration:none;box-sizing:border-box">⚙︎</a>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ s.showSummary }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="summary" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#faf15d;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px">{{ s.summaryTitle }}</div><div style="font-size:14px">{{ s.summaryMeta }}</div></div>
+          <div style="position:relative;background:#faf15d;padding:20px 56px 20px 20px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;font-size:16px;align-content:start">
+            <div style="position:absolute;right:-8px;top:0;bottom:0;width:28px;background:#cec311;border-left:1px solid #000;transform:skewX(-15deg)"></div>
+            <sc-for list="{{ s.summary }}" as="l" hint-placeholder-count="5">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #cec311;padding-bottom:6px;min-height:36px"><span>{{ l.label }}</span>
+              <sc-if value="{{ l.isPlate }}" hint-placeholder-val="{{ true }}"><span style="position:relative;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 6px"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ l.plateBg }};border:1px solid #000"></span><span style="position:relative;width:26px;height:26px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ l.hex }};border:1px solid #000"></span></span><sc-if value="{{ l.crown }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:20px;height:16px;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:2px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span></sc-if><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;color:#f7f7f3;font-size:16px">{{ l.value }}</span></span></sc-if>
+              <sc-if value="{{ l.isText }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700">{{ l.value }}</span></sc-if>
+            </div>
+            </sc-for>
+            <div style="font-size:14px;align-self:end">{{ s.summaryNote }}</div>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="display:flex;align-items:center;gap:24px;margin-left:8px">
+          <div data-tabs="" style="display:flex;gap:6px;flex:1">
+            <sc-for list="{{ s.tabs }}" as="t" hint-placeholder-count="4">
+            <a style="position:relative;width:160px;height:44px;display:flex;align-items:center;justify-content:center;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ t.bg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ t.fg }}">{{ t.name }}</span></a>
+            </sc-for>
+          </div>
+          <sc-if value="{{ s.showAct }}" hint-placeholder-val="{{ false }}">
+          <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:240px;flex:none;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">{{ s.act }}</a>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ s.showStandings }}" hint-placeholder-val="{{ true }}">
+        <div data-panel="standings" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Standings</div>
+            <div style="display:flex;align-items:center;gap:20px;font-size:14px;color:#f7f7f3"><span>{{ s.stNote }}</span><a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;color:#f7f7f3">Share · Copy as text</a></div>
+          </div>
+          <div style="background:#000;padding:12px 16px 12px 16px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <div style="width:280px;flex:none;display:flex;align-items:center;height:32px;padding-left:12px;box-sizing:border-box"><span style="font-size:13px;color:#f7f7f3">Team</span></div>
+              <sc-for list="{{ s.stCols }}" as="c" hint-placeholder-count="9">
+              <div style="position:relative;height:32px;flex:1 1 {{ c.w }};min-width:0;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }}">{{ c.name }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ s.standings }}" as="r" hint-placeholder-count="5">
+            <div style="display:flex;gap:6px;align-items:center">
+              <a style="position:relative;width:280px;flex:none;height:48px;display:flex;align-items:center;gap:10px;padding:0 16px 0 20px;text-decoration:none;box-sizing:border-box;margin-left:6px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ r.nameBg }};border:1px solid #000"></div><span style="position:relative;font-size:13px;color:{{ r.fg }};width:26px;flex:none">{{ r.pos }}</span><span style="position:relative;width:28px;height:28px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:5px;transform:skewX(-15deg);background:{{ r.hex }};border:1px solid #000"></span></span><span style="position:relative;display:flex;flex-direction:column;min-width:0"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;line-height:1.1;color:{{ r.fg }};white-space:nowrap">{{ r.name }}</span><sc-if value="{{ r.withdrawn }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;white-space:nowrap;color:{{ r.fg }}">{{ r.wdText }}</span></sc-if></span><sc-if value="{{ r.champion }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:#f4e937"><span style="position:relative;width:20px;height:16px;flex:none"><span style="position:absolute;inset:0;background:#000;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span><span style="position:absolute;inset:2px;background:#f4e937;clip-path:polygon(0 100%,0 30%,26% 55%,50% 8%,74% 55%,100% 30%,100% 100%)"></span></span>Champion</span></sc-if></a>
+              <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="9">
+              <div style="position:relative;height:48px;flex:1 1 {{ c.w }};min-width:0;display:flex;align-items:center;justify-content:center;gap:5px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div>
+                <sc-if value="{{ c.isText }}" hint-placeholder-val="{{ true }}"><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ c.fg }}">{{ c.v }}</span></sc-if>
+                <sc-if value="{{ c.isForm }}" hint-placeholder-val="{{ false }}"><sc-for list="{{ c.form }}" as="f" hint-placeholder-count="5"><span style="position:relative;width:20px;height:20px;flex:none;display:inline-flex;align-items:center;justify-content:center;color:{{ f.fg }};font-size:12px;font-weight:700;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ f.bg }};border:1px solid #000;transform:rotate({{ f.rot }})"></span>{{ f.v }}</span></sc-for></sc-if>
+              </div>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showSchedule }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="schedule" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Schedule</div>
+            <div style="display:flex;align-items:center;gap:16px">
+              <span style="font-size:14px;color:#f7f7f3">{{ s.schedMeta }}</span>
+              <a data-filter="" style="position:relative;width:240px;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 18px;text-decoration:none;box-sizing:border-box;margin-left:6px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></div><span style="position:relative;font-size:15px;color:#000">{{ s.teamFilter }}</span><span style="position:relative;color:#000;font-size:12px">▼</span></a>
+              <sc-if value="{{ isManager }}" hint-placeholder-val="{{ true }}">
+              <div style="position:relative;flex:none">
+                <a aria-label="Schedule acts" style="width:44px;height:44px;background:{{ s.mgrBtnBg }};border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:{{ s.mgrBtnFg }};text-decoration:none;box-sizing:border-box">⋯</a>
+                <sc-if value="{{ s.showMgrMenu }}" hint-placeholder-val="{{ false }}">
+                <div data-menu="manager" style="position:absolute;right:0;top:48px;width:340px;z-index:5;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;padding:6px 0 8px;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">
+                  <sc-for list="{{ mgrMenu }}" as="i" hint-placeholder-count="10">
+                  <sc-if value="{{ i.isHead }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:baseline;gap:10px;margin:10px 16px 4px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;color:#000">{{ i.t }}</span><span style="font-size:12px;color:#000">{{ i.sub }}</span></div></sc-if>
+                  <sc-if value="{{ i.isItem }}" hint-placeholder-val="{{ true }}"><a style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:4px 16px;text-decoration:none;color:{{ i.fg }};box-sizing:border-box"><span style="font-size:15px;white-space:nowrap">{{ i.t }}</span><span style="font-size:12px;text-align:right;color:{{ i.subFg }}">{{ i.sub }}</span></a></sc-if>
+                  </sc-for>
+                </div>
+                </sc-if>
+              </div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="background:#0c542c;padding:16px 20px 20px;display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ s.rounds }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <a style="display:flex;align-items:center;gap:16px;min-height:44px;padding:0 4px;color:#f7f7f3;text-decoration:none"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase">{{ r.n }}</span><span style="font-size:14px;color:#d7e6cc">{{ r.date }}</span><span style="flex:1;height:1px;background:#f7f7f3;opacity:0.6"></span><span style="font-size:14px;color:{{ r.statusFg }}">{{ r.status }}</span><span style="width:44px;height:44px;margin-right:-12px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none">{{ r.chev }}</span></a>
+              <sc-if value="{{ r.open }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ r.fixtures }}" as="f" hint-placeholder-count="2">
+              <div style="position:relative;display:flex;align-items:center;gap:4px;padding:0 10px 0 14px;height:56px;background:{{ f.bg }};border:1px solid #000;color:{{ f.fg }};text-decoration:none">
+                <div style="position:relative;display:flex;align-items:center;gap:10px;height:40px;padding:0 20px 0 14px;width:200px;box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.cellBg }};border:1px solid #000"></div><span style="position:relative;width:24px;height:24px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ f.aHex }};border:1px solid #000"></span></span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;white-space:nowrap">{{ f.a }}</span></div>
+                <div style="position:relative;width:48px;height:40px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.scoreBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:24px;color:{{ f.scoreFg }}">{{ f.aS }}</span></div>
+                <div style="position:relative;width:48px;height:40px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.scoreBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:24px;color:{{ f.scoreFg }}">{{ f.bS }}</span></div>
+                <div style="position:relative;display:flex;align-items:center;justify-content:flex-end;gap:10px;height:40px;padding:0 14px 0 20px;width:200px;box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.cellBg }};border:1px solid #000"></div><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:18px;white-space:nowrap">{{ f.b }}</span><span style="position:relative;width:24px;height:24px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ f.bHex }};border:1px solid #000"></span></span></div>
+                <div style="position:relative;display:flex;align-items:center;gap:10px;height:40px;padding:0 20px;flex:1;margin-left:16px;min-width:0"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.cellBg }};border:1px solid #000"></div>
+                  <sc-if value="{{ f.hasMark }}" hint-placeholder-val="{{ false }}"><span style="position:relative;display:inline-flex;align-items:center;height:24px;padding:0 8px;color:{{ f.markFg }};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;flex:none;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:{{ f.markBg }};border:1px solid #000;transform:rotate(-1.5deg)"></span>{{ f.mark }}</span><span style="position:relative;font-size:14px;color:#bcc5ce;min-width:0;line-height:1.15;text-wrap:pretty">{{ f.markLine }}</span></sc-if>
+                  <sc-if value="{{ f.noMark }}" hint-placeholder-val="{{ true }}"><span style="position:relative;font-size:15px;color:{{ f.lineFg }}">{{ f.status }}</span></sc-if>
+                </div>
+                <div style="position:relative;display:flex;align-items:center;height:40px;padding:0 12px;width:120px;box-sizing:border-box;justify-content:center;margin-left:16px"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ f.cellBg }};border:1px solid #000"></div><span style="position:relative;font-size:14px;color:#bcc5ce">{{ f.date }}</span></div>
+                <sc-if value="{{ isManager }}" hint-placeholder-val="{{ true }}">
+                <div style="position:relative;flex:none;margin-left:10px">
+                  <span aria-label="Fixture acts" style="width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:22px;line-height:1;color:{{ f.dotsFg }};border:1px solid {{ f.dotsBd }};background:{{ f.dotsBg }};box-sizing:border-box">⋯</span>
+                  <sc-if value="{{ f.menuOpen }}" hint-placeholder-val="{{ false }}">
+                  <div data-menu="fixture" style="position:absolute;right:0;top:48px;width:320px;z-index:5;background:#f7f7f3;border:1px solid #000;box-shadow:-8px 8px 0 #000;padding:6px 0 8px;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">
+                    <div style="display:flex;flex-direction:column;margin:6px 16px 4px;padding-bottom:6px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:#000">{{ f.a }} v {{ f.b }}</span><span style="font-size:12px;color:#000">{{ f.menuSub }}</span></div>
+                    <sc-for list="{{ fixMenu }}" as="i" hint-placeholder-count="7">
+                    <a style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:4px 16px;text-decoration:none;color:{{ i.fg }};box-sizing:border-box"><span style="font-size:15px;white-space:nowrap">{{ i.t }}</span><span style="font-size:12px;text-align:right;color:{{ i.subFg }}">{{ i.sub }}</span></a>
+                    </sc-for>
+                  </div>
+                  </sc-if>
+                </div>
+                </sc-if>
+              </div>
+              </sc-for>
+              <sc-if value="{{ r.hasBye }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;gap:10px;padding:2px 18px 6px;font-size:15px;color:#f7f7f3"><span style="position:relative;width:20px;height:20px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:3px;transform:skewX(-15deg);background:{{ r.byeHex }};border:1px solid #000"></span></span><span>{{ r.bye }}</span></div>
+              </sc-if>
+              </sc-if>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showPlayers }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:24px;margin-left:8px">
+          <div data-chips="" style="display:flex;gap:12px">
+            <sc-for list="{{ presetChips }}" as="c" hint-placeholder-count="4">
+            <a style="position:relative;display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 22px;flex:none;text-decoration:none"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000;box-shadow:-3px 3px 0 #000"></div><span style="position:relative;font-size:15px;font-weight:700;color:{{ c.fg }}">{{ c.name }}</span></a>
+            </sc-for>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+            <div data-search="" style="width:260px;height:44px;background:#f7f7f3;border:1px solid #000;display:flex;align-items:center;gap:10px;padding:0 12px;box-sizing:border-box"><span style="width:14px;height:14px;border:2px solid #000;border-radius:50%;flex:none;box-sizing:border-box;position:relative"><span style="position:absolute;width:2px;height:7px;background:#000;right:-4px;bottom:-6px;transform:rotate(-45deg)"></span></span><span style="font-size:15px;color:#4b5560">Search Players</span></div>
+            <a style="display:flex;align-items:center;justify-content:center;height:44px;padding:0 20px;background:#f7f7f3;border:1px solid #000;color:#000;font-size:15px;text-decoration:none;box-sizing:border-box">Share</a>
+          </div>
+        </div>
+        <div data-panel="players" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Players</div>
+            <div style="font-size:14px;color:#f7f7f3">{{ s.seasonShort }} · {{ qualifiedNote }}</div>
+          </div>
+          <div style="background:#000;padding:12px 12px 12px 16px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <div style="width:200px;flex:none;display:flex;align-items:center;height:32px;padding-left:8px;box-sizing:border-box"><span style="font-size:13px;color:#f7f7f3">Player</span></div>
+              <sc-for list="{{ playerCols }}" as="c" hint-placeholder-count="11">
+              <div style="position:relative;height:32px;flex:{{ c.flex }};min-width:0;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid {{ c.bd }}"></div><span style="position:relative;font-size:13px;color:{{ c.fg }};white-space:nowrap">{{ c.name }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ players }}" as="p" hint-placeholder-count="8">
+            <div style="display:flex;gap:6px;align-items:center">
+              <a style="position:relative;width:200px;flex:none;height:44px;display:flex;align-items:center;gap:10px;padding:0 20px;text-decoration:none;margin-left:6px;box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ p.nameBg }};border:1px solid #000"></div><span style="position:relative;font-size:13px;color:{{ p.fg }};width:26px">{{ p.rank }}</span><span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:16px;color:{{ p.fg }}">{{ p.name }}</span></a>
+              <sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="11">
+              <div style="position:relative;height:44px;flex:{{ c.flex }};min-width:0;display:flex;align-items:center;justify-content:{{ c.jc }};gap:6px;padding:0 {{ c.px }};box-sizing:border-box"><div style="position:absolute;inset:0;transform:skewX(-15deg);background:{{ c.bg }};border:1px solid #000"></div>
+                <sc-if value="{{ c.isTeam }}" hint-placeholder-val="{{ false }}"><span style="position:relative;width:22px;height:22px;flex:none"><span style="position:absolute;inset:0;transform:skewX(-15deg);background:#f7f7f3;border:1px solid #000"></span><span style="position:absolute;inset:4px;transform:skewX(-15deg);background:{{ c.hex }};border:1px solid #000"></span></span></sc-if>
+                <span style="position:relative;font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:15px;color:{{ c.fg }};white-space:nowrap">{{ c.v }}</span>
+              </div>
+              </sc-for>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showRules }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="rules" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000;max-width:760px">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#07361c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Rules</div>
+            <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}"><a style="display:inline-flex;align-items:center;height:44px;padding:0 6px;margin:0 -6px;text-decoration:none;font-size:14px;color:#f7f7f3">Change in Competition settings</a></sc-if>
+          </div>
+          <div style="background:#f7f7f3;padding:8px 24px 12px;display:flex;flex-direction:column">
+            <sc-for list="{{ rules }}" as="r" hint-placeholder-count="7">
+            <div style="display:grid;grid-template-columns:220px 1fr;gap:24px;min-height:48px;align-items:center;border-bottom:1px solid #bcc5ce;font-size:16px"><span>{{ r.label }}</span><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700">{{ r.value }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ s.showEmpty }}" hint-placeholder-val="{{ false }}">
+        <div data-panel="entries-empty" style="position:relative;margin-left:13px;border:1px solid #000;box-shadow:-8px 8px 0 #000">
+          <div style="position:absolute;left:-13px;top:-1px;width:12px;height:64px;background:#f7f7f3;border:1px solid #000;box-sizing:border-box"></div>
+          <div style="background:#0c542c;height:64px;padding:0 20px;display:flex;align-items:center;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="font-family:Ultra,'Blackoak Std',serif;font-size:28px;color:#f7f7f3">Standings</div>
+          </div>
+          <div style="background:#f7f7f3;padding:56px 24px 48px;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center">
+            <img src="assets/balls.png" alt="" style="width:420px;height:auto">
+            <div style="font-size:16px;max-width:460px;text-wrap:pretty">{{ emptyLine }}</div>
+            <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;height:44px;width:300px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">Roster setup</a>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ s.showDialog }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(7,54,28,0.62);display:flex;align-items:center;justify-content:center">
+        <div data-dialog="regenerate" style="width:560px;border:1px solid #000;box-shadow:-8px 8px 0 #000;display:flex;flex-direction:column">
+          <div style="background:#0c542c;height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #000;box-sizing:border-box">
+            <div style="display:flex;flex-direction:column"><div style="font-family:Ultra,'Blackoak Std',serif;font-size:24px;color:#f7f7f3;line-height:1.2">{{ s.sheetTitle }}</div><div style="font-size:13px;color:#d7e6cc">{{ s.sheetSub }}</div></div>
+            <a style="font-size:14px;color:#f7f7f3;padding:12px 0;margin:-12px 0">Cancel</a>
+          </div>
+          <div style="background:#f7f7f3;padding:20px 24px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:15px;text-wrap:pretty">{{ regen.lead }}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">Discarded</span></div>
+                <sc-for list="{{ regen.discard }}" as="d" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:10px;font-size:15px"><span style="width:10px;height:10px;background:#ed1c24;border:1px solid #000;flex:none"></span><span>{{ d }}</span></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid #000"><span style="font-family:'Archivo Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase">Kept</span></div>
+                <sc-for list="{{ regen.keep }}" as="d" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:10px;font-size:15px"><span style="width:10px;height:10px;background:#42af36;border:1px solid #000;flex:none"></span><span>{{ d }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:inline-flex;align-self:flex-start;align-items:center;padding:8px 12px 8px 22px;font-size:14px;color:#000;margin-left:4px;position:relative;z-index:0"><span style="position:absolute;inset:0;z-index:-1;box-sizing:border-box;pointer-events:none;background:#faf15d;border:1px solid #000;border-left:10px solid #cec311;transform:rotate(-1deg);box-shadow:-2px 2px 0 #000"></span>{{ regen.warn }}</div>
+          </div>
+          <div style="background:#f7f7f3;border-top:1px solid #000;padding:16px 24px 24px;display:flex;justify-content:flex-end">
+            <a style="display:flex;align-items:center;justify-content:center;gap:10px;width:280px;height:44px;margin-left:8px;background:#ed1c24;border:1px solid #000;color:#f7f7f3;font-size:16px;text-decoration:none;box-sizing:border-box;box-shadow:-8px 8px 0 #000">{{ regen.cta }}</a>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;texturedGrass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grass&quot;},&quot;viewerRole&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Member&quot;,&quot;Manager&quot;,&quot;Admin&quot;],&quot;default&quot;:&quot;Admin&quot;,&quot;tsType&quot;:&quot;'Member' | 'Manager' | 'Admin'&quot;,&quot;section&quot;:&quot;Viewer&quot;},&quot;walkoverScore&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Rules&quot;},&quot;formOrder&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Newest right&quot;,&quot;Newest left&quot;],&quot;default&quot;:&quot;Newest right&quot;,&quot;tsType&quot;:&quot;'Newest right' | 'Newest left'&quot;,&quot;section&quot;:&quot;Standings&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.apply(); }
+  componentDidUpdate() { this.apply(); }
+  apply() {
+    const tex = this.props.texturedGrass ?? false;
+    document.querySelectorAll('[data-frame]').forEach(el => {
+      el.style.backgroundImage = tex ? 'url(assets/grass.png)' : 'none';
+      el.style.backgroundSize = 'cover';
+      el.querySelectorAll('[data-pitch]').forEach(p => { p.style.display = tex ? 'none' : ''; });
+    });
+  }
+  renderVals() {
+    const role = this.props.viewerRole ?? 'Admin';
+    const isAdmin = role === 'Admin', isManager = role !== 'Member';
+    const WO = this.props.walkoverScore ?? 3;
+    const newestRight = (this.props.formOrder ?? 'Newest right') === 'Newest right';
+    const COL = { Red: '#ed1c24', Blue: '#3a3ab0', Green: '#42af36', Navy: '#091e40', Yellow: '#f4e937', Sky: '#4fb3e8', Purple: '#7b3fb5' };
+    const TEAM = { Bulls: 'Red', Plavi: 'Blue', Zeleni: 'Green', Lokomotiva: 'Navy', 'Dinamo Blok 45': 'Yellow', 'Stari lavovi': 'Sky' };
+    const hex = t => COL[TEAM[t]];
+    const WDL = { W: { bg: '#42af36', fg: '#000' }, D: { bg: '#bcc5ce', fg: '#000' }, L: { bg: '#ed1c24', fg: '#f7f7f3' } };
+    const form = str => { const a = str.split(''); if (!newestRight) a.reverse(); return a.map((v, i) => ({ v, ...WDL[v], rot: (i % 2 ? 2 : -2) + 'deg' })); };
+    const num = (v, w, fg, bg) => ({ v, w: w || '56px', isText: true, fg, bg });
+
+    const stColsBase = ['P', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts'];
+    const colDefs = names => names.map((name, i) => ({ name, w: name === 'Form' ? '128px' : (name === 'Seasons' || name === 'Titles') ? '72px' : '56px', ...(i % 2 === 0 ? { bg: '#f7f7f3', bd: '#000', fg: '#000' } : { bg: 'transparent', bd: 'transparent', fg: '#f7f7f3' }) }));
+    const stColsSeason = colDefs([...stColsBase, 'Form']);
+    const stColsAll = colDefs(['Seasons', 'Titles', ...stColsBase]);
+    // row: [name, P, W, D, L, GF, GA, form, extra]
+    const table = (rows, opts) => rows.map((r, i) => {
+      const [name, P, W, D, L, GF, GA, f] = r;
+      const x = r[8] || {};
+      const wd = !!x.withdrawn, fg = wd ? '#bcc5ce' : '#f7f7f3', bg = wd ? '#28477a' : '#091e40';
+      const pts = W * 3 + D, gd = GF - GA;
+      const cells = [];
+      if (opts.all) { cells.push(num(x.seasons, '72px', fg, bg), num(x.titles, '72px', x.titles ? '#f4e937' : fg, bg)); }
+      cells.push(num(P, 0, fg, bg), num(W, 0, fg, bg), num(D, 0, fg, bg), num(L, 0, fg, bg), num(GF, 0, fg, bg), num(GA, 0, fg, bg), num((gd > 0 ? '+' : '') + gd, 0, fg, bg), num(pts, 0, '#f4e937', bg));
+      if (!opts.all) cells.push({ w: '128px', isForm: true, form: form(f), bg });
+      return { name, hex: hex(name), pos: wd ? '' : (x.pos || '#' + (i + 1)), nameBg: wd ? '#28477a' : (i === 0 && opts.crown ? '#171775' : '#3a3ab0'), fg, champion: i === 0 && !!opts.crown, withdrawn: wd, wdText: x.withdrawn || '', cells };
+    });
+    const s3Standings = table([
+      ['Bulls', 6, 5, 1, 0, 17, 6, 'DWWWW'],
+      ['Plavi', 5, 2, 2, 1, 9, 7, 'WDWDL', { pos: '2=' }],
+      ['Zeleni', 6, 2, 2, 2, 9, 7, 'WDDLW', { pos: '2=' }],
+      ['Lokomotiva', 6, 1, 2, 3, 7, 12, 'LDDWL', { pos: '#4' }],
+      ['Dinamo Blok 45', 5, 0, 1, 4, 4, 14, 'LLLDL', { pos: '#5' }]
+    ], {});
+    const s2Standings = table([
+      ['Bulls', 8, 6, 1, 1, 22, 9, 'WWDWW'],
+      ['Plavi', 8, 5, 1, 2, 18, 11, 'WLWWD'],
+      ['Lokomotiva', 8, 3, 2, 3, 12, 13, 'LWDLW'],
+      ['Zeleni', 8, 1, 2, 5, 8, 17, 'LDLLW'],
+      ['Stari lavovi', 4, 0, 0, 4, 3, 13, 'LLLL', { withdrawn: 'withdrawn · Round 4' }]
+    ], { crown: true });
+    const allStandings = table([
+      ['Bulls', 30, 19, 5, 6, 71, 34, '', { seasons: 3, titles: 2 }],
+      ['Plavi', 29, 15, 6, 8, 58, 41, '', { seasons: 3, titles: 1 }],
+      ['Lokomotiva', 30, 10, 7, 13, 44, 52, '', { seasons: 3, titles: 0 }],
+      ['Zeleni', 20, 6, 5, 9, 30, 38, '', { seasons: 2, titles: 0 }],
+      ['Dinamo Blok 45', 15, 3, 3, 9, 19, 40, '', { seasons: 2, titles: 0 }],
+      ['Stari lavovi', 4, 0, 0, 4, 3, 13, '', { seasons: 1, titles: 0, withdrawn: 'withdrawn · Season 2' }]
+    ], { all: true });
+    const zeroStandings = table([['Bulls', 0, 0, 0, 0, 0, 0, ''], ['Plavi', 0, 0, 0, 0, 0, 0, ''], ['Zeleni', 0, 0, 0, 0, 0, 0, ''], ['Lokomotiva', 0, 0, 0, 0, 0, 0, '']], {}).map(r => ({ ...r, pos: '', cells: r.cells.map(c => c.isForm ? { ...c, form: [] } : { ...c, fg: '#bcc5ce' }) }));
+
+    const plate = (label, team, x) => ({ label, value: team, isPlate: true, hex: hex(team), plateBg: '#091e40', crown: !!(x && x.crown) });
+    const line = (label, value) => ({ label, value, isText: true });
+
+    // fixtures: [a, b, aS, bS, mark]
+    const fx = (a, b, aS, bS, x) => ({ a, b, aS, bS, ...(x || {}) });
+    const R = (n, date, fixtures, bye, x) => ({ n, date, fixtures, bye, ...(x || {}) });
+    const s3Rounds = [
+      R('Round 1', '27 Sep', [fx('Bulls', 'Zeleni', 3, 1), fx('Lokomotiva', 'Plavi', 1, 2)], 'Dinamo Blok 45'),
+      R('Round 2', '4 Oct', [fx('Bulls', 'Plavi', 2, 2), fx('Zeleni', 'Dinamo Blok 45', 2, 0)], 'Lokomotiva'),
+      R('Round 3', '11 Oct', [fx('Bulls', 'Lokomotiva', 4, 1), fx('Plavi', 'Dinamo Blok 45', 4, 2)], 'Zeleni'),
+      R('Round 4', '18 Oct', [fx('Zeleni', 'Lokomotiva', 1, 1), fx('Dinamo Blok 45', 'Bulls', 0, 3)], 'Plavi'),
+      R('Round 5', '25 Oct', [fx('Plavi', 'Zeleni', 1, 1), fx('Lokomotiva', 'Dinamo Blok 45', 2, 2)], 'Bulls'),
+      R('Round 6', '1 Nov', [fx('Zeleni', 'Bulls', 1, 2), fx('Plavi', 'Lokomotiva', 0, 1)], 'Dinamo Blok 45'),
+      R('Round 7', '8 Nov', [fx('Plavi', 'Bulls', null, null, { np: 'pitch closed' }), fx('Dinamo Blok 45', 'Zeleni', 0, WO, { wo: 'Dinamo Blok 45 did not show' })], 'Lokomotiva', { open: true, tapped: true }),
+      R('Round 8', '15 Nov', [fx('Lokomotiva', 'Bulls', 1, 3), fx('Dinamo Blok 45', 'Plavi', null, null, { toPlay: 'Wednesday', date: '18 Nov' })], 'Zeleni', { open: true, current: true }),
+      R('Round 9', '22 Nov', [fx('Lokomotiva', 'Zeleni'), fx('Bulls', 'Dinamo Blok 45')], 'Plavi'),
+      R('Round 10', '29 Nov', [fx('Zeleni', 'Plavi'), fx('Dinamo Blok 45', 'Lokomotiva')], 'Bulls')
+    ];
+    const buildRounds = (rounds, openMenuAt) => rounds.map((r, ri) => {
+      const done = r.fixtures.filter(f => f.aS != null || f.np).length, total = r.fixtures.length;
+      const future = !r.current && done === 0, complete = done === total && !r.current;
+      const status = r.current ? 'in progress' : complete ? (total + ' played') : future ? 'to play' : done + ' of ' + total;
+      const fixtures = r.fixtures.map((f, fi) => {
+        const played = f.aS != null;
+        const isNP = !!f.np, isWO = !!f.wo, toPlay = !played && !isNP;
+        const bg = fi % 2 ? '#0d2e63' : '#091e40', cellBg = fi % 2 ? '#091e40' : '#0d2e63';
+        const menuOpen = openMenuAt && openMenuAt[0] === ri && openMenuAt[1] === fi;
+        return { ...f, aHex: hex(f.a), bHex: hex(f.b),
+          aS: played ? f.aS : '–', bS: played ? f.bS : '–',
+          scoreBg: played ? '#f7f7f3' : (isNP ? '#28477a' : '#28477a'), scoreFg: played ? '#000' : '#bcc5ce',
+          bg: isNP ? '#28477a' : bg, cellBg: isNP ? '#091e40' : cellBg, fg: isNP ? '#bcc5ce' : '#f7f7f3',
+          status: isWO ? 'Walkover' : isNP ? 'Not played' : played ? 'Completed' : (f.toPlay ? 'to play · ' + f.toPlay : 'to play'),
+          lineFg: played ? '#bcc5ce' : '#f7f7f3',
+          date: f.date || r.date,
+          hasMark: isNP || isWO, noMark: !(isNP || isWO),
+          mark: isWO ? 'Walkover' : 'Not played', markBg: isWO ? '#faf15d' : '#bcc5ce', markFg: '#000',
+          markLine: isWO ? f.wo : f.np,
+          menuOpen, dotsBg: menuOpen ? '#f7f7f3' : 'transparent', dotsBd: menuOpen ? '#000' : 'rgba(247,247,243,0.4)', dotsFg: menuOpen ? '#000' : '#f7f7f3',
+          menuSub: r.n + ' · ' + (f.date || r.date) + (isNP ? ' · Not played' : isWO ? ' · Walkover' : played ? ' · ' + f.aS + '-' + f.bS : ' · to play') };
+      });
+      return { ...r, fixtures, status, statusFg: r.current ? '#f4e937' : '#d7e6cc', open: !!r.open, chev: r.open ? '▴' : '▾', hasBye: !!r.bye, bye: r.bye + ' rests', byeHex: hex(r.bye) };
+    });
+
+    const item = (t, sub, x) => ({ t, sub: sub || '', isItem: true, fg: x && x.off ? '#8c8f94' : (x && x.danger ? '#ed1c24' : '#000'), subFg: x && x.off ? '#8c8f94' : '#000' });
+    const head = (t, sub) => ({ t, sub: sub || '', isHead: true });
+    const mgrMenu = [
+      item('Generate', 'schedule exists', { off: true }),
+      item('Regenerate…', 'a new draw, Fixtures to play discarded', { danger: true }),
+      item('Add a cycle', 'a third leg · 5 more Rounds'),
+      item('Remove last cycle', 'Rounds 6–10 · 3 completed there', { danger: true }),
+      item('Extra Fixture…', 'outside the Rounds'),
+      item('Set the Round\'s date…', 'Round 8 · 15 Nov'),
+      ...(isAdmin ? [head('Admin', 'Entries'), item('Add a team…', 'joins from the next Round'), item('Withdraw…', 'Not played or Walkover for the rest', { danger: true }), item('Restore', 'no withdrawn Entry', { off: true })] : [])
+    ];
+    const fixMenu = [
+      item('Change date…', '8 Nov'), item('Move to another Round…', 'Round 7'), item('Swap the order of the sides', 'Bulls v Plavi'),
+      item('Mark Not played…', 'already Not played', { off: true }), item('Restore', 'back to play'), item('Walkover…', WO + '-0 to one side', { danger: true }), item('Undo', 'Not played · Cope, 8 Nov')
+    ];
+    const regen = {
+      lead: 'A new draw for Season 3. Completed Fixtures and the Standings stay where they are; everything still to play is drawn again from Round 8 on.',
+      discard: ['5 Fixtures to play', '3 Fixtures with a lineup recorded but not completed', '1 Fixture marked Not played · Plavi v Bulls', '2 Round dates set by hand'],
+      keep: ['14 completed Fixtures', 'The Standings and every vote', '5 Entries and their rosters'],
+      warn: 'Managers get a note. Players with a lineup already entered lose that work.',
+      cta: 'Regenerate · discard 9'
+    };
+
+    const pcolNames = ['Team', 'Played', 'W', 'D', 'L', 'Win rate', 'Goals', 'Assists', 'Own goals', 'Rating', 'Crowns'];
+    const playerCols = pcolNames.map((name, i) => ({ name, flex: name === 'Team' ? '0 0 150px' : name === 'Rating' ? '1 1 80px' : name === 'Own goals' ? '1 1 76px' : '1 1 64px', w: name === 'Team' ? '148px' : name === 'Rating' ? '80px' : '64px', ...(i % 2 === 0 ? { bg: '#f7f7f3', bd: '#000', fg: '#000' } : { bg: 'transparent', bd: 'transparent', fg: '#f7f7f3' }) }));
+    const MIN = 4;
+    const P = [
+      ['Ana', 'Bulls', 6, 5, 1, 0, 4, 5, 0, '2.44 · 12', 3], ['Marko', 'Bulls', 6, 5, 1, 0, 9, 2, 0, '2.35 · 11', 2], ['Luka', 'Plavi', 5, 2, 2, 1, 3, 6, 0, '2.10 · 10', 1],
+      ['Steva', 'Zeleni', 6, 2, 2, 2, 5, 2, 0, '2.02 · 10', 1], ['Ivan', 'Bulls', 6, 5, 1, 0, 2, 3, 1, '1.96 · 9', 0], ['Boban', 'Lokomotiva', 6, 1, 2, 3, 4, 1, 0, '1.88 · 9', 1],
+      ['Dinić', 'Plavi', 5, 2, 2, 1, 2, 2, 0, '1.80 · 8', 0], ['Zoki', 'Zeleni', 5, 2, 1, 2, 1, 3, 0, '1.71 · 7', 0], ['Gaga', '', 4, 1, 1, 2, 2, 0, 1, '1.60 · 6', 0],
+      ['Pule', 'Plavi', 3, 1, 1, 1, 1, 1, 0, '– · 3', 0], ['Kiza', 'Zeleni', 2, 0, 1, 1, 0, 0, 0, '– · 2', 0]
+    ];
+    const players = P.map((r, i) => {
+      const q = r[2] >= MIN, fg = q ? '#f7f7f3' : '#bcc5ce';
+      const win = q ? Math.round(r[3] / r[2] * 100) + '%' : '–';
+      const vals = [r[2], r[3], r[4], r[5], win, r[6], r[7], r[8], r[9], r[10]];
+      const cells = [{ v: r[1] || 'Guest', isTeam: !!r[1], hex: r[1] ? hex(r[1]) : '', w: '148px', flex: '0 0 150px', jc: 'flex-start', px: '14px', fg: r[1] ? fg : '#bcc5ce', bg: '#091e40' }];
+      vals.forEach((v, j) => { const rate = j === 4 || j === 8; cells.push({ v, w: j === 8 ? '80px' : '64px', flex: j === 8 ? '1 1 80px' : j === 7 ? '1 1 76px' : '1 1 64px', jc: 'center', px: '0', fg: (!q && rate) ? '#bcc5ce' : fg, bg: (!q && rate) ? '#28477a' : '#091e40' }); });
+      return { name: r[0], rank: q ? '#' + (i + 1) : '', nameBg: q ? '#3a3ab0' : '#28477a', fg, cells };
+    });
+    const rules = [
+      { label: 'Format', value: 'League · 5 Entries · two legs · 3 points a win' }, { label: 'Match format', value: '5-a-side' },
+      { label: 'Voting', value: 'On · man of the match after each result' }, { label: 'Voting period', value: 'Until Friday 20:00 after the match' },
+      { label: 'Minimum matches', value: MIN + ' in a Season to be a Qualified Player' }, { label: 'Award threshold', value: '60% of a Team\'s Fixtures for the MVP award' },
+      { label: 'Managers', value: 'Cope, Ana, Boban' }
+    ];
+
+    const tabsFor = (active, off) => ['Standings', 'Schedule', 'Players', 'Rules'].map(name => name === active ? { name, bg: '#ed1c24', fg: '#f7f7f3' } : off ? { name, bg: '#28477a', fg: '#bcc5ce' } : { name, bg: '#091e40', fg: '#d7e6cc' });
+    const s3 = { comp: 'Sunday league', season: 'Season 3 · 2026/27 · since Sep 2026', seasonShort: 'Season 3', summaryTitle: 'Season summary', summaryMeta: 'so far · Round 8 of 10',
+      summary: [plate('Leader so far', 'Bulls'), line('Top scorer', 'Marko · 9'), line('Top assists', 'Luka · 6'), line('Most matches', 'Ivan · 6'), line('Most crowns', 'Ana · 3')],
+      summaryNote: '14 completed · 1 not played · 5 to play', showSummary: true, stCols: stColsSeason, standings: s3Standings, stNote: '2= shares on points, goal difference and goals',
+      rounds: buildRounds(s3Rounds), schedMeta: '10 Rounds · two legs', teamFilter: 'All Teams', mgrBtnBg: '#f7f7f3', mgrBtnFg: '#000', hasSheet: false, showMgrMenu: false, showDialog: false, sheetKind: '', sheetBg: '#091e40', sheetTitle: '', sheetSub: '', sheetIsMenu: false, sheetIsRegen: false, menu: [] };
+    const s2 = { ...s3, season: 'Season 2 · 2025/26 · Sep 2025 to Apr 2026', seasonPast: true, seasonShort: 'Season 2', summaryMeta: 'final · 10 Rounds',
+      summary: [plate('Champion', 'Bulls', { crown: true }), line('Top scorer', 'Marko · 17'), line('Top assists', 'Ana · 11'), line('Most matches', 'Boban · 8'), line('Most crowns', 'Ana · 5')],
+      summaryNote: '18 completed · 6 not played · Stari lavovi withdrew after Round 4', standings: s2Standings, stNote: 'Withdrawn Entries last · their remaining Fixtures Not played' };
+    const sAll = { ...s3, season: 'All seasons', seasonShort: 'All seasons', summaryTitle: 'All seasons', summaryMeta: '3 Seasons · since Sep 2024',
+      summary: [plate('Most titles', 'Bulls · 2', { crown: true }), line('Top scorer', 'Marko · 41'), line('Top assists', 'Luka · 24'), line('Most matches', 'Ivan · 29'), line('Most crowns', 'Ana · 12')],
+      summaryNote: '52 completed · 7 not played', stCols: stColsAll, standings: allStandings, stNote: 'Every Entry that played · Seasons entered and titles' };
+    sAll.summary[0].hex = hex('Bulls');
+    const sreda = { ...s3, comp: 'Sreda liga', season: 'Season 1 · 2026/27 · since Nov 2026', seasonShort: 'Season 1', showSummary: false, standings: zeroStandings, stNote: '4 Entries · no Fixtures yet', rounds: [], schedMeta: 'no schedule yet' };
+    const sections = [
+      { ...s3, id: '12a', label: '12a League, Standings', tab: 'Standings', showStandings: true,
+        blurb: 'Sunday league, a League · Season 3, Round 8 in progress · Cope as ' + role + ' · the yellow summary with the leader as a Team colour plate and "so far" · Standings: plate and name in the skewed cell, P W D L GF GA GD Pts, Form as five stickers · Plavi and Zeleni share 2= · Share holds Copy as text · numerals scroll sideways on a phone' },
+      { ...s3, id: '12b', label: '12b League, Schedule', tab: 'Schedule', showSchedule: true,
+        blurb: 'Schedule · Rounds as groups, Round 8 open as the Round in progress, Round 7 opened by a tap · each Fixture in home order with the date and the result or "to play" · the Not played mark on Plavi v Bulls, the Walkover on Dinamo v Zeleni · the bye line "Zeleni rests" · a per-Team filter above · ⋯ on the panel and on each Fixture for Managers' },
+      { ...s3, id: '12c', label: '12c League, the Manager\'s overflow', tab: 'Schedule', showSchedule: true, showMgrMenu: true, mgrBtnBg: '#ed1c24', mgrBtnFg: '#f7f7f3',
+        hasSheet: true, sheetKind: 'manager', sheetBg: '#0c542c', sheetTitle: 'Schedule', sheetSub: 'Season 3 · 10 Rounds', sheetIsMenu: true, menu: mgrMenu,
+        blurb: 'The Manager\'s overflow · Generate greyed because a schedule exists · Regenerate · Add a cycle · Remove last cycle · Extra Fixture · Set the Round\'s date · for an admin, the Entry acts below a heading: Add a team, Withdraw with the Not played or Walkover choice, Restore greyed with nothing to restore · a sheet on a phone, a menu on a desktop' },
+      { ...s3, id: '12d', label: '12d League, a Fixture\'s overflow', tab: 'Schedule', showSchedule: true, rounds: buildRounds(s3Rounds, [6, 0]),
+        hasSheet: true, sheetKind: 'fixture', sheetBg: '#091e40', sheetTitle: 'Plavi v Bulls', sheetSub: 'Round 7 · 8 Nov · Not played', sheetIsMenu: true, menu: fixMenu,
+        blurb: 'A Fixture\'s overflow on Plavi v Bulls, Not played · Change date · Move to another Round · Swap home order · Mark Not played greyed as it already is · Restore · Walkover · Undo names the last act and who did it' },
+      { ...s3, id: '12e', label: '12e League, Regenerate', tab: 'Schedule', showSchedule: true, showDialog: true,
+        hasSheet: true, sheetKind: 'regenerate', sheetBg: '#0c542c', sheetTitle: 'Regenerate schedule', sheetSub: 'Season 3 · from Round 8', sheetIsRegen: true,
+        blurb: 'The Regenerate confirmation · what is discarded, counted: 5 Fixtures to play, 3 with a lineup recorded but not completed, the Not played one, two hand-set dates · what is kept · a yellow warning · the red act carries the count' },
+      { ...s3, id: '12f', label: '12f League, Players', tab: 'Players', showPlayers: true,
+        blurb: 'Players · the title bar in the League green · presets, search and Share as on the Players page, All preset shown · a Team column after the pinned name: colour plate and name, Gaga a guest · Qualified from ' + MIN + ' matches and ranked · Pule and Kiza under it, greyed on win rate and rating' },
+      { ...s3, id: '12g', label: '12g League, Rules', tab: 'Rules', showRules: true,
+        blurb: 'Rules · read-only lines: Format with Entries and legs, match format, voting, voting period, Minimum matches, Award threshold, Managers · an admin changes them behind the gear' },
+      { ...s2, id: '12h', label: '12h League, Past season', tab: 'Standings', showStandings: true,
+        blurb: 'Season 2, a Past season · "Champion" with the plate and a crown in the summary, no "so far" · Bulls marked Champion in the table · Stari lavovi withdrew after Round 4: last, greyed and marked' },
+      { ...sAll, id: '12i', label: '12i League, All seasons', tab: 'Standings', showStandings: true,
+        blurb: 'All seasons · columns for Seasons entered and titles before the totals, no Form · six Entries across three Seasons, the withdrawn one last' },
+      { ...sreda, id: '12j', label: '12j League, rosters without a schedule', tab: 'Standings', showStandings: true, showAct: isManager, act: 'Generate schedule',
+        blurb: 'Sreda liga, Season 1 · four Entries saved in Roster setup, no Fixtures yet · Standings at zero with no positions · Generate schedule as the primary act for a Manager · no summary panel yet' },
+      { ...sreda, id: '12k', label: '12k League, the empty Season', tab: 'Standings', showEmpty: true, standings: [], emptyTabs: true,
+        blurb: 'The empty Season · no Entries yet · the footballs, one sentence and Roster setup as the primary act for an admin · a Member reads the sentence alone · flip the role tweak' }
+    ].map(s => ({ ...s, tabs: tabsFor(s.tab, !!s.emptyTabs) }));
+    const opt = o => ({ ...o, past: !!o.past, current: !!o.current, bg: o.current ? '#171775' : '#091e40', mBg: o.current ? '#171775' : 'transparent', mFg: o.current ? '#f7f7f3' : '#000' });
+    const byId = id => sections.find(x => x.id === id);
+    const oneSeason = [{ name: 'Season 1', span: 'no matches yet', current: true }].map(opt);
+    const pickerBlurb = 'The Season selector open · a full-screen sheet titled Season with Cancel on a phone, a menu the selector\'s width on a desktop · newest first, 48 px rows · Season 3 as the Current season on #171775 with a filled dot · Seasons 2 and 1 with a coral Past tag · a divider, then All seasons · a tap selects and closes';
+    const oneBlurb = 'The selector open on a competition whose only Season has no matches · one row, Season 1, no matches yet, then All seasons';
+    const seasons = [{ name: 'Season 3 · 2026/27', span: 'since Sep 2026', current: true }, { name: 'Season 2 · 2025/26', span: 'Sep 2025 to Apr 2026', past: true }, { name: 'Season 1 · 2024/25', span: 'Sep 2024 to May 2025', past: true }].map(opt);
+    sections.push(
+      { ...byId('12a'), id: '12l', label: '12l League, Season selector open', showPicker: true, seasons, blurb: pickerBlurb },
+      { ...byId('12j'), id: '12m', label: '12m League, Season selector, one empty Season', showPicker: true, seasons: oneSeason, blurb: oneBlurb + ' · Sreda liga' }
+    );
+
+    return { sections, isAdmin, isManager, playerCols, players, rules, mgrMenu, fixMenu, regen,
+      qualifiedNote: 'Qualified from ' + MIN + ' matches · the rest greyed on win rate and rating',
+      presetChips: ['Overview', 'Scoring', 'Voting', 'All'].map(name => ({ name, bg: name === 'All' ? '#ed1c24' : '#f7f7f3', fg: name === 'All' ? '#f7f7f3' : '#000' })),
+      emptyLine: isAdmin ? 'No Entries yet. Set up the rosters to start the Season.' : 'No Entries yet. An admin sets up the rosters to start the Season.' };
+  }
+}
+</script>
+</body>
+</html>
