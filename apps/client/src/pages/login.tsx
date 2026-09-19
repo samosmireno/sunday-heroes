@@ -65,6 +65,15 @@ export default function LoginPage() {
                 </div>
               </button>
             </div>
+
+            <div className="mt-6 text-center">
+              <Link
+                to="/privacy"
+                className="rounded text-xs text-gray-400 underline-offset-4 hover:text-accent hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+              >
+                Privacy
+              </Link>
+            </div>
           </div>
         </div>
       </div>

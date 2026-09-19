@@ -22,6 +22,7 @@ import RegisterPage from "./pages/register";
 import ForgotPasswordPage from "./pages/forgot-password-page";
 import ResetPasswordPage from "./pages/reset-password-page";
 import PlayerStatsPage from "./pages/player-stats-page";
+import PrivacyPage from "./pages/privacy-page";
 import PublicLayout from "./layouts/public-layout";
 
 const publicRoutes = [
@@ -30,6 +31,7 @@ const publicRoutes = [
   { path: "/forgot-password", element: <ForgotPasswordPage /> },
   { path: "/reset-password", element: <ResetPasswordPage /> },
   { path: "/landing", element: <LandingPage /> },
+  { path: "/privacy", element: <PrivacyPage /> },
   { path: "/auth/callback", element: <AuthCallback /> },
   { path: "/player-stats/:playerId", element: <PlayerStatsPage /> },
   { path: "/invite/:token", element: <InvitationPage /> },

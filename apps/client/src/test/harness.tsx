@@ -11,7 +11,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
  * mount to decide whether it is on a phone. Defined only when it is missing,
  * so a test that wants its own stub still wins.
  */
-function ensureMatchMedia() {
+export function ensureMatchMedia() {
   // Typed as always defined, which is true of a browser and not of jsdom.
   if (typeof window === "undefined") return;
   if (typeof window.matchMedia === "function") return;
