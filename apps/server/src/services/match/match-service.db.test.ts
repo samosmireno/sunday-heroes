@@ -1,6 +1,7 @@
 import { CompetitionType, MatchType, Team } from "@repo/shared-types";
 import { describe, expect, it, vi } from "vitest";
 import {
+  addModerator,
   addPlayersToFixture,
   createDuel,
   createDuelMatch,
@@ -329,6 +330,28 @@ describe("MatchService.getMatchesForUser for a viewer who administers no dashboa
 
     expect(matches.map((match) => match.id)).toEqual([watched.id, played.id]);
     expect(totalCount).toBe(2);
+  });
+
+  it("marks a competition's matches as the moderator's to manage, played or not", async () => {
+    const { user: admin, dashboard } = await createUserWithDashboard();
+    const { competition } = await createDuel({ userId: admin.id });
+    await createDuelMatch({
+      competitionId: competition.id,
+      date: "2026-01-10",
+    });
+
+    const { user: moderator } = await addModerator({
+      competitionId: competition.id,
+      dashboardId: dashboard.id,
+    });
+    const { matches } = await MatchService.getMatchesForUser(moderator.id, {
+      competitionId: competition.id,
+    });
+
+    expect(matches).toHaveLength(1);
+    // Never on the match, yet the one who may carry its missing ballots.
+    expect(matches[0].viewerPlayed).toBe(false);
+    expect(matches[0].isAdmin).toBe(true);
   });
 
   it("refuses a competition on a dashboard the viewer belongs to no part of", async () => {

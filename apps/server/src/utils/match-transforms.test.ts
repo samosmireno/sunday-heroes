@@ -91,6 +91,8 @@ function matchOnThePage(
     voted?: string[];
     competitionId?: string;
     admin?: string;
+    /** The accounts moderating the Competition. */
+    moderators?: string[];
     /** Bea's row: the same account is a different player on each dashboard. */
     bea?: { id: string; userId: string | null };
   } = {},
@@ -146,6 +148,9 @@ function matchOnThePage(
       type: CompetitionType.DUEL,
       votingEnabled: true,
       dashboard: { adminId: options.admin ?? ADMIN },
+      moderators: (options.moderators ?? []).map((userId) => ({
+        dashboardPlayer: { userId },
+      })),
     },
   } as unknown as MatchWithDetails;
 }
@@ -190,6 +195,32 @@ describe("transformMatchesToMatchesResponse", () => {
       matchesThisSeason: 0,
     });
     expect(response.isAdmin).toBe(true);
+  });
+
+  it("counts a moderator of the Competition as one who manages its votes", () => {
+    const [moderated] = transformMatchesToMatchesResponse(
+      STRANGER,
+      [matchOnThePage({ moderators: [STRANGER] })],
+      eligibilitiesOf(gate(5, [ANA])),
+    );
+    const [unmoderated] = transformMatchesToMatchesResponse(
+      STRANGER,
+      [matchOnThePage()],
+      eligibilitiesOf(gate(5, [ANA])),
+    );
+
+    expect(moderated.isAdmin).toBe(true);
+    expect(unmoderated.isAdmin).toBe(false);
+  });
+
+  it("does not count a player who plays on the match", () => {
+    const [response] = transformMatchesToMatchesResponse(
+      BEA_USER,
+      [matchOnThePage({ moderators: [STRANGER] })],
+      eligibilitiesOf(gate(5, [ANA])),
+    );
+
+    expect(response.isAdmin).toBe(false);
   });
 
   it("says whether the viewer was on the match", () => {

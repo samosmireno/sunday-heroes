@@ -3,6 +3,7 @@ import {
   MatchPageResponse,
   MatchResponse,
   PlayerResponse,
+  Role,
 } from "@repo/shared-types";
 import { MatchWithDetails } from "../repositories/match/types";
 import { Match, VotingStatus } from "@prisma/client";
@@ -10,6 +11,7 @@ import { calculatePendingVotes, calculatePlayerScore } from "./utils";
 import { VotingEligibility } from "./voting-eligibility";
 import { transformMatchSeasonToResponse } from "./season-transforms";
 import { createMatchRequest } from "../schemas/create-match-request-schema";
+import { getUserRole } from "./competition-transforms";
 
 function sortPlayersHomeAwayByPosition(
   players: PlayerResponse[],
@@ -152,7 +154,10 @@ export function transformMatchesToMatchesResponse(
       competitionId: match.competition.id,
       competitionName: match.competition.name,
       competitionType: match.competition.type as CompetitionResponse["type"],
-      isAdmin: match.competition.dashboard.adminId === userId,
+      // The admin and the Competition's moderators alike: both may carry a
+      // ballot for another player, and this flag is what shows them the way to
+      // the on-behalf-of list.
+      isAdmin: getUserRole(match.competition, userId) !== Role.PLAYER,
       videoUrl: match.videoUrl ?? undefined,
       season: transformMatchSeasonToResponse(match.season),
     };
