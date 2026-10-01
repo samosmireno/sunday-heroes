@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { MatchResponse, Role } from "@repo/shared-types";
 import { useCompetitionContext } from "@/context/competition-context";
 import { addMatchHint } from "@/features/competition/season-labels";
+import { useReadOnly } from "@/features/read-only/use-read-only";
 
 interface MatchListProps {
   userRole: Role;
@@ -39,6 +40,7 @@ export default function MatchList({
     isPast,
     isAll,
   } = useCompetitionContext();
+  const readOnly = useReadOnly();
 
   const sortedMatchIndexes = matches
     .map((match, index) => ({ match, index }))
@@ -78,19 +80,19 @@ export default function MatchList({
           Match Results
         </h2>
         {userRole !== Role.PLAYER &&
-          (isPast ? (
-            currentSeason !== undefined && (
-              <span className="text-xs text-gray-400">
-                {addMatchHint(currentSeason)}
-              </span>
-            )
-          ) : (
-            <Link to={`/add-match/${competitionId}`}>
-              <Button className="transform rounded bg-accent px-4 py-2 font-bold uppercase text-bg shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent">
-                Add Match
-              </Button>
-            </Link>
-          ))}
+          (isPast
+            ? currentSeason !== undefined && (
+                <span className="text-xs text-gray-400">
+                  {addMatchHint(currentSeason)}
+                </span>
+              )
+            : !readOnly && (
+                <Link to={`/add-match/${competitionId}`}>
+                  <Button className="transform rounded bg-accent px-4 py-2 font-bold uppercase text-bg shadow-md transition-transform duration-200 hover:translate-y-1 hover:bg-accent">
+                    Add Match
+                  </Button>
+                </Link>
+              ))}
       </div>
       {/* Keyed by season so a switch starts the carousel at the newest match again. */}
       <Carousel

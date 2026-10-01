@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/auth-context";
 import Loading from "@/components/ui/loading";
+import { toast } from "sonner";
+import { READ_ONLY_CODE, READ_ONLY_MESSAGE } from "@repo/shared-types";
 
 const AuthCallback = () => {
   const { processAuthSuccess } = useAuth();
@@ -14,6 +16,9 @@ const AuthCallback = () => {
 
     if (errorParam) {
       console.error("Authentication error:", errorParam);
+      // A Google account with no User here: the frozen copy signs no one up.
+      if (errorParam === READ_ONLY_CODE)
+        toast.error(READ_ONLY_MESSAGE, { id: READ_ONLY_CODE });
       navigate("/landing", { replace: true });
       return;
     }

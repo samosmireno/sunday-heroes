@@ -21,6 +21,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { capitalizeFirstLetter } from "@/utils/string";
+import { cn } from "@/utils/cn";
+import { useReadOnly } from "@/features/read-only/use-read-only";
 
 const sidebarItems = [
   {
@@ -65,6 +67,7 @@ export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isMobile, setOpenMobile } = useSidebar();
+  const readOnly = useReadOnly();
 
   const isActive = (url: string) => {
     return location.pathname.startsWith(url) && url !== "#";
@@ -79,7 +82,11 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r-2 border-accent/60 bg-sidebar-bg font-exo shadow-md transition-all duration-300 ease-in-out"
+      className={cn(
+        "border-r-2 border-accent/60 bg-sidebar-bg font-exo shadow-md transition-all duration-300 ease-in-out",
+        // Below the read-only banner, which is one line (h-10) from md up.
+        readOnly && "md:top-10 md:h-[calc(100svh-2.5rem)]",
+      )}
     >
       <SidebarContent className="flex flex-1 flex-col overflow-y-auto">
         <SidebarGroup>

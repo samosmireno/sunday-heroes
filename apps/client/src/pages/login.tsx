@@ -5,10 +5,12 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import { constructFullPath } from "@/features/landing/utils";
 import LoginForm from "@/features/sign-in-form/login-form";
 import { GoogleIcon } from "@/components/icons/google";
+import { useReadOnly } from "@/features/read-only/use-read-only";
 
 export default function LoginPage() {
   const { user, login, isLoading } = useAuth();
   const location = useLocation();
+  const readOnly = useReadOnly();
 
   const from = constructFullPath(location.state?.from);
 
@@ -44,15 +46,17 @@ export default function LoginPage() {
 
             <LoginForm />
 
-            <div className="mt-4 text-center text-sm">
-              <span className="text-gray-400">Don’t have an account?</span>{" "}
-              <Link
-                to="/register"
-                className="rounded font-semibold text-accent underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-              >
-                Sign up here
-              </Link>
-            </div>
+            {!readOnly && (
+              <div className="mt-4 text-center text-sm">
+                <span className="text-gray-400">Don’t have an account?</span>{" "}
+                <Link
+                  to="/register"
+                  className="rounded font-semibold text-accent underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                >
+                  Sign up here
+                </Link>
+              </div>
+            )}
 
             <div className="mt-8 flex justify-center">
               <button

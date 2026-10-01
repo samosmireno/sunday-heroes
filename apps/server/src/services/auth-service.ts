@@ -48,8 +48,13 @@ export class AuthService {
     return JSON.parse(Buffer.from(id_token.split(".")[1], "base64").toString());
   }
 
+  /** The User a Google identity signs in as, if one exists. */
+  static async findUser(googleUser: any): Promise<User | null> {
+    return await UserRepo.findByEmail(googleUser.email);
+  }
+
   static async findOrCreateUser(googleUser: any): Promise<User> {
-    let user = await UserRepo.findByEmail(googleUser.email);
+    let user = await this.findUser(googleUser);
 
     if (!user) {
       user = await UserRepo.create({

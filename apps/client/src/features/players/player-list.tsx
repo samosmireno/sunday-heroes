@@ -3,6 +3,7 @@ import InvitePlayerDialog from "../invite-player/invite-player-dialog";
 import { PlayerTabsType } from "@/pages/players/types";
 import { playerTabs } from "@/pages/players/constants";
 import { useNavigate } from "react-router-dom";
+import { useReadOnly } from "@/features/read-only/use-read-only";
 
 interface PlayersListProps {
   players: PlayerListResponse[];
@@ -14,6 +15,7 @@ export default function PlayersList({
   activeFilter,
 }: PlayersListProps) {
   const navigate = useNavigate();
+  const readOnly = useReadOnly();
 
   return (
     <div className="relative -mx-2 sm:-mx-4 xl:-mx-0">
@@ -160,7 +162,7 @@ export default function PlayersList({
                 {activeFilter === playerTabs.ADMIN && (
                   <td className="whitespace-nowrap px-1 py-2 text-center sm:px-2 sm:py-3 lg:px-3">
                     <div className="flex items-center justify-center">
-                      {!player.isRegistered && (
+                      {!player.isRegistered && !readOnly && (
                         <InvitePlayerDialog
                           dashboardPlayerId={player.id}
                           playerNickname={player.nickname}

@@ -8,6 +8,7 @@ import { UserService } from "../services/user-service";
 import { RefreshTokenService } from "../services/refresh-token-service";
 import {
   LoginRequest,
+  READ_ONLY_CODE,
   RegisterRequest,
   UserResponse,
 } from "@repo/shared-types";
@@ -221,7 +222,21 @@ export const handleGoogleCallback = async (
     logger.info("Google OAuth callback received");
 
     const googleUser = await AuthService.exchangeGoogleCode(code);
-    const user = await AuthService.findOrCreateUser(googleUser);
+
+    // Read-only, an existing User may still sign in to read. A new one would
+    // appear after the final dump and never reach the new app, so it is sent
+    // back with the error the client shows as the read-only message.
+    // (middleware/read-only.ts has already dropped any invite token.)
+    const user = config.readOnly
+      ? await AuthService.findUser(googleUser)
+      : await AuthService.findOrCreateUser(googleUser);
+
+    if (!user) {
+      logger.info("Google OAuth sign-up refused: the app is read-only");
+      return res.redirect(
+        `${config.google.redirectClientUrl}?error=${READ_ONLY_CODE}`,
+      );
+    }
 
     const { accessToken, refreshToken } = await AuthService.refreshUserTokens(
       user.id,

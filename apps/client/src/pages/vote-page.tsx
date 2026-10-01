@@ -12,6 +12,7 @@ import {
   VotingClosedState,
 } from "@/features/voting/vote-states";
 import { useVoteSubmit } from "@/features/voting/hooks/use-vote-submit";
+import { useReadOnly } from "@/features/read-only/use-read-only";
 import { usePlayerSelection } from "@/features/voting/hooks/use-player-selection";
 import { VotingDeadline, VotingGuide } from "@/features/voting/votig-info";
 import { VoteNotSubmittedNotice } from "@/features/voting/vote-not-submitted-notice";
@@ -34,6 +35,7 @@ export default function VotePage() {
     navigateToDashboard,
   } = useVoteSubmit();
   const { votingStatus, isLoading, error } = useVotingStatus(matchId, voterId);
+  const readOnly = useReadOnly();
   const { selectedPlayers, handlePlayerSelect, canSubmit } = usePlayerSelection(
     {
       matchId,
@@ -131,7 +133,7 @@ export default function VotePage() {
             players={votingStatus.players}
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
-            showSubmitButton={canSubmit}
+            showSubmitButton={canSubmit && !readOnly}
             /* Both of these take the submit button's place, and only one can
                be true: a blocked voter has no submit button to press, so no
                submit of theirs can have been refused. */
