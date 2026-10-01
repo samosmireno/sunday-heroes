@@ -8,9 +8,11 @@ import invitationRoutes from "./api/invitation-routes";
 import teamRoutes from "./api/team-routes";
 import leagueRoutes from "./api/league-routes";
 import testRoutes from "./api/test-routes";
+import { getStatus } from "../handlers/status";
 
 const router = Router();
 
+router.get("/status", getStatus);
 router.use("/dashboard", dashboardRoutes);
 router.use("/competitions", competitionRoutes);
 router.use("/matches", matchRoutes);

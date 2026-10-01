@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Route, Routes } from "react-router-dom";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { READ_ONLY_CODE, READ_ONLY_MESSAGE } from "@repo/shared-types";
 import axiosInstance, { SessionExpiredError } from "@/config/axios-config";
 import { axiosResponse, createTestProviders } from "@/test/harness";
 import {
@@ -321,5 +322,65 @@ describe("VotePage when the ballot itself is refused", () => {
         "You are not authorized to view this player's ballot",
       ),
     ).toBeDefined();
+  });
+});
+
+describe("VotePage on the read-only copy", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("offers no Submit Votes button while the app is read-only", async () => {
+    vi.spyOn(axiosInstance, "get").mockImplementation(async (url: string) =>
+      axiosResponse(
+        url.endsWith("/api/status") ? { readOnly: true } : votingStatus(),
+      ),
+    );
+    render(
+      <Routes>
+        <Route path="/vote/:matchId" element={<VotePage />} />
+      </Routes>,
+      { wrapper: createTestProviders({ at: ballotPath }) },
+    );
+    await screen.findByText("Home Team");
+
+    fireEvent.click(playerCard("Ana"));
+    fireEvent.click(playerCard("Cal"));
+    fireEvent.click(playerCard("Dan"));
+
+    expect(screen.getByText("Your selection (3/3)")).toBeDefined();
+    expect(screen.queryByRole("button", { name: "Submit Votes" })).toBeNull();
+  });
+
+  it("says the app has moved when the server refuses the vote as read-only", async () => {
+    // The page didn't know yet (the status read is a courtesy), so the
+    // server's 503 is what the player hears about.
+    const errorToast = vi.spyOn(toast, "error");
+    vi.spyOn(axiosInstance, "post").mockRejectedValue(
+      Object.assign(new Error("Request failed with status code 503"), {
+        status: 503,
+        response: {
+          status: 503,
+          data: {
+            code: READ_ONLY_CODE,
+            message: READ_ONLY_MESSAGE,
+            error: READ_ONLY_MESSAGE,
+          },
+        },
+      }),
+    );
+    await renderVotePage(votingStatus());
+
+    fireEvent.click(playerCard("Ana"));
+    fireEvent.click(playerCard("Cal"));
+    fireEvent.click(playerCard("Dan"));
+    fireEvent.click(screen.getByRole("button", { name: "Submit Votes" }));
+
+    await waitFor(() =>
+      expect(errorToast).toHaveBeenCalledWith(READ_ONLY_MESSAGE, {
+        id: READ_ONLY_CODE,
+      }),
+    );
+    expect(screen.queryByText(/Votes Submitted Successfully/)).toBeNull();
   });
 });

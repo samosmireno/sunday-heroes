@@ -51,6 +51,9 @@ const redirectBaseUrl = isProd
 
 export const config = {
   env: process.env.NODE_ENV,
+  // The Cut-over freeze (see middleware/read-only.ts). Only the exact string
+  // `true` turns it on; unset or anything else leaves the app as it always was.
+  readOnly: process.env.READ_ONLY === "true",
   port: process.env.PORT || 3001,
   client: isProd ? process.env.PRODUCTION_URL : process.env.DEV_CLIENT_URL,
   google: {

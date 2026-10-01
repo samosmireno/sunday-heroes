@@ -24,6 +24,7 @@ import ResetPasswordPage from "./pages/reset-password-page";
 import PlayerStatsPage from "./pages/player-stats-page";
 import PrivacyPage from "./pages/privacy-page";
 import PublicLayout from "./layouts/public-layout";
+import { ReadOnlyBanner } from "./features/read-only/read-only-banner";
 
 const publicRoutes = [
   { path: "/login", element: <LoginPage /> },
@@ -59,6 +60,7 @@ const protectedRoutes = [
 export default function App() {
   return (
     <BrowserRouter>
+      <ReadOnlyBanner />
       <GlobalErrorBoundary>
         <AuthProvider>
           <Routes>

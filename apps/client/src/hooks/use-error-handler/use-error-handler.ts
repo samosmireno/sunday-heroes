@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import { useAuth } from "@/context/auth-context";
 import { useErrorBoundary } from "react-error-boundary";
 import { isSessionExpired } from "@/config/axios-config";
+import { READ_ONLY_CODE, READ_ONLY_MESSAGE } from "@repo/shared-types";
+import { isReadOnlyError } from "@/features/read-only/use-read-only";
 import { AppError } from "./types";
 
 /**
@@ -55,6 +57,17 @@ export const useErrorHandler = () => {
         }
         if (redirectOnAuth) {
           logout();
+        }
+        if (throwError) showBoundary(error);
+        return;
+      }
+
+      // The frozen copy left behind at Cut-over refuses every write. That is
+      // not a failure of this request, and the player should hear where the
+      // app went.
+      if (isReadOnlyError(error)) {
+        if (showToast) {
+          toast.error(READ_ONLY_MESSAGE, { id: READ_ONLY_CODE });
         }
         if (throwError) showBoundary(error);
         return;

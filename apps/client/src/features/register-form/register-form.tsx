@@ -15,6 +15,7 @@ import { Loader2 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useRegister } from "./use-register";
 import { PasswordInput } from "@/components/ui/password-input";
+import { useReadOnly } from "@/features/read-only/use-read-only";
 
 export default function RegisterForm() {
   const location = useLocation();
@@ -23,6 +24,8 @@ export default function RegisterForm() {
   const invitedBy = location.state?.invitedBy as string;
 
   const { register, isLoading } = useRegister({ invitedBy });
+  // The frozen copy signs no one up; the server refuses it anyway.
+  const readOnly = useReadOnly();
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -124,7 +127,7 @@ export default function RegisterForm() {
           />
           <Button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || readOnly}
             className="w-full border-2 border-accent bg-accent/20 text-accent hover:bg-accent/30 disabled:opacity-50"
           >
             {isLoading ? (
