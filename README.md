@@ -1,5 +1,7 @@
 # Sunday Heroes
 
+> **Archived.** This app was replaced on 2026-10-02 by a rewrite, [samosmireno/sunday-heroes-app](https://github.com/samosmireno/sunday-heroes-app), which now serves [sunday-heroes.app](https://sunday-heroes.app). This repository is kept read-only for reference; none of its code is carried over.
+
 A full-stack web application for managing football teams, matches, and player statistics with analytics and team management features.
 
 ## Features
